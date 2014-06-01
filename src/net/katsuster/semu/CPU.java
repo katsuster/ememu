@@ -28,6 +28,11 @@ public class CPU extends MasterCore64 {
         modeDisasm = m;
     }
 
+    public void printDisasm(int op, String s) {
+        System.out.println(String.format("%08x:    %08x    %s",
+                getPC(), op, s));
+    }
+
     /**
      * レジスタ Rn の値を取得します。
      *
@@ -46,6 +51,37 @@ public class CPU extends MasterCore64 {
      */
     public void setReg(int n, int val) {
         regs[n] = val;
+    }
+
+    /**
+     * レジスタ Rn の名前を取得します。
+     *
+     * @param n レジスタ番号（0 ～ 15）
+     * @return レジスタの名前
+     */
+    public static String getRegName(int n) {
+        return String.format("r%d", n);
+    }
+
+    /**
+     * コプロセッサ Pn の名前を取得します。
+     *
+     * @param cpnum コプロセッサ番号
+     * @return コプロセッサの名前
+     */
+    public static String getCoprocName(int cpnum) {
+        return String.format("p%d", cpnum);
+    }
+
+    /**
+     * コプロセッサレジスタ CRn の名前を取得します。
+     *
+     * @param cpnum コプロセッサ番号
+     * @param n コプロセッサレジスタ番号（0 ～ 7）
+     * @return コプロセッサレジスタの名前
+     */
+    public static String getCoprocRegName(int cpnum, int n) {
+        return String.format("cr%d", n);
     }
 
     /**
@@ -234,6 +270,14 @@ public class CPU extends MasterCore64 {
         return (val >> 5) & 0x1;
     }
 
+    public static final int MODE_USR = 0x10;
+    public static final int MODE_FIQ = 0x11;
+    public static final int MODE_IRQ = 0x12;
+    public static final int MODE_SVC = 0x13;
+    public static final int MODE_ABT = 0x17;
+    public static final int MODE_UND = 0x1b;
+    public static final int MODE_SYS = 0x1f;
+
     /**
      * PSR（プログラムステートレジスタ）の M フィールド
      * （ビット [4:0]）を取得します。
@@ -342,36 +386,43 @@ public class CPU extends MasterCore64 {
      * @param op ARM 命令
      * @return cond フィールド
      */
-    public static int getOpcode(int op) {
+    public static int getSubcode(int op) {
         return (op >> 20) & 0xff;
     }
 
     public static final int OP_ADDSFT = 0;
-    public static final int OP_MSRREG = 1;
-    public static final int OP_ADDIMM = 2;
-    public static final int OP_MSRIMM = 3;
-    public static final int OP_LDRIMM = 4;
-    public static final int OP_LDRREG = 6;
+    public static final int OP_MRSREG = 1;
+    public static final int OP_MSRREG = 2;
+    public static final int OP_ADDIMM = 4;
+    public static final int OP_MSRIMM = 5;
+    public static final int OP_LDRIMM = 6;
+    public static final int OP_LDRREG = 7;
     public static final int OP_LDMSTM = 8;
     public static final int OP_BL_BLX = 10;
     public static final int OP_LDCSTC = 12;
-    public static final int OP_MCRMRC = 14;
+    public static final int OP_CDPMCR = 14;
+    public static final int OP_CDPMRC = 15;
+    public static final int OP_SWIIMM = 16;
 
     public static final int[] optable = {
             //0b000_00000: データ処理
-            //  0b000_10xx0: ステータスレジスタへレジスタ転送（16, 18, 20, 22）
+            //  0b000_10x00: mrs ステータスレジスタへレジスタ転送
+            //               16, 20
+            //  0b000_10x10: msr ステータスレジスタへレジスタ転送
+            //               18, 22
             OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
             OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
             OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
             OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
 
-            OP_MSRREG, OP_ADDSFT, OP_MSRREG, OP_ADDSFT,
-            OP_MSRREG, OP_ADDSFT, OP_MSRREG, OP_ADDSFT,
+            OP_MRSREG, OP_ADDSFT, OP_MSRREG, OP_ADDSFT,
+            OP_MRSREG, OP_ADDSFT, OP_MSRREG, OP_ADDSFT,
             OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
             OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
 
             //0b001_00000
-            //  0b001_10x10: ステータスレジスタへの即値転送（50, 54）
+            //  0b001_10x10: msr ステータスレジスタへ即値転送
+            //               50, 54
             OP_ADDIMM, OP_ADDIMM, OP_ADDIMM, OP_ADDIMM,
             OP_ADDIMM, OP_ADDIMM, OP_ADDIMM, OP_ADDIMM,
             OP_ADDIMM, OP_ADDIMM, OP_ADDIMM, OP_ADDIMM,
@@ -438,44 +489,56 @@ public class CPU extends MasterCore64 {
             OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
 
             //0b111_00000
-            OP_MCRMRC, OP_MCRMRC, OP_MCRMRC, OP_MCRMRC,
-            OP_MCRMRC, OP_MCRMRC, OP_MCRMRC, OP_MCRMRC,
-            OP_MCRMRC, OP_MCRMRC, OP_MCRMRC, OP_MCRMRC,
-            OP_MCRMRC, OP_MCRMRC, OP_MCRMRC, OP_MCRMRC,
+            //  0b1110xxx0: cdp コプロセッサデータ処理
+            //              mrc コプロセッサから ARM レジスタへ転送
+            //              224, 226, 228, 230, 232, 234, 236, 238
+            //  0b1110xxx1: cdp コプロセッサデータ処理
+            //              mrc コプロセッサから ARM レジスタへ転送
+            //              225, 227, 229, 231, 233, 235, 237, 239
+            //  0b1111xxxx: swi ソフトウェア割り込み
+            //              240, ..., 255
+            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
+            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
+            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
+            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
 
-            OP_MCRMRC, OP_MCRMRC, OP_MCRMRC, OP_MCRMRC,
-            OP_MCRMRC, OP_MCRMRC, OP_MCRMRC, OP_MCRMRC,
-            OP_MCRMRC, OP_MCRMRC, OP_MCRMRC, OP_MCRMRC,
-            OP_MCRMRC, OP_MCRMRC, OP_MCRMRC, OP_MCRMRC,
+            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
+            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
+            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
+            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
     };
 
-    public void executeAddSft(int op, int opcode, int cond) {
+    public void executeAddSft(int op, int cond, int subcode) {
 
     }
 
-    public void executeMrsReg(int op, int opcode, int cond) {
+    public void executeMrsReg(int op, int cond, int subcode) {
         op = op;
     }
 
-    public void executeAddImm(int op, int opcode, int cond) {
+    public void executeMsrReg(int op, int cond, int subcode) {
+        op = op;
+    }
+
+    public void executeAddImm(int op, int cond, int subcode) {
 
     }
 
-    public void executeMsrImm(int op, int opcode, int cond) {
+    public void executeMsrImm(int op, int cond, int subcode) {
         int flag_r = (op >> 22) & 0x1;
-        int fmask_f = (op >> 19) & 0x1;
-        int fmask_s = (op >> 18) & 0x1;
-        int fmask_x = (op >> 17) & 0x1;
-        int fmask_c = (op >> 16) & 0x1;
+        int mask_f = (op >> 19) & 0x1;
+        int mask_s = (op >> 18) & 0x1;
+        int mask_x = (op >> 17) & 0x1;
+        int mask_c = (op >> 16) & 0x1;
         int sbo = (op >> 12) & 0xf;
-        int rotr = (op >> 8) & 0xf;
+        int rotR = (op >> 8) & 0xf;
         int imm8 = op & 0xff;
-        int imm = Integer.rotateRight(imm8, rotr * 2);
-        int v, m;
+        int imm = Integer.rotateRight(imm8, rotR * 2);
+        int v, m = 0;
 
         if (sbo != 0xf) {
             throw new IllegalStateException("Illegal instruction, " +
-                    String.format("SBO[15:12](0x%01x) of MSR has zero.",
+                    String.format("msr SBO[15:12](0x%01x) has zero.",
                             sbo));
         }
 
@@ -485,17 +548,16 @@ public class CPU extends MasterCore64 {
             v = getSPSR();
         }
 
-        m = 0;
-        if (fmask_c == 1) {
+        if (mask_c == 1) {
             m |= 0x000000ff;
         }
-        if (fmask_x == 1) {
+        if (mask_x == 1) {
             m |= 0x0000ff00;
         }
-        if (fmask_s == 1) {
+        if (mask_s == 1) {
             m |= 0x00ff0000;
         }
-        if (fmask_f == 1) {
+        if (mask_f == 1) {
             m |= 0xff000000;
         }
         v &= ~m;
@@ -508,36 +570,81 @@ public class CPU extends MasterCore64 {
         }
 
         if (isDisasmMode()) {
-            System.out.println(String.format(
-                    "%08x: %08x  msr%s %s_%s%s%s%s, #%d    ; 0x%x",
-                    getPC(), op,
+            printDisasm(op, String.format(
+                    "msr%s %s_%s%s%s%s, #%d    ; 0x%x",
                     getCondName(cond),
                     (flag_r == 1) ? "SPSR" : "CPSR",
-                    (fmask_f == 1) ? "f" : "",
-                    (fmask_s == 1) ? "s" : "",
-                    (fmask_x == 1) ? "x" : "",
-                    (fmask_c == 1) ? "c" : "",
+                    (mask_f == 1) ? "f" : "",
+                    (mask_s == 1) ? "s" : "",
+                    (mask_x == 1) ? "x" : "",
+                    (mask_c == 1) ? "c" : "",
                     imm, imm));
         }
     }
 
+    public void executeCdpMcr(int op, int cond, int subcode) {
+        int bit4 = (op >> 4) & 0x1;
+
+        //ビット 4 が 0 ならば cdp 命令, 1 ならば mcr 命令
+        if (bit4 == 0) {
+            executeCdp(op, cond, subcode);
+            return;
+        }
+    }
+
+    public void executeCdpMrc(int op, int cond, int subcode) {
+        int opcode1 = (op >> 21) & 0x7;
+        int crn = (op >> 16) & 0xf;
+        int rd = (op >> 12) & 0xf;
+        int cpnum = (op >> 8) & 0xf;
+        int opcode2 = (op >> 5) & 0x7;
+        int bit4 = (op >> 4) & 0x1;
+        int crm = op & 0xf;
+
+        //ビット 4 が 0 ならば cdp 命令, 1 ならば mrc 命令
+        if (bit4 == 0) {
+            executeCdp(op, cond, subcode);
+            return;
+        }
+
+        if (isDisasmMode()) {
+            printDisasm(op, String.format(
+                    "mrc%s %s, %d, %s, %s, %s, {%d}",
+                    getCondName(cond),
+                    getCoprocName(cpnum), opcode1, getRegName(rd),
+                    getCoprocRegName(cpnum, crn), getCoprocRegName(cpnum, crm),
+                    opcode2));
+        }
+    }
+
+    public void executeCdp(int op, int cond, int subcode) {
+
+    }
+
+    public void executeSwiImm(int op, int cond, int subcode) {
+
+    }
+
     public void execute(int op) {
         int cond = getCond(op);
-        int opcode = getOpcode(op);
-        int sub = optable[opcode];
+        int subcode = getSubcode(op);
+        int subcodeId = optable[subcode];
 
-        switch (sub) {
+        switch (subcodeId) {
         case OP_ADDSFT:
-            executeAddSft(op, opcode, cond);
+            executeAddSft(op, cond, subcode);
+            break;
+        case OP_MRSREG:
+            executeMrsReg(op, cond, subcode);
             break;
         case OP_MSRREG:
-            executeMrsReg(op, opcode, cond);
+            executeMsrReg(op, cond, subcode);
             break;
         case OP_ADDIMM:
-            executeAddImm(op, opcode, cond);
+            executeAddImm(op, cond, subcode);
             break;
         case OP_MSRIMM:
-            executeMsrImm(op, opcode, cond);
+            executeMsrImm(op, cond, subcode);
             break;
         case OP_LDRIMM:
             break;
@@ -549,11 +656,18 @@ public class CPU extends MasterCore64 {
             break;
         case OP_LDCSTC:
             break;
-        case OP_MCRMRC:
+        case OP_CDPMCR:
+            executeCdpMcr(op, cond, subcode);
+            break;
+        case OP_CDPMRC:
+            executeCdpMrc(op, cond, subcode);
+            break;
+        case OP_SWIIMM:
+            executeSwiImm(op, cond, subcode);
             break;
         default:
             throw new IllegalStateException("Unknown sub execute no." +
-                    sub + ".");
+                    subcodeId + ".");
         }
 
         //System.out.println(getCondName(cond));
