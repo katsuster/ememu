@@ -38,8 +38,10 @@ public class Main {
         cpu.setSlaveBus(bus);
         bus.addSlaveCore(ram, 0xc0008000L, 0xc0800000L);
 
-        cpu.setPC(0xc0008000);
         cpu.setDisasmMode(1);
+        cpu.exceptionReset("Init.");
+        //tentative
+        cpu.setPC(0xc0008000);
         cpu.run();
     }
 }
