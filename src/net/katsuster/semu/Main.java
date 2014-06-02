@@ -41,7 +41,8 @@ public class Main {
         cpu.setDisasmMode(1);
         cpu.exceptionReset("Init.");
         //tentative
-        cpu.setPC(0xc0008000);
+        cpu.setPC(0xc0008000 + 8);
+        cpu.setJumped(false);
         cpu.run();
     }
 }

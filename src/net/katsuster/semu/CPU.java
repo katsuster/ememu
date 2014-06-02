@@ -11,6 +11,8 @@ public class CPU extends MasterCore64 {
     private int spsr;
     private CoProc[] coprocs;
 
+    private boolean jumped;
+
     private int modeDisasm;
 
     public CPU() {
@@ -33,9 +35,32 @@ public class CPU extends MasterCore64 {
         modeDisasm = m;
     }
 
-    public void printDisasm(int op, String s) {
-        System.out.printf("%08x:    %08x    %s\n",
-                getPC(), op, s);
+    public void printDisasm(int op, String operation, String operand) {
+        System.out.printf("%08x:    %08x    %-7s %s\n",
+                getPC() - 8, op, operation, operand);
+    }
+
+    /**
+     * 符号拡張を行います。
+     *
+     * @param v 任意の値
+     * @param n 値のビット数
+     */
+    public static long signext(long v, int n) {
+        long sb, mb;
+
+        if (n == 0) {
+            return 0;
+        }
+
+        sb = 1L << (n - 1);
+        mb = (-1L << (n - 1)) << 1;
+        v &= ~mb;
+        if ((v & sb) != 0) {
+            v = mb + v;
+        }
+
+        return v;
     }
 
     /**
@@ -111,6 +136,55 @@ public class CPU extends MasterCore64 {
      */
     public void setPC(int val) {
         setReg(15, val);
+    }
+
+    /**
+     * 指定したアドレスに絶対ジャンプします。
+     *
+     * PC には次に実行する命令のアドレス +8 を格納します。
+     *
+     * また命令実行後は自動的に PC に 4 が加算されますが、
+     * ジャンプ後は加算が実行されません。
+     *
+     * @param val 次に実行する命令のアドレス
+     */
+    public void jumpAbs(int val) {
+        setPC(val + 8);
+        setJumped(true);
+    }
+
+    /**
+     * 指定したアドレス分だけ相対ジャンプします。
+     *
+     * PC（実行中の命令のアドレス +8）+ 相対アドレス + 8 を、
+     * 新たな PC として設定します。
+     *
+     * また命令実行後は自動的に PC に 4 が加算されますが、
+     * ジャンプ後は加算が実行されません。
+     *
+     * @param val 次に実行する命令の相対アドレス
+     */
+    public void jumpRel(int val) {
+        setPC(getPC() + val + 8);
+        setJumped(true);
+    }
+
+    /**
+     * ジャンプが行われたかどうかを取得します。
+     *
+     * @return ジャンプが行われたならば true、そうでなければ false
+     */
+    public boolean isJumped() {
+        return jumped;
+    }
+
+    /**
+     * ジャンプが行われたかどうかを設定します。
+     *
+     * @param b ジャンプが行われたならば true、そうでなければ false
+     */
+    public void setJumped(boolean b) {
+        jumped = b;
     }
 
     /**
@@ -326,22 +400,22 @@ public class CPU extends MasterCore64 {
      */
     public static String getPSR_ModeName(int mode) {
         switch (mode) {
-            case 0x10:
-                return "usr";
-            case 0x11:
-                return "fiq";
-            case 0x12:
-                return "irq";
-            case 0x13:
-                return "svc";
-            case 0x17:
-                return "abt";
-            case 0x1b:
-                return "und";
-            case 0x1f:
-                return "sys";
-            default:
-                return "???";
+        case 0x10:
+            return "usr";
+        case 0x11:
+            return "fiq";
+        case 0x12:
+            return "irq";
+        case 0x13:
+            return "svc";
+        case 0x17:
+            return "abt";
+        case 0x1b:
+            return "und";
+        case 0x1f:
+            return "sys";
+        default:
+            return "???";
         }
     }
 
@@ -406,6 +480,55 @@ public class CPU extends MasterCore64 {
         } else {
             throw new IllegalArgumentException("Invalid cond " +
                     cond + ".");
+        }
+    }
+
+    /**
+     * ステータスレジスタの値が条件 cond を満たしているかどうか判定します。
+     *
+     * cond が NV の場合は常に true を返し、条件の判定は行いません。
+     * 各命令ごとに適切な判定を行って下さい。
+     *
+     * @param cond 条件オペコード
+     * @param psr  プログラムステータスレジスタの値
+     * @return 条件を満たしていれば true、満たしていなければ false
+     */
+    public static boolean satisfiesCondition(int cond, int psr) {
+        switch (cond) {
+        case COND_EQ:
+            return getPSR_Z(psr) == 1;
+        case COND_NE:
+            return getPSR_Z(psr) == 0;
+        case COND_CS:
+            return getPSR_C(psr) == 1;
+        case COND_CC:
+            return getPSR_C(psr) == 0;
+        case COND_MI:
+            return getPSR_N(psr) == 1;
+        case COND_PL:
+            return getPSR_N(psr) == 0;
+        case COND_VS:
+            return getPSR_V(psr) == 1;
+        case COND_VC:
+            return getPSR_V(psr) == 0;
+        case COND_HI:
+            return (getPSR_C(psr) == 1) && (getPSR_Z(psr) == 0);
+        case COND_LS:
+            return (getPSR_C(psr) == 0) || (getPSR_Z(psr) == 1);
+        case COND_GE:
+            return getPSR_N(psr) == getPSR_V(psr);
+        case COND_LT:
+            return getPSR_N(psr) != getPSR_V(psr);
+        case COND_GT:
+            return (getPSR_Z(psr) == 0) && (getPSR_N(psr) == getPSR_V(psr));
+        case COND_LE:
+            return (getPSR_Z(psr) == 1) || (getPSR_N(psr) != getPSR_V(psr));
+        case COND_AL:
+        case COND_NV:
+            return true;
+        default:
+            throw new IllegalArgumentException(String.format(
+                    "Unknown cond %d, psr 0x%08x.", cond, psr));
         }
     }
 
@@ -566,15 +689,19 @@ public class CPU extends MasterCore64 {
         int v, m = 0;
 
         if (isDisasmMode()) {
-            printDisasm(op, String.format(
-                    "msr%s %s_%s%s%s%s, #%d    ; 0x%x",
-                    getCondName(cond),
-                    (flag_r == 1) ? "SPSR" : "CPSR",
-                    (mask_f == 1) ? "f" : "",
-                    (mask_s == 1) ? "s" : "",
-                    (mask_x == 1) ? "x" : "",
-                    (mask_c == 1) ? "c" : "",
-                    imm, imm));
+            printDisasm(op,
+                    String.format("msr%s", getCondName(cond)),
+                    String.format("%s_%s%s%s%s, #%d    ; 0x%x",
+                            (flag_r == 1) ? "SPSR" : "CPSR",
+                            (mask_f == 1) ? "f" : "",
+                            (mask_s == 1) ? "s" : "",
+                            (mask_x == 1) ? "x" : "",
+                            (mask_c == 1) ? "c" : "",
+                            imm, imm));
+        }
+
+        if (!satisfiesCondition(cond, getCPSR())) {
+            return;
         }
 
         if (sbo != 0xf) {
@@ -610,6 +737,61 @@ public class CPU extends MasterCore64 {
         }
     }
 
+    public void executeBlBlx(int op, int cond, int subcode) {
+        int l = (op >> 24) & 0x1;
+        int imm24 = op & 0xffffff;
+        int simm24 = (int)signext(imm24, 24) << 2;
+
+        //cond = 0b1111 ならば blx 命令
+        if (cond == COND_NV) {
+            executeBlx(op, cond, subcode);
+            return;
+        }
+
+        if (isDisasmMode()) {
+            printDisasm(op,
+                    String.format("b%s%s",
+                            (l == 1) ? "l" : "",
+                            getCondName(cond)),
+                    String.format("%08x", getPC() + simm24));
+        }
+
+        if (!satisfiesCondition(cond, getCPSR())) {
+            return;
+        }
+
+        if (l == 1) {
+            setReg(14, getPC() - 4);
+        }
+        jumpRel(simm24);
+    }
+
+    public void executeBlx(int op, int cond, int subcode) {
+        int h = (op >> 24) & 0x1;
+        int imm24 = op & 0xffffff;
+        int simm24 = (int)signext(imm24, 24) << 2;
+        int psr;
+
+        if (isDisasmMode()) {
+            printDisasm(op,
+                    String.format("blx"),
+                    String.format("%08x", getPC() + simm24 + (h << 1)));
+        }
+
+        //blx は条件判定不可です
+
+        setReg(14, getPC() - 4);
+        //T ビットをセット
+        setCPSR(getCPSR() | 0x20);
+        jumpRel(simm24 + (h << 1));
+
+        throw new IllegalStateException("not support blx.");
+    }
+
+    public void executeLdcStc(int op, int cond, int subcode) {
+
+    }
+
     public void executeCdpMcr(int op, int cond, int subcode) {
         int bit4 = (op >> 4) & 0x1;
 
@@ -638,12 +820,16 @@ public class CPU extends MasterCore64 {
         }
 
         if (isDisasmMode()) {
-            printDisasm(op, String.format(
-                    "mrc%s %s, %d, %s, %s, %s, {%d}",
-                    getCondName(cond),
-                    getCoprocName(cpnum), opcode1, getRegName(rd),
-                    getCoprocRegName(cpnum, crn), getCoprocRegName(cpnum, crm),
-                    opcode2));
+            printDisasm(op,
+                    String.format("mrc%s", getCondName(cond)),
+                    String.format("%s, %d, %s, %s, %s, {%d}",
+                            getCoprocName(cpnum), opcode1, getRegName(rd),
+                            getCoprocRegName(cpnum, crn), getCoprocRegName(cpnum, crm),
+                            opcode2));
+        }
+
+        if (!satisfiesCondition(cond, getCPSR())) {
+            return;
         }
 
         cp = coprocs[cpnum];
@@ -688,43 +874,45 @@ public class CPU extends MasterCore64 {
         int subcodeId = optable[subcode];
 
         switch (subcodeId) {
-            case OP_ADDSFT:
-                executeAddSft(op, cond, subcode);
-                break;
-            case OP_MRSREG:
-                executeMrsReg(op, cond, subcode);
-                break;
-            case OP_MSRREG:
-                executeMsrReg(op, cond, subcode);
-                break;
-            case OP_ADDIMM:
-                executeAddImm(op, cond, subcode);
-                break;
-            case OP_MSRIMM:
-                executeMsrImm(op, cond, subcode);
-                break;
-            case OP_LDRIMM:
-                break;
-            case OP_LDRREG:
-                break;
-            case OP_LDMSTM:
-                break;
-            case OP_BL_BLX:
-                break;
-            case OP_LDCSTC:
-                break;
-            case OP_CDPMCR:
-                executeCdpMcr(op, cond, subcode);
-                break;
-            case OP_CDPMRC:
-                executeCdpMrc(op, cond, subcode);
-                break;
-            case OP_SWIIMM:
-                executeSwiImm(op, cond, subcode);
-                break;
-            default:
-                throw new IllegalStateException("Unknown subcodeId" +
-                        String.format("(%d).", subcodeId));
+        case OP_ADDSFT:
+            executeAddSft(op, cond, subcode);
+            break;
+        case OP_MRSREG:
+            executeMrsReg(op, cond, subcode);
+            break;
+        case OP_MSRREG:
+            executeMsrReg(op, cond, subcode);
+            break;
+        case OP_ADDIMM:
+            executeAddImm(op, cond, subcode);
+            break;
+        case OP_MSRIMM:
+            executeMsrImm(op, cond, subcode);
+            break;
+        case OP_LDRIMM:
+            break;
+        case OP_LDRREG:
+            break;
+        case OP_LDMSTM:
+            break;
+        case OP_BL_BLX:
+            executeBlBlx(op, cond, subcode);
+            break;
+        case OP_LDCSTC:
+            executeLdcStc(op, cond, subcode);
+            break;
+        case OP_CDPMCR:
+            executeCdpMcr(op, cond, subcode);
+            break;
+        case OP_CDPMRC:
+            executeCdpMrc(op, cond, subcode);
+            break;
+        case OP_SWIIMM:
+            executeSwiImm(op, cond, subcode);
+            break;
+        default:
+            throw new IllegalStateException("Unknown subcodeId" +
+                    String.format("(%d).", subcodeId));
         }
     }
 
@@ -732,7 +920,7 @@ public class CPU extends MasterCore64 {
         int v;
 
         while (true) {
-            v = read32(getPC());
+            v = read32(getPC() - 8);
             try {
                 execute(v);
             } catch (IllegalStateException e) {
@@ -740,7 +928,11 @@ public class CPU extends MasterCore64 {
                 //ignore
             }
 
-            setPC(getPC() + 4);
+            if (isJumped()) {
+                setJumped(false);
+            } else {
+                setPC(getPC() + 4);
+            }
         }
     }
 
@@ -750,7 +942,7 @@ public class CPU extends MasterCore64 {
     public void exceptionReset(String dbgmsg) {
         System.out.printf("Exception: Reset by '%s'.\n",
                 dbgmsg);
-        setPC(0x00000000);
+        jumpAbs(0x00000000);
     }
 
     /**
@@ -759,7 +951,6 @@ public class CPU extends MasterCore64 {
     public void exceptionInst(String dbgmsg) {
         System.out.printf("Exception: Undefined Instruction by '%s'.\n",
                 dbgmsg);
-        setPC(0x00000004);
+        jumpAbs(0x00000004);
     }
-
 }
