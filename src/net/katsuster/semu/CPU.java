@@ -545,8 +545,24 @@ public class CPU extends MasterCore64 {
     public static final int OP_ADDSFT = 0;
     public static final int OP_MRSREG = 1;
     public static final int OP_MSRREG = 2;
-    public static final int OP_ADDIMM = 4;
-    public static final int OP_MSRIMM = 5;
+    public static final int OP_ANDIMM = 100;
+    public static final int OP_EORIMM = 101;
+    public static final int OP_SUBIMM = 102;
+    public static final int OP_RSBIMM = 103;
+    public static final int OP_ADDIMM = 104;
+    public static final int OP_ADCIMM = 105;
+    public static final int OP_SBCIMM = 106;
+    public static final int OP_RSCIMM = 107;
+    public static final int OP_TSTIMM = 108;
+    public static final int OP_TEQIMM = 109;
+    public static final int OP_CMPIMM = 110;
+    public static final int OP_CMNIMM = 111;
+    public static final int OP_ORRIMM = 112;
+    public static final int OP_MOVIMM = 113;
+    public static final int OP_BICIMM = 114;
+    public static final int OP_MVNIMM = 115;
+    public static final int OP_UNDIMM = 116;
+    public static final int OP_MSRIMM = 117;
     public static final int OP_LDRIMM = 6;
     public static final int OP_LDRREG = 7;
     public static final int OP_LDMSTM = 8;
@@ -573,17 +589,35 @@ public class CPU extends MasterCore64 {
             OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
 
             //0b001_00000
+            //  0b001_0000x: and 32, 33
+            //  0b001_0001x: eor 34, 35
+            //  0b001_0010x: sub 36, 37
+            //  0b001_0011x: rsb 38, 39
+            //  0b001_0100x: add 40, 41
+            //  0b001_0101x: adc 42, 43
+            //  0b001_0110x: sbc 44, 45
+            //  0b001_0111x: rsc 46, 47
+            //  0b001_10001: tst 49
+            //  0b001_10011: teq 51
+            //  0b001_10101: cmp 53
+            //  0b001_10111: cmn 55
+            //  0b001_1100x: orr 56, 57
+            //  0b001_1101x: mov 58, 59
+            //  0b001_1110x: bic 60, 61
+            //  0b001_1111x: mvn 62, 63
+            //  0b001_10x10: und 未定義命令
+            //               48, 52
             //  0b001_10x10: msr ステータスレジスタへ即値転送
             //               50, 54
-            OP_ADDIMM, OP_ADDIMM, OP_ADDIMM, OP_ADDIMM,
-            OP_ADDIMM, OP_ADDIMM, OP_ADDIMM, OP_ADDIMM,
-            OP_ADDIMM, OP_ADDIMM, OP_ADDIMM, OP_ADDIMM,
-            OP_ADDIMM, OP_ADDIMM, OP_ADDIMM, OP_ADDIMM,
+            OP_ANDIMM, OP_ANDIMM, OP_EORIMM, OP_EORIMM,
+            OP_SUBIMM, OP_SUBIMM, OP_RSBIMM, OP_RSBIMM,
+            OP_ADDIMM, OP_ADDIMM, OP_ADCIMM, OP_ADCIMM,
+            OP_SBCIMM, OP_SBCIMM, OP_RSCIMM, OP_RSCIMM,
 
-            OP_ADDIMM, OP_ADDIMM, OP_MSRIMM, OP_ADDIMM,
-            OP_ADDIMM, OP_ADDIMM, OP_MSRIMM, OP_ADDIMM,
-            OP_ADDIMM, OP_ADDIMM, OP_ADDIMM, OP_ADDIMM,
-            OP_ADDIMM, OP_ADDIMM, OP_ADDIMM, OP_ADDIMM,
+            OP_UNDIMM, OP_TSTIMM, OP_MSRIMM, OP_TEQIMM,
+            OP_UNDIMM, OP_CMPIMM, OP_MSRIMM, OP_CMNIMM,
+            OP_ORRIMM, OP_ORRIMM, OP_MOVIMM, OP_MOVIMM,
+            OP_BICIMM, OP_BICIMM, OP_MVNIMM, OP_MVNIMM,
 
             //0b010_00000
             OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
@@ -660,6 +694,25 @@ public class CPU extends MasterCore64 {
             OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
     };
 
+    /**
+     * データ処理オペランドの 32ビットイミディエートを取得します。
+     *
+     * rotate_imm: ビット[11:8]
+     * immed_8: ビット[7:0]
+     * とすると、イミディエート imm32 は下記のように求められます。
+     *
+     * imm32 = rotateRight(immed_8, rotate_imm * 2)
+     *
+     * @param op 命令コード
+     * @return イミディエート
+     */
+    public static int getOperandImm32(int op) {
+        int rotR = (op >> 8) & 0xf;
+        int imm8 = op & 0xff;
+
+        return Integer.rotateRight(imm8, rotR * 2);
+    }
+
     public void executeAddSft(int op, int cond, int subcode) {
 
     }
@@ -673,7 +726,29 @@ public class CPU extends MasterCore64 {
     }
 
     public void executeAddImm(int op, int cond, int subcode) {
+        int st = (op >> 20) & 0xf;
+        int rn = (op >> 16) & 0xf;
+        int rd = (op >> 12) & 0xf;
+        int imm32 = getOperandImm32(op);
 
+        if (isDisasmMode()) {
+            printDisasm(op,
+                    String.format("add%s%s", getCondName(cond),
+                            (st == 1) ? "s" : ""),
+                    String.format("r%d, r%d, #%d    ; 0x%x",
+                            rd, rn, imm32, imm32));
+        }
+
+        if (!satisfiesCondition(cond, getCPSR())) {
+            return;
+        }
+
+        setReg(rd, getReg(rn) + imm32);
+        if (st == 1 && rd == 15) {
+            setCPSR(getSPSR());
+        } else if (st == 1) {
+            //TODO: set flags
+        }
     }
 
     public void executeMsrImm(int op, int cond, int subcode) {
@@ -683,9 +758,7 @@ public class CPU extends MasterCore64 {
         int mask_x = (op >> 17) & 0x1;
         int mask_c = (op >> 16) & 0x1;
         int sbo = (op >> 12) & 0xf;
-        int rotR = (op >> 8) & 0xf;
-        int imm8 = op & 0xff;
-        int imm = Integer.rotateRight(imm8, rotR * 2);
+        int imm32 = getOperandImm32(op);
         int v, m = 0;
 
         if (isDisasmMode()) {
@@ -697,7 +770,7 @@ public class CPU extends MasterCore64 {
                             (mask_s == 1) ? "s" : "",
                             (mask_x == 1) ? "x" : "",
                             (mask_c == 1) ? "c" : "",
-                            imm, imm));
+                            imm32, imm32));
         }
 
         if (!satisfiesCondition(cond, getCPSR())) {
@@ -728,7 +801,7 @@ public class CPU extends MasterCore64 {
             m |= 0xff000000;
         }
         v &= ~m;
-        v |= imm & m;
+        v |= imm32 & m;
 
         if (flag_r == 0) {
             setCPSR(v);
