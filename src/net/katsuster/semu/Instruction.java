@@ -183,7 +183,10 @@ public class Instruction {
     public static final int SUB_MSRIMM = 117;
     public static final int SUB_LDRIMM = 6;
     public static final int SUB_LDRREG = 7;
-    public static final int SUB_LDMSTM = 8;
+    public static final int SUB_STM1_R = 20;
+    public static final int SUB_LDM1_R = 21;
+    public static final int SUB_STM2_3 = 22;
+    public static final int SUB_LDM2_3 = 23;
     public static final int SUB_BL_BLX = 10;
     public static final int SUB_LDCSTC = 12;
     public static final int SUB_CDPMCR = 14;
@@ -260,15 +263,27 @@ public class Instruction {
             SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
 
             //0b100_00000
-            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
-            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
-            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
-            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
+            //  0b100_xx0x0: stm(1) ストアマルチプル
+            //               128, 130, 136, 138,
+            //               144, 146, 152, 154,
+            //  0b100_xx0x1: ldm(1) ロードマルチプル
+            //               129, 131, 137, 139,
+            //               145, 147, 153, 155,
+            //  0b100_xx1x0: stm(2), (3) ストアマルチプル
+            //               132, 134, 140, 142,
+            //               148, 150, 156, 158,
+            //  0b100_xx0x1: ldm(2), (3) ロードマルチプル
+            //               133, 135, 141, 143,
+            //               149, 151, 157, 159,
+            SUB_STM1_R, SUB_LDM1_R, SUB_STM1_R, SUB_LDM1_R,
+            SUB_STM2_3, SUB_LDM2_3, SUB_STM2_3, SUB_LDM2_3,
+            SUB_STM1_R, SUB_LDM1_R, SUB_STM1_R, SUB_LDM1_R,
+            SUB_STM2_3, SUB_LDM2_3, SUB_STM2_3, SUB_LDM2_3,
 
-            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
-            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
-            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
-            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
+            SUB_STM1_R, SUB_LDM1_R, SUB_STM1_R, SUB_LDM1_R,
+            SUB_STM2_3, SUB_LDM2_3, SUB_STM2_3, SUB_LDM2_3,
+            SUB_STM1_R, SUB_LDM1_R, SUB_STM1_R, SUB_LDM1_R,
+            SUB_STM2_3, SUB_LDM2_3, SUB_STM2_3, SUB_LDM2_3,
 
             //0b101_00000
             SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
@@ -334,6 +349,66 @@ public class Instruction {
     }
 
     /**
+     * ARM 命令の P, U ビット（ビット [24:23]）を取得します。
+     *
+     * ロード、ストアマルチプル命令に存在し、
+     * アドレシングモード 4 を構成するフィールドです。
+     *
+     * @return P, U ビット
+     */
+    public int getPUField() {
+        return getPUField(rawInst);
+    }
+
+    /**
+     * ARM 命令の P, U ビット（ビット [24:23]）を取得します。
+     *
+     * ロード、ストアマルチプル命令に存在し、
+     * アドレシングモード 4 を構成するフィールドです。
+     *
+     * @param inst ARM 命令
+     * @return P, U ビット
+     */
+    public static int getPUField(int inst) {
+        return (inst >> 23) & 0x3;
+    }
+
+    public static final int PU_ADDR4_IA = 1;
+    public static final int PU_ADDR4_IB = 3;
+    public static final int PU_ADDR4_DA = 0;
+    public static final int PU_ADDR4_DB = 2;
+
+    /**
+     * ARM 命令の P, U ビット（ビット [24:23]）が示す、
+     * アドレシングモードの名前を取得します。
+     *
+     * @return P, U ビットが指すアドレシングモードの名前
+     */
+    public String getPUFieldName() {
+        return getPUFieldName(getPUField());
+    }
+
+    /**
+     * ARM 命令の P, U ビット（ビット [24:23]）が示す、
+     * アドレシングモードの名前を取得します。
+     *
+     * @param pu ARM 命令の P, U ビット
+     * @return P, U ビットが指すアドレシングモードの名前
+     */
+    public static String getPUFieldName(int pu) {
+        final String[] names = {
+                "da", "ia", "db", "ib",
+        };
+
+        if (0 <= pu && pu <= 15) {
+            return names[pu];
+        } else {
+            throw new IllegalArgumentException("Invalid p, u bits " +
+                    pu + ".");
+        }
+    }
+
+    /**
      * ARM 命令の S ビット（ビット 20）を取得します。
      *
      * このビットが 1 の場合、PSR の状態ビット
@@ -348,6 +423,7 @@ public class Instruction {
     /**
      * ARM 命令の S ビット（ビット 20）を取得します。
      *
+     * データ処理命令に存在し、
      * このビットが 1 の場合、PSR の状態ビット
      * （N, Z, C, V ビット）を更新します。
      *
@@ -356,6 +432,58 @@ public class Instruction {
      */
     public static int getSBit(int inst) {
         return (inst >> 20) & 0x1;
+    }
+
+    /**
+     * ARM 命令のレジスタリストフィールド（ビット [15:0]）を取得します。
+     *
+     * @return レジスタリストフィールド
+     */
+    public int getRegListField() {
+        return getRegListField(rawInst);
+    }
+
+    /**
+     * ARM 命令のレジスタリストフィールド（ビット [15:0]）を取得します。
+     *
+     * @param inst ARM 命令
+     * @return レジスタリストフィールド
+     */
+    public static int getRegListField(int inst) {
+        return inst & 0xffff;
+    }
+
+    /**
+     * ARM 命令のレジスタリストフィールドの名前を取得します。
+     *
+     * @return レジスタリストに含まれるレジスタの名前一覧
+     */
+    public String getRegListFieldName() {
+        return getRegListFieldName(getRegListField());
+    }
+
+    /**
+     * ARM 命令のレジスタリストフィールドの名前を取得します。
+     *
+     * @param rlist レジスタリストフィールド
+     * @return レジスタリストに含まれるレジスタの名前一覧
+     */
+    public static String getRegListFieldName(int rlist) {
+        StringBuilder sb = new StringBuilder();
+        int i, cnt;
+
+        cnt = 0;
+        for (i = 0; i < 16; i++) {
+            if ((rlist & (1 << i)) != 0) {
+                if (cnt != 0) {
+                    sb.append(", ");
+                }
+                sb.append(String.format("r%d", i));
+                cnt += 1;
+            }
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -385,6 +513,7 @@ public class Instruction {
     public int getRdField() {
         return getRdField(rawInst);
     }
+
     /**
      * ARM 命令の Rd フィールド（ビット [15:12]）を取得します。
      *

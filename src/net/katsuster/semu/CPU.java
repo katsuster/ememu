@@ -450,8 +450,7 @@ public class CPU extends MasterCore64 {
 
         if (isDisasmMode()) {
             printDisasm(inst,
-                    String.format("add%s%s",
-                            Instruction.getCondFieldName(cond),
+                    String.format("add%s%s", inst.getCondFieldName(),
                             (s == 1) ? "s" : ""),
                     String.format("r%d, r%d, #%d    ; 0x%x",
                             rd, rn, imm32, imm32));
@@ -481,8 +480,7 @@ public class CPU extends MasterCore64 {
 
         if (isDisasmMode()) {
             printDisasm(inst,
-                    String.format("msr%s",
-                            Instruction.getCondFieldName(cond)),
+                    String.format("msr%s", inst.getCondFieldName()),
                     String.format("%s_%s%s%s%s, #%d    ; 0x%x",
                             (flag_r == 1) ? "SPSR" : "CPSR",
                             (mask_f == 1) ? "f" : "",
@@ -529,6 +527,33 @@ public class CPU extends MasterCore64 {
         }
     }
 
+    public void executeStmReg(Instruction inst, int cond) {
+        int p = (inst.getInst() >> 24) & 0x1;
+        int u = (inst.getInst() >> 23) & 0x1;
+        int w = (inst.getInst() >> 21) & 0x1;
+
+    }
+
+    public void executeLdmReg(Instruction inst, int cond) {
+        int p = (inst.getInst() >> 24) & 0x1;
+        int u = (inst.getInst() >> 23) & 0x1;
+        int w = (inst.getInst() >> 21) & 0x1;
+        int rn = inst.getRnField();
+        int rlist = inst.getRegListField();
+
+        if (isDisasmMode()) {
+            printDisasm(inst,
+                    String.format("ldm%s%s",
+                            inst.getCondFieldName(),
+                            inst.getPUFieldName()),
+                    String.format("r%d%s, {%s}",
+                            rn, (w == 1) ? "!" : "",
+                            inst.getRegListFieldName()));
+        }
+
+        //TODO: disasm only...
+    }
+
     public void executeBlBlx(Instruction inst, int cond) {
         int l = (inst.getInst() >> 24) & 0x1;
         int imm24 = inst.getInst() & 0xffffff;
@@ -543,8 +568,7 @@ public class CPU extends MasterCore64 {
         if (isDisasmMode()) {
             printDisasm(inst,
                     String.format("b%s%s",
-                            (l == 1) ? "l" : "",
-                            Instruction.getCondFieldName(cond)),
+                            (l == 1) ? "l" : "", inst.getCondFieldName()),
                     String.format("%08x", getPC() + simm24));
         }
 
@@ -613,8 +637,7 @@ public class CPU extends MasterCore64 {
 
         if (isDisasmMode()) {
             printDisasm(inst,
-                    String.format("mrc%s",
-                            Instruction.getCondFieldName(cond)),
+                    String.format("mrc%s", inst.getCondFieldName()),
                     String.format("%s, %d, %s, %s, %s, {%d}",
                             getCoproc(cpnum).toString(), opcode1, getRegName(rd),
                             getCoprocRegName(cpnum, crn), getCoprocRegName(cpnum, crm),
@@ -685,7 +708,11 @@ public class CPU extends MasterCore64 {
             break;
         case Instruction.SUB_LDRREG:
             break;
-        case Instruction.SUB_LDMSTM:
+        case Instruction.SUB_STM1_R:
+            executeStmReg(inst, cond);
+            break;
+        case Instruction.SUB_LDM1_R:
+            executeLdmReg(inst, cond);
             break;
         case Instruction.SUB_BL_BLX:
             executeBlBlx(inst, cond);
