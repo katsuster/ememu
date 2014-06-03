@@ -732,6 +732,8 @@ public class CPU extends MasterCore64 {
 
     /**
      * リセット例外を発生させます。
+     *
+     * @param dbgmsg デバッグ用のメッセージ
      */
     public void exceptionReset(String dbgmsg) {
         System.out.printf("Exception: Reset by '%s'.\n",
@@ -741,6 +743,8 @@ public class CPU extends MasterCore64 {
 
     /**
      * 未定義命令例外を発生させます。
+     *
+     * @param dbgmsg デバッグ用のメッセージ
      */
     public void exceptionInst(String dbgmsg) {
         System.out.printf("Exception: Undefined Instruction by '%s'.\n",
