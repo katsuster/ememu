@@ -6,6 +6,12 @@ package net.katsuster.semu;
  * @author katsuhiro
  */
 public class Instruction {
+    private int rawInst;
+
+    public Instruction(int inst) {
+        this.rawInst = inst;
+    }
+
     public static final int COND_EQ = 0;
     public static final int COND_NE = 1;
     public static final int COND_CS = 2;
@@ -26,13 +32,42 @@ public class Instruction {
     public static final int COND_NV = 15;
 
     /**
-     * ARM 命令セットの cond フィールド（ビット [31:28]）を取得します。
+     * ARM 命令のバイナリデータを取得します。
      *
-     * @param op ARM 命令
+     * @return ARM 命令のバイナリデータ
+     */
+    public int getInst() {
+        return rawInst;
+    }
+
+    /**
+     * ARM 命令の cond フィールド（ビット [31:28]）を取得します。
+     *
      * @return cond フィールド
      */
-    public static int getCondField(int op) {
-        return (op >> 28) & 0xf;
+    public int getCondField() {
+        return getCondField(rawInst);
+    }
+
+    /**
+     * ARM 命令セットの cond フィールド（ビット [31:28]）を取得します。
+     *
+     * @param inst ARM 命令
+     * @return cond フィールド
+     */
+    public static int getCondField(int inst) {
+        return (inst >> 28) & 0xf;
+    }
+
+    /**
+     * ARM 命令セットの cond フィールドの名前を取得します。
+     *
+     * AL の場合は空の文字列を返します。
+     *
+     * @return cond フィールドの名前
+     */
+    public String getCondFieldName() {
+        return getCondFieldName(getCondField());
     }
 
     /**
@@ -66,13 +101,25 @@ public class Instruction {
      * cond フィールドが NV の場合は常に true を返し、条件の判定は行いません。
      * 各命令ごとに適切な判定を行って下さい。
      *
-     * @param op  ARM 命令
      * @param psr プログラムステータスレジスタの値
      * @return 条件を満たしていれば true、満たしていなければ false
      */
-    public static boolean satisfiesCond(int op, int psr) {
-        int cond = getCondField(op);
+    public boolean satisfiesCond(int psr) {
+        return satisfiesCond(getCondField(), psr);
+    }
 
+    /**
+     * ステータスレジスタの値が、
+     * cond フィールドで指定された条件を満たしているかどうか判定します。
+     *
+     * cond フィールドが NV の場合は常に true を返し、条件の判定は行いません。
+     * 各命令ごとに適切な判定を行って下さい。
+     *
+     * @param cond  ARM 命令の cond フィールド
+     * @param psr プログラムステータスレジスタの値
+     * @return 条件を満たしていれば true、満たしていなければ false
+     */
+    public static boolean satisfiesCond(int cond, int psr) {
         switch (cond) {
         case Instruction.COND_EQ:
             return CPU.getPSR_Z(psr) == 1;
@@ -113,51 +160,51 @@ public class Instruction {
         }
     }
 
-    public static final int OP_ADDSFT = 0;
-    public static final int OP_MRSREG = 1;
-    public static final int OP_MSRREG = 2;
-    public static final int OP_ANDIMM = 100;
-    public static final int OP_EORIMM = 101;
-    public static final int OP_SUBIMM = 102;
-    public static final int OP_RSBIMM = 103;
-    public static final int OP_ADDIMM = 104;
-    public static final int OP_ADCIMM = 105;
-    public static final int OP_SBCIMM = 106;
-    public static final int OP_RSCIMM = 107;
-    public static final int OP_TSTIMM = 108;
-    public static final int OP_TEQIMM = 109;
-    public static final int OP_CMPIMM = 110;
-    public static final int OP_CMNIMM = 111;
-    public static final int OP_ORRIMM = 112;
-    public static final int OP_MOVIMM = 113;
-    public static final int OP_BICIMM = 114;
-    public static final int OP_MVNIMM = 115;
-    public static final int OP_UNDIMM = 116;
-    public static final int OP_MSRIMM = 117;
-    public static final int OP_LDRIMM = 6;
-    public static final int OP_LDRREG = 7;
-    public static final int OP_LDMSTM = 8;
-    public static final int OP_BL_BLX = 10;
-    public static final int OP_LDCSTC = 12;
-    public static final int OP_CDPMCR = 14;
-    public static final int OP_CDPMRC = 15;
-    public static final int OP_SWIIMM = 16;
+    public static final int SUB_ADDSFT = 0;
+    public static final int SUB_MRSREG = 1;
+    public static final int SUB_MSRREG = 2;
+    public static final int SUB_ANDIMM = 100;
+    public static final int SUB_EORIMM = 101;
+    public static final int SUB_SUBIMM = 102;
+    public static final int SUB_RSBIMM = 103;
+    public static final int SUB_ADDIMM = 104;
+    public static final int SUB_ADCIMM = 105;
+    public static final int SUB_SBCIMM = 106;
+    public static final int SUB_RSCIMM = 107;
+    public static final int SUB_TSTIMM = 108;
+    public static final int SUB_TEQIMM = 109;
+    public static final int SUB_CMPIMM = 110;
+    public static final int SUB_CMNIMM = 111;
+    public static final int SUB_ORRIMM = 112;
+    public static final int SUB_MOVIMM = 113;
+    public static final int SUB_BICIMM = 114;
+    public static final int SUB_MVNIMM = 115;
+    public static final int SUB_UNDIMM = 116;
+    public static final int SUB_MSRIMM = 117;
+    public static final int SUB_LDRIMM = 6;
+    public static final int SUB_LDRREG = 7;
+    public static final int SUB_LDMSTM = 8;
+    public static final int SUB_BL_BLX = 10;
+    public static final int SUB_LDCSTC = 12;
+    public static final int SUB_CDPMCR = 14;
+    public static final int SUB_CDPMRC = 15;
+    public static final int SUB_SWIIMM = 16;
 
-    private static final int[] optable = {
+    private static final int[] subinsts = {
             //0b000_00000: データ処理
             //  0b000_10x00: mrs ステータスレジスタへレジスタ転送
             //               16, 20
             //  0b000_10x10: msr ステータスレジスタへレジスタ転送
             //               18, 22
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
+            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
+            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
+            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
+            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
 
-            OP_MRSREG, OP_ADDSFT, OP_MSRREG, OP_ADDSFT,
-            OP_MRSREG, OP_ADDSFT, OP_MSRREG, OP_ADDSFT,
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
+            SUB_MRSREG, SUB_ADDSFT, SUB_MSRREG, SUB_ADDSFT,
+            SUB_MRSREG, SUB_ADDSFT, SUB_MSRREG, SUB_ADDSFT,
+            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
+            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
 
             //0b001_00000
             //  0b001_0000x: and 32, 33
@@ -180,70 +227,70 @@ public class Instruction {
             //               48, 52
             //  0b001_10x10: msr ステータスレジスタへ即値転送
             //               50, 54
-            OP_ANDIMM, OP_ANDIMM, OP_EORIMM, OP_EORIMM,
-            OP_SUBIMM, OP_SUBIMM, OP_RSBIMM, OP_RSBIMM,
-            OP_ADDIMM, OP_ADDIMM, OP_ADCIMM, OP_ADCIMM,
-            OP_SBCIMM, OP_SBCIMM, OP_RSCIMM, OP_RSCIMM,
+            SUB_ANDIMM, SUB_ANDIMM, SUB_EORIMM, SUB_EORIMM,
+            SUB_SUBIMM, SUB_SUBIMM, SUB_RSBIMM, SUB_RSBIMM,
+            SUB_ADDIMM, SUB_ADDIMM, SUB_ADCIMM, SUB_ADCIMM,
+            SUB_SBCIMM, SUB_SBCIMM, SUB_RSCIMM, SUB_RSCIMM,
 
-            OP_UNDIMM, OP_TSTIMM, OP_MSRIMM, OP_TEQIMM,
-            OP_UNDIMM, OP_CMPIMM, OP_MSRIMM, OP_CMNIMM,
-            OP_ORRIMM, OP_ORRIMM, OP_MOVIMM, OP_MOVIMM,
-            OP_BICIMM, OP_BICIMM, OP_MVNIMM, OP_MVNIMM,
+            SUB_UNDIMM, SUB_TSTIMM, SUB_MSRIMM, SUB_TEQIMM,
+            SUB_UNDIMM, SUB_CMPIMM, SUB_MSRIMM, SUB_CMNIMM,
+            SUB_ORRIMM, SUB_ORRIMM, SUB_MOVIMM, SUB_MOVIMM,
+            SUB_BICIMM, SUB_BICIMM, SUB_MVNIMM, SUB_MVNIMM,
 
             //0b010_00000
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
+            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
+            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
+            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
+            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
 
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
+            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
+            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
+            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
+            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
 
             //0b011_00000
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
+            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
+            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
+            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
+            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
 
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
+            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
+            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
+            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
+            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
 
             //0b100_00000
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
+            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
+            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
+            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
+            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
 
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
+            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
+            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
+            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
+            SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM, SUB_LDMSTM,
 
             //0b101_00000
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
+            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
+            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
+            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
+            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
 
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
+            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
+            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
+            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
+            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
 
             //0b110_00000
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
+            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
+            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
+            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
+            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
 
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
+            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
+            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
+            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
+            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
 
             //0b111_00000
             //  0b1110xxx0: cdp コプロセッサデータ処理
@@ -254,26 +301,36 @@ public class Instruction {
             //              225, 227, 229, 231, 233, 235, 237, 239
             //  0b1111xxxx: swi ソフトウェア割り込み
             //              240, ..., 255
-            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
-            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
-            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
-            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
+            SUB_CDPMCR, SUB_CDPMRC, SUB_CDPMCR, SUB_CDPMRC,
+            SUB_CDPMCR, SUB_CDPMRC, SUB_CDPMCR, SUB_CDPMRC,
+            SUB_CDPMCR, SUB_CDPMRC, SUB_CDPMCR, SUB_CDPMRC,
+            SUB_CDPMCR, SUB_CDPMRC, SUB_CDPMCR, SUB_CDPMRC,
 
-            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
-            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
-            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
-            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
+            SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM,
+            SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM,
+            SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM,
+            SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM,
     };
 
     /**
      * ARM 命令セットのオペコードのフィールド（ビット [27:20]）から、
      * 命令のタイプを表す ID を取得します。
      *
-     * @param op ARM 命令
      * @return 命令のタイプを表す ID
      */
-    public static int getSubcodeId(int op) {
-        return optable[(op >> 20) & 0xff];
+    public int getSubcodeId() {
+        return getSubcodeId(rawInst);
+    }
+
+    /**
+     * ARM 命令セットのオペコードのフィールド（ビット [27:20]）から、
+     * 命令のタイプを表す ID を取得します。
+     *
+     * @param inst ARM 命令
+     * @return 命令のタイプを表す ID
+     */
+    public static int getSubcodeId(int inst) {
+        return subinsts[(inst >> 20) & 0xff];
     }
 
     /**
@@ -282,31 +339,60 @@ public class Instruction {
      * このビットが 1 の場合、PSR の状態ビット
      * （N, Z, C, V ビット）を更新します。
      *
-     * @param op ARM 命令
      * @return S ビット
      */
-    public static int getSBit(int op) {
-        return (op >> 20) & 0x1;
+    public int getSBit() {
+        return getSBit(rawInst);
+    }
+
+    /**
+     * ARM 命令の S ビット（ビット 20）を取得します。
+     *
+     * このビットが 1 の場合、PSR の状態ビット
+     * （N, Z, C, V ビット）を更新します。
+     *
+     * @param inst ARM 命令
+     * @return S ビット
+     */
+    public static int getSBit(int inst) {
+        return (inst >> 20) & 0x1;
     }
 
     /**
      * ARM 命令の Rn フィールド（ビット [19:16]）を取得します。
      *
-     * @param op ARM 命令
      * @return Rn フィールド
      */
-    public static int getRnField(int op) {
-        return (op >> 16) & 0xf;
+    public int getRnField() {
+        return getRnField(rawInst);
+    }
+
+    /**
+     * ARM 命令の Rn フィールド（ビット [19:16]）を取得します。
+     *
+     * @param inst ARM 命令
+     * @return Rn フィールド
+     */
+    public static int getRnField(int inst) {
+        return (inst >> 16) & 0xf;
     }
 
     /**
      * ARM 命令の Rd フィールド（ビット [15:12]）を取得します。
      *
-     * @param op ARM 命令
      * @return Rd フィールド
      */
-    public static int getRdField(int op) {
-        return (op >> 12) & 0xf;
+    public int getRdField() {
+        return getRdField(rawInst);
+    }
+    /**
+     * ARM 命令の Rd フィールド（ビット [15:12]）を取得します。
+     *
+     * @param inst ARM 命令
+     * @return Rd フィールド
+     */
+    public static int getRdField(int inst) {
+        return (inst >> 12) & 0xf;
     }
 
     /**
@@ -318,12 +404,27 @@ public class Instruction {
      *
      * imm32 = rotateRight(immed_8, rotate_imm * 2)
      *
-     * @param op 命令コード
      * @return イミディエート
      */
-    public static int getImm32Operand(int op) {
-        int rotR = (op >> 8) & 0xf;
-        int imm8 = op & 0xff;
+    public int getImm32Operand() {
+        return getImm32Operand(rawInst);
+    }
+
+    /**
+     * データ処理オペランドの 32ビットイミディエートを取得します。
+     *
+     * rotate_imm: ビット[11:8]
+     * immed_8: ビット[7:0]
+     * とすると、イミディエート imm32 は下記のように求められます。
+     *
+     * imm32 = rotateRight(immed_8, rotate_imm * 2)
+     *
+     * @param inst 命令コード
+     * @return イミディエート
+     */
+    public static int getImm32Operand(int inst) {
+        int rotR = (inst >> 8) & 0xf;
+        int imm8 = inst & 0xff;
 
         return Integer.rotateRight(imm8, rotR * 2);
     }

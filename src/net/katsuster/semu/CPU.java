@@ -35,9 +35,9 @@ public class CPU extends MasterCore64 {
         modeDisasm = m;
     }
 
-    public void printDisasm(int inst, String operation, String operand) {
+    public void printDisasm(Instruction inst, String operation, String operand) {
         System.out.printf("%08x:    %08x    %-7s %s\n",
-                getPC() - 8, inst, operation, operand);
+                getPC() - 8, inst.getInst(), operation, operand);
     }
 
     /**
@@ -430,23 +430,23 @@ public class CPU extends MasterCore64 {
         return getPSR_Mode(getCPSR());
     }
 
-    public void executeAddSft(int inst, int cond) {
+    public void executeAddSft(Instruction inst, int cond) {
 
     }
 
-    public void executeMrsReg(int inst, int cond) {
+    public void executeMrsReg(Instruction inst, int cond) {
 
     }
 
-    public void executeMsrReg(int inst, int cond) {
+    public void executeMsrReg(Instruction inst, int cond) {
 
     }
 
-    public void executeAddImm(int inst, int cond) {
-        int s = Instruction.getSBit(inst);
-        int rn = Instruction.getRnField(inst);
-        int rd = Instruction.getRdField(inst);
-        int imm32 = Instruction.getImm32Operand(inst);
+    public void executeAddImm(Instruction inst, int cond) {
+        int s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int imm32 = inst.getImm32Operand();
 
         if (isDisasmMode()) {
             printDisasm(inst,
@@ -457,7 +457,7 @@ public class CPU extends MasterCore64 {
                             rd, rn, imm32, imm32));
         }
 
-        if (!Instruction.satisfiesCond(inst, getCPSR())) {
+        if (!inst.satisfiesCond(getCPSR())) {
             return;
         }
 
@@ -469,14 +469,14 @@ public class CPU extends MasterCore64 {
         }
     }
 
-    public void executeMsrImm(int inst, int cond) {
-        int flag_r = (inst >> 22) & 0x1;
-        int mask_f = (inst >> 19) & 0x1;
-        int mask_s = (inst >> 18) & 0x1;
-        int mask_x = (inst >> 17) & 0x1;
-        int mask_c = (inst >> 16) & 0x1;
-        int sbo = (inst >> 12) & 0xf;
-        int imm32 = Instruction.getImm32Operand(inst);
+    public void executeMsrImm(Instruction inst, int cond) {
+        int flag_r = (inst.getInst() >> 22) & 0x1;
+        int mask_f = (inst.getInst() >> 19) & 0x1;
+        int mask_s = (inst.getInst() >> 18) & 0x1;
+        int mask_x = (inst.getInst() >> 17) & 0x1;
+        int mask_c = (inst.getInst() >> 16) & 0x1;
+        int sbo = (inst.getInst() >> 12) & 0xf;
+        int imm32 = inst.getImm32Operand();
         int v, m = 0;
 
         if (isDisasmMode()) {
@@ -492,7 +492,7 @@ public class CPU extends MasterCore64 {
                             imm32, imm32));
         }
 
-        if (!Instruction.satisfiesCond(inst, getCPSR())) {
+        if (!inst.satisfiesCond(getCPSR())) {
             return;
         }
 
@@ -529,9 +529,9 @@ public class CPU extends MasterCore64 {
         }
     }
 
-    public void executeBlBlx(int inst, int cond) {
-        int l = (inst >> 24) & 0x1;
-        int imm24 = inst & 0xffffff;
+    public void executeBlBlx(Instruction inst, int cond) {
+        int l = (inst.getInst() >> 24) & 0x1;
+        int imm24 = inst.getInst() & 0xffffff;
         int simm24 = (int)signext(imm24, 24) << 2;
 
         //cond = 0b1111 ならば blx 命令
@@ -548,7 +548,7 @@ public class CPU extends MasterCore64 {
                     String.format("%08x", getPC() + simm24));
         }
 
-        if (!Instruction.satisfiesCond(inst, getCPSR())) {
+        if (!inst.satisfiesCond(getCPSR())) {
             return;
         }
 
@@ -558,9 +558,9 @@ public class CPU extends MasterCore64 {
         jumpRel(simm24);
     }
 
-    public void executeBlx(int inst, int cond) {
-        int h = (inst >> 24) & 0x1;
-        int imm24 = inst & 0xffffff;
+    public void executeBlx(Instruction inst, int cond) {
+        int h = (inst.getInst() >> 24) & 0x1;
+        int imm24 = inst.getInst() & 0xffffff;
         int simm24 = (int)signext(imm24, 24) << 2;
         int psr;
 
@@ -580,12 +580,12 @@ public class CPU extends MasterCore64 {
         throw new IllegalStateException("not support blx.");
     }
 
-    public void executeLdcStc(int inst, int cond) {
+    public void executeLdcStc(Instruction inst, int cond) {
 
     }
 
-    public void executeCdpMcr(int inst, int cond) {
-        int bit4 = (inst >> 4) & 0x1;
+    public void executeCdpMcr(Instruction inst, int cond) {
+        int bit4 = (inst.getInst() >> 4) & 0x1;
 
         //ビット 4 が 0 ならば cdp 命令, 1 ならば mcr 命令
         if (bit4 == 0) {
@@ -594,14 +594,14 @@ public class CPU extends MasterCore64 {
         }
     }
 
-    public void executeCdpMrc(int inst, int cond) {
-        int opcode1 = (inst >> 21) & 0x7;
-        int crn = (inst >> 16) & 0xf;
-        int rd = Instruction.getRdField(inst);
-        int cpnum = (inst >> 8) & 0xf;
-        int opcode2 = (inst >> 5) & 0x7;
-        int bit4 = (inst >> 4) & 0x1;
-        int crm = inst & 0xf;
+    public void executeCdpMrc(Instruction inst, int cond) {
+        int opcode1 = (inst.getInst() >> 21) & 0x7;
+        int crn = (inst.getInst() >> 16) & 0xf;
+        int rd = inst.getRdField();
+        int cpnum = (inst.getInst() >> 8) & 0xf;
+        int opcode2 = (inst.getInst() >> 5) & 0x7;
+        int bit4 = (inst.getInst() >> 4) & 0x1;
+        int crm = inst.getInst() & 0xf;
         CoProc cp;
         int crid, crval, rval;
 
@@ -621,7 +621,7 @@ public class CPU extends MasterCore64 {
                             opcode2));
         }
 
-        if (!Instruction.satisfiesCond(inst, getCPSR())) {
+        if (!inst.satisfiesCond(getCPSR())) {
             return;
         }
 
@@ -653,53 +653,53 @@ public class CPU extends MasterCore64 {
         }
     }
 
-    public void executeCdp(int inst, int cond) {
+    public void executeCdp(Instruction inst, int cond) {
 
     }
 
-    public void executeSwiImm(int inst, int cond) {
+    public void executeSwiImm(Instruction inst, int cond) {
 
     }
 
-    public void execute(int inst) {
-        int cond = Instruction.getCondField(inst);
-        int subcodeId = Instruction.getSubcodeId(inst);
+    public void execute(Instruction inst) {
+        int cond = inst.getCondField();
+        int subcodeId = inst.getSubcodeId();
 
         switch (subcodeId) {
-        case Instruction.OP_ADDSFT:
+        case Instruction.SUB_ADDSFT:
             executeAddSft(inst, cond);
             break;
-        case Instruction.OP_MRSREG:
+        case Instruction.SUB_MRSREG:
             executeMrsReg(inst, cond);
             break;
-        case Instruction.OP_MSRREG:
+        case Instruction.SUB_MSRREG:
             executeMsrReg(inst, cond);
             break;
-        case Instruction.OP_ADDIMM:
+        case Instruction.SUB_ADDIMM:
             executeAddImm(inst, cond);
             break;
-        case Instruction.OP_MSRIMM:
+        case Instruction.SUB_MSRIMM:
             executeMsrImm(inst, cond);
             break;
-        case Instruction.OP_LDRIMM:
+        case Instruction.SUB_LDRIMM:
             break;
-        case Instruction.OP_LDRREG:
+        case Instruction.SUB_LDRREG:
             break;
-        case Instruction.OP_LDMSTM:
+        case Instruction.SUB_LDMSTM:
             break;
-        case Instruction.OP_BL_BLX:
+        case Instruction.SUB_BL_BLX:
             executeBlBlx(inst, cond);
             break;
-        case Instruction.OP_LDCSTC:
+        case Instruction.SUB_LDCSTC:
             executeLdcStc(inst, cond);
             break;
-        case Instruction.OP_CDPMCR:
+        case Instruction.SUB_CDPMCR:
             executeCdpMcr(inst, cond);
             break;
-        case Instruction.OP_CDPMRC:
+        case Instruction.SUB_CDPMRC:
             executeCdpMrc(inst, cond);
             break;
-        case Instruction.OP_SWIIMM:
+        case Instruction.SUB_SWIIMM:
             executeSwiImm(inst, cond);
             break;
         default:
@@ -709,12 +709,14 @@ public class CPU extends MasterCore64 {
     }
 
     public void run() {
+        Instruction inst;
         int v;
 
         while (true) {
             v = read32(getPC() - 8);
+            inst = new Instruction(v);
             try {
-                execute(v);
+                execute(inst);
             } catch (IllegalStateException e) {
                 System.out.printf("%08x: %s\n", getPC(), e);
                 //ignore
