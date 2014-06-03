@@ -133,6 +133,6 @@ public class CoProc {
 
     @Override
     public String toString() {
-        return String.format("cp%d", getNumber());
+        return String.format("p%d", getNumber());
     }
 }

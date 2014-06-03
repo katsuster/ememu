@@ -9,7 +9,7 @@ public class CPU extends MasterCore64 {
     private int[] regs;
     private int cpsr;
     private int spsr;
-    private CoProc[] coprocs;
+    private CoProc[] coProcs;
 
     private boolean jumped;
 
@@ -19,8 +19,8 @@ public class CPU extends MasterCore64 {
         int i;
 
         regs = new int[16];
-        coprocs = new CoProc[16];
-        coprocs[15] = new StdCoProc(15, this);
+        coProcs = new CoProc[16];
+        coProcs[15] = new StdCoProc(15, this);
     }
 
     public boolean isDisasmMode() {
@@ -35,9 +35,9 @@ public class CPU extends MasterCore64 {
         modeDisasm = m;
     }
 
-    public void printDisasm(int op, String operation, String operand) {
+    public void printDisasm(int inst, String operation, String operand) {
         System.out.printf("%08x:    %08x    %-7s %s\n",
-                getPC() - 8, op, operation, operand);
+                getPC() - 8, inst, operation, operand);
     }
 
     /**
@@ -94,13 +94,13 @@ public class CPU extends MasterCore64 {
     }
 
     /**
-     * コプロセッサ Pn の名前を取得します。
+     * コプロセッサ Pn を取得します。
      *
      * @param cpnum コプロセッサ番号
-     * @return コプロセッサの名前
+     * @return コプロセッサ
      */
-    public static String getCoprocName(int cpnum) {
-        return String.format("p%d", cpnum);
+    public CoProc getCoproc(int cpnum) {
+        return coProcs[cpnum];
     }
 
     /**
@@ -430,340 +430,59 @@ public class CPU extends MasterCore64 {
         return getPSR_Mode(getCPSR());
     }
 
-    public static final int COND_EQ = 0;
-    public static final int COND_NE = 1;
-    public static final int COND_CS = 2;
-    public static final int COND_HS = 2;
-    public static final int COND_CC = 3;
-    public static final int COND_LO = 3;
-    public static final int COND_MI = 4;
-    public static final int COND_PL = 5;
-    public static final int COND_VS = 6;
-    public static final int COND_VC = 7;
-    public static final int COND_HI = 8;
-    public static final int COND_LS = 9;
-    public static final int COND_GE = 10;
-    public static final int COND_LT = 11;
-    public static final int COND_GT = 12;
-    public static final int COND_LE = 13;
-    public static final int COND_AL = 14;
-    public static final int COND_NV = 15;
-
-    /**
-     * ARM 命令セットの cond フィールド（31:28ビット）を取得します。
-     *
-     * @param op ARM 命令
-     * @return cond フィールド
-     */
-    public static int getCond(int op) {
-        return (op >> 28) & 0xf;
-    }
-
-    /**
-     * ARM 命令セットの cond フィールドの名前を取得します。
-     *
-     * AL の場合は空の文字列を返します。
-     *
-     * @param cond ARM 命令の cond フィールド
-     * @return cond フィールドの名前
-     */
-    public static String getCondName(int cond) {
-        final String[] names = {
-                "eq", "ne", "cs", "cc",
-                "mi", "pl", "vs", "vc",
-                "hi", "ls", "ge", "lt",
-                "gt", "le", "", "nv",
-        };
-
-        if (0 <= cond && cond <= 15) {
-            return names[cond];
-        } else {
-            throw new IllegalArgumentException("Invalid cond " +
-                    cond + ".");
-        }
-    }
-
-    /**
-     * ステータスレジスタの値が条件 cond を満たしているかどうか判定します。
-     *
-     * cond が NV の場合は常に true を返し、条件の判定は行いません。
-     * 各命令ごとに適切な判定を行って下さい。
-     *
-     * @param cond 条件オペコード
-     * @param psr  プログラムステータスレジスタの値
-     * @return 条件を満たしていれば true、満たしていなければ false
-     */
-    public static boolean satisfiesCondition(int cond, int psr) {
-        switch (cond) {
-        case COND_EQ:
-            return getPSR_Z(psr) == 1;
-        case COND_NE:
-            return getPSR_Z(psr) == 0;
-        case COND_CS:
-            return getPSR_C(psr) == 1;
-        case COND_CC:
-            return getPSR_C(psr) == 0;
-        case COND_MI:
-            return getPSR_N(psr) == 1;
-        case COND_PL:
-            return getPSR_N(psr) == 0;
-        case COND_VS:
-            return getPSR_V(psr) == 1;
-        case COND_VC:
-            return getPSR_V(psr) == 0;
-        case COND_HI:
-            return (getPSR_C(psr) == 1) && (getPSR_Z(psr) == 0);
-        case COND_LS:
-            return (getPSR_C(psr) == 0) || (getPSR_Z(psr) == 1);
-        case COND_GE:
-            return getPSR_N(psr) == getPSR_V(psr);
-        case COND_LT:
-            return getPSR_N(psr) != getPSR_V(psr);
-        case COND_GT:
-            return (getPSR_Z(psr) == 0) && (getPSR_N(psr) == getPSR_V(psr));
-        case COND_LE:
-            return (getPSR_Z(psr) == 1) || (getPSR_N(psr) != getPSR_V(psr));
-        case COND_AL:
-        case COND_NV:
-            return true;
-        default:
-            throw new IllegalArgumentException(String.format(
-                    "Unknown cond %d, psr 0x%08x.", cond, psr));
-        }
-    }
-
-    /**
-     * ARM 命令セットのオペコードフィールド（27:20ビット）を取得します。
-     *
-     * @param op ARM 命令
-     * @return cond フィールド
-     */
-    public static int getSubcode(int op) {
-        return (op >> 20) & 0xff;
-    }
-
-    public static final int OP_ADDSFT = 0;
-    public static final int OP_MRSREG = 1;
-    public static final int OP_MSRREG = 2;
-    public static final int OP_ANDIMM = 100;
-    public static final int OP_EORIMM = 101;
-    public static final int OP_SUBIMM = 102;
-    public static final int OP_RSBIMM = 103;
-    public static final int OP_ADDIMM = 104;
-    public static final int OP_ADCIMM = 105;
-    public static final int OP_SBCIMM = 106;
-    public static final int OP_RSCIMM = 107;
-    public static final int OP_TSTIMM = 108;
-    public static final int OP_TEQIMM = 109;
-    public static final int OP_CMPIMM = 110;
-    public static final int OP_CMNIMM = 111;
-    public static final int OP_ORRIMM = 112;
-    public static final int OP_MOVIMM = 113;
-    public static final int OP_BICIMM = 114;
-    public static final int OP_MVNIMM = 115;
-    public static final int OP_UNDIMM = 116;
-    public static final int OP_MSRIMM = 117;
-    public static final int OP_LDRIMM = 6;
-    public static final int OP_LDRREG = 7;
-    public static final int OP_LDMSTM = 8;
-    public static final int OP_BL_BLX = 10;
-    public static final int OP_LDCSTC = 12;
-    public static final int OP_CDPMCR = 14;
-    public static final int OP_CDPMRC = 15;
-    public static final int OP_SWIIMM = 16;
-
-    public static final int[] optable = {
-            //0b000_00000: データ処理
-            //  0b000_10x00: mrs ステータスレジスタへレジスタ転送
-            //               16, 20
-            //  0b000_10x10: msr ステータスレジスタへレジスタ転送
-            //               18, 22
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
-
-            OP_MRSREG, OP_ADDSFT, OP_MSRREG, OP_ADDSFT,
-            OP_MRSREG, OP_ADDSFT, OP_MSRREG, OP_ADDSFT,
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
-            OP_ADDSFT, OP_ADDSFT, OP_ADDSFT, OP_ADDSFT,
-
-            //0b001_00000
-            //  0b001_0000x: and 32, 33
-            //  0b001_0001x: eor 34, 35
-            //  0b001_0010x: sub 36, 37
-            //  0b001_0011x: rsb 38, 39
-            //  0b001_0100x: add 40, 41
-            //  0b001_0101x: adc 42, 43
-            //  0b001_0110x: sbc 44, 45
-            //  0b001_0111x: rsc 46, 47
-            //  0b001_10001: tst 49
-            //  0b001_10011: teq 51
-            //  0b001_10101: cmp 53
-            //  0b001_10111: cmn 55
-            //  0b001_1100x: orr 56, 57
-            //  0b001_1101x: mov 58, 59
-            //  0b001_1110x: bic 60, 61
-            //  0b001_1111x: mvn 62, 63
-            //  0b001_10x10: und 未定義命令
-            //               48, 52
-            //  0b001_10x10: msr ステータスレジスタへ即値転送
-            //               50, 54
-            OP_ANDIMM, OP_ANDIMM, OP_EORIMM, OP_EORIMM,
-            OP_SUBIMM, OP_SUBIMM, OP_RSBIMM, OP_RSBIMM,
-            OP_ADDIMM, OP_ADDIMM, OP_ADCIMM, OP_ADCIMM,
-            OP_SBCIMM, OP_SBCIMM, OP_RSCIMM, OP_RSCIMM,
-
-            OP_UNDIMM, OP_TSTIMM, OP_MSRIMM, OP_TEQIMM,
-            OP_UNDIMM, OP_CMPIMM, OP_MSRIMM, OP_CMNIMM,
-            OP_ORRIMM, OP_ORRIMM, OP_MOVIMM, OP_MOVIMM,
-            OP_BICIMM, OP_BICIMM, OP_MVNIMM, OP_MVNIMM,
-
-            //0b010_00000
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-            OP_LDRIMM, OP_LDRIMM, OP_LDRIMM, OP_LDRIMM,
-
-            //0b011_00000
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-            OP_LDRREG, OP_LDRREG, OP_LDRREG, OP_LDRREG,
-
-            //0b100_00000
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-            OP_LDMSTM, OP_LDMSTM, OP_LDMSTM, OP_LDMSTM,
-
-            //0b101_00000
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-            OP_BL_BLX, OP_BL_BLX, OP_BL_BLX, OP_BL_BLX,
-
-            //0b110_00000
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-            OP_LDCSTC, OP_LDCSTC, OP_LDCSTC, OP_LDCSTC,
-
-            //0b111_00000
-            //  0b1110xxx0: cdp コプロセッサデータ処理
-            //              mrc コプロセッサから ARM レジスタへ転送
-            //              224, 226, 228, 230, 232, 234, 236, 238
-            //  0b1110xxx1: cdp コプロセッサデータ処理
-            //              mrc コプロセッサから ARM レジスタへ転送
-            //              225, 227, 229, 231, 233, 235, 237, 239
-            //  0b1111xxxx: swi ソフトウェア割り込み
-            //              240, ..., 255
-            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
-            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
-            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
-            OP_CDPMCR, OP_CDPMRC, OP_CDPMCR, OP_CDPMRC,
-
-            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
-            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
-            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
-            OP_SWIIMM, OP_SWIIMM, OP_SWIIMM, OP_SWIIMM,
-    };
-
-    /**
-     * データ処理オペランドの 32ビットイミディエートを取得します。
-     *
-     * rotate_imm: ビット[11:8]
-     * immed_8: ビット[7:0]
-     * とすると、イミディエート imm32 は下記のように求められます。
-     *
-     * imm32 = rotateRight(immed_8, rotate_imm * 2)
-     *
-     * @param op 命令コード
-     * @return イミディエート
-     */
-    public static int getOperandImm32(int op) {
-        int rotR = (op >> 8) & 0xf;
-        int imm8 = op & 0xff;
-
-        return Integer.rotateRight(imm8, rotR * 2);
-    }
-
-    public void executeAddSft(int op, int cond, int subcode) {
+    public void executeAddSft(int inst, int cond) {
 
     }
 
-    public void executeMrsReg(int op, int cond, int subcode) {
-        op = op;
+    public void executeMrsReg(int inst, int cond) {
+
     }
 
-    public void executeMsrReg(int op, int cond, int subcode) {
-        op = op;
+    public void executeMsrReg(int inst, int cond) {
+
     }
 
-    public void executeAddImm(int op, int cond, int subcode) {
-        int st = (op >> 20) & 0xf;
-        int rn = (op >> 16) & 0xf;
-        int rd = (op >> 12) & 0xf;
-        int imm32 = getOperandImm32(op);
+    public void executeAddImm(int inst, int cond) {
+        int s = Instruction.getSBit(inst);
+        int rn = Instruction.getRnField(inst);
+        int rd = Instruction.getRdField(inst);
+        int imm32 = Instruction.getImm32Operand(inst);
 
         if (isDisasmMode()) {
-            printDisasm(op,
-                    String.format("add%s%s", getCondName(cond),
-                            (st == 1) ? "s" : ""),
+            printDisasm(inst,
+                    String.format("add%s%s",
+                            Instruction.getCondFieldName(cond),
+                            (s == 1) ? "s" : ""),
                     String.format("r%d, r%d, #%d    ; 0x%x",
                             rd, rn, imm32, imm32));
         }
 
-        if (!satisfiesCondition(cond, getCPSR())) {
+        if (!Instruction.satisfiesCond(inst, getCPSR())) {
             return;
         }
 
         setReg(rd, getReg(rn) + imm32);
-        if (st == 1 && rd == 15) {
+        if (s == 1 && rd == 15) {
             setCPSR(getSPSR());
-        } else if (st == 1) {
+        } else if (s == 1) {
             //TODO: set flags
         }
     }
 
-    public void executeMsrImm(int op, int cond, int subcode) {
-        int flag_r = (op >> 22) & 0x1;
-        int mask_f = (op >> 19) & 0x1;
-        int mask_s = (op >> 18) & 0x1;
-        int mask_x = (op >> 17) & 0x1;
-        int mask_c = (op >> 16) & 0x1;
-        int sbo = (op >> 12) & 0xf;
-        int imm32 = getOperandImm32(op);
+    public void executeMsrImm(int inst, int cond) {
+        int flag_r = (inst >> 22) & 0x1;
+        int mask_f = (inst >> 19) & 0x1;
+        int mask_s = (inst >> 18) & 0x1;
+        int mask_x = (inst >> 17) & 0x1;
+        int mask_c = (inst >> 16) & 0x1;
+        int sbo = (inst >> 12) & 0xf;
+        int imm32 = Instruction.getImm32Operand(inst);
         int v, m = 0;
 
         if (isDisasmMode()) {
-            printDisasm(op,
-                    String.format("msr%s", getCondName(cond)),
+            printDisasm(inst,
+                    String.format("msr%s",
+                            Instruction.getCondFieldName(cond)),
                     String.format("%s_%s%s%s%s, #%d    ; 0x%x",
                             (flag_r == 1) ? "SPSR" : "CPSR",
                             (mask_f == 1) ? "f" : "",
@@ -773,7 +492,7 @@ public class CPU extends MasterCore64 {
                             imm32, imm32));
         }
 
-        if (!satisfiesCondition(cond, getCPSR())) {
+        if (!Instruction.satisfiesCond(inst, getCPSR())) {
             return;
         }
 
@@ -810,26 +529,26 @@ public class CPU extends MasterCore64 {
         }
     }
 
-    public void executeBlBlx(int op, int cond, int subcode) {
-        int l = (op >> 24) & 0x1;
-        int imm24 = op & 0xffffff;
+    public void executeBlBlx(int inst, int cond) {
+        int l = (inst >> 24) & 0x1;
+        int imm24 = inst & 0xffffff;
         int simm24 = (int)signext(imm24, 24) << 2;
 
         //cond = 0b1111 ならば blx 命令
-        if (cond == COND_NV) {
-            executeBlx(op, cond, subcode);
+        if (cond == Instruction.COND_NV) {
+            executeBlx(inst, cond);
             return;
         }
 
         if (isDisasmMode()) {
-            printDisasm(op,
+            printDisasm(inst,
                     String.format("b%s%s",
                             (l == 1) ? "l" : "",
-                            getCondName(cond)),
+                            Instruction.getCondFieldName(cond)),
                     String.format("%08x", getPC() + simm24));
         }
 
-        if (!satisfiesCondition(cond, getCPSR())) {
+        if (!Instruction.satisfiesCond(inst, getCPSR())) {
             return;
         }
 
@@ -839,14 +558,14 @@ public class CPU extends MasterCore64 {
         jumpRel(simm24);
     }
 
-    public void executeBlx(int op, int cond, int subcode) {
-        int h = (op >> 24) & 0x1;
-        int imm24 = op & 0xffffff;
+    public void executeBlx(int inst, int cond) {
+        int h = (inst >> 24) & 0x1;
+        int imm24 = inst & 0xffffff;
         int simm24 = (int)signext(imm24, 24) << 2;
         int psr;
 
         if (isDisasmMode()) {
-            printDisasm(op,
+            printDisasm(inst,
                     String.format("blx"),
                     String.format("%08x", getPC() + simm24 + (h << 1)));
         }
@@ -861,51 +580,52 @@ public class CPU extends MasterCore64 {
         throw new IllegalStateException("not support blx.");
     }
 
-    public void executeLdcStc(int op, int cond, int subcode) {
+    public void executeLdcStc(int inst, int cond) {
 
     }
 
-    public void executeCdpMcr(int op, int cond, int subcode) {
-        int bit4 = (op >> 4) & 0x1;
+    public void executeCdpMcr(int inst, int cond) {
+        int bit4 = (inst >> 4) & 0x1;
 
         //ビット 4 が 0 ならば cdp 命令, 1 ならば mcr 命令
         if (bit4 == 0) {
-            executeCdp(op, cond, subcode);
+            executeCdp(inst, cond);
             return;
         }
     }
 
-    public void executeCdpMrc(int op, int cond, int subcode) {
-        int opcode1 = (op >> 21) & 0x7;
-        int crn = (op >> 16) & 0xf;
-        int rd = (op >> 12) & 0xf;
-        int cpnum = (op >> 8) & 0xf;
-        int opcode2 = (op >> 5) & 0x7;
-        int bit4 = (op >> 4) & 0x1;
-        int crm = op & 0xf;
+    public void executeCdpMrc(int inst, int cond) {
+        int opcode1 = (inst >> 21) & 0x7;
+        int crn = (inst >> 16) & 0xf;
+        int rd = Instruction.getRdField(inst);
+        int cpnum = (inst >> 8) & 0xf;
+        int opcode2 = (inst >> 5) & 0x7;
+        int bit4 = (inst >> 4) & 0x1;
+        int crm = inst & 0xf;
         CoProc cp;
         int crid, crval, rval;
 
         //ビット 4 が 0 ならば cdp 命令, 1 ならば mrc 命令
         if (bit4 == 0) {
-            executeCdp(op, cond, subcode);
+            executeCdp(inst, cond);
             return;
         }
 
         if (isDisasmMode()) {
-            printDisasm(op,
-                    String.format("mrc%s", getCondName(cond)),
+            printDisasm(inst,
+                    String.format("mrc%s",
+                            Instruction.getCondFieldName(cond)),
                     String.format("%s, %d, %s, %s, %s, {%d}",
-                            getCoprocName(cpnum), opcode1, getRegName(rd),
+                            getCoproc(cpnum).toString(), opcode1, getRegName(rd),
                             getCoprocRegName(cpnum, crn), getCoprocRegName(cpnum, crm),
                             opcode2));
         }
 
-        if (!satisfiesCondition(cond, getCPSR())) {
+        if (!Instruction.satisfiesCond(inst, getCPSR())) {
             return;
         }
 
-        cp = coprocs[cpnum];
+        cp = getCoproc(cpnum);
         if (cp == null) {
             exceptionInst("Unimplemented coprocessor, " +
                     String.format("p%d selected.", cpnum));
@@ -933,55 +653,54 @@ public class CPU extends MasterCore64 {
         }
     }
 
-    public void executeCdp(int op, int cond, int subcode) {
+    public void executeCdp(int inst, int cond) {
 
     }
 
-    public void executeSwiImm(int op, int cond, int subcode) {
+    public void executeSwiImm(int inst, int cond) {
 
     }
 
-    public void execute(int op) {
-        int cond = getCond(op);
-        int subcode = getSubcode(op);
-        int subcodeId = optable[subcode];
+    public void execute(int inst) {
+        int cond = Instruction.getCondField(inst);
+        int subcodeId = Instruction.getSubcodeId(inst);
 
         switch (subcodeId) {
-        case OP_ADDSFT:
-            executeAddSft(op, cond, subcode);
+        case Instruction.OP_ADDSFT:
+            executeAddSft(inst, cond);
             break;
-        case OP_MRSREG:
-            executeMrsReg(op, cond, subcode);
+        case Instruction.OP_MRSREG:
+            executeMrsReg(inst, cond);
             break;
-        case OP_MSRREG:
-            executeMsrReg(op, cond, subcode);
+        case Instruction.OP_MSRREG:
+            executeMsrReg(inst, cond);
             break;
-        case OP_ADDIMM:
-            executeAddImm(op, cond, subcode);
+        case Instruction.OP_ADDIMM:
+            executeAddImm(inst, cond);
             break;
-        case OP_MSRIMM:
-            executeMsrImm(op, cond, subcode);
+        case Instruction.OP_MSRIMM:
+            executeMsrImm(inst, cond);
             break;
-        case OP_LDRIMM:
+        case Instruction.OP_LDRIMM:
             break;
-        case OP_LDRREG:
+        case Instruction.OP_LDRREG:
             break;
-        case OP_LDMSTM:
+        case Instruction.OP_LDMSTM:
             break;
-        case OP_BL_BLX:
-            executeBlBlx(op, cond, subcode);
+        case Instruction.OP_BL_BLX:
+            executeBlBlx(inst, cond);
             break;
-        case OP_LDCSTC:
-            executeLdcStc(op, cond, subcode);
+        case Instruction.OP_LDCSTC:
+            executeLdcStc(inst, cond);
             break;
-        case OP_CDPMCR:
-            executeCdpMcr(op, cond, subcode);
+        case Instruction.OP_CDPMCR:
+            executeCdpMcr(inst, cond);
             break;
-        case OP_CDPMRC:
-            executeCdpMrc(op, cond, subcode);
+        case Instruction.OP_CDPMRC:
+            executeCdpMrc(inst, cond);
             break;
-        case OP_SWIIMM:
-            executeSwiImm(op, cond, subcode);
+        case Instruction.OP_SWIIMM:
+            executeSwiImm(inst, cond);
             break;
         default:
             throw new IllegalStateException("Unknown subcodeId" +
