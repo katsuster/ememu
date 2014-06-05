@@ -534,12 +534,37 @@ public class CPU extends MasterCore64 {
 
     }
 
+    /**
+     * LDM, STM 命令の転送開始アドレスを取得します。
+     *
+     * @param pu    P, U ビット
+     * @param rn    レジスタ番号
+     * @param rlist レジスタリスト
+     * @return
+     */
+    public int getLdmStartAddress(int pu, int rn, int rlist) {
+        switch (pu) {
+        case Instruction.PU_ADDR4_IA:
+            return getReg(rn);
+        case Instruction.PU_ADDR4_IB:
+            return getReg(rn) + 4;
+        case Instruction.PU_ADDR4_DA:
+            return getReg(rn) - (Integer.bitCount(rlist) * 4) + 4;
+        case Instruction.PU_ADDR4_DB:
+            return getReg(rn) - (Integer.bitCount(rlist) * 4);
+        default:
+            throw new IllegalArgumentException("Illegal PU field " +
+                    pu + ".");
+        }
+    }
+
     public void executeLdmReg(Instruction inst, int cond) {
         int p = (inst.getInst() >> 24) & 0x1;
         int u = (inst.getInst() >> 23) & 0x1;
         int w = (inst.getInst() >> 21) & 0x1;
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
+        int staddr = getLdmStartAddress(inst.getPUField(), rn, 0);
 
         if (isDisasmMode()) {
             printDisasm(inst,
@@ -549,6 +574,10 @@ public class CPU extends MasterCore64 {
                     String.format("r%d%s, {%s}",
                             rn, (w == 1) ? "!" : "",
                             inst.getRegListFieldName()));
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
         }
 
         //TODO: disasm only...
