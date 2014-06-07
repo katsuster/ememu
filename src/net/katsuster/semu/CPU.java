@@ -261,13 +261,13 @@ public class CPU extends MasterCore64 {
      */
     public static String getPSRName(int val) {
         return String.format("%s%s%s%s_%s%s%s%5s",
-                (BitOp.getBit(val, PSR_BIT_N) == 1) ? "N" : "n",
-                (BitOp.getBit(val, PSR_BIT_Z) == 1) ? "Z" : "z",
-                (BitOp.getBit(val, PSR_BIT_C) == 1) ? "C" : "c",
-                (BitOp.getBit(val, PSR_BIT_V) == 1) ? "V" : "v",
-                (BitOp.getBit(val, PSR_BIT_I) == 1) ? "I" : "i",
-                (BitOp.getBit(val, PSR_BIT_F) == 1) ? "F" : "f",
-                (BitOp.getBit(val, PSR_BIT_T) == 1) ? "T" : "t",
+                BitOp.getBit(val, PSR_BIT_N) ? "N" : "n",
+                BitOp.getBit(val, PSR_BIT_Z) ? "Z" : "z",
+                BitOp.getBit(val, PSR_BIT_C) ? "C" : "c",
+                BitOp.getBit(val, PSR_BIT_V) ? "V" : "v",
+                BitOp.getBit(val, PSR_BIT_I) ? "I" : "i",
+                BitOp.getBit(val, PSR_BIT_F) ? "F" : "f",
+                BitOp.getBit(val, PSR_BIT_T) ? "T" : "t",
                 getPSR_ModeName(getPSR_Mode(val)));
     }
 
@@ -279,9 +279,9 @@ public class CPU extends MasterCore64 {
      * すなわち演算結果を 2の補数の符号付き整数としてみたとき、
      * 演算結果が正の数であれば N=0、負の数であれば N=1 となります。
      *
-     * @return N ビットの値
+     * @return N ビットがセットされていれば true, そうでなければ false
      */
-    public int getCPSR_N() {
+    public boolean getCPSR_N() {
         return BitOp.getBit(getCPSR(), PSR_BIT_N);
     }
 
@@ -293,7 +293,7 @@ public class CPU extends MasterCore64 {
      * すなわち演算結果を 2の補数の符号付き整数としてみたとき、
      * 演算結果が正の数であれば N=0、負の数であれば N=1 となります。
      *
-     * @param nv 新しい N ビットの値
+     * @param nv N ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_N(boolean nv) {
         setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_N, nv));
@@ -306,9 +306,9 @@ public class CPU extends MasterCore64 {
      * Z ビットは演算結果が 0 の場合に設定されます。
      * 演算結果が 0 以外ならば Z=0、0 ならば Z=1 となります。
      *
-     * @return Z ビットの値
+     * @return Z ビットがセットされていれば true, そうでなければ false
      */
-    public int getCPSR_Z() {
+    public boolean getCPSR_Z() {
         return BitOp.getBit(getCPSR(), PSR_BIT_Z);
     }
 
@@ -319,7 +319,7 @@ public class CPU extends MasterCore64 {
      * Z ビットは演算結果が 0 の場合に設定されます。
      * 演算結果が 0 以外ならば Z=0、0 ならば Z=1 となります。
      *
-     * @param nv 新しい Z ビットの値
+     * @param nv Z ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_Z(boolean nv) {
         setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_Z, nv));
@@ -342,9 +342,9 @@ public class CPU extends MasterCore64 {
      * - 演算がシフトで、演算によりシフトアウトされた値が 0 ならば C=0、
      * シフトアウトされた値が 1 ならば C=1 となります。
      *
-     * @return C ビットの値
+     * @return C ビットがセットされていれば true, そうでなければ false
      */
-    public int getCPSR_C() {
+    public boolean getCPSR_C() {
         return BitOp.getBit(getCPSR(), PSR_BIT_C);
     }
 
@@ -365,7 +365,7 @@ public class CPU extends MasterCore64 {
      * - 演算がシフトで、演算によりシフトアウトされた値が 0 ならば C=0、
      * シフトアウトされた値が 1 ならば C=1 となります。
      *
-     * @param nv 新しい C ビットの値
+     * @param nv C ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_C(boolean nv) {
         setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_C, nv));
@@ -381,9 +381,9 @@ public class CPU extends MasterCore64 {
      * 演算により符号付きオーバーフローしなければ V=0、
      * 符号付きオーバーフローしたならば V=1 となります。
      *
-     * @return V ビットの値
+     * @return V ビットがセットされていれば true, そうでなければ false
      */
-    public int getCPSR_V() {
+    public boolean getCPSR_V() {
         return BitOp.getBit(getCPSR(), PSR_BIT_V);
     }
 
@@ -397,7 +397,7 @@ public class CPU extends MasterCore64 {
      * 演算により符号付きオーバーフローしなければ V=0、
      * 符号付きオーバーフローしたならば V=1 となります。
      *
-     * @param nv 新しい V ビットの値
+     * @param nv V ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_V(boolean nv) {
         setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_V, nv));
@@ -410,9 +410,9 @@ public class CPU extends MasterCore64 {
      * I=0 ならば IRQ 割り込みが有効となります。
      * I=1 ならば IRQ 割り込みが無効となります。
      *
-     * @return I ビットの値
+     * @return I ビットがセットされていれば true, そうでなければ false
      */
-    public int getCPSR_I() {
+    public boolean getCPSR_I() {
         return BitOp.getBit(getCPSR(), PSR_BIT_I);
     }
 
@@ -423,7 +423,7 @@ public class CPU extends MasterCore64 {
      * I=0 ならば IRQ 割り込みが有効となります。
      * I=1 ならば IRQ 割り込みが無効となります。
      *
-     * @param nv 新しい I ビットの値
+     * @param nv I ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_I(boolean nv) {
         setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_I, nv));
@@ -436,9 +436,9 @@ public class CPU extends MasterCore64 {
      * F=0 ならば FIQ 割り込みが有効となります。
      * F=1 ならば FIQ 割り込みが無効となります。
      *
-     * @return F ビットの値
+     * @return F ビットがセットされていれば true, そうでなければ false
      */
-    public int getCPSR_F() {
+    public boolean getCPSR_F() {
         return BitOp.getBit(getCPSR(), PSR_BIT_F);
     }
 
@@ -449,7 +449,7 @@ public class CPU extends MasterCore64 {
      * F=0 ならば FIQ 割り込みが有効となります。
      * F=1 ならば FIQ 割り込みが無効となります。
      *
-     * @param nv  新しい F ビットの値
+     * @param nv  F ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_F(boolean nv) {
         setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_F, nv));
@@ -465,9 +465,9 @@ public class CPU extends MasterCore64 {
      * ARMv5 以上の非 T バリアント（Thumb 命令非対応）の場合、
      * T=1 ならば次に実行される命令で未定義命令例外を発生させます。
      *
-     * @return T ビットの値
+     * @return T ビットがセットされていれば true, そうでなければ false
      */
-    public int getCPSR_T() {
+    public boolean getCPSR_T() {
         return BitOp.getBit(getCPSR(), PSR_BIT_T);
     }
 
@@ -481,7 +481,7 @@ public class CPU extends MasterCore64 {
      * ARMv5 以上の非 T バリアント（Thumb 命令非対応）の場合、
      * T=1 ならば次に実行される命令で未定義命令例外を発生させます。
      *
-     * @param nv  新しい T ビットの値
+     * @param nv  T ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_T(boolean nv) {
         setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_T, nv));
@@ -551,22 +551,22 @@ public class CPU extends MasterCore64 {
      * @return イミディエート
      */
     public int getShifterOperand(Instruction inst) {
-        int i = inst.getIBit();
-        int b7 = inst.getBit(7);
-        int b4 = inst.getBit(4);
+        boolean i = inst.getIBit();
+        boolean b7 = inst.getBit(7);
+        boolean b4 = inst.getBit(4);
 
-        if (i == 1) {
+        if (i) {
             //32bits イミディエート
             return getImm32Operand(inst);
-        } else if (b4 == 0) {
+        } else if (!b4) {
             //イミディエートシフト
             return getImmShiftOperand(inst);
-        } else if (b4 == 1 && b7 == 0) {
+        } else if (b4 && !b7) {
             //レジスタシフト
             return getRegShiftOperand(inst);
         } else {
             throw new IllegalArgumentException("Unknown shifter_operand " +
-                    String.format("0x%08x, I:%d, b7:%d, b4:%d.",
+                    String.format("0x%08x, I:%b, b7:%b, b4:%b.",
                             inst.getInst(), i, b7, b4));
         }
     }
@@ -592,23 +592,6 @@ public class CPU extends MasterCore64 {
         int imm8 = inst.getInst() & 0xff;
 
         return Integer.rotateRight(imm8, rotR * 2);
-    }
-
-    /**
-     * アドレシングモード 1 - データ処理オペランド、
-     * 32ビットイミディエートのキャリーアウトを取得します。
-     *
-     * @param inst ARM 命令
-     * @return キャリーアウトする場合は 1、そうでなければ 0
-     */
-    public int getImm32Carry(Instruction inst) {
-        int rotR = (inst.getInst() >> 8) & 0xf;
-
-        if (rotR == 0) {
-            return getCPSR_C();
-        } else {
-            return BitOp.getBit(getImm32Operand(inst), 31);
-        }
     }
 
     /**
@@ -654,7 +637,11 @@ public class CPU extends MasterCore64 {
         case 3:
             if (shift_imm == 0) {
                 //拡張付き右ローテート
-                return (getCPSR_C() << 31) | (getReg(rm) >>> 1);
+                if (getCPSR_C()) {
+                    return (1 << 31) | (getReg(rm) >>> 1);
+                } else {
+                    return getReg(rm) >>> 1;
+                }
             } else {
                 //イミディエート右ローテート
                 return Integer.rotateRight(getReg(rm), shift_imm);
@@ -666,38 +653,113 @@ public class CPU extends MasterCore64 {
         }
     }
 
-    public int getImmShiftCarry(Instruction inst) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
-    }
-
     public int getRegShiftOperand(Instruction inst) {
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
-    public int getRegShiftCarry(Instruction inst) {
+    /**
+     * アドレシングモード 1 - データ処理オペランドのキャリーアウトを取得します。
+     *
+     * @param inst ARM 命令
+     * @return キャリーアウトがあれば true、なければ false
+     */
+    public boolean getShifterCarry(Instruction inst) {
+        boolean i = inst.getIBit();
+        boolean b7 = inst.getBit(7);
+        boolean b4 = inst.getBit(4);
+
+        if (i) {
+            //32bits イミディエート
+            return getImm32Carry(inst);
+        } else if (!b4) {
+            //イミディエートシフト
+            return getImmShiftCarry(inst);
+        } else if (b4 && !b7) {
+            //レジスタシフト
+            return getRegShiftCarry(inst);
+        } else {
+            throw new IllegalArgumentException("Unknown shifter_operand " +
+                    String.format("0x%08x, I:%b, b7:%b, b4:%b.",
+                            inst.getInst(), i, b7, b4));
+        }
+    }
+
+    /**
+     * アドレシングモード 1 - データ処理オペランド、
+     * 32ビットイミディエートのキャリーアウトを取得します。
+     *
+     * @param inst ARM 命令
+     * @return キャリーアウトする場合は 1、そうでなければ 0
+     */
+    public boolean getImm32Carry(Instruction inst) {
+        int rotR = (inst.getInst() >> 8) & 0xf;
+
+        if (rotR == 0) {
+            return getCPSR_C();
+        } else {
+            return BitOp.getBit(getImm32Operand(inst), 31);
+        }
+    }
+
+    public boolean getImmShiftCarry(Instruction inst) {
+        int shift_imm = (inst.getInst() >> 7) & 0x1f;
+        int b5_6 = (inst.getInst() >> 5) & 0x3;
+        int rm = inst.getInst() & 0xf;
+
+        switch (b5_6) {
+        case 0:
+            if (shift_imm == 0) {
+                //レジスタ
+            } else {
+                //イミディエート論理左シフト
+            }
+            break;
+        case 1:
+            //イミディエート論理右シフト
+            break;
+        case 2:
+            //イミディエート算術右シフト
+            break;
+        case 3:
+            if (shift_imm == 0) {
+                //拡張付き右ローテート
+            } else {
+                //イミディエート右ローテート
+            }
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown Imm Shift " +
+                    String.format("0x%08x, b5_6:%d.",
+                            inst.getInst(), b5_6));
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    public boolean getRegShiftCarry(Instruction inst) {
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     public String getShifterOperandName(Instruction inst) {
-        int i = inst.getIBit();
-        int b7 = inst.getBit(7);
-        int b4 = inst.getBit(4);
+        boolean i = inst.getIBit();
+        boolean b7 = inst.getBit(7);
+        boolean b4 = inst.getBit(4);
 
-        if (i == 1) {
+        if (i) {
             //32bits イミディエート
             return getImm32OperandName(inst);
-        } else if (b4 == 0) {
+        } else if (!b4) {
             //イミディエートシフト
             return getImmShiftOperandName(inst);
-        } else if (b4 == 1 && b7 == 0) {
+        } else if (b4 && !b7) {
             //レジスタシフト
             return getRegShiftOperandName(inst);
         } else {
             throw new IllegalArgumentException("Unknown shifter_operand " +
-                    String.format("0x%08x, I:%d, b7:%d, b4:%d.",
+                    String.format("0x%08x, I:%b, b7:%b, b4:%b.",
                             inst.getInst(), i, b7, b4));
         }
     }
@@ -765,16 +827,16 @@ public class CPU extends MasterCore64 {
      * @param cond cond フィールド
      */
     public void executeMsr(Instruction inst, int cond) {
-        int flag_r = inst.getBit(22);
-        int mask_f = inst.getBit(19);
-        int mask_s = inst.getBit(18);
-        int mask_x = inst.getBit(17);
-        int mask_c = inst.getBit(16);
+        boolean flag_r = inst.getBit(22);
+        boolean mask_f = inst.getBit(19);
+        boolean mask_s = inst.getBit(18);
+        boolean mask_x = inst.getBit(17);
+        boolean mask_c = inst.getBit(16);
         int sbo = (inst.getInst() >> 12) & 0xf;
         int imm32 = getImm32Operand(inst);
         int v, m = 0;
 
-        if (inst.getIBit() == 0) {
+        if (!inst.getIBit()) {
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
         }
@@ -783,11 +845,11 @@ public class CPU extends MasterCore64 {
             printDisasm(inst,
                     String.format("msr%s", inst.getCondFieldName()),
                     String.format("%s_%s%s%s%s, #%d    ; 0x%x",
-                            (flag_r == 1) ? "SPSR" : "CPSR",
-                            (mask_f == 1) ? "f" : "",
-                            (mask_s == 1) ? "s" : "",
-                            (mask_x == 1) ? "x" : "",
-                            (mask_c == 1) ? "c" : "",
+                            (flag_r) ? "SPSR" : "CPSR",
+                            (mask_f) ? "f" : "",
+                            (mask_s) ? "s" : "",
+                            (mask_x) ? "x" : "",
+                            (mask_c) ? "c" : "",
                             imm32, imm32));
         }
 
@@ -800,28 +862,28 @@ public class CPU extends MasterCore64 {
                     String.format("msr SBO[15:12](0x%01x) has zero.", sbo));
         }
 
-        if (flag_r == 0) {
+        if (!flag_r) {
             v = getCPSR();
         } else {
             v = getSPSR();
         }
 
-        if (mask_c == 1) {
+        if (mask_c) {
             m |= 0x000000ff;
         }
-        if (mask_x == 1) {
+        if (mask_x) {
             m |= 0x0000ff00;
         }
-        if (mask_s == 1) {
+        if (mask_s) {
             m |= 0x00ff0000;
         }
-        if (mask_f == 1) {
+        if (mask_f) {
             m |= 0xff000000;
         }
         v &= ~m;
         v |= imm32 & m;
 
-        if (flag_r == 0) {
+        if (!flag_r) {
             setCPSR(v);
         } else {
             setSPSR(v);
@@ -835,7 +897,7 @@ public class CPU extends MasterCore64 {
      * @param cond cond フィールド
      */
     public void executeAnd(Instruction inst, int cond) {
-        int s = inst.getSBit();
+        boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getShifterOperand(inst);
@@ -843,8 +905,9 @@ public class CPU extends MasterCore64 {
 
         if (isDisasmMode()) {
             printDisasm(inst,
-                    String.format("and%s%s", inst.getCondFieldName(),
-                            (s == 1) ? "s" : ""),
+                    String.format("%s%s%s", inst.getOpcodeFieldName(),
+                            inst.getCondFieldName(),
+                            (s) ? "s" : ""),
                     String.format("r%d, r%d, %s", rd, rn,
                             getShifterOperandName(inst)));
         }
@@ -857,9 +920,9 @@ public class CPU extends MasterCore64 {
         right = opr;
         dest = left & right;
 
-        if (s == 1 && rd == 15) {
+        if (s && rd == 15) {
             setCPSR(getSPSR());
-        } else if (s == 1) {
+        } else if (s) {
             //TODO: set flags
             throw new IllegalArgumentException("Sorry, not implemented.");
         }
@@ -874,7 +937,7 @@ public class CPU extends MasterCore64 {
      * @param cond cond フィールド
      */
     public void executeSub(Instruction inst, int cond) {
-        int s = inst.getSBit();
+        boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getShifterOperand(inst);
@@ -882,8 +945,9 @@ public class CPU extends MasterCore64 {
 
         if (isDisasmMode()) {
             printDisasm(inst,
-                    String.format("sub%s%s", inst.getCondFieldName(),
-                            (s == 1) ? "s" : ""),
+                    String.format("%s%s%s", inst.getOpcodeFieldName(),
+                            inst.getCondFieldName(),
+                            (s) ? "s" : ""),
                     String.format("r%d, r%d, %s", rd, rn,
                             getShifterOperandName(inst)));
         }
@@ -896,9 +960,9 @@ public class CPU extends MasterCore64 {
         right = opr;
         dest = left - right;
 
-        if (s == 1 && rd == 15) {
+        if (s && rd == 15) {
             setCPSR(getSPSR());
-        } else if (s == 1) {
+        } else if (s) {
             //TODO: set flags
             throw new IllegalArgumentException("Sorry, not implemented.");
         }
@@ -913,7 +977,7 @@ public class CPU extends MasterCore64 {
      * @param cond cond フィールド
      */
     public void executeAdd(Instruction inst, int cond) {
-        int s = inst.getSBit();
+        boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getShifterOperand(inst);
@@ -921,8 +985,9 @@ public class CPU extends MasterCore64 {
 
         if (isDisasmMode()) {
             printDisasm(inst,
-                    String.format("add%s%s", inst.getCondFieldName(),
-                            (s == 1) ? "s" : ""),
+                    String.format("%s%s%s", inst.getOpcodeFieldName(),
+                            inst.getCondFieldName(),
+                            (s) ? "s" : ""),
                     String.format("r%d, r%d, %s", rd, rn,
                             getShifterOperandName(inst)));
         }
@@ -935,9 +1000,9 @@ public class CPU extends MasterCore64 {
         right = opr;
         dest = left + right;
 
-        if (s == 1 && rd == 15) {
+        if (s && rd == 15) {
             setCPSR(getSPSR());
-        } else if (s == 1) {
+        } else if (s) {
             //TODO: set flags
             throw new IllegalArgumentException("Sorry, not implemented.");
         }
@@ -958,7 +1023,8 @@ public class CPU extends MasterCore64 {
 
         if (isDisasmMode()) {
             printDisasm(inst,
-                    String.format("teq%s", inst.getCondFieldName()),
+                    String.format("%s%s", inst.getOpcodeFieldName(),
+                            inst.getCondFieldName()),
                     String.format("r%d, %s", rn,
                             getShifterOperandName(inst)));
         }
@@ -971,8 +1037,10 @@ public class CPU extends MasterCore64 {
         right = opr;
         dest = left ^ right;
 
-        //TODO: set flags
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        setCPSR_N(BitOp.getBit(dest, 31));
+        setCPSR_Z(dest == 0);
+        setCPSR_C(getShifterCarry(inst));
+        //V flag is unaffected
     }
 
     /**
@@ -1021,7 +1089,7 @@ public class CPU extends MasterCore64 {
     }
 
     public void executeLdm1(Instruction inst, int cond) {
-        int w = inst.getBit(21);
+        boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
         int addr, len;
@@ -1032,7 +1100,7 @@ public class CPU extends MasterCore64 {
                             inst.getCondFieldName(),
                             inst.getPUFieldName()),
                     String.format("r%d%s, {%s}",
-                            rn, (w == 1) ? "!" : "",
+                            rn, (w) ? "!" : "",
                             inst.getRegListFieldName()));
         }
 
@@ -1055,11 +1123,11 @@ public class CPU extends MasterCore64 {
             int v = read32(addr);
 
             setPC(v & 0xfffffffe);
-            setCPSR_T(BitOp.getBit(v, 0) != 0);
+            setCPSR_T(BitOp.getBit(v, 0));
             addr += 4;
         }
 
-        if (w == 1) {
+        if (w) {
             setReg(rn, getReg(rn) + len);
         }
     }
@@ -1085,14 +1153,14 @@ public class CPU extends MasterCore64 {
     }
 
     public void executeBl(Instruction inst, int cond) {
-        int l = inst.getBit(24);
+        boolean l = inst.getBit(24);
         int imm24 = inst.getInst() & 0xffffff;
         int simm24 = (int)signext(imm24, 24) << 2;
 
         if (isDisasmMode()) {
             printDisasm(inst,
                     String.format("b%s%s",
-                            (l == 1) ? "l" : "", inst.getCondFieldName()),
+                            (l) ? "l" : "", inst.getCondFieldName()),
                     String.format("%08x", getPC() + simm24));
         }
 
@@ -1100,22 +1168,22 @@ public class CPU extends MasterCore64 {
             return;
         }
 
-        if (l == 1) {
+        if (l) {
             setReg(14, getPC() - 4);
         }
         jumpRel(simm24);
     }
 
     public void executeBlx(Instruction inst, int cond) {
-        int h = inst.getBit(24);
+        boolean h = inst.getBit(24);
+        int vh = BitOp.toBit(h) << 1;
         int imm24 = inst.getInst() & 0xffffff;
         int simm24 = (int)signext(imm24, 24) << 2;
-        int psr;
 
         if (isDisasmMode()) {
             printDisasm(inst,
                     String.format("blx"),
-                    String.format("%08x", getPC() + simm24 + (h << 1)));
+                    String.format("%08x", getPC() + simm24 + vh));
         }
 
         //blx は条件判定不可です
@@ -1123,7 +1191,7 @@ public class CPU extends MasterCore64 {
         setReg(14, getPC() - 4);
         //T ビットをセット
         setCPSR(getCPSR() | 0x20);
-        jumpRel(simm24 + (h << 1));
+        jumpRel(simm24 + vh);
 
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
@@ -1233,20 +1301,20 @@ public class CPU extends MasterCore64 {
      * @param cond cond フィールド
      */
     public void executeSubUseALU(Instruction inst, int cond) {
-        int i = inst.getIBit();
-        int b7 = inst.getBit(7);
-        int b4 = inst.getBit(4);
+        boolean i = inst.getIBit();
+        boolean b7 = inst.getBit(7);
+        boolean b4 = inst.getBit(4);
 
-        if (i == 0) {
+        if (!i) {
             //b4, b7 の値が、
             //  0, 0: イミディエートシフト
             //  0, 1: イミディエートシフト
             //  1, 0: レジスタシフト
             //  1, 1: 算術命令拡張空間: 乗算、追加ロードストア
-            if (b4 == 0) {
+            if (!b4) {
                 //イミディエートシフト
                 executeSubUseALUShiftImm(inst, cond);
-            } else if ((b4 == 1) && (b7 == 0)) {
+            } else if (b4 && !b7) {
                 //レジスタシフト
                 executeSubUseALUShiftReg(inst, cond);
             } else {
@@ -1432,16 +1500,16 @@ public class CPU extends MasterCore64 {
      * @param cond cond フィールド
      */
     public void executeSubLdmStm(Instruction inst, int cond) {
-        int b25 = inst.getBit(25);
-        int l = inst.getLBit();
+        boolean b25 = inst.getBit(25);
+        boolean l = inst.getLBit();
 
-        if (b25 == 0) {
+        if (!b25) {
             //ロードマルチプル、ストアマルチプル
             if (cond == Instruction.COND_NV) {
                 //未定義命令
                 executeUnd(inst, cond);
             } else {
-                if (l == 1) {
+                if (l) {
                     //ldm(1), ldm(2), ldm(3)
                     executeSubLdm(inst, cond);
                 } else {
@@ -1470,14 +1538,14 @@ public class CPU extends MasterCore64 {
      * @param cond cond フィールド
      */
     public void executeSubLdm(Instruction inst, int cond) {
-        int s = inst.getBit(22);
-        int b15 = inst.getBit(15);
+        boolean s = inst.getBit(22);
+        boolean b15 = inst.getBit(15);
 
-        if (s == 0) {
+        if (!s) {
             //ldm(1)
             executeLdm1(inst, cond);
         } else {
-            if (b15 == 0) {
+            if (!b15) {
                 //ldm(2)
                 executeLdm2(inst, cond);
             } else {
@@ -1496,14 +1564,14 @@ public class CPU extends MasterCore64 {
      * @param cond cond フィールド
      */
     public void executeSubStm(Instruction inst, int cond) {
-        int s = inst.getBit(22);
-        int w = inst.getBit(21);
+        boolean s = inst.getBit(22);
+        boolean w = inst.getBit(21);
 
-        if (s == 0) {
+        if (!s) {
             //stm(1)
             executeStm1(inst, cond);
         } else {
-            if (w == 0) {
+            if (!w) {
                 //stm(2)
                 executeStm2(inst, cond);
             } else {
@@ -1523,19 +1591,19 @@ public class CPU extends MasterCore64 {
      */
     public void executeSubCopSwi(Instruction inst, int cond) {
         int subsub = (inst.getInst() >> 24) & 0x3;
-        int b20 = inst.getBit(20);
-        int b4 = inst.getBit(4);
+        boolean b20 = inst.getBit(20);
+        boolean b4 = inst.getBit(4);
 
         switch (subsub) {
         case 0:
         case 1:
             break;
         case 2:
-            if (b4 == 0) {
+            if (!b4) {
                 //cdp
                 executeCdp(inst, cond);
             } else {
-                if (b20 == 0) {
+                if (!b20) {
                     //mcr
                     executeMcr(inst, cond);
                 } else {

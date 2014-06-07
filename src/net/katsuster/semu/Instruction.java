@@ -25,9 +25,9 @@ public class Instruction {
      * ARM 命令のバイナリデータの指定された 1ビットを取得します。
      *
      * @param bit ビット位置
-     * @return 指定されたビットがセットされていれば 1、そうでなければ 0
+     * @return 指定されたビットがセットされていれば true、そうでなければ false
      */
-    public int getBit(int bit) {
+    public boolean getBit(int bit) {
         return BitOp.getBit(rawInst, bit);
     }
 
@@ -132,40 +132,40 @@ public class Instruction {
      * @return 条件を満たしていれば true、満たしていなければ false
      */
     public static boolean satisfiesCond(int cond, int psr) {
-        int n = BitOp.getBit(psr, CPU.PSR_BIT_N);
-        int z = BitOp.getBit(psr, CPU.PSR_BIT_Z);
-        int c = BitOp.getBit(psr, CPU.PSR_BIT_C);
-        int v = BitOp.getBit(psr, CPU.PSR_BIT_V);
+        boolean n = BitOp.getBit(psr, CPU.PSR_BIT_N);
+        boolean z = BitOp.getBit(psr, CPU.PSR_BIT_Z);
+        boolean c = BitOp.getBit(psr, CPU.PSR_BIT_C);
+        boolean v = BitOp.getBit(psr, CPU.PSR_BIT_V);
 
         switch (cond) {
         case Instruction.COND_EQ:
-            return z == 1;
+            return z;
         case Instruction.COND_NE:
-            return z == 0;
+            return !z;
         case Instruction.COND_CS:
-            return c == 1;
+            return c;
         case Instruction.COND_CC:
-            return c == 0;
+            return !c;
         case Instruction.COND_MI:
-            return n == 1;
+            return n;
         case Instruction.COND_PL:
-            return n == 0;
+            return !n;
         case Instruction.COND_VS:
-            return v == 1;
+            return v;
         case Instruction.COND_VC:
-            return v == 0;
+            return !v;
         case Instruction.COND_HI:
-            return (c == 1) && (z == 0);
+            return c && !z;
         case Instruction.COND_LS:
-            return (c == 0) || (z == 1);
+            return !c || z;
         case Instruction.COND_GE:
             return n == v;
         case Instruction.COND_LT:
             return n != v;
         case Instruction.COND_GT:
-            return (z == 0) && (n == v);
+            return !z && (n == v);
         case Instruction.COND_LE:
-            return (z == 1) || (n != v);
+            return z || (n != v);
         case Instruction.COND_AL:
         case Instruction.COND_NV:
             return true;
@@ -211,9 +211,9 @@ public class Instruction {
      * データ処理命令に存在し、
      * オペランドがイミディエートかどうかを示します。
      *
-     * @return I ビット
+     * @return I ビットがセットされていれば true, そうでなければ false
      */
-    public int getIBit() {
+    public boolean getIBit() {
         return getIBit(rawInst);
     }
 
@@ -224,9 +224,9 @@ public class Instruction {
      * オペランドがイミディエートかどうかを示します。
      *
      * @param inst ARM 命令
-     * @return I ビット
+     * @return I ビットがセットされていれば true, そうでなければ false
      */
-    public static int getIBit(int inst) {
+    public static boolean getIBit(int inst) {
         return BitOp.getBit(inst, 25);
     }
 
@@ -490,9 +490,9 @@ public class Instruction {
      * このビットが 1 の場合、PSR の状態ビット
      * （N, Z, C, V ビット）を更新します。
      *
-     * @return S ビット
+     * @return S ビットがセットされていれば true, そうでなければ false
      */
-    public int getSBit() {
+    public boolean getSBit() {
         return getSBit(rawInst);
     }
 
@@ -504,9 +504,9 @@ public class Instruction {
      * （N, Z, C, V ビット）を更新します。
      *
      * @param inst ARM 命令
-     * @return S ビット
+     * @return S ビットがセットされていれば true, そうでなければ false
      */
-    public static int getSBit(int inst) {
+    public static boolean getSBit(int inst) {
         return BitOp.getBit(inst, 20);
     }
 
@@ -516,9 +516,9 @@ public class Instruction {
      * ロード、ストア、ロードストアマルチプル処理命令に存在し、
      * このビットが 1 の場合、ロード命令であることを示します。
      *
-     * @return L ビット
+     * @return L ビットがセットされていれば true, そうでなければ false
      */
-    public int getLBit() {
+    public boolean getLBit() {
         return getLBit(rawInst);
     }
 
@@ -529,9 +529,9 @@ public class Instruction {
      * このビットが 1 の場合、ロード命令であることを示します。
      *
      * @param inst ARM 命令
-     * @return L ビット
+     * @return L ビットがセットされていれば true, そうでなければ false
      */
-    public static int getLBit(int inst) {
+    public static boolean getLBit(int inst) {
         return BitOp.getBit(inst, 20);
     }
 
