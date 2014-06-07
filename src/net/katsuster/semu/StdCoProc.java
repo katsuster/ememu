@@ -16,7 +16,9 @@ public class StdCoProc extends CoProc {
         super(no, p);
 
         //ID コードレジスタ
-        addCReg(CREG_MIDR, "MIDR",   0x00000000);
+        //implementer: 0x41(ARM), variant: 0x0(nothing),
+        //arch: 0x6(ARMv5TEJ), part: 0x926(ARM926), revision: 0x0
+        addCReg(CREG_MIDR, "MIDR",   0x41069260);
         addCReg(CREG_CTR, "CTR",     0x00000000);
         addCReg(CREG_TCMTR, "TCMTR", 0x00000000);
         addCReg(CREG_TLBTR, "TLBTR", 0x00000000);
