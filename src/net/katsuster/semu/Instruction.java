@@ -132,37 +132,40 @@ public class Instruction {
      * @return 条件を満たしていれば true、満たしていなければ false
      */
     public static boolean satisfiesCond(int cond, int psr) {
+        int n = BitOp.getBit(psr, CPU.PSR_BIT_N);
+        int z = BitOp.getBit(psr, CPU.PSR_BIT_Z);
+        int c = BitOp.getBit(psr, CPU.PSR_BIT_C);
+        int v = BitOp.getBit(psr, CPU.PSR_BIT_V);
+
         switch (cond) {
         case Instruction.COND_EQ:
-            return CPU.getPSR_Z(psr) == 1;
+            return z == 1;
         case Instruction.COND_NE:
-            return CPU.getPSR_Z(psr) == 0;
+            return z == 0;
         case Instruction.COND_CS:
-            return CPU.getPSR_C(psr) == 1;
+            return c == 1;
         case Instruction.COND_CC:
-            return CPU.getPSR_C(psr) == 0;
+            return c == 0;
         case Instruction.COND_MI:
-            return CPU.getPSR_N(psr) == 1;
+            return n == 1;
         case Instruction.COND_PL:
-            return CPU.getPSR_N(psr) == 0;
+            return n == 0;
         case Instruction.COND_VS:
-            return CPU.getPSR_V(psr) == 1;
+            return v == 1;
         case Instruction.COND_VC:
-            return CPU.getPSR_V(psr) == 0;
+            return v == 0;
         case Instruction.COND_HI:
-            return (CPU.getPSR_C(psr) == 1) && (CPU.getPSR_Z(psr) == 0);
+            return (c == 1) && (z == 0);
         case Instruction.COND_LS:
-            return (CPU.getPSR_C(psr) == 0) || (CPU.getPSR_Z(psr) == 1);
+            return (c == 0) || (z == 1);
         case Instruction.COND_GE:
-            return CPU.getPSR_N(psr) == CPU.getPSR_V(psr);
+            return n == v;
         case Instruction.COND_LT:
-            return CPU.getPSR_N(psr) != CPU.getPSR_V(psr);
+            return n != v;
         case Instruction.COND_GT:
-            return (CPU.getPSR_Z(psr) == 0) &&
-                    (CPU.getPSR_N(psr) == CPU.getPSR_V(psr));
+            return (z == 0) && (n == v);
         case Instruction.COND_LE:
-            return (CPU.getPSR_Z(psr) == 1) ||
-                    (CPU.getPSR_N(psr) != CPU.getPSR_V(psr));
+            return (z == 1) || (n != v);
         case Instruction.COND_AL:
         case Instruction.COND_NV:
             return true;
@@ -172,7 +175,7 @@ public class Instruction {
         }
     }
 
-    public static final int SUBCODE_ADDSUB = 0;
+    public static final int SUBCODE_USEALU = 0;
     public static final int SUBCODE_LDRSTR = 1;
     public static final int SUBCODE_LDMSTM = 2;
     public static final int SUBCODE_COPSWI = 3;
@@ -373,7 +376,7 @@ public class Instruction {
      *
      * @return 演算を示す ID
      */
-    public int getOpcodeSBitShitfID() {
+    public int getOpcodeSBitShiftID() {
         return getOpcodeSBitShiftID(rawInst);
     }
 
@@ -620,44 +623,5 @@ public class Instruction {
         }
 
         return sb.toString();
-    }
-
-    /**
-     * データ処理オペランドの 32ビットイミディエートを取得します。
-     *
-     * rotate_imm: ビット[11:8]
-     * immed_8: ビット[7:0]
-     * とすると、イミディエート imm32 は下記のように求められます。
-     *
-     * imm32 = rotateRight(immed_8, rotate_imm * 2)
-     *
-     * @return イミディエート
-     */
-    public int getImm32Operand() {
-        return getImm32Operand(rawInst);
-    }
-
-    /**
-     * データ処理オペランドの 32ビットイミディエートを取得します。
-     *
-     * rotate_imm: ビット[11:8]
-     * immed_8: ビット[7:0]
-     * とすると、イミディエート imm32 は下記のように求められます。
-     *
-     * imm32 = rotateRight(immed_8, rotate_imm * 2)
-     *
-     * @param inst 命令コード
-     * @return イミディエート
-     */
-    public static int getImm32Operand(int inst) {
-        int rotR = (inst >> 8) & 0xf;
-        int imm8 = inst & 0xff;
-
-        return Integer.rotateRight(imm8, rotR * 2);
-    }
-
-    public static int getImm32Carry(int inst) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 }
