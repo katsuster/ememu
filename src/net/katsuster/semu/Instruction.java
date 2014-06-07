@@ -12,6 +12,25 @@ public class Instruction {
         this.rawInst = inst;
     }
 
+    /**
+     * ARM 命令のバイナリデータを取得します。
+     *
+     * @return ARM 命令のバイナリデータ
+     */
+    public int getInst() {
+        return rawInst;
+    }
+
+    /**
+     * ARM 命令のバイナリデータの指定された 1ビットを取得します。
+     *
+     * @param bit ビット位置
+     * @return 指定されたビットがセットされていれば 1、そうでなければ 0
+     */
+    public int getBit(int bit) {
+        return BitOp.getBit(rawInst, bit);
+    }
+
     public static final int COND_EQ = 0;
     public static final int COND_NE = 1;
     public static final int COND_CS = 2;
@@ -30,15 +49,6 @@ public class Instruction {
     public static final int COND_LE = 13;
     public static final int COND_AL = 14;
     public static final int COND_NV = 15;
-
-    /**
-     * ARM 命令のバイナリデータを取得します。
-     *
-     * @return ARM 命令のバイナリデータ
-     */
-    public int getInst() {
-        return rawInst;
-    }
 
     /**
      * ARM 命令の cond フィールド（ビット [31:28]）を取得します。
@@ -60,23 +70,25 @@ public class Instruction {
     }
 
     /**
-     * ARM 命令セットの cond フィールドの名前を取得します。
+     * ARM 命令セットの cond フィールド（ビット [31:28]）が示す、
+     * 条件の名前を取得します。
      *
      * AL の場合は空の文字列を返します。
      *
-     * @return cond フィールドの名前
+     * @return cond フィールドの条件の名前
      */
     public String getCondFieldName() {
         return getCondFieldName(getCondField());
     }
 
     /**
-     * ARM 命令セットの cond フィールドの名前を取得します。
+     * ARM 命令セットの cond フィールド（ビット [31:28]）が示す、
+     * 条件の名前を取得します。
      *
      * AL の場合は空の文字列を返します。
      *
      * @param cond ARM 命令の cond フィールド
-     * @return cond フィールドの名前
+     * @return cond フィールドの条件の名前
      */
     public static String getCondFieldName(int cond) {
         final String[] names = {
@@ -90,7 +102,7 @@ public class Instruction {
             return names[cond];
         } else {
             throw new IllegalArgumentException("Invalid cond " +
-                    cond + ".");
+                    String.format("%d.", cond));
         }
     }
 
@@ -160,199 +172,263 @@ public class Instruction {
         }
     }
 
-    public static final int SUB_ADDSFT = 0;
-    public static final int SUB_MRSREG = 1;
-    public static final int SUB_MSRREG = 2;
-    public static final int SUB_ANDIMM = 100;
-    public static final int SUB_EORIMM = 101;
-    public static final int SUB_SUBIMM = 102;
-    public static final int SUB_RSBIMM = 103;
-    public static final int SUB_ADDIMM = 104;
-    public static final int SUB_ADCIMM = 105;
-    public static final int SUB_SBCIMM = 106;
-    public static final int SUB_RSCIMM = 107;
-    public static final int SUB_TSTIMM = 108;
-    public static final int SUB_TEQIMM = 109;
-    public static final int SUB_CMPIMM = 110;
-    public static final int SUB_CMNIMM = 111;
-    public static final int SUB_ORRIMM = 112;
-    public static final int SUB_MOVIMM = 113;
-    public static final int SUB_BICIMM = 114;
-    public static final int SUB_MVNIMM = 115;
-    public static final int SUB_UNDIMM = 116;
-    public static final int SUB_MSRIMM = 117;
-    public static final int SUB_LDRIMM = 6;
-    public static final int SUB_LDRREG = 7;
-    public static final int SUB_STM1_R = 20;
-    public static final int SUB_LDM1_R = 21;
-    public static final int SUB_STM2_3 = 22;
-    public static final int SUB_LDM2_3 = 23;
-    public static final int SUB_BL_BLX = 10;
-    public static final int SUB_LDCSTC = 12;
-    public static final int SUB_CDPMCR = 14;
-    public static final int SUB_CDPMRC = 15;
-    public static final int SUB_SWIIMM = 16;
+    public static final int SUBCODE_ADDSUB = 0;
+    public static final int SUBCODE_LDRSTR = 1;
+    public static final int SUBCODE_LDMSTM = 2;
+    public static final int SUBCODE_COPSWI = 3;
 
-    private static final int[] subinsts = {
-            //0b000_00000: データ処理
-            //  0b000_10x00: mrs ステータスレジスタへレジスタ転送
-            //               16, 20
-            //  0b000_10x10: msr ステータスレジスタへレジスタ転送
-            //               18, 22
-            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
-            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
-            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
-            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
+    /**
+     * ARM 命令セットのサブコードのフィールド（ビット [27:26]）を取得します。
+     *
+     * 注: ARM の仕様書にはサブコードのフィールドという定義はありません。
+     * このアプリケーション独自の定義です。
+     *
+     * @return サブコード
+     */
+    public int getSubCodeField() {
+        return getSubCodeField(rawInst);
+    }
 
-            SUB_MRSREG, SUB_ADDSFT, SUB_MSRREG, SUB_ADDSFT,
-            SUB_MRSREG, SUB_ADDSFT, SUB_MSRREG, SUB_ADDSFT,
-            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
-            SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT, SUB_ADDSFT,
+    /**
+     * ARM 命令セットのサブコードフィールド（ビット [27:26]）を取得します。
+     *
+     * 注: ARM の仕様書にはサブコードのフィールドという定義はありません。
+     * このアプリケーション独自の定義です。
+     *
+     * @param inst ARM 命令
+     * @return サブコード
+     */
+    public static int getSubCodeField(int inst) {
+        return (inst >> 26) & 0x3;
+    }
 
-            //0b001_00000
-            //  0b001_0000x: and 32, 33
-            //  0b001_0001x: eor 34, 35
-            //  0b001_0010x: sub 36, 37
-            //  0b001_0011x: rsb 38, 39
-            //  0b001_0100x: add 40, 41
-            //  0b001_0101x: adc 42, 43
-            //  0b001_0110x: sbc 44, 45
-            //  0b001_0111x: rsc 46, 47
-            //  0b001_10001: tst 49
-            //  0b001_10011: teq 51
-            //  0b001_10101: cmp 53
-            //  0b001_10111: cmn 55
-            //  0b001_1100x: orr 56, 57
-            //  0b001_1101x: mov 58, 59
-            //  0b001_1110x: bic 60, 61
-            //  0b001_1111x: mvn 62, 63
-            //  0b001_10x10: und 未定義命令
-            //               48, 52
-            //  0b001_10x10: msr ステータスレジスタへ即値転送
-            //               50, 54
-            SUB_ANDIMM, SUB_ANDIMM, SUB_EORIMM, SUB_EORIMM,
-            SUB_SUBIMM, SUB_SUBIMM, SUB_RSBIMM, SUB_RSBIMM,
-            SUB_ADDIMM, SUB_ADDIMM, SUB_ADCIMM, SUB_ADCIMM,
-            SUB_SBCIMM, SUB_SBCIMM, SUB_RSCIMM, SUB_RSCIMM,
+    /**
+     * ARM 命令の I ビット（ビット 25）を取得します。
+     *
+     * データ処理命令に存在し、
+     * オペランドがイミディエートかどうかを示します。
+     *
+     * @return I ビット
+     */
+    public int getIBit() {
+        return getIBit(rawInst);
+    }
 
-            SUB_UNDIMM, SUB_TSTIMM, SUB_MSRIMM, SUB_TEQIMM,
-            SUB_UNDIMM, SUB_CMPIMM, SUB_MSRIMM, SUB_CMNIMM,
-            SUB_ORRIMM, SUB_ORRIMM, SUB_MOVIMM, SUB_MOVIMM,
-            SUB_BICIMM, SUB_BICIMM, SUB_MVNIMM, SUB_MVNIMM,
+    /**
+     * ARM 命令の I ビット（ビット 25）を取得します。
+     *
+     * データ処理命令に存在し、
+     * オペランドがイミディエートかどうかを示します。
+     *
+     * @param inst ARM 命令
+     * @return I ビット
+     */
+    public static int getIBit(int inst) {
+        return BitOp.getBit(inst, 25);
+    }
 
-            //0b010_00000
-            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
-            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
-            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
-            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
+    public static final int OPCODE_AND = 0;
+    public static final int OPCODE_EOR = 1;
+    public static final int OPCODE_SUB = 2;
+    public static final int OPCODE_RSB = 3;
+    public static final int OPCODE_ADD = 4;
+    public static final int OPCODE_ADC = 5;
+    public static final int OPCODE_SBC = 6;
+    public static final int OPCODE_RSC = 7;
+    public static final int OPCODE_TST = 8;
+    public static final int OPCODE_TEQ = 9;
+    public static final int OPCODE_CMP = 10;
+    public static final int OPCODE_CMN = 11;
+    public static final int OPCODE_ORR = 12;
+    public static final int OPCODE_MOV = 13;
+    public static final int OPCODE_BIC = 14;
+    public static final int OPCODE_MVN = 15;
 
-            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
-            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
-            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
-            SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM, SUB_LDRIMM,
+    /**
+     * ARM 命令セットのオペコードフィールド（ビット [24:21]）を取得します。
+     *
+     * このフィールドが存在するのは、データ命令処理のみです。
+     *
+     * @return オペコード
+     */
+    public int getOpcodeField() {
+        return getOpcodeField(rawInst);
+    }
 
-            //0b011_00000
-            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
-            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
-            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
-            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
+    /**
+     * ARM 命令セットのオペコードフィールド（ビット [24:21]）を取得します。
+     *
+     * このフィールドが存在するのは、データ命令処理のみです。
+     *
+     * @param inst ARM 命令
+     * @return オペコード
+     */
+    public static int getOpcodeField(int inst) {
+        return (inst >> 21) & 0xf;
+    }
 
-            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
-            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
-            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
-            SUB_LDRREG, SUB_LDRREG, SUB_LDRREG, SUB_LDRREG,
+    /**
+     * ARM 命令セットの opcode フィールド（ビット [24:21]）が示す、
+     * 演算の名前を取得します。
+     *
+     * @return opcode フィールドが示す演算の名前
+     */
+    public String getOpcodeFieldName() {
+        return getOpcodeFieldName(getOpcodeField());
+    }
 
-            //0b100_00000
-            //  0b100_xx0x0: stm(1) ストアマルチプル
-            //               128, 130, 136, 138,
-            //               144, 146, 152, 154,
-            //  0b100_xx0x1: ldm(1) ロードマルチプル
-            //               129, 131, 137, 139,
-            //               145, 147, 153, 155,
-            //  0b100_xx1x0: stm(2), (3) ストアマルチプル
-            //               132, 134, 140, 142,
-            //               148, 150, 156, 158,
-            //  0b100_xx0x1: ldm(2), (3) ロードマルチプル
-            //               133, 135, 141, 143,
-            //               149, 151, 157, 159,
-            SUB_STM1_R, SUB_LDM1_R, SUB_STM1_R, SUB_LDM1_R,
-            SUB_STM2_3, SUB_LDM2_3, SUB_STM2_3, SUB_LDM2_3,
-            SUB_STM1_R, SUB_LDM1_R, SUB_STM1_R, SUB_LDM1_R,
-            SUB_STM2_3, SUB_LDM2_3, SUB_STM2_3, SUB_LDM2_3,
+    /**
+     * ARM 命令セットの opcode フィールド（ビット [24:21]）が示す、
+     * 演算の名前を取得します。
+     *
+     * @param opcode ARM 命令のオペコードフィールド
+     * @return opcode フィールドが示す演算の名前
+     */
+    public static String getOpcodeFieldName(int opcode) {
+        final String[] names = {
+                "and", "eor", "sub", "rsb",
+                "add", "adc", "sbc", "rsc",
+                "tst", "teq", "cmp", "cmn",
+                "orr", "mov", "bic", "mvn",
+        };
 
-            SUB_STM1_R, SUB_LDM1_R, SUB_STM1_R, SUB_LDM1_R,
-            SUB_STM2_3, SUB_LDM2_3, SUB_STM2_3, SUB_LDM2_3,
-            SUB_STM1_R, SUB_LDM1_R, SUB_STM1_R, SUB_LDM1_R,
-            SUB_STM2_3, SUB_LDM2_3, SUB_STM2_3, SUB_LDM2_3,
+        if (0 <= opcode && opcode <= 15) {
+            return names[opcode];
+        } else {
+            throw new IllegalArgumentException("Invalid opcode " +
+                    opcode + ".");
+        }
+    }
 
-            //0b101_00000
-            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
-            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
-            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
-            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
+    public static final int OPCODE_S_AND = 0;
+    public static final int OPCODE_S_EOR = 2;
+    public static final int OPCODE_S_SUB = 4;
+    public static final int OPCODE_S_RSB = 6;
+    public static final int OPCODE_S_ADD = 8;
+    public static final int OPCODE_S_ADC = 10;
+    public static final int OPCODE_S_SBC = 12;
+    public static final int OPCODE_S_RSC = 14;
+    public static final int OPCODE_S_OTH = 16;
+    public static final int OPCODE_S_TST = 17;
+    public static final int OPCODE_S_MSR = 18;
+    public static final int OPCODE_S_TEQ = 19;
+    //16 と同じ //public static final int OPCODE_S_MRS = 20;
+    public static final int OPCODE_S_CMP = 21;
+    //18 と同じ //public static final int OPCODE_S_MSR = 22;
+    public static final int OPCODE_S_CMN = 23;
+    public static final int OPCODE_S_ORR = 24;
+    public static final int OPCODE_S_MOV = 26;
+    public static final int OPCODE_S_BIC = 28;
+    public static final int OPCODE_S_MVN = 30;
+    public static final int OPCODE_S_UND = 32;
 
-            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
-            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
-            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
-            SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX, SUB_BL_BLX,
+    public static final int[] opcodeSBitShiftTable = {
+            //0
+            OPCODE_S_AND, OPCODE_S_AND,
+            OPCODE_S_EOR, OPCODE_S_EOR,
+            OPCODE_S_SUB, OPCODE_S_SUB,
+            OPCODE_S_RSB, OPCODE_S_RSB,
+            OPCODE_S_ADD, OPCODE_S_ADD,
+            OPCODE_S_ADC, OPCODE_S_ADC,
+            OPCODE_S_SBC, OPCODE_S_SBC,
+            OPCODE_S_RSC, OPCODE_S_RSC,
+            //16
+            OPCODE_S_OTH, OPCODE_S_TST,
+            OPCODE_S_OTH, OPCODE_S_TEQ,
+            OPCODE_S_OTH, OPCODE_S_CMP,
+            OPCODE_S_OTH, OPCODE_S_CMN,
+            OPCODE_S_ORR, OPCODE_S_ORR,
+            OPCODE_S_MOV, OPCODE_S_MOV,
+            OPCODE_S_BIC, OPCODE_S_BIC,
+            OPCODE_S_MVN, OPCODE_S_MVN,
+    };
 
-            //0b110_00000
-            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
-            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
-            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
-            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
-
-            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
-            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
-            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
-            SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC, SUB_LDCSTC,
-
-            //0b111_00000
-            //  0b1110xxx0: cdp コプロセッサデータ処理
-            //              mrc コプロセッサから ARM レジスタへ転送
-            //              224, 226, 228, 230, 232, 234, 236, 238
-            //  0b1110xxx1: cdp コプロセッサデータ処理
-            //              mrc コプロセッサから ARM レジスタへ転送
-            //              225, 227, 229, 231, 233, 235, 237, 239
-            //  0b1111xxxx: swi ソフトウェア割り込み
-            //              240, ..., 255
-            SUB_CDPMCR, SUB_CDPMRC, SUB_CDPMCR, SUB_CDPMRC,
-            SUB_CDPMCR, SUB_CDPMRC, SUB_CDPMCR, SUB_CDPMRC,
-            SUB_CDPMCR, SUB_CDPMRC, SUB_CDPMCR, SUB_CDPMRC,
-            SUB_CDPMCR, SUB_CDPMRC, SUB_CDPMCR, SUB_CDPMRC,
-
-            SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM,
-            SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM,
-            SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM,
-            SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM, SUB_SWIIMM,
+    public static final int[] opcodeSBitImmTable = {
+            //0
+            OPCODE_S_AND, OPCODE_S_AND,
+            OPCODE_S_EOR, OPCODE_S_EOR,
+            OPCODE_S_SUB, OPCODE_S_SUB,
+            OPCODE_S_RSB, OPCODE_S_RSB,
+            OPCODE_S_ADD, OPCODE_S_ADD,
+            OPCODE_S_ADC, OPCODE_S_ADC,
+            OPCODE_S_SBC, OPCODE_S_SBC,
+            OPCODE_S_RSC, OPCODE_S_RSC,
+            //16
+            OPCODE_S_UND, OPCODE_S_TST,
+            OPCODE_S_MSR, OPCODE_S_TEQ,
+            OPCODE_S_UND, OPCODE_S_CMP,
+            OPCODE_S_MSR, OPCODE_S_CMN,
+            OPCODE_S_ORR, OPCODE_S_ORR,
+            OPCODE_S_MOV, OPCODE_S_MOV,
+            OPCODE_S_BIC, OPCODE_S_BIC,
+            OPCODE_S_MVN, OPCODE_S_MVN,
     };
 
     /**
-     * ARM 命令セットのオペコードのフィールド（ビット [27:20]）から、
-     * 命令のタイプを表す ID を取得します。
+     * ARM 命令セットのデータ処理シフト命令における、
+     * オペコードフィールド（ビット [24:21]）と、
+     * S ビット（ビット 20）が示す演算の ID を取得します。
      *
-     * @return 命令のタイプを表す ID
+     * このフィールドが存在するのは、データ命令処理のみです。
+     *
+     * @return 演算を示す ID
      */
-    public int getSubcodeId() {
-        return getSubcodeId(rawInst);
+    public int getOpcodeSBitShitfID() {
+        return getOpcodeSBitShiftID(rawInst);
     }
 
     /**
-     * ARM 命令セットのオペコードのフィールド（ビット [27:20]）から、
-     * 命令のタイプを表す ID を取得します。
+     * ARM 命令セットのデータ処理シフト命令における、
+     * オペコードフィールド（ビット [24:21]）と、
+     * S ビット（ビット 20）が示す演算の ID を取得します。
+     *
+     * このフィールドが存在するのは、データ命令処理のみです。
      *
      * @param inst ARM 命令
-     * @return 命令のタイプを表す ID
+     * @return 演算を示す ID
      */
-    public static int getSubcodeId(int inst) {
-        return subinsts[(inst >> 20) & 0xff];
+    public static int getOpcodeSBitShiftID(int inst) {
+        return opcodeSBitShiftTable[(inst >> 20) & 0x1f];
     }
+
+    /**
+     * ARM 命令セットのデータ処理イミディエート命令における、
+     * オペコードフィールド（ビット [24:21]）と、
+     * S ビット（ビット 20）が示す演算の ID を取得します。
+     *
+     * このフィールドが存在するのは、データ命令処理のみです。
+     *
+     * @return 演算を示す ID
+     */
+    public int getOpcodeSBitImmID() {
+        return getOpcodeSBitImmID(rawInst);
+    }
+
+    /**
+     * ARM 命令セットのデータ処理イミディエート命令における、
+     * オペコードフィールド（ビット [24:21]）と、
+     * S ビット（ビット 20）が示す演算の ID を取得します。
+     *
+     * このフィールドが存在するのは、データ命令処理のみです。
+     *
+     * @param inst ARM 命令
+     * @return 演算を示す ID
+     */
+    public static int getOpcodeSBitImmID(int inst) {
+        return opcodeSBitImmTable[(inst >> 20) & 0x1f];
+    }
+
+    public static final int PU_ADDR4_IA = 1;
+    public static final int PU_ADDR4_IB = 3;
+    public static final int PU_ADDR4_DA = 0;
+    public static final int PU_ADDR4_DB = 2;
 
     /**
      * ARM 命令の P, U ビット（ビット [24:23]）を取得します。
      *
      * ロード、ストアマルチプル命令に存在し、
-     * アドレシングモード 4 を構成するフィールドです。
+     * アドレシングモード 4 の 4つのモード（IA, IB, DA, DB）のうち、
+     * どのモードを使用するか指定するフィールドです。
      *
      * @return P, U ビット
      */
@@ -364,7 +440,8 @@ public class Instruction {
      * ARM 命令の P, U ビット（ビット [24:23]）を取得します。
      *
      * ロード、ストアマルチプル命令に存在し、
-     * アドレシングモード 4 を構成するフィールドです。
+     * アドレシングモード 4 の 4つのモード（IA, IB, DA, DB）のうち、
+     * どのモードを使用するか指定するフィールドです。
      *
      * @param inst ARM 命令
      * @return P, U ビット
@@ -372,11 +449,6 @@ public class Instruction {
     public static int getPUField(int inst) {
         return (inst >> 23) & 0x3;
     }
-
-    public static final int PU_ADDR4_IA = 1;
-    public static final int PU_ADDR4_IB = 3;
-    public static final int PU_ADDR4_DA = 0;
-    public static final int PU_ADDR4_DB = 2;
 
     /**
      * ARM 命令の P, U ビット（ビット [24:23]）が示す、
@@ -400,7 +472,7 @@ public class Instruction {
                 "da", "ia", "db", "ib",
         };
 
-        if (0 <= pu && pu <= 15) {
+        if (0 <= pu && pu <= 3) {
             return names[pu];
         } else {
             throw new IllegalArgumentException("Invalid p, u bits " +
@@ -411,6 +483,7 @@ public class Instruction {
     /**
      * ARM 命令の S ビット（ビット 20）を取得します。
      *
+     * データ処理命令に存在し、
      * このビットが 1 の場合、PSR の状態ビット
      * （N, Z, C, V ビット）を更新します。
      *
@@ -431,7 +504,70 @@ public class Instruction {
      * @return S ビット
      */
     public static int getSBit(int inst) {
-        return (inst >> 20) & 0x1;
+        return BitOp.getBit(inst, 20);
+    }
+
+    /**
+     * ARM 命令の L ビット（ビット 20）を取得します。
+     *
+     * ロード、ストア、ロードストアマルチプル処理命令に存在し、
+     * このビットが 1 の場合、ロード命令であることを示します。
+     *
+     * @return L ビット
+     */
+    public int getLBit() {
+        return getLBit(rawInst);
+    }
+
+    /**
+     * ARM 命令の L ビット（ビット 20）を取得します。
+     *
+     * ロード、ストア、ロードストアマルチプル処理命令に存在し、
+     * このビットが 1 の場合、ロード命令であることを示します。
+     *
+     * @param inst ARM 命令
+     * @return L ビット
+     */
+    public static int getLBit(int inst) {
+        return BitOp.getBit(inst, 20);
+    }
+
+    /**
+     * ARM 命令の Rn フィールド（ビット [19:16]）を取得します。
+     *
+     * @return Rn フィールド
+     */
+    public int getRnField() {
+        return getRnField(rawInst);
+    }
+
+    /**
+     * ARM 命令の Rn フィールド（ビット [19:16]）を取得します。
+     *
+     * @param inst ARM 命令
+     * @return Rn フィールド
+     */
+    public static int getRnField(int inst) {
+        return (inst >> 16) & 0xf;
+    }
+
+    /**
+     * ARM 命令の Rd フィールド（ビット [15:12]）を取得します。
+     *
+     * @return Rd フィールド
+     */
+    public int getRdField() {
+        return getRdField(rawInst);
+    }
+
+    /**
+     * ARM 命令の Rd フィールド（ビット [15:12]）を取得します。
+     *
+     * @param inst ARM 命令
+     * @return Rd フィールド
+     */
+    public static int getRdField(int inst) {
+        return (inst >> 12) & 0xf;
     }
 
     /**
@@ -487,44 +623,6 @@ public class Instruction {
     }
 
     /**
-     * ARM 命令の Rn フィールド（ビット [19:16]）を取得します。
-     *
-     * @return Rn フィールド
-     */
-    public int getRnField() {
-        return getRnField(rawInst);
-    }
-
-    /**
-     * ARM 命令の Rn フィールド（ビット [19:16]）を取得します。
-     *
-     * @param inst ARM 命令
-     * @return Rn フィールド
-     */
-    public static int getRnField(int inst) {
-        return (inst >> 16) & 0xf;
-    }
-
-    /**
-     * ARM 命令の Rd フィールド（ビット [15:12]）を取得します。
-     *
-     * @return Rd フィールド
-     */
-    public int getRdField() {
-        return getRdField(rawInst);
-    }
-
-    /**
-     * ARM 命令の Rd フィールド（ビット [15:12]）を取得します。
-     *
-     * @param inst ARM 命令
-     * @return Rd フィールド
-     */
-    public static int getRdField(int inst) {
-        return (inst >> 12) & 0xf;
-    }
-
-    /**
      * データ処理オペランドの 32ビットイミディエートを取得します。
      *
      * rotate_imm: ビット[11:8]
@@ -556,5 +654,10 @@ public class Instruction {
         int imm8 = inst & 0xff;
 
         return Integer.rotateRight(imm8, rotR * 2);
+    }
+
+    public static int getImm32Carry(int inst) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 }

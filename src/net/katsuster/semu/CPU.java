@@ -276,7 +276,7 @@ public class CPU extends MasterCore64 {
      * @return N ビットの値
      */
     public static int getPSR_N(int val) {
-        return (val >> 31) & 0x1;
+        return BitOp.getBit(val, 31);
     }
 
     /**
@@ -289,7 +289,7 @@ public class CPU extends MasterCore64 {
      * @return Z ビットの値
      */
     public static int getPSR_Z(int val) {
-        return (val >> 30) & 0x1;
+        return BitOp.getBit(val, 30);
     }
 
     /**
@@ -312,7 +312,7 @@ public class CPU extends MasterCore64 {
      * @return C ビットの値
      */
     public static int getPSR_C(int val) {
-        return (val >> 29) & 0x1;
+        return BitOp.getBit(val, 29);
     }
 
     /**
@@ -328,7 +328,7 @@ public class CPU extends MasterCore64 {
      * @return V ビットの値
      */
     public static int getPSR_V(int val) {
-        return (val >> 28) & 0x1;
+        return BitOp.getBit(val, 28);
     }
 
     /**
@@ -341,7 +341,7 @@ public class CPU extends MasterCore64 {
      * @return I ビットの値
      */
     public static int getPSR_I(int val) {
-        return (val >> 7) & 0x1;
+        return BitOp.getBit(val, 7);
     }
 
     /**
@@ -354,7 +354,20 @@ public class CPU extends MasterCore64 {
      * @return F ビットの値
      */
     public static int getPSR_F(int val) {
-        return (val >> 6) & 0x1;
+        return BitOp.getBit(val, 6);
+    }
+
+    /**
+     * PSR（プログラムステートレジスタ）の F ビット（ビット 6）を設定します。
+     *
+     * F=0 ならば FIQ 割り込みが有効となります。
+     * F=1 ならば FIQ 割り込みが無効となります。
+     *
+     * @param val PSR の値
+     * @param nv  新しい F ビットの値
+     */
+    public static int setPSR_F(int val, boolean nv) {
+        return BitOp.setBit(val, 6, nv);
     }
 
     /**
@@ -370,7 +383,23 @@ public class CPU extends MasterCore64 {
      * @return T ビットの値
      */
     public static int getPSR_T(int val) {
-        return (val >> 5) & 0x1;
+        return BitOp.getBit(val, 5);
+    }
+
+    /**
+     * PSR（プログラムステートレジスタ）の T ビット（ビット 5）を設定します。
+     *
+     * T=0 ならば ARM 命令を実行します。
+     * T=1 ならば Thumb 命令を実行します。
+     *
+     * ARMv5 以上の非 T バリアント（Thumb 命令非対応）の場合、
+     * T=1 ならば次に実行される命令で未定義命令例外を発生させます。
+     *
+     * @param val PSR の値
+     * @param nv  新しい T ビットの値
+     */
+    public static int setPSR_T(int val, boolean nv) {
+        return BitOp.setBit(val, 5, nv);
     }
 
     public static final int MODE_USR = 0x10;
@@ -430,23 +459,62 @@ public class CPU extends MasterCore64 {
         return getPSR_Mode(getCPSR());
     }
 
-    public void executeAddSft(Instruction inst, int cond) {
+    public int getShifterOperand(Instruction inst) {
+        int i = inst.getBit(24);
+        int b7 = inst.getBit(7);
+        int b4 = inst.getBit(4);
 
+        if (i == 1) {
+            //32bits イミディエート
+            return inst.getImm32Operand();
+        } else if (b4 == 0) {
+            //イミディエートシフト
+            return getImmShiftOperand(inst);
+        } else if (b4 == 1 && b7 == 0) {
+            //レジスタシフト
+            return getRegShiftOperand(inst);
+        } else {
+            throw new IllegalArgumentException("Unknown shifter_operand " +
+                    String.format("0x%08x, I:%d, b7:%d, b4:%d.", inst, b7, b4));
+        }
     }
 
-    public void executeMrsReg(Instruction inst, int cond) {
-
+    public int getImmShiftOperand(Instruction inst) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
-    public void executeMsrReg(Instruction inst, int cond) {
-
+    public int getRegShiftOperand(Instruction inst) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
-    public void executeAddImm(Instruction inst, int cond) {
+    public int getImmShiftCarry(Instruction inst) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    public int getRegShiftCarry(Instruction inst) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * データ処理イミディエート
+     *
+     * @param inst ARM 命令
+     * @param cond cond フィールド
+     */
+    public void executeAdd(Instruction inst, int cond) {
         int s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int imm32 = inst.getImm32Operand();
+
+        if (inst.getIBit() == 0) {
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+        }
 
         if (isDisasmMode()) {
             printDisasm(inst,
@@ -465,18 +533,24 @@ public class CPU extends MasterCore64 {
             setCPSR(getSPSR());
         } else if (s == 1) {
             //TODO: set flags
+            throw new IllegalArgumentException("Sorry, not implemented.");
         }
     }
 
-    public void executeMsrImm(Instruction inst, int cond) {
-        int flag_r = (inst.getInst() >> 22) & 0x1;
-        int mask_f = (inst.getInst() >> 19) & 0x1;
-        int mask_s = (inst.getInst() >> 18) & 0x1;
-        int mask_x = (inst.getInst() >> 17) & 0x1;
-        int mask_c = (inst.getInst() >> 16) & 0x1;
+    public void executeMsr(Instruction inst, int cond) {
+        int flag_r = inst.getBit(22);
+        int mask_f = inst.getBit(19);
+        int mask_s = inst.getBit(18);
+        int mask_x = inst.getBit(17);
+        int mask_c = inst.getBit(16);
         int sbo = (inst.getInst() >> 12) & 0xf;
         int imm32 = inst.getImm32Operand();
         int v, m = 0;
+
+        if (inst.getIBit() == 0) {
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+        }
 
         if (isDisasmMode()) {
             printDisasm(inst,
@@ -527,20 +601,13 @@ public class CPU extends MasterCore64 {
         }
     }
 
-    public void executeStmReg(Instruction inst, int cond) {
-        int p = (inst.getInst() >> 24) & 0x1;
-        int u = (inst.getInst() >> 23) & 0x1;
-        int w = (inst.getInst() >> 21) & 0x1;
-
-    }
-
     /**
      * LDM, STM 命令の転送開始アドレスを取得します。
      *
      * @param pu    P, U ビット
      * @param rn    レジスタ番号
      * @param rlist レジスタリスト
-     * @return
+     * @return 転送開始アドレス
      */
     public int getLdmStartAddress(int pu, int rn, int rlist) {
         switch (pu) {
@@ -558,13 +625,32 @@ public class CPU extends MasterCore64 {
         }
     }
 
-    public void executeLdmReg(Instruction inst, int cond) {
-        int p = (inst.getInst() >> 24) & 0x1;
-        int u = (inst.getInst() >> 23) & 0x1;
-        int w = (inst.getInst() >> 21) & 0x1;
+    /**
+     * LDM, STM 命令が転送するデータの長さを取得します。
+     *
+     * @param pu    P, U ビット
+     * @param rlist レジスタリスト
+     * @return 転送するデータの長さ
+     */
+    public int getLdmLength(int pu, int rlist) {
+        switch (pu) {
+        case Instruction.PU_ADDR4_IA:
+        case Instruction.PU_ADDR4_IB:
+            return Integer.bitCount(rlist) * 4;
+        case Instruction.PU_ADDR4_DA:
+        case Instruction.PU_ADDR4_DB:
+            return -(Integer.bitCount(rlist) * 4);
+        default:
+            throw new IllegalArgumentException("Illegal PU field " +
+                    pu + ".");
+        }
+    }
+
+    public void executeLdm1(Instruction inst, int cond) {
+        int w = inst.getBit(21);
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
-        int staddr = getLdmStartAddress(inst.getPUField(), rn, 0);
+        int addr, len;
 
         if (isDisasmMode()) {
             printDisasm(inst,
@@ -580,19 +666,54 @@ public class CPU extends MasterCore64 {
             return;
         }
 
-        //TODO: disasm only...
+        //r15 以外
+        addr = getLdmStartAddress(inst.getPUField(), rn, rlist);
+        len = getLdmLength(inst.getPUField(), rlist);
+        for (int i = 0; i < 15; i++) {
+            if ((rlist & (1 << i)) == 0) {
+                continue;
+            }
+            setReg(i, read32(addr));
+            addr += 4;
+        }
+        //r15
+        if ((rlist & 0x8000) != 0) {
+            int v = read32(addr);
+
+            setPC(v & 0xfffffffe);
+            setCPSR(setPSR_T(getCPSR(), (v & 0x1) != 0));
+            addr += 4;
+        }
+
+        if (w == 1) {
+            setReg(rn, getReg(rn) + len);
+        }
     }
 
-    public void executeBlBlx(Instruction inst, int cond) {
-        int l = (inst.getInst() >> 24) & 0x1;
+    public void executeLdm2(Instruction inst, int cond) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    public void executeLdm3(Instruction inst, int cond) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    public void executeStm1(Instruction inst, int cond) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    public void executeStm2(Instruction inst, int cond) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    public void executeBl(Instruction inst, int cond) {
+        int l = inst.getBit(24);
         int imm24 = inst.getInst() & 0xffffff;
         int simm24 = (int)signext(imm24, 24) << 2;
-
-        //cond = 0b1111 ならば blx 命令
-        if (cond == Instruction.COND_NV) {
-            executeBlx(inst, cond);
-            return;
-        }
 
         if (isDisasmMode()) {
             printDisasm(inst,
@@ -612,7 +733,7 @@ public class CPU extends MasterCore64 {
     }
 
     public void executeBlx(Instruction inst, int cond) {
-        int h = (inst.getInst() >> 24) & 0x1;
+        int h = inst.getBit(24);
         int imm24 = inst.getInst() & 0xffffff;
         int simm24 = (int)signext(imm24, 24) << 2;
         int psr;
@@ -633,36 +754,25 @@ public class CPU extends MasterCore64 {
         throw new IllegalStateException("not support blx.");
     }
 
-    public void executeLdcStc(Instruction inst, int cond) {
-
+    public void executeCdp(Instruction inst, int cond) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
-    public void executeCdpMcr(Instruction inst, int cond) {
-        int bit4 = (inst.getInst() >> 4) & 0x1;
-
-        //ビット 4 が 0 ならば cdp 命令, 1 ならば mcr 命令
-        if (bit4 == 0) {
-            executeCdp(inst, cond);
-            return;
-        }
+    public void executeMcr(Instruction inst, int cond) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
-    public void executeCdpMrc(Instruction inst, int cond) {
+    public void executeMrc(Instruction inst, int cond) {
         int opcode1 = (inst.getInst() >> 21) & 0x7;
         int crn = (inst.getInst() >> 16) & 0xf;
         int rd = inst.getRdField();
         int cpnum = (inst.getInst() >> 8) & 0xf;
         int opcode2 = (inst.getInst() >> 5) & 0x7;
-        int bit4 = (inst.getInst() >> 4) & 0x1;
         int crm = inst.getInst() & 0xf;
         CoProc cp;
         int crid, crval, rval;
-
-        //ビット 4 が 0 ならば cdp 命令, 1 ならば mrc 命令
-        if (bit4 == 0) {
-            executeCdp(inst, cond);
-            return;
-        }
 
         if (isDisasmMode()) {
             printDisasm(inst,
@@ -705,62 +815,331 @@ public class CPU extends MasterCore64 {
         }
     }
 
-    public void executeCdp(Instruction inst, int cond) {
-
+    public void executeSwi(Instruction inst, int cond) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
-    public void executeSwiImm(Instruction inst, int cond) {
-
+    public void executeUnd(Instruction inst, int cond) {
+        exceptionInst("Warning: Undefined instruction " +
+                String.format("inst:0x%08x, cond:%d.", inst, cond));
     }
 
     public void execute(Instruction inst) {
         int cond = inst.getCondField();
-        int subcodeId = inst.getSubcodeId();
+        int subcode = inst.getSubCodeField();
 
-        switch (subcodeId) {
-        case Instruction.SUB_ADDSFT:
-            executeAddSft(inst, cond);
+        switch (subcode) {
+        case Instruction.SUBCODE_ADDSUB:
+            executeSubAddSub(inst, cond);
             break;
-        case Instruction.SUB_MRSREG:
-            executeMrsReg(inst, cond);
+        case Instruction.SUBCODE_LDRSTR:
+            executeSubLdrStr(inst, cond);
             break;
-        case Instruction.SUB_MSRREG:
-            executeMsrReg(inst, cond);
+        case Instruction.SUBCODE_LDMSTM:
+            executeSubLdmStm(inst, cond);
             break;
-        case Instruction.SUB_ADDIMM:
-            executeAddImm(inst, cond);
-            break;
-        case Instruction.SUB_MSRIMM:
-            executeMsrImm(inst, cond);
-            break;
-        case Instruction.SUB_LDRIMM:
-            break;
-        case Instruction.SUB_LDRREG:
-            break;
-        case Instruction.SUB_STM1_R:
-            executeStmReg(inst, cond);
-            break;
-        case Instruction.SUB_LDM1_R:
-            executeLdmReg(inst, cond);
-            break;
-        case Instruction.SUB_BL_BLX:
-            executeBlBlx(inst, cond);
-            break;
-        case Instruction.SUB_LDCSTC:
-            executeLdcStc(inst, cond);
-            break;
-        case Instruction.SUB_CDPMCR:
-            executeCdpMcr(inst, cond);
-            break;
-        case Instruction.SUB_CDPMRC:
-            executeCdpMrc(inst, cond);
-            break;
-        case Instruction.SUB_SWIIMM:
-            executeSwiImm(inst, cond);
+        case Instruction.SUBCODE_COPSWI:
+            executeSubCopSwi(inst, cond);
             break;
         default:
-            throw new IllegalStateException("Unknown subcodeId" +
-                    String.format("(%d).", subcodeId));
+            throw new IllegalStateException("Unknown Subcode" +
+                    String.format("(%d).", subcode));
+        }
+    }
+
+    /**
+     * データ処理命令を実行します。
+     *
+     * subcode = 0b00
+     *
+     * @param inst ARM 命令
+     * @param cond cond フィールド
+     */
+    public void executeSubAddSub(Instruction inst, int cond) {
+        int i = inst.getIBit();
+        int b7 = inst.getBit(7);
+        int b4 = inst.getBit(4);
+
+        if (i == 0) {
+            //b4, b7 の値が、
+            //  0, 0: イミディエートシフト
+            //  0, 1: イミディエートシフト
+            //  1, 0: レジスタシフト
+            //  1, 1: 乗算、追加ロードストア
+            if (b4 == 0) {
+                //イミディエートシフト
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            } else if ((b4 == 1) && (b7 == 0)) {
+                //レジスタシフト
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            } else {
+                //乗算、追加ロードストア
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            }
+        } else {
+            //イミディエート
+            executeSubAddSubImm32(inst, cond);
+        }
+    }
+
+    /**
+     * イミディエートのみを取るデータ処理命令、その他の命令を実行します。
+     *
+     * データ処理イミディエート命令、
+     * ステータスレジスタへのイミディエート移動命令、
+     * の実行
+     *
+     * @param inst ARM 命令
+     * @param cond cond フィールド
+     */
+    public void executeSubAddSubImm32(Instruction inst, int cond) {
+        int id = inst.getOpcodeSBitImmID();
+
+        switch (id) {
+        case Instruction.OPCODE_S_MSR:
+            executeMsr(inst, cond);
+            break;
+        case Instruction.OPCODE_S_UND:
+            executeUnd(inst, cond);
+            break;
+        default:
+            executeSubAddSubGen(inst, cond, id);
+            break;
+        }
+    }
+
+    /**
+     * シフトオペランド、イミディエートオペランド、
+     * どちらも取り得るデータ処理命令を実行します。
+     *
+     * 下記の種類の命令を扱います。
+     * and, eor, sub, rsb,
+     * add, adc, sbc, rsc,
+     * tst, teq, cmp, cmn,
+     * orr, mov, bic, mvn,
+     *
+     * @param inst ARM 命令
+     * @param cond cond フィールド
+     * @param id   オペコードフィールドと S ビットが示す演算の ID
+     */
+    public void executeSubAddSubGen(Instruction inst, int cond, int id) {
+        switch (id) {
+        case Instruction.OPCODE_S_AND:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_EOR:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_SUB:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_RSB:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_ADD:
+            executeAdd(inst, cond);
+            break;
+        case Instruction.OPCODE_S_ADC:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_SBC:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_RSC:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_TST:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_TEQ:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_CMP:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_CMN:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_ORR:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_MOV:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_BIC:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case Instruction.OPCODE_S_MVN:
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        default:
+            throw new IllegalArgumentException("Unknown opcode S-bit ID " +
+                    String.format("%d.", id));
+        }
+    }
+
+    /**
+     * ロード、ストア命令を実行します。
+     *
+     * subcode = 0b01
+     *
+     * @param inst ARM 命令
+     * @param cond cond フィールド
+     */
+    public void executeSubLdrStr(Instruction inst, int cond) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * ロードマルチプル、ストアマルチプル、分岐命令を実行します。
+     *
+     * subcode = 0b10
+     *
+     * @param inst ARM 命令
+     * @param cond cond フィールド
+     */
+    public void executeSubLdmStm(Instruction inst, int cond) {
+        int b25 = inst.getBit(25);
+        int l = inst.getLBit();
+
+        if (b25 == 0) {
+            //ロードマルチプル、ストアマルチプル
+            if (cond == Instruction.COND_NV) {
+                //未定義命令
+                executeUnd(inst, cond);
+            } else {
+                if (l == 1) {
+                    //ldm(1), ldm(2), ldm(3)
+                    executeSubLdm(inst, cond);
+                } else {
+                    //stm(1), stm(2)
+                    executeSubStm(inst, cond);
+                }
+            }
+        } else {
+            //分岐命令
+            if (cond == Instruction.COND_NV) {
+                //blx
+                executeBlx(inst, cond);
+            } else {
+                //b, bl
+                executeBl(inst, cond);
+            }
+        }
+    }
+
+    /**
+     * ロードマルチプル命令を実行します。
+     *
+     * subcode = 0b10
+     *
+     * @param inst ARM 命令
+     * @param cond cond フィールド
+     */
+    public void executeSubLdm(Instruction inst, int cond) {
+        int s = inst.getBit(22);
+        int b15 = inst.getBit(15);
+
+        if (s == 0) {
+            //ldm(1)
+            executeLdm1(inst, cond);
+        } else {
+            if (b15 == 0) {
+                //ldm(2)
+                executeLdm2(inst, cond);
+            } else {
+                //ldm(3)
+                executeLdm3(inst, cond);
+            }
+        }
+    }
+
+    /**
+     * ストアマルチプル命令を実行します。
+     *
+     * subcode = 0b10
+     *
+     * @param inst ARM 命令
+     * @param cond cond フィールド
+     */
+    public void executeSubStm(Instruction inst, int cond) {
+        int s = inst.getBit(22);
+        int w = inst.getBit(21);
+
+        if (s == 0) {
+            //stm(1)
+            executeStm1(inst, cond);
+        } else {
+            if (w == 0) {
+                //stm(2)
+                executeStm2(inst, cond);
+            } else {
+                //未定義
+                executeUnd(inst, cond);
+            }
+        }
+    }
+
+    /**
+     * コプロセッサ、ソフトウェア割り込み命令を実行します。
+     *
+     * subcode = 0b11
+     *
+     * @param inst ARM 命令
+     * @param cond cond フィールド
+     */
+    public void executeSubCopSwi(Instruction inst, int cond) {
+        int subsub = (inst.getInst() >> 24) & 0x3;
+        int b20 = inst.getBit(20);
+        int b4 = inst.getBit(4);
+
+        switch (subsub) {
+        case 0:
+        case 1:
+            break;
+        case 2:
+            if (b4 == 0) {
+                //cdp
+                executeCdp(inst, cond);
+            } else {
+                if (b20 == 0) {
+                    //mcr
+                    executeMcr(inst, cond);
+                } else {
+                    //mrc
+                    executeMrc(inst, cond);
+                }
+            }
+            break;
+        case 3:
+            if (cond == Instruction.COND_NV) {
+                //未定義
+                executeUnd(inst, cond);
+            } else {
+                //swi
+                executeSwi(inst, cond);
+            }
+            break;
         }
     }
 
@@ -774,7 +1153,8 @@ public class CPU extends MasterCore64 {
             try {
                 execute(inst);
             } catch (IllegalStateException e) {
-                System.out.printf("%08x: %s\n", getPC(), e);
+                System.out.printf("%08x: %08x: %s\n",
+                        getPC(), inst.getInst(), e);
                 //ignore
             }
 
