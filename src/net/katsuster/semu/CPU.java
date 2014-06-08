@@ -7,8 +7,12 @@ package net.katsuster.semu;
  */
 public class CPU extends MasterCore64 implements Runnable {
     private int[] regs;
+    private int[] regs_svc;
+    private int[] regs_abt;
+    private int[] regs_und;
+    private int[] regs_irq;
+    private int[] regs_fiq;
     private int cpsr;
-    private int spsr;
     private CoProc[] coProcs;
 
     private boolean jumped;
@@ -18,7 +22,12 @@ public class CPU extends MasterCore64 implements Runnable {
     private boolean flagPrintReg;
 
     public CPU() {
-        regs = new int[16];
+        regs = new int[17];
+        regs_svc = new int[17];
+        regs_abt = new int[17];
+        regs_und = new int[17];
+        regs_irq = new int[17];
+        regs_fiq = new int[17];
         coProcs = new CoProc[16];
         coProcs[15] = new StdCoProc(15, this);
     }
@@ -92,6 +101,121 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
+     * レジスタ Rn そのものの値を取得します。
+     *
+     * r15 を返す際に +8 のオフセットを加算しません。
+     *
+     * @param n レジスタ番号（0 ～ 15）、16 は SPSR を示す
+     * @return レジスタの値
+     */
+    public int getRegRaw(int n) {
+        switch (getCPSR_Mode()) {
+        case MODE_USR:
+        case MODE_SYS:
+            return regs[n];
+        case MODE_SVC:
+            if ((13 <= n && n <= 14) || n == 16) {
+                return regs_svc[n];
+            } else {
+                return regs[n];
+            }
+        case MODE_ABT:
+            if ((13 <= n && n <= 14) || n == 16) {
+                return regs_abt[n];
+            } else {
+                return regs[n];
+            }
+        case MODE_UND:
+            if ((13 <= n && n <= 14) || n == 16) {
+                return regs_und[n];
+            } else {
+                return regs[n];
+            }
+        case MODE_IRQ:
+            if ((13 <= n && n <= 14) || n == 16) {
+                return regs_irq[n];
+            } else {
+                return regs[n];
+            }
+        case MODE_FIQ:
+            if ((8 <= n && n <= 14) || n == 16) {
+                return regs_fiq[n];
+            } else {
+                return regs[n];
+            }
+        default:
+            //do nothing
+            break;
+        }
+
+        throw new IllegalArgumentException("Illegal mode " +
+                String.format("mode:0x%x.", getCPSR_Mode()));
+    }
+
+    /**
+     * レジスタ Rn そのもの値を設定します。
+     *
+     * r15 を設定する際にジャンプ済みフラグセットしません。
+     *
+     * @param n   レジスタ番号（0 ～ 15）、16 は SPSR を示す
+     * @param val 新しいレジスタの値
+     */
+    public void setRegRaw(int n, int val) {
+        switch (getCPSR_Mode()) {
+        case MODE_USR:
+        case MODE_SYS:
+            regs[n] = val;
+            return;
+        case MODE_SVC:
+            if ((13 <= n && n <= 14) || n == 16) {
+                regs_svc[n] = val;
+                return;
+            } else {
+                regs[n] = val;
+                return;
+            }
+        case MODE_ABT:
+            if ((13 <= n && n <= 14) || n == 16) {
+                regs_abt[n] = val;
+                return;
+            } else {
+                regs[n] = val;
+                return;
+            }
+        case MODE_UND:
+            if ((13 <= n && n <= 14) || n == 16) {
+                regs_und[n] = val;
+                return;
+            } else {
+                regs[n] = val;
+                return;
+            }
+        case MODE_IRQ:
+            if ((13 <= n && n <= 14) || n == 16) {
+                regs_irq[n] = val;
+                return;
+            } else {
+                regs[n] = val;
+                return;
+            }
+        case MODE_FIQ:
+            if ((8 <= n && n <= 14) || n == 16) {
+                regs_fiq[n] = val;
+                return;
+            } else {
+                regs[n] = val;
+                return;
+            }
+        default:
+            //do nothing
+            break;
+        }
+
+        throw new IllegalArgumentException("Illegal mode " +
+                String.format("mode:0x%x.", getCPSR_Mode()));
+    }
+
+    /**
      * レジスタ Rn の値を取得します。
      *
      * @param n レジスタ番号（0 ～ 15）
@@ -99,23 +223,10 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public int getReg(int n) {
         if (n == 15) {
-            return regs[n] + 8;
+            return getRegRaw(n) + 8;
         } else {
-            return regs[n];
+            return getRegRaw(n);
         }
-    }
-
-    /**
-     * レジスタ Rn そのものの値を取得します。
-     *
-     * r15 を返す際に +8 のオフセットを加算しません。
-     * ダンプする際などに使用します。
-     *
-     * @param n レジスタ番号（0 ～ 15）
-     * @return レジスタの値
-     */
-    public int getRegRaw(int n) {
-        return regs[n];
     }
 
     /**
@@ -128,7 +239,7 @@ public class CPU extends MasterCore64 implements Runnable {
         if (n == 15) {
             setJumped(true);
         }
-        regs[n] = val;
+        setRegRaw(n, val);
     }
 
     /**
@@ -263,7 +374,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @return SPSR の値
      */
     public int getSPSR() {
-        return spsr;
+        return getReg(16);
     }
 
     /**
@@ -272,7 +383,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param val 新しい SPSR の値
      */
     public void setSPSR(int val) {
-        spsr = val;
+        setReg(16, val);
     }
 
     /**
@@ -297,6 +408,69 @@ public class CPU extends MasterCore64 implements Runnable {
         r &= ~0xf80f0000;
         r |= val & 0xf80f0000;
         setCPSR(r);
+    }
+
+    public static final int MODE_USR = 0x10;
+    public static final int MODE_FIQ = 0x11;
+    public static final int MODE_IRQ = 0x12;
+    public static final int MODE_SVC = 0x13;
+    public static final int MODE_ABT = 0x17;
+    public static final int MODE_UND = 0x1b;
+    public static final int MODE_SYS = 0x1f;
+
+    /**
+     * PSR（プログラムステートレジスタ）の M フィールド
+     * （ビット [4:0]）を取得します。
+     *
+     * @param val PSR の値
+     * @return M フィールドの値
+     */
+    public static int getPSR_Mode(int val) {
+        return val & 0x1f;
+    }
+
+    /**
+     * PSR（プログラムステートレジスタ）の M フィールド
+     * （ビット [4:0]）を設定します。
+     *
+     * @param val PSR の値
+     * @param mod 新たなモード
+     * @return 新たな PSR の値
+     */
+    public static int setPSR_Mode(int val, int mod) {
+        int mask = 0x1f;
+
+        val &= ~mask;
+        val |= mod & mask;
+
+        return val;
+    }
+
+    /**
+     * プロセッサの動作モードの名前を取得します。
+     *
+     * @param mode プロセッサの動作モード
+     * @return 動作モードの名前
+     */
+    public static String getPSR_ModeName(int mode) {
+        switch (mode) {
+        case 0x10:
+            return "usr";
+        case 0x11:
+            return "fiq";
+        case 0x12:
+            return "irq";
+        case 0x13:
+            return "svc";
+        case 0x17:
+            return "abt";
+        case 0x1b:
+            return "und";
+        case 0x1f:
+            return "sys";
+        default:
+            return "???";
+        }
     }
 
     /**
@@ -533,52 +707,6 @@ public class CPU extends MasterCore64 implements Runnable {
         setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_T, nv));
     }
 
-    public static final int MODE_USR = 0x10;
-    public static final int MODE_FIQ = 0x11;
-    public static final int MODE_IRQ = 0x12;
-    public static final int MODE_SVC = 0x13;
-    public static final int MODE_ABT = 0x17;
-    public static final int MODE_UND = 0x1b;
-    public static final int MODE_SYS = 0x1f;
-
-    /**
-     * PSR（プログラムステートレジスタ）の M フィールド
-     * （ビット [4:0]）を取得します。
-     *
-     * @param val PSR の値
-     * @return M フィールドの値
-     */
-    public static int getPSR_Mode(int val) {
-        return val & 0x1f;
-    }
-
-    /**
-     * プロセッサの動作モードの名前を取得します。
-     *
-     * @param mode プロセッサの動作モード
-     * @return 動作モードの名前
-     */
-    public static String getPSR_ModeName(int mode) {
-        switch (mode) {
-        case 0x10:
-            return "usr";
-        case 0x11:
-            return "fiq";
-        case 0x12:
-            return "irq";
-        case 0x13:
-            return "svc";
-        case 0x17:
-            return "abt";
-        case 0x1b:
-            return "und";
-        case 0x1f:
-            return "sys";
-        default:
-            return "???";
-        }
-    }
-
     /**
      * 現在のプロセッサの動作モードを取得します。
      *
@@ -586,8 +714,19 @@ public class CPU extends MasterCore64 implements Runnable {
      *
      * @return プロセッサの動作モード
      */
-    public int getProcessorMode() {
+    public int getCPSR_Mode() {
         return getPSR_Mode(getCPSR());
+    }
+
+    /**
+     * 現在のプロセッサの動作モードを設定します。
+     *
+     * CPSR の M フィールド（ビット[4:0]）を変更します。
+     *
+     * @param mod 新たなプロセッサの動作モード
+     */
+    public void setCPSR_Mode(int mod) {
+        setCPSR(setPSR_Mode(getCPSR(), mod));
     }
 
     /**
@@ -769,10 +908,13 @@ public class CPU extends MasterCore64 implements Runnable {
                 return Integer.rotateRight(getReg(rm), shift_imm);
             }
         default:
-            throw new IllegalArgumentException("Unknown Imm Shift " +
-                    String.format("0x%08x, shift:%d.",
-                            inst.getInst(), shift));
+            //do nothing
+            break;
         }
+
+        throw new IllegalArgumentException("Unknown Imm Shift " +
+                String.format("0x%08x, shift:%d.",
+                        inst.getInst(), shift));
     }
 
     public int getShifterOperandRegShift(Instruction inst) {
@@ -881,10 +1023,13 @@ public class CPU extends MasterCore64 implements Runnable {
                 return BitOp.getBit(getReg(rm), shift_imm - 1);
             }
         default:
-            throw new IllegalArgumentException("Unknown Imm Shift " +
-                    String.format("0x%08x, shift:%d.",
-                            inst.getInst(), shift));
+            //do nothing
+            break;
         }
+
+        throw new IllegalArgumentException("Unknown Imm Shift " +
+                String.format("0x%08x, shift:%d.",
+                        inst.getInst(), shift));
     }
 
     public boolean getShifterCarryRegShift(Instruction inst) {
@@ -986,10 +1131,13 @@ public class CPU extends MasterCore64 implements Runnable {
                         getRegName(rm), shift_imm);
             }
         default:
-            throw new IllegalArgumentException("Unknown Imm Shift " +
-                    String.format("0x%08x, shift:%d.",
-                            inst.getInst(), shift));
+            //do nothing
+            break;
         }
+
+        throw new IllegalArgumentException("Unknown Imm Shift " +
+                String.format("0x%08x, shift:%d.",
+                        inst.getInst(), shift));
     }
 
     public String getShifterOperandRegShiftName(Instruction inst) {
@@ -1295,7 +1443,7 @@ public class CPU extends MasterCore64 implements Runnable {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        String strOperand;
+        String strInst, strOperand;
 
         if (!exec) {
             switch (id) {
@@ -1309,12 +1457,20 @@ public class CPU extends MasterCore64 implements Runnable {
             case Instruction.OPCODE_S_RSC:
             case Instruction.OPCODE_S_SBC:
             case Instruction.OPCODE_S_SUB:
+                //with S bit
+                strInst = String.format("%s%s%s", inst.getOpcodeFieldName(),
+                        inst.getCondFieldName(),
+                        (s) ? "s" : "");
                 //rd, rn, shifter_operand
                 strOperand = String.format("%s, %s, %s", getRegName(rd),
                         getRegName(rn), getShifterOperandName(inst));
                 break;
             case Instruction.OPCODE_S_MOV:
             case Instruction.OPCODE_S_MVN:
+                //with S bit
+                strInst = String.format("%s%s%s", inst.getOpcodeFieldName(),
+                        inst.getCondFieldName(),
+                        (s) ? "s" : "");
                 //rd, shifter_operand
                 strOperand = String.format("%s, %s", getRegName(rd),
                         getShifterOperandName(inst));
@@ -1323,6 +1479,9 @@ public class CPU extends MasterCore64 implements Runnable {
             case Instruction.OPCODE_S_CMP:
             case Instruction.OPCODE_S_TEQ:
             case Instruction.OPCODE_S_TST:
+                //S bit is 1
+                strInst = String.format("%s%s", inst.getOpcodeFieldName(),
+                        inst.getCondFieldName());
                 //rn, shifter_operand
                 strOperand = String.format("%s, %s", getRegName(rn),
                         getShifterOperandName(inst));
@@ -1331,12 +1490,8 @@ public class CPU extends MasterCore64 implements Runnable {
                 throw new IllegalArgumentException("Unknown opcode S-bit ID " +
                         String.format("%d.", id));
             }
+            printDisasm(inst, strInst, strOperand);
 
-            printDisasm(inst,
-                    String.format("%s%s%s", inst.getOpcodeFieldName(),
-                            inst.getCondFieldName(),
-                            (s) ? "s" : ""),
-                    strOperand);
             return;
         }
 
@@ -1757,7 +1912,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("ldr%s", inst.getCondFieldName()),
+                    String.format("str%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetAddressName(inst)));
             return;
@@ -1804,9 +1959,12 @@ public class CPU extends MasterCore64 implements Runnable {
         case Instruction.PU_ADDR4_DB:
             return getReg(rn) - (Integer.bitCount(rlist) * 4);
         default:
-            throw new IllegalArgumentException("Illegal PU field " +
-                    pu + ".");
+            //do nothing
+            break;
         }
+
+        throw new IllegalArgumentException("Illegal PU field " +
+                pu + ".");
     }
 
     /**
@@ -1825,9 +1983,12 @@ public class CPU extends MasterCore64 implements Runnable {
         case Instruction.PU_ADDR4_DB:
             return -(Integer.bitCount(rlist) * 4);
         default:
-            throw new IllegalArgumentException("Illegal PU field " +
-                    pu + ".");
+            //do nothing
+            break;
         }
+
+        throw new IllegalArgumentException("Illegal PU field " +
+                pu + ".");
     }
 
     public void executeLdm1(Instruction inst, boolean exec) {
@@ -1948,11 +2109,6 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public void executeMcr(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
-    }
-
-    public void executeMrc(Instruction inst, boolean exec) {
         int opcode1 = (inst.getInst() >> 21) & 0x7;
         int crn = (inst.getInst() >> 16) & 0xf;
         int rd = inst.getRdField();
@@ -1960,15 +2116,15 @@ public class CPU extends MasterCore64 implements Runnable {
         int opcode2 = (inst.getInst() >> 5) & 0x7;
         int crm = inst.getInst() & 0xf;
         CoProc cp;
-        int crid, crval, rval;
+        int crid;
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("mrc%s", inst.getCondFieldName()),
+                    String.format("mcr%s", inst.getCondFieldName()),
                     String.format("%s, %d, %s, %s, %s, {%d}",
-                            getCoproc(cpnum).toString(), opcode1, getRegName(rd),
-                            getCoprocRegName(cpnum, crn), getCoprocRegName(cpnum, crm),
-                            opcode2));
+                            getCoproc(cpnum).toString(), opcode1,
+                            getRegName(rd), getCoprocRegName(cpnum, crn),
+                            getCoprocRegName(cpnum, crm), opcode2));
             return;
         }
 
@@ -1989,7 +2145,48 @@ public class CPU extends MasterCore64 implements Runnable {
                     String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
                             cpnum, crid, crn, opcode1, crm, opcode2));
             return;
+        }
 
+        cp.setCReg(crid, getReg(rd));
+    }
+
+    public void executeMrc(Instruction inst, boolean exec) {
+        int opcode1 = (inst.getInst() >> 21) & 0x7;
+        int crn = (inst.getInst() >> 16) & 0xf;
+        int rd = inst.getRdField();
+        int cpnum = (inst.getInst() >> 8) & 0xf;
+        int opcode2 = (inst.getInst() >> 5) & 0x7;
+        int crm = inst.getInst() & 0xf;
+        CoProc cp;
+        int crid, crval, rval;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("mrc%s", inst.getCondFieldName()),
+                    String.format("%s, %d, %s, %s, %s, {%d}",
+                            getCoproc(cpnum).toString(), opcode1,
+                            getRegName(rd), getCoprocRegName(cpnum, crn),
+                            getCoprocRegName(cpnum, crm), opcode2));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        cp = getCoproc(cpnum);
+        if (cp == null) {
+            exceptionInst("Unimplemented coprocessor, " +
+                    String.format("p%d selected.", cpnum));
+            return;
+        }
+
+        crid = CoProc.getCRegID(crn, opcode1, crm, opcode2);
+        if (!cp.validCRegNumber(crid)) {
+            exceptionInst("Unimplemented coprocessor register, " +
+                    String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
+                            cpnum, crid, crn, opcode1, crm, opcode2));
+            return;
         }
 
         crval = cp.getCReg(crid);
@@ -2012,6 +2209,13 @@ public class CPU extends MasterCore64 implements Runnable {
     public void executeUnd(Instruction inst, boolean exec) {
         int cond = inst.getCondField();
 
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("und%s", inst.getCondFieldName()),
+                    "");
+            return;
+        }
+
         exceptionInst("Warning: Undefined instruction " +
                 String.format("inst:0x%08x, cond:%d.",
                         inst.getInst(), cond));
@@ -2030,20 +2234,23 @@ public class CPU extends MasterCore64 implements Runnable {
         switch (subcode) {
         case Instruction.SUBCODE_USEALU:
             executeSubUseALU(inst, exec);
-            break;
+            return;
         case Instruction.SUBCODE_LDRSTR:
             executeSubLdrStr(inst, exec);
-            break;
+            return;
         case Instruction.SUBCODE_LDMSTM:
             executeSubLdmStm(inst, exec);
-            break;
+            return;
         case Instruction.SUBCODE_COPSWI:
             executeSubCopSwi(inst, exec);
-            break;
+            return;
         default:
-            throw new IllegalStateException("Unknown Subcode" +
-                    String.format("(%d).", subcode));
+            //do nothing
+            break;
         }
+
+        throw new IllegalArgumentException("Unknown Subcode" +
+                String.format("(%d).", subcode));
     }
 
     /**
@@ -2317,7 +2524,9 @@ public class CPU extends MasterCore64 implements Runnable {
         switch (subsub) {
         case 0:
         case 1:
-            break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
         case 2:
             if (!b4) {
                 //cdp
@@ -2331,7 +2540,7 @@ public class CPU extends MasterCore64 implements Runnable {
                     executeMrc(inst, exec);
                 }
             }
-            break;
+            return;
         case 3:
             if (cond == Instruction.COND_NV) {
                 //未定義
@@ -2340,8 +2549,14 @@ public class CPU extends MasterCore64 implements Runnable {
                 //swi
                 executeSwi(inst, exec);
             }
+            return;
+        default:
+            //do nothing
             break;
         }
+
+        throw new IllegalArgumentException("Illegal b25, b24 bits " +
+                String.format("b25b24:%d.", subsub));
     }
 
     public void step() {
@@ -2349,7 +2564,7 @@ public class CPU extends MasterCore64 implements Runnable {
         int v;
 
         //for debug
-        int target_address = 0xc0008090;
+        int target_address = 0xc0008078;//0xc001da68;
 
         v = read32(getPC() - 8);
         inst = new Instruction(v);
@@ -2372,12 +2587,8 @@ public class CPU extends MasterCore64 implements Runnable {
 
             //実行する
             execute(inst, true);
-        } catch (IllegalStateException e) {
-            System.out.printf("pc:%08x, inst:%08x, %s\n",
-                    getPC() - 8, inst.getInst(), e);
-            printRegs();
-            //ignore
         } catch (IllegalArgumentException e) {
+            //おそらくバグでしょう
             System.out.printf("pc:%08x, inst:%08x, %s\n",
                     getPC() - 8, inst.getInst(), e);
             printRegs();
@@ -2400,8 +2611,25 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void exceptionReset(String dbgmsg) {
+        int spsrOrg;
+
         System.out.printf("Exception: Reset by '%s'.\n",
                 dbgmsg);
+
+        //cpsr の値を取っておく
+        spsrOrg = getCPSR();
+
+        //スーパーバイザモード、ARM 状態、高速割り込み禁止、割り込み禁止、
+        //へ移行
+        setCPSR_Mode(MODE_SVC);
+        setCPSR_T(false);
+        setCPSR_F(true);
+        setCPSR_I(true);
+
+        //spsr にリセット前の cpsr を保存する
+        setSPSR(spsrOrg);
+
+        //リセット例外ベクタへ
         setPC(0x00000000);
     }
 
@@ -2411,8 +2639,31 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void exceptionInst(String dbgmsg) {
+        int pcOrg, spsrOrg;
+
         System.out.printf("Exception: Undefined Instruction by '%s'.\n",
                 dbgmsg);
+
+        //pc, cpsr の値を取っておく
+        pcOrg = getPC() - 4;
+        spsrOrg = getCPSR();
+
+        //未定義モード、ARM 状態、割り込み禁止、
+        //へ移行
+        setCPSR_Mode(MODE_UND);
+        setCPSR_T(false);
+        //F flag is not affected
+        setCPSR_I(true);
+
+        //lr, spsr に例外前の pc, cpsr を保存する
+        setReg(14, pcOrg);
+        setSPSR(spsrOrg);
+
+        //未定義命令例外ベクタへ
         setPC(0x00000004);
+
+        //tentative...
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 }

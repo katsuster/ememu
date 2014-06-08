@@ -99,7 +99,7 @@ public class CoProc {
 
         r = cregs.get(cn);
         if (r == null) {
-            throw new IllegalStateException(String.format(
+            throw new IllegalArgumentException(String.format(
                     "Illegal coproc %d reg(%08x).", getNumber(), cn));
         }
 
@@ -124,7 +124,7 @@ public class CoProc {
 
         r = cregs.get(cn);
         if (r == null) {
-            throw new IllegalStateException(String.format(
+            throw new IllegalArgumentException(String.format(
                     "Illegal coproc %d reg(%08x).", getNumber(), cn));
         }
 
