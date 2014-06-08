@@ -55,16 +55,28 @@ public class Main {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
 
         CPU cpu = new CPU();
-        RAM<Word64> ramFirst = new RAM<Word64>(createRAM(16 * 1024 * 1024));
-        RAM<Word64> ramMain = new RAM<Word64>(loadImage(filename));
+        RAM<Word64> ramSystem = new RAM<Word64>(createRAM(32 * 1024));
+        RAM<Word64> ramMain = new RAM<Word64>(createRAM(16 * 1024 * 1024));
+        RAM<Word64> ramPageTable = new RAM<Word64>(createRAM(32 * 1024));
+        RAM<Word64> ramImage = new RAM<Word64>(loadImage(filename));
         Bus<Word64> bus = new Bus<Word64>();
-        int addrAtags = 0x10000000;
+        int addrAtags = 0x00004000;
 
         cpu.setSlaveBus(bus);
-        bus.addSlaveCore(ramFirst, 0x10000000L, 0x11000000L);
-        bus.addSlaveCore(ramMain, 0xc0008000L, 0xc0800000L);
+        //RAM Image(tentative)
+        //  0x00000000 - 0x00001000: vector
+        //    0x00004000 - 0x00005000: ATAG_XXX
+        //  0x10000000 - 0x11000000: Main
+        //  0xc0000000 - 0xc0008000: Linux pagetable
+        //  0xc0008000 - 0xc0500000: Linux Image
+        bus.addSlaveCore(ramSystem, 0x00000000L, 0x00008000L);
+        bus.addSlaveCore(ramMain, 0x10000000L, 0x11000000L);
+        bus.addSlaveCore(ramPageTable, 0xc0000000L, 0xc0008000L);
+        bus.addSlaveCore(ramImage, 0xc0008000L, 0xc0500000L);
 
-        cpu.setDisasmMode(1);
+        cpu.setDisasmMode(true);
+        cpu.setPrintingDisasm(true);
+        cpu.setPrintingRegs(false);
         cpu.exceptionReset("Init.");
 
         //tentative boot loader for Linux
@@ -95,6 +107,7 @@ public class Main {
             cpu.write32(addrAtags + 0x04, 0x00000000);
             addrAtags += 0x08;
         }
+
         //pc: entry of stext
         cpu.setPC(0xc0008000);
         cpu.setJumped(false);
