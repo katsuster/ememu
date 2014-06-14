@@ -21,9 +21,8 @@ public class Main {
         return ramWords;
     }
 
-    public static Word64[] loadImage(String filename) {
+    public static void loadFile(String filename, CPU cpu, int addr) {
         int lenWords;
-        Word64[] ramWords;
 
         try {
             File f = new File(filename);
@@ -35,10 +34,9 @@ public class Main {
                         f.length() + ".");
             }
 
-            lenWords = (int)(f.length() / 8);
-            ramWords = new Word64[lenWords];
-            for (int i = 0; i < ramWords.length; i++) {
-                ramWords[i] = new Word64(Long.reverseBytes(s.readLong()));
+            lenWords = (int)f.length();
+            for (int i = 0; i < lenWords; i += 8) {
+                cpu.write64(addr + i, Long.reverseBytes(s.readLong()));
             }
         } catch (FileNotFoundException e) {
             System.out.println(e);
@@ -47,8 +45,6 @@ public class Main {
             System.out.println(e);
             throw new RuntimeException(e);
         }
-
-        return ramWords;
     }
 
     public static void main(String[] args) {
@@ -57,8 +53,6 @@ public class Main {
         CPU cpu = new CPU();
         RAM<Word64> ramSystem = new RAM<Word64>(createRAM(32 * 1024));
         RAM<Word64> ramMain = new RAM<Word64>(createRAM(16 * 1024 * 1024));
-        RAM<Word64> ramPageTable = new RAM<Word64>(createRAM(32 * 1024));
-        RAM<Word64> ramImage = new RAM<Word64>(loadImage(filename));
         Bus<Word64> bus = new Bus<Word64>();
         int addrAtags = 0x00004000;
 
@@ -66,20 +60,22 @@ public class Main {
         //RAM Image(tentative)
         //  0x00000000 - 0x00001000: vector
         //    0x00004000 - 0x00005000: ATAG_XXX
-        //  0x10000000 - 0x11000000: Main
-        //  0xc0000000 - 0xc0008000: Linux pagetable
-        //  0xc0008000 - 0xc0500000: Linux Image
+        //  0xc0000000 - 0xc1000000: Main
+        //    0xc0000000 - 0xc0008000: Linux pagetable
+        //    0xc0008000 - 0xc0500000: Linux Image
         bus.addSlaveCore(ramSystem, 0x00000000L, 0x00008000L);
-        bus.addSlaveCore(ramMain, 0x10000000L, 0x11000000L);
-        bus.addSlaveCore(ramPageTable, 0xc0000000L, 0xc0008000L);
-        bus.addSlaveCore(ramImage, 0xc0008000L, 0xc0500000L);
+        bus.addSlaveCore(ramMain, 0xc0000000L, 0xc1000000L);
 
+        //reset
         cpu.setDisasmMode(true);
         cpu.setPrintingDisasm(true);
         cpu.setPrintingRegs(false);
         cpu.exceptionReset("Init.");
 
         //tentative boot loader for Linux
+        //load Image file
+        loadFile(filename, cpu, 0xc0008000);
+
         //r0: 0
         cpu.setReg(0, 0);
         //r1: machine nr
