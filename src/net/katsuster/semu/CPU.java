@@ -1356,6 +1356,61 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
+     * アドレシングモード 4 - ロード/ストアマルチプル
+     *
+     * 転送開始アドレスを取得します。
+     *
+     * @param pu    P, U ビット
+     * @param rn    レジスタ番号
+     * @param rlist レジスタリスト
+     * @return 転送開始アドレス
+     */
+    public int getLdmStartAddress(int pu, int rn, int rlist) {
+        switch (pu) {
+        case Instruction.PU_ADDR4_IA:
+            return getReg(rn);
+        case Instruction.PU_ADDR4_IB:
+            return getReg(rn) + 4;
+        case Instruction.PU_ADDR4_DA:
+            return getReg(rn) - (Integer.bitCount(rlist) * 4) + 4;
+        case Instruction.PU_ADDR4_DB:
+            return getReg(rn) - (Integer.bitCount(rlist) * 4);
+        default:
+            //do nothing
+            break;
+        }
+
+        throw new IllegalArgumentException("Illegal PU field " +
+                pu + ".");
+    }
+
+    /**
+     * アドレシングモード 4 - ロード/ストアマルチプル
+     *
+     * 転送するデータの長さを取得します。
+     *
+     * @param pu    P, U ビット
+     * @param rlist レジスタリスト
+     * @return 転送するデータの長さ
+     */
+    public int getLdmLength(int pu, int rlist) {
+        switch (pu) {
+        case Instruction.PU_ADDR4_IA:
+        case Instruction.PU_ADDR4_IB:
+            return Integer.bitCount(rlist) * 4;
+        case Instruction.PU_ADDR4_DA:
+        case Instruction.PU_ADDR4_DB:
+            return -(Integer.bitCount(rlist) * 4);
+        default:
+            //do nothing
+            break;
+        }
+
+        throw new IllegalArgumentException("Illegal PU field " +
+                pu + ".");
+    }
+
+    /**
      * ステータスレジスタへの値の転送命令。
      *
      * @param inst ARM 命令
@@ -1552,9 +1607,8 @@ public class CPU extends MasterCore64 implements Runnable {
             executeALUBic(inst, exec);
             break;
         case Instruction.OPCODE_S_MVN:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeALUMvn(inst, exec);
+            break;
         default:
             throw new IllegalArgumentException("Unknown opcode S-bit ID " +
                     String.format("%d.", id));
@@ -1808,6 +1862,33 @@ public class CPU extends MasterCore64 implements Runnable {
         setReg(rd, dest);
     }
 
+    /**
+     * 移動否定命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeALUMvn(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rd = inst.getRdField();
+        int opr = getShifterOperand(inst);
+        int left, right, dest;
+
+        right = opr;
+        dest = ~right;
+
+        if (s && rd == 15) {
+            setCPSR(getSPSR());
+        } else if (s) {
+            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_Z(dest == 0);
+            setCPSR_C(getShifterCarry(inst));
+            //V flag is unaffected
+        }
+
+        setReg(rd, dest);
+    }
+
     public void executeLdrt(Instruction inst, boolean exec) {
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
@@ -1940,57 +2021,6 @@ public class CPU extends MasterCore64 implements Runnable {
         }
     }
 
-    /**
-     * LDM, STM 命令の転送開始アドレスを取得します。
-     *
-     * @param pu    P, U ビット
-     * @param rn    レジスタ番号
-     * @param rlist レジスタリスト
-     * @return 転送開始アドレス
-     */
-    public int getLdmStartAddress(int pu, int rn, int rlist) {
-        switch (pu) {
-        case Instruction.PU_ADDR4_IA:
-            return getReg(rn);
-        case Instruction.PU_ADDR4_IB:
-            return getReg(rn) + 4;
-        case Instruction.PU_ADDR4_DA:
-            return getReg(rn) - (Integer.bitCount(rlist) * 4) + 4;
-        case Instruction.PU_ADDR4_DB:
-            return getReg(rn) - (Integer.bitCount(rlist) * 4);
-        default:
-            //do nothing
-            break;
-        }
-
-        throw new IllegalArgumentException("Illegal PU field " +
-                pu + ".");
-    }
-
-    /**
-     * LDM, STM 命令が転送するデータの長さを取得します。
-     *
-     * @param pu    P, U ビット
-     * @param rlist レジスタリスト
-     * @return 転送するデータの長さ
-     */
-    public int getLdmLength(int pu, int rlist) {
-        switch (pu) {
-        case Instruction.PU_ADDR4_IA:
-        case Instruction.PU_ADDR4_IB:
-            return Integer.bitCount(rlist) * 4;
-        case Instruction.PU_ADDR4_DA:
-        case Instruction.PU_ADDR4_DB:
-            return -(Integer.bitCount(rlist) * 4);
-        default:
-            //do nothing
-            break;
-        }
-
-        throw new IllegalArgumentException("Illegal PU field " +
-                pu + ".");
-    }
-
     public void executeLdm1(Instruction inst, boolean exec) {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -2047,8 +2077,40 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public void executeStm1(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int pu = inst.getPUField();
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rlist = inst.getRegListField();
+        int addr, len;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("stm%s%s",
+                            inst.getCondFieldName(),
+                            inst.getPUFieldName()),
+                    String.format("%s%s, {%s}",
+                            getRegName(rn), (w) ? "!" : "",
+                            inst.getRegListFieldName()));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        addr = getLdmStartAddress(pu, rn, rlist);
+        len = getLdmLength(pu, rlist);
+        for (int i = 0; i < 16; i++) {
+            if ((rlist & (1 << i)) == 0) {
+                continue;
+            }
+            write32(addr, getReg(i));
+            addr += 4;
+        }
+
+        if (w) {
+            setReg(rn, getReg(rn) + len);
+        }
     }
 
     public void executeStm2(Instruction inst, boolean exec) {
@@ -2362,6 +2424,24 @@ public class CPU extends MasterCore64 implements Runnable {
      *
      * subcode = 0b01
      *
+     * 各ビットと命令の対応は下記の通りです。
+     *
+     *        |  I  |  P  |  B  |  W  |  L  |     |
+     *        | 25  | 24  | 22  | 21  | 20  |  4  |
+     * -------+-----+-----+-----+-----+-----+-----+
+     * LDR    |  x  |  x  |  0  |  x  |  1  |  x  |
+     * LDRB   |  x  |  x  |  1  |  x  |  1  |  x  |
+     * LDRBT  |  x  |  0  |  1  |  1  |  1  |  x  |
+     * LDRT   |  x  |  0  |  0  |  1  |  1  |  x  |
+     * -------+-----+-----+-----+-----+-----+-----+
+     * STR    |  x  |  x  |  0  |  x  |  0  |  x  |
+     * STRB   |  x  |  x  |  1  |  x  |  0  |  x  |
+     * STRBT  |  x  |  0  |  1  |  1  |  0  |  x  |
+     * STRT   |  x  |  0  |  0  |  1  |  0  |  x  |
+     * -------+-----+-----+-----+-----+-----+-----+
+     * UND    |  1  |  x  |  x  |  x  |  x  |  1  |
+     * -------+-----+-----+-----+-----+-----+-----+
+     *
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
@@ -2564,7 +2644,7 @@ public class CPU extends MasterCore64 implements Runnable {
         int v;
 
         //for debug
-        int target_address = 0xc0008078;//0xc001da68;
+        int target_address = 0xc036528c;
 
         v = read32(getPC() - 8);
         inst = new Instruction(v);
@@ -2581,7 +2661,7 @@ public class CPU extends MasterCore64 implements Runnable {
             }
 
             //ブレーク用
-            if (getPC() - 8 == target_address) {
+            if (isPrintingRegs()) {
                 int a = 0;
             }
 
