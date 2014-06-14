@@ -213,13 +213,13 @@ public class StdCoProc extends CoProc {
     public void setCReg(int cn, int val) {
         switch (cn) {
         case CR01_MMU_SCTLR:
-            System.out.printf("SCTLR    : 0x%x.\n", val);
+            setSCTLR(val);
             break;
         case CR02_MMU_TTBR0:
-            System.out.printf("TTBR0    : 0x%x.\n", val);
+            setTTBR0(val);
             break;
         case CR03_MMU_DACR:
-            System.out.printf("DACR     : 0x%x.\n", val);
+            setDACR(val);
             break;
         case CR07_UCH_INVALL:
             System.out.printf("I&D-cache: all invalidated.\n");
@@ -245,6 +245,55 @@ public class StdCoProc extends CoProc {
         default:
             super.setCReg(cn, val);
             break;
+        }
+    }
+
+    /**
+     * crn01: 制御ビット
+     *
+     * @param val 新たなレジスタの値
+     */
+    public void setSCTLR(int val) {
+        boolean r = BitOp.getBit(val, 9);
+        boolean s = BitOp.getBit(val, 8);
+        boolean a = BitOp.getBit(val, 1);
+        boolean m = BitOp.getBit(val, 0);
+
+        System.out.printf("SCTLR    : 0x%x.\n", val);
+        System.out.printf("  R      : %b.\n", r);
+        System.out.printf("  S      : %b.\n", s);
+        System.out.printf("  A      : %b.\n", a);
+        System.out.printf("  M      : %b.\n", m);
+    }
+
+    /**
+     * crn02: メモリの保護と制御、MMU 変換テーブル
+     *
+     * @param val 新たなレジスタの値
+     */
+    public void setTTBR0(int val) {
+        int base = (val >> 14) & 0x3ffff;
+
+        System.out.printf("TTBR0    : 0x%x.\n", val);
+        System.out.printf("  base   : 0x%x.\n", base);
+    }
+
+    /**
+     * crn03: メモリの保護と制御、MMU ドメインアクセス制御
+     *
+     * @param val 新たなレジスタの値
+     */
+    public void setDACR(int val) {
+        int[] dom = new int[16];
+
+        for (int i = 0; i < 16; i++) {
+            dom[i] = (val >> (i * 2)) & 0x3;
+        }
+
+        System.out.printf("DACR     : 0x%x.\n", val);
+
+        for (int i = 0; i < 16; i++) {
+            System.out.printf("  dom%2d  : 0x%x.\n", i, dom[i]);
         }
     }
 }
