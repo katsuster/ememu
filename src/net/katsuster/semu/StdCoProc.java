@@ -264,6 +264,9 @@ public class StdCoProc extends CoProc {
         System.out.printf("  S      : %b.\n", s);
         System.out.printf("  A      : %b.\n", a);
         System.out.printf("  M      : %b.\n", m);
+
+        //m: MMU イネーブルビット
+        getCPU().getMMU().setEnable(m);
     }
 
     /**

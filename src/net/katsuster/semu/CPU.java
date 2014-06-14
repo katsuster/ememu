@@ -14,6 +14,7 @@ public class CPU extends MasterCore64 implements Runnable {
     private int[] regs_fiq;
     private int cpsr;
     private CoProc[] coProcs;
+    private MMU mmu;
 
     private boolean jumped;
 
@@ -30,6 +31,7 @@ public class CPU extends MasterCore64 implements Runnable {
         regs_fiq = new int[17];
         coProcs = new CoProc[16];
         coProcs[15] = new StdCoProc(15, this);
+        mmu = new MMU(this);
     }
 
     public boolean isDisasmMode() {
@@ -271,6 +273,15 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public static String getCoprocRegName(int cpnum, int n) {
         return String.format("cr%d", n);
+    }
+
+    /**
+     * MMU を取得します。
+     *
+     * @return MMU
+     */
+    public MMU getMMU() {
+        return mmu;
     }
 
     /**
@@ -1910,7 +1921,7 @@ public class CPU extends MasterCore64 implements Runnable {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getOffsetAddress(inst);
-        int address, rot, value;
+        int vaddr, paddr, rot, value;
 
         if (!exec) {
             printDisasm(inst,
@@ -1926,14 +1937,15 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (p) {
             //プリインデクス
-            address = offset;
+            vaddr = offset;
         } else {
             //ポストインデクス
-            address = getReg(rn);
+            vaddr = getReg(rn);
         }
-        rot = address & 0x3;
+        rot = vaddr & 0x3;
 
-        value = read32(address);
+        paddr = getMMU().translate(vaddr);
+        value = read32(paddr);
         switch (rot) {
         case 0:
             //do nothing
@@ -1989,7 +2001,7 @@ public class CPU extends MasterCore64 implements Runnable {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getOffsetAddress(inst);
-        int address;
+        int vaddr, paddr;
 
         if (!exec) {
             printDisasm(inst,
@@ -2005,13 +2017,14 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (p) {
             //プリインデクス
-            address = offset;
+            vaddr = offset;
         } else {
             //ポストインデクス
-            address = getReg(rn);
+            vaddr = getReg(rn);
         }
 
-        write32(address, getReg(rd));
+        paddr = getMMU().translate(vaddr);
+        write32(paddr, getReg(rd));
 
         if (!p || w) {
             //ベースレジスタを更新する
@@ -2025,7 +2038,7 @@ public class CPU extends MasterCore64 implements Runnable {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
-        int addr, len;
+        int vaddr, paddr, len;
 
         if (!exec) {
             printDisasm(inst,
@@ -2043,22 +2056,26 @@ public class CPU extends MasterCore64 implements Runnable {
         }
 
         //r15 以外
-        addr = getLdmStartAddress(inst.getPUField(), rn, rlist);
+        vaddr = getLdmStartAddress(inst.getPUField(), rn, rlist);
         len = getLdmLength(inst.getPUField(), rlist);
         for (int i = 0; i < 15; i++) {
             if ((rlist & (1 << i)) == 0) {
                 continue;
             }
-            setReg(i, read32(addr));
-            addr += 4;
+            paddr = getMMU().translate(vaddr);
+            setReg(i, read32(paddr));
+            vaddr += 4;
         }
         //r15
         if (BitOp.getBit(rlist, 15)) {
-            int v = read32(addr);
+            int v;
+
+            paddr = getMMU().translate(vaddr);
+            v = read32(paddr);
 
             setPC(v & 0xfffffffe);
             setCPSR_T(BitOp.getBit(v, 0));
-            addr += 4;
+            vaddr += 4;
         }
 
         if (w) {
@@ -2081,7 +2098,7 @@ public class CPU extends MasterCore64 implements Runnable {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
-        int addr, len;
+        int vaddr, paddr, len;
 
         if (!exec) {
             printDisasm(inst,
@@ -2098,14 +2115,15 @@ public class CPU extends MasterCore64 implements Runnable {
             return;
         }
 
-        addr = getLdmStartAddress(pu, rn, rlist);
+        vaddr = getLdmStartAddress(pu, rn, rlist);
         len = getLdmLength(pu, rlist);
         for (int i = 0; i < 16; i++) {
             if ((rlist & (1 << i)) == 0) {
                 continue;
             }
-            write32(addr, getReg(i));
-            addr += 4;
+            paddr = getMMU().translate(vaddr);
+            write32(paddr, getReg(i));
+            vaddr += 4;
         }
 
         if (w) {
@@ -2641,12 +2659,14 @@ public class CPU extends MasterCore64 implements Runnable {
 
     public void step() {
         Instruction inst;
-        int v;
+        int v, vaddr, paddr;
 
         //for debug
         int target_address = 0xc036528c;
 
-        v = read32(getPC() - 8);
+        vaddr = getPC() - 8;
+        paddr = getMMU().translate(vaddr);
+        v = read32(paddr);
         inst = new Instruction(v);
         try {
             //表示調整用
