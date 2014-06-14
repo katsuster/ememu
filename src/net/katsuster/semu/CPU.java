@@ -1367,8 +1367,7 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
-     * アドレシングモード 4 - ロード/ストアマルチプル
-     *
+     * アドレシングモード 4 - ロード/ストアマルチプル、
      * 転送開始アドレスを取得します。
      *
      * @param pu    P, U ビット
@@ -1376,7 +1375,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param rlist レジスタリスト
      * @return 転送開始アドレス
      */
-    public int getLdmStartAddress(int pu, int rn, int rlist) {
+    public int getRegistersStartAddress(int pu, int rn, int rlist) {
         switch (pu) {
         case Instruction.PU_ADDR4_IA:
             return getReg(rn);
@@ -1396,15 +1395,14 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
-     * アドレシングモード 4 - ロード/ストアマルチプル
-     *
+     * アドレシングモード 4 - ロード/ストアマルチプル、
      * 転送するデータの長さを取得します。
      *
      * @param pu    P, U ビット
      * @param rlist レジスタリスト
      * @return 転送するデータの長さ
      */
-    public int getLdmLength(int pu, int rlist) {
+    public int getRegistersLength(int pu, int rlist) {
         switch (pu) {
         case Instruction.PU_ADDR4_IA:
         case Instruction.PU_ADDR4_IB:
@@ -2056,8 +2054,8 @@ public class CPU extends MasterCore64 implements Runnable {
         }
 
         //r15 以外
-        vaddr = getLdmStartAddress(inst.getPUField(), rn, rlist);
-        len = getLdmLength(inst.getPUField(), rlist);
+        vaddr = getRegistersStartAddress(inst.getPUField(), rn, rlist);
+        len = getRegistersLength(inst.getPUField(), rlist);
         for (int i = 0; i < 15; i++) {
             if ((rlist & (1 << i)) == 0) {
                 continue;
@@ -2115,8 +2113,8 @@ public class CPU extends MasterCore64 implements Runnable {
             return;
         }
 
-        vaddr = getLdmStartAddress(pu, rn, rlist);
-        len = getLdmLength(pu, rlist);
+        vaddr = getRegistersStartAddress(pu, rn, rlist);
+        len = getRegistersLength(pu, rlist);
         for (int i = 0; i < 16; i++) {
             if ((rlist & (1 << i)) == 0) {
                 continue;
