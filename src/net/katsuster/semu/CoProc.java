@@ -3,7 +3,7 @@ package net.katsuster.semu;
 import java.util.*;
 
 /**
- * コプロセッサ。
+ * ARM コプロセッサ。
  *
  * @author katsuhiro
  */

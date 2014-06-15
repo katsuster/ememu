@@ -1,7 +1,7 @@
 package net.katsuster.semu;
 
 /**
- * コプロセッサ 15: 標準コプロセッサ。
+ * ARM コプロセッサ 15: 標準コプロセッサ。
  *
  * @author katsuhiro
  */

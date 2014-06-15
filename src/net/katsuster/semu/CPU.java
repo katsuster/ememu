@@ -1,7 +1,16 @@
 package net.katsuster.semu;
 
 /**
- * CPU
+ * ARM9 CPU
+ *
+ * 命令セット: ARMv5TE
+ *
+ * ARM アーキテクチャリファレンスマニュアル Second Edition による。
+ * （文章番号 ARM DDI 0100DJ-00）
+ *
+ * T は Thumb 命令、
+ * E はエンハンスド DSP 命令、
+ * のことらしい。
  *
  * @author katsuhiro
  */

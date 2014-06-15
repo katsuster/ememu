@@ -1,7 +1,7 @@
 package net.katsuster.semu;
 
 /**
- * MMU
+ * ARM MMU
  *
  * @author katsuhiro
  */
