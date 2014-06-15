@@ -2759,7 +2759,7 @@ public class CPU extends MasterCore64 implements Runnable {
                 //ldrbt
                 executeLdrbt(inst, exec);
             } else if (b) {
-                if (cond == inst.COND_NV && rd == 15) {
+                if (cond == inst.COND_NV && p && !w && rd == 15) {
                     //PLD
                     executePld(inst, exec);
                 } else {
