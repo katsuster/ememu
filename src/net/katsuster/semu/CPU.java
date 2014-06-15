@@ -1420,36 +1420,22 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
-     * ステータスレジスタへの値の転送命令。
+     * ステータスレジスタから汎用レジスタへの転送命令。
      *
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeMsr(Instruction inst, boolean exec) {
-        boolean flag_r = inst.getBit(22);
-        boolean mask_f = inst.getBit(19);
-        boolean mask_s = inst.getBit(18);
-        boolean mask_x = inst.getBit(17);
-        boolean mask_c = inst.getBit(16);
-        int sbo = (inst.getInst() >> 12) & 0xf;
-        int imm32 = getShifterOperandImm32(inst);
-        int v, m = 0;
-
-        if (!inst.getIBit()) {
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-        }
+    public void executeMrs(Instruction inst, boolean exec) {
+        boolean r = inst.getBit(22);
+        int sbo = (inst.getInst() >> 16) & 0xf;
+        int rd = inst.getRdField();
+        int dest;
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("msr%s", inst.getCondFieldName()),
-                    String.format("%s_%s%s%s%s, #%d    ; 0x%x",
-                            (flag_r) ? "SPSR" : "CPSR",
-                            (mask_f) ? "f" : "",
-                            (mask_s) ? "s" : "",
-                            (mask_x) ? "x" : "",
-                            (mask_c) ? "c" : "",
-                            imm32, imm32));
+                    String.format("mrs%s", inst.getCondFieldName()),
+                    String.format("%s, %s",
+                            getRegName(rd), (r) ? "spsr" : "cpsr"));
             return;
         }
 
@@ -1459,13 +1445,61 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (sbo != 0xf) {
             System.out.println("Warning: Illegal instruction, " +
-                    String.format("msr SBO[15:12](0x%01x) has zero.", sbo));
+                    String.format("mrs SBO[19:16](0x%01x) != 0xf.", sbo));
         }
 
-        if (!flag_r) {
-            v = getCPSR();
+        if (r) {
+            dest = getSPSR();
         } else {
-            v = getSPSR();
+            dest = getCPSR();
+        }
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * ステータスレジスタへの値の転送命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeMsr(Instruction inst, boolean exec) {
+        boolean i = inst.getIBit();
+        boolean r = inst.getBit(22);
+        boolean mask_f = inst.getBit(19);
+        boolean mask_s = inst.getBit(18);
+        boolean mask_x = inst.getBit(17);
+        boolean mask_c = inst.getBit(16);
+        int sbo = (inst.getInst() >> 12) & 0xf;
+        int opr = getShifterOperand(inst);
+        int dest, m = 0;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("msr%s", inst.getCondFieldName()),
+                    String.format("%s_%s%s%s%s, %s",
+                            (r) ? "SPSR" : "CPSR",
+                            (mask_f) ? "f" : "",
+                            (mask_s) ? "s" : "",
+                            (mask_x) ? "x" : "",
+                            (mask_c) ? "c" : "",
+                            getShifterOperandName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        if (sbo != 0xf) {
+            System.out.println("Warning: Illegal instruction, " +
+                    String.format("msr SBO[15:12](0x%01x) != 0xf.", sbo));
+        }
+
+        if (!r) {
+            dest = getCPSR();
+        } else {
+            dest = getSPSR();
         }
 
         if (mask_c) {
@@ -1480,13 +1514,13 @@ public class CPU extends MasterCore64 implements Runnable {
         if (mask_f) {
             m |= 0xff000000;
         }
-        v &= ~m;
-        v |= imm32 & m;
+        dest &= ~m;
+        dest |= opr & m;
 
-        if (!flag_r) {
-            setCPSR(v);
+        if (!r) {
+            setCPSR(dest);
         } else {
-            setSPSR(v);
+            setSPSR(dest);
         }
     }
 
@@ -1648,9 +1682,6 @@ public class CPU extends MasterCore64 implements Runnable {
             setCPSR_Z(dest == 0);
             setCPSR_C(getShifterCarry(inst));
             //V flag is unaffected
-
-            //TODO: set flags
-            throw new IllegalArgumentException("Sorry, not implemented.");
         }
 
         setReg(rd, dest);
@@ -1680,9 +1711,6 @@ public class CPU extends MasterCore64 implements Runnable {
             setCPSR_Z(dest == 0);
             setCPSR_C(!borrowFrom(left, right));
             setCPSR_V(overflowFrom(left, right, false));
-
-            //TODO: set flags
-            throw new IllegalArgumentException("Sorry, not implemented.");
         }
 
         setReg(rd, dest);
@@ -1712,9 +1740,6 @@ public class CPU extends MasterCore64 implements Runnable {
             setCPSR_Z(dest == 0);
             setCPSR_C(carryFrom(left, right));
             setCPSR_V(overflowFrom(left, right, true));
-
-            //TODO: set flags
-            throw new IllegalArgumentException("Sorry, not implemented.");
         }
 
         setReg(rd, dest);
@@ -1728,8 +1753,14 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeALUTst(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
+        int sbz = (inst.getInst() >> 12) & 0xf;
         int opr = getShifterOperand(inst);
         int left, right, dest;
+
+        if (sbz != 0x0) {
+            System.out.println("Warning: Illegal instruction, " +
+                    String.format("tst SBZ[15:12](0x%01x) != 0x0.", sbz));
+        }
 
         left = getReg(rn);
         right = opr;
@@ -1749,8 +1780,14 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeALUTeq(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
+        int sbz = (inst.getInst() >> 12) & 0xf;
         int opr = getShifterOperand(inst);
         int left, right, dest;
+
+        if (sbz != 0x0) {
+            System.out.println("Warning: Illegal instruction, " +
+                    String.format("teq SBZ[15:12](0x%01x) != 0x0.", sbz));
+        }
 
         left = getReg(rn);
         right = opr;
@@ -1770,8 +1807,14 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeALUCmp(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
+        int sbz = (inst.getInst() >> 12) & 0xf;
         int opr = getShifterOperand(inst);
         int left, right, dest;
+
+        if (sbz != 0x0) {
+            System.out.println("Warning: Illegal instruction, " +
+                    String.format("cmp SBZ[15:12](0x%01x) != 0x0.", sbz));
+        }
 
         left = getReg(rn);
         right = opr;
@@ -1807,9 +1850,6 @@ public class CPU extends MasterCore64 implements Runnable {
             setCPSR_Z(dest == 0);
             setCPSR_C(getShifterCarry(inst));
             //V flag is unaffected
-
-            //TODO: set flags
-            throw new IllegalArgumentException("Sorry, not implemented.");
         }
 
         setReg(rd, dest);
@@ -1823,9 +1863,15 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeALUMov(Instruction inst, boolean exec) {
         boolean s = inst.getSBit();
+        int sbz = (inst.getInst() >> 16) & 0xf;
         int rd = inst.getRdField();
         int opr = getShifterOperand(inst);
         int right, dest;
+
+        if (sbz != 0x0) {
+            System.out.println("Warning: Illegal instruction, " +
+                    String.format("mov SBZ[19:16](0x%01x) != 0x0.", sbz));
+        }
 
         right = opr;
         dest = right;
@@ -1909,8 +1955,44 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public void executeLdrb(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        boolean p = inst.getBit(24);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetAddress(inst);
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("ldrb%s", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetAddressName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        if (p) {
+            //プリインデクス
+            vaddr = offset;
+        } else {
+            //ポストインデクス
+            vaddr = getReg(rn);
+        }
+
+        paddr = getMMU().translate(vaddr);
+        value = (int)(read8(paddr)) & 0xff;
+
+        setReg(rd, value);
+
+        if (!p || w) {
+            //ベースレジスタを更新する
+            //条件は !(p && !w) と等価、つまり P, W ビットが
+            //オフセットアドレス以外の指定なら Rn を書き換える
+            setReg(rn, offset);
+        }
     }
 
     public void executeLdr(Instruction inst, boolean exec) {
@@ -2157,7 +2239,17 @@ public class CPU extends MasterCore64 implements Runnable {
         jumpRel(simm24);
     }
 
-    public void executeBlx(Instruction inst, boolean exec) {
+    /**
+     * BLX(1) 命令。
+     *
+     * 31  30  29  28 |27  26  25 |24 |23               0|
+     * ---------------------------------------------------
+     *  1   1   1   1 | 1   0   1 | H | signed_immed_24  |
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBlx1(Instruction inst, boolean exec) {
         boolean h = inst.getBit(24);
         int vh = BitOp.toBit(h) << 1;
         int imm24 = inst.getInst() & 0xffffff;
@@ -2369,7 +2461,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
     /**
      * イミディエートシフトオペランドを取るデータ処理命令、
-     * その他の命令を実行します。
+     * または、その他の命令を実行します。
      *
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
@@ -2379,9 +2471,8 @@ public class CPU extends MasterCore64 implements Runnable {
 
         switch (id) {
         case Instruction.OPCODE_S_OTH:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeSubUseALUShiftImmOther(inst, exec);
+            break;
         default:
             executeALU(inst, exec, id);
             break;
@@ -2432,6 +2523,75 @@ public class CPU extends MasterCore64 implements Runnable {
         default:
             executeALU(inst, exec, id);
             break;
+        }
+    }
+
+    /**
+     * イミディエートシフトオペランドを取るデータ処理命令、
+     * その他の命令を実行します。
+     *
+     * bit[27:23] = 0b00010
+     * bit[20] = 0
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSubUseALUShiftImmOther(Instruction inst, boolean exec) {
+        int cond = inst.getCondField();
+        boolean b22 = BitOp.getBit(inst.getInst(), 22);
+        boolean b21 = BitOp.getBit(inst.getInst(), 21);
+        int type = (inst.getInst() >> 4) & 0xf;
+
+        switch (type) {
+        case 0x0:
+            if (!b21) {
+                //mrs
+                executeMrs(inst, exec);
+            } else {
+                //msr
+                executeMsr(inst, exec);
+            }
+            break;
+        case 0x1:
+            if (!b22 && b21) {
+                //bx
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            } else if (b22 && b21) {
+                //clz
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            } else {
+                //und
+                executeUnd(inst, exec);
+            }
+            break;
+        case 0x3:
+            if (!b22 && b21) {
+                //blx(2)
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            } else {
+                //und
+                executeUnd(inst, exec);
+            }
+            break;
+        case 0x7:
+            if (cond == Instruction.COND_AL && !b22 && b21) {
+                //bkpt
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            } else {
+                //und
+                executeUnd(inst, exec);
+            }
+            break;
+        default:
+            //und
+            //executeUnd(inst, exec);
+            //break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
         }
     }
 
@@ -2543,7 +2703,7 @@ public class CPU extends MasterCore64 implements Runnable {
             //分岐命令
             if (cond == Instruction.COND_NV) {
                 //blx
-                executeBlx(inst, exec);
+                executeBlx1(inst, exec);
             } else {
                 //b, bl
                 executeBl(inst, exec);
@@ -2660,7 +2820,7 @@ public class CPU extends MasterCore64 implements Runnable {
         int v, vaddr, paddr;
 
         //for debug
-        int target_address = 0xc036528c;
+        int target_address = 0xc015dbb0;
 
         vaddr = getPC() - 8;
         paddr = getMMU().translate(vaddr);
