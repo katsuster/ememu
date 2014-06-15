@@ -1609,9 +1609,8 @@ public class CPU extends MasterCore64 implements Runnable {
             executeALUSub(inst, exec);
             break;
         case Instruction.OPCODE_S_RSB:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeALURsb(inst, exec);
+            break;
         case Instruction.OPCODE_S_ADD:
             executeALUAdd(inst, exec);
             break;
@@ -1637,9 +1636,8 @@ public class CPU extends MasterCore64 implements Runnable {
             executeALUCmp(inst, exec);
             break;
         case Instruction.OPCODE_S_CMN:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeALUCmn(inst, exec);
+            break;
         case Instruction.OPCODE_S_ORR:
             executeALUOrr(inst, exec);
             break;
@@ -1702,6 +1700,35 @@ public class CPU extends MasterCore64 implements Runnable {
 
         left = getReg(rn);
         right = opr;
+        dest = left - right;
+
+        if (s && rd == 15) {
+            setCPSR(getSPSR());
+        } else if (s) {
+            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_Z(dest == 0);
+            setCPSR_C(!borrowFrom(left, right));
+            setCPSR_V(overflowFrom(left, right, false));
+        }
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * 逆減算命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeALURsb(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int opr = getShifterOperand(inst);
+        int left, right, dest;
+
+        left = opr;
+        right = getReg(rn);
         dest = left - right;
 
         if (s && rd == 15) {
@@ -1824,6 +1851,33 @@ public class CPU extends MasterCore64 implements Runnable {
         setCPSR_Z(dest == 0);
         setCPSR_C(!borrowFrom(left, right));
         setCPSR_V(overflowFrom(left, right, false));
+    }
+
+    /**
+     * 比較否定命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeALUCmn(Instruction inst, boolean exec) {
+        int rn = inst.getRnField();
+        int sbz = (inst.getInst() >> 12) & 0xf;
+        int opr = getShifterOperand(inst);
+        int left, right, dest;
+
+        if (sbz != 0x0) {
+            System.out.println("Warning: Illegal instruction, " +
+                    String.format("cmp SBZ[15:12](0x%01x) != 0x0.", sbz));
+        }
+
+        left = getReg(rn);
+        right = opr;
+        dest = left + right;
+
+        setCPSR_N(BitOp.getBit(dest, 31));
+        setCPSR_Z(dest == 0);
+        setCPSR_C(carryFrom(left, right));
+        setCPSR_V(overflowFrom(left, right, true));
     }
 
     /**
@@ -1964,7 +2018,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("ldrb%s", inst.getCondFieldName()),
+                    String.format("ldr%sb", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetAddressName(inst)));
             return;
@@ -2060,6 +2114,21 @@ public class CPU extends MasterCore64 implements Runnable {
         }
     }
 
+    public void executePld(Instruction inst, boolean exec) {
+        boolean r = inst.getBit(22);
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("pld%s", (r) ? "" : "w"),
+                    String.format("%s", getOffsetAddressName(inst)));
+            return;
+        }
+
+        //pld は cond が常に NV のため、条件判定不可です
+
+        //do noting
+    }
+
     public void executeStrt(Instruction inst, boolean exec) {
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
@@ -2071,8 +2140,42 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public void executeStrb(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        boolean p = inst.getBit(24);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetAddress(inst);
+        int vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("str%sb", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetAddressName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        if (p) {
+            //プリインデクス
+            vaddr = offset;
+        } else {
+            //ポストインデクス
+            vaddr = getReg(rn);
+        }
+
+        paddr = getMMU().translate(vaddr);
+        write8(paddr, (byte) getReg(rd));
+
+        if (!p || w) {
+            //ベースレジスタを更新する
+            //条件は !(p && !w) と等価、つまり P, W ビットが
+            //オフセットアドレス以外の指定なら Rn を書き換える
+            setReg(rn, offset);
+        }
     }
 
     public void executeStr(Instruction inst, boolean exec) {
@@ -2262,7 +2365,7 @@ public class CPU extends MasterCore64 implements Runnable {
             return;
         }
 
-        //blx は条件判定不可です
+        //blx は cond が常に NV のため、条件判定不可です
 
         setReg(14, getPC() - 4);
         //T ビットをセット
@@ -2533,6 +2636,20 @@ public class CPU extends MasterCore64 implements Runnable {
      * bit[27:23] = 0b00010
      * bit[20] = 0
      *
+     * 各ビットと命令の対応は下記の通りです。
+     *
+     *        | 22  | 21  |  7  |  6  |  5  |  4  |
+     * -------+-----+-----+-----+-----+-----+-----+
+     * MRS    |  x  |  0  |  0  |  0  |  0  |  0  |
+     * MSR    |  x  |  1  |  0  |  0  |  0  |  0  |
+     * BX     |  0  |  1  |  0  |  0  |  0  |  1  |
+     * CLZ    |  1  |  1  |  0  |  0  |  0  |  1  |
+     * BLX(2) |  0  |  1  |  0  |  0  |  1  |  1  |
+     * BKPT   |  0  |  1  |  0  |  1  |  1  |  1  |
+     * -------+-----+-----+-----+-----+-----+-----+
+     *
+     * これ以外のパターンは全て未定義命令です。
+     *
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
@@ -2622,11 +2739,13 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSubLdrStr(Instruction inst, boolean exec) {
+        int cond = inst.getCondField();
         boolean i = inst.getBit(25);
         boolean p = inst.getBit(24);
         boolean b = inst.getBit(22);
         boolean w = inst.getBit(21);
         boolean l = inst.getLBit();
+        int rd = inst.getRdField();
         boolean b4 = inst.getBit(4);
 
         if (i && b4) {
@@ -2640,8 +2759,13 @@ public class CPU extends MasterCore64 implements Runnable {
                 //ldrbt
                 executeLdrbt(inst, exec);
             } else if (b) {
-                //ldrb
-                executeLdrb(inst, exec);
+                if (cond == inst.COND_NV && rd == 15) {
+                    //PLD
+                    executePld(inst, exec);
+                } else {
+                    //ldrb
+                    executeLdrb(inst, exec);
+                }
             } else if (!b) {
                 //ldr
                 executeLdr(inst, exec);
