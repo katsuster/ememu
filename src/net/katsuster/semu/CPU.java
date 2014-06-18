@@ -277,11 +277,20 @@ public class CPU extends MasterCore64 implements Runnable {
      * コプロセッサレジスタ CRn の名前を取得します。
      *
      * @param cpnum コプロセッサ番号
-     * @param n コプロセッサレジスタ番号（0 ～ 7）
+     * @param n     コプロセッサレジスタ番号（0 ～ 7）
      * @return コプロセッサレジスタの名前
      */
     public static String getCoprocRegName(int cpnum, int n) {
         return String.format("cr%d", n);
+    }
+
+    /**
+     * 標準コプロセッサ（Cp15）を取得します。
+     *
+     * @return 標準コプロセッサ
+     */
+    public StdCoProc getStdCoProc() {
+        return (StdCoProc)coProcs[15];
     }
 
     /**
@@ -689,7 +698,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * F=0 ならば FIQ 割り込みが有効となります。
      * F=1 ならば FIQ 割り込みが無効となります。
      *
-     * @param nv  F ビットをセットするなら true, クリアするなら false
+     * @param nv F ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_F(boolean nv) {
         setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_F, nv));
@@ -721,7 +730,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * ARMv5 以上の非 T バリアント（Thumb 命令非対応）の場合、
      * T=1 ならば次に実行される命令で未定義命令例外を発生させます。
      *
-     * @param nv  T ビットをセットするなら true, クリアするなら false
+     * @param nv T ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_T(boolean nv) {
         setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_T, nv));
@@ -1179,7 +1188,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * ポストインデクスの場合、
      * 更新後のベースレジスタの値を返します。
      *
-     * @param inst  ARM 命令
+     * @param inst ARM 命令
      * @return アドレス
      */
     public int getOffsetAddress(Instruction inst) {
@@ -1339,7 +1348,7 @@ public class CPU extends MasterCore64 implements Runnable {
         } else if (!p) {
             //ポストインデクスイミディエート
             return String.format("[%s], #%s%d    ; 0x%x",
-                    getRegName(rn),  (u) ? "" : "-",
+                    getRegName(rn), (u) ? "" : "-",
                     offset12, offset12);
         } else {
             throw new IllegalArgumentException("Illegal P,W bits " +
@@ -2416,14 +2425,14 @@ public class CPU extends MasterCore64 implements Runnable {
 
         cp = getCoproc(cpnum);
         if (cp == null) {
-            exceptionInst("Unimplemented coprocessor, " +
+            exceptionUndefined("Unimplemented coprocessor, " +
                     String.format("p%d selected.", cpnum));
             return;
         }
 
         crid = CoProc.getCRegID(crn, opcode1, crm, opcode2);
         if (!cp.validCRegNumber(crid)) {
-            exceptionInst("Unimplemented coprocessor register, " +
+            exceptionUndefined("Unimplemented coprocessor register, " +
                     String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
                             cpnum, crid, crn, opcode1, crm, opcode2));
             return;
@@ -2458,14 +2467,14 @@ public class CPU extends MasterCore64 implements Runnable {
 
         cp = getCoproc(cpnum);
         if (cp == null) {
-            exceptionInst("Unimplemented coprocessor, " +
+            exceptionUndefined("Unimplemented coprocessor, " +
                     String.format("p%d selected.", cpnum));
             return;
         }
 
         crid = CoProc.getCRegID(crn, opcode1, crm, opcode2);
         if (!cp.validCRegNumber(crid)) {
-            exceptionInst("Unimplemented coprocessor register, " +
+            exceptionUndefined("Unimplemented coprocessor register, " +
                     String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
                             cpnum, crid, crn, opcode1, crm, opcode2));
             return;
@@ -2489,8 +2498,6 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public void executeUnd(Instruction inst, boolean exec) {
-        int cond = inst.getCondField();
-
         if (!exec) {
             printDisasm(inst,
                     String.format("und%s", inst.getCondFieldName()),
@@ -2498,9 +2505,8 @@ public class CPU extends MasterCore64 implements Runnable {
             return;
         }
 
-        exceptionInst("Warning: Undefined instruction " +
-                String.format("inst:0x%08x, cond:%d.",
-                        inst.getInst(), cond));
+        exceptionPrefetch("Warning: Undefined instruction " +
+                String.format("inst:0x%08x.", inst.getInst()));
     }
 
     /**
@@ -3021,18 +3027,25 @@ public class CPU extends MasterCore64 implements Runnable {
         setSPSR(spsrOrg);
 
         //リセット例外ベクタへ
-        setPC(0x00000000);
+        if (getStdCoProc().isHighVector()) {
+            setPC(0xffff0000);
+        } else {
+            setPC(0x00000000);
+        }
     }
 
     /**
-     * 未定義命令例外を発生させます。
+     * 未定義例外を発生させます。
+     *
+     * この例外はコプロセッサ命令の実行時、
+     * 応答するコプロセッサが存在しないときに発生します。
      *
      * @param dbgmsg デバッグ用のメッセージ
      */
-    public void exceptionInst(String dbgmsg) {
+    public void exceptionUndefined(String dbgmsg) {
         int pcOrg, spsrOrg;
 
-        System.out.printf("Exception: Undefined Instruction by '%s'.\n",
+        System.out.printf("Exception: Undefined by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
@@ -3050,8 +3063,212 @@ public class CPU extends MasterCore64 implements Runnable {
         setReg(14, pcOrg);
         setSPSR(spsrOrg);
 
-        //未定義命令例外ベクタへ
-        setPC(0x00000004);
+        //未定義例外ベクタへ
+        if (getStdCoProc().isHighVector()) {
+            setPC(0xffff0004);
+        } else {
+            setPC(0x00000004);
+        }
+
+        //tentative...
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * ソフトウェア割り込み例外を発生させます。
+     *
+     * この例外は swi 命令を実行したときに生成されます。
+     *
+     * @param dbgmsg デバッグ用のメッセージ
+     */
+    public void exceptionSoftware(String dbgmsg) {
+        int pcOrg, spsrOrg;
+
+        System.out.printf("Exception: Software by '%s'.\n",
+                dbgmsg);
+
+        //pc, cpsr の値を取っておく
+        pcOrg = getPC() - 4;
+        spsrOrg = getCPSR();
+
+        //スーパバイザモード、ARM 状態、割り込み禁止、
+        //へ移行
+        setCPSR_Mode(MODE_SVC);
+        setCPSR_T(false);
+        //F flag is not affected
+        setCPSR_I(true);
+
+        //lr, spsr に例外前の pc, cpsr を保存する
+        setReg(14, pcOrg);
+        setSPSR(spsrOrg);
+
+        //ソフトウェア割り込み例外ベクタへ
+        if (getStdCoProc().isHighVector()) {
+            setPC(0xffff0008);
+        } else {
+            setPC(0x00000008);
+        }
+
+        //tentative...
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * プリフェッチアボート例外を発生させます。
+     *
+     * この例外は無効な命令を実行したときに生成されます。
+     *
+     * @param dbgmsg デバッグ用のメッセージ
+     */
+    public void exceptionPrefetch(String dbgmsg) {
+        int pcOrg, spsrOrg;
+
+        System.out.printf("Exception: Prefetch by '%s'.\n",
+                dbgmsg);
+
+        //pc, cpsr の値を取っておく
+        pcOrg = getPC() - 4;
+        spsrOrg = getCPSR();
+
+        //アボートモード、ARM 状態、割り込み禁止、
+        //へ移行
+        setCPSR_Mode(MODE_ABT);
+        setCPSR_T(false);
+        //F flag is not affected
+        setCPSR_I(true);
+
+        //lr, spsr に例外前の pc, cpsr を保存する
+        setReg(14, pcOrg);
+        setSPSR(spsrOrg);
+
+        //プリフェッチアボート例外ベクタへ
+        if (getStdCoProc().isHighVector()) {
+            setPC(0xffff000c);
+        } else {
+            setPC(0x0000000c);
+        }
+
+        //tentative...
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * データアボート例外を発生させます。
+     *
+     * この例外は無効なロード、あるいはストア命令を実行したときに生成されます。
+     *
+     * @param dbgmsg デバッグ用のメッセージ
+     */
+    public void exceptionData(String dbgmsg) {
+        int pcOrg, spsrOrg;
+
+        System.out.printf("Exception: Data by '%s'.\n",
+                dbgmsg);
+
+        //pc, cpsr の値を取っておく
+        pcOrg = getPC() - 4;
+        spsrOrg = getCPSR();
+
+        //アボートモード、ARM 状態、割り込み禁止、
+        //へ移行
+        setCPSR_Mode(MODE_ABT);
+        setCPSR_T(false);
+        //F flag is not affected
+        setCPSR_I(true);
+
+        //lr, spsr に例外前の pc, cpsr を保存する
+        setReg(14, pcOrg);
+        setSPSR(spsrOrg);
+
+        //データアボート例外ベクタへ
+        if (getStdCoProc().isHighVector()) {
+            setPC(0xffff0010);
+        } else {
+            setPC(0x00000010);
+        }
+
+        //tentative...
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 割り込み要求例外を発生させます。
+     *
+     * この例外はプロセッサの IRQ のアサートにより生成されます。
+     *
+     * @param dbgmsg デバッグ用のメッセージ
+     */
+    public void exceptionIRQ(String dbgmsg) {
+        int pcOrg, spsrOrg;
+
+        System.out.printf("Exception: IRQ by '%s'.\n",
+                dbgmsg);
+
+        //pc, cpsr の値を取っておく
+        pcOrg = getPC() - 4;
+        spsrOrg = getCPSR();
+
+        //IRQ モード、ARM 状態、割り込み禁止、
+        //へ移行
+        setCPSR_Mode(MODE_IRQ);
+        setCPSR_T(false);
+        //F flag is not affected
+        setCPSR_I(true);
+
+        //lr, spsr に例外前の pc, cpsr を保存する
+        setReg(14, pcOrg);
+        setSPSR(spsrOrg);
+
+        //IRQ 例外ベクタへ
+        if (getStdCoProc().isHighVector()) {
+            setPC(0xffff0018);
+        } else {
+            setPC(0x00000018);
+        }
+
+        //tentative...
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 高速割り込み要求例外を発生させます。
+     *
+     * この例外はプロセッサの FIQ のアサートにより生成されます。
+     *
+     * @param dbgmsg デバッグ用のメッセージ
+     */
+    public void exceptionFIQ(String dbgmsg) {
+        int pcOrg, spsrOrg;
+
+        System.out.printf("Exception: FIQ by '%s'.\n",
+                dbgmsg);
+
+        //pc, cpsr の値を取っておく
+        pcOrg = getPC() - 4;
+        spsrOrg = getCPSR();
+
+        //FIQ モード、ARM 状態、高速割り込み禁止、割り込み禁止、
+        //へ移行
+        setCPSR_Mode(MODE_FIQ);
+        setCPSR_T(false);
+        setCPSR_F(true);
+        setCPSR_I(true);
+
+        //lr, spsr に例外前の pc, cpsr を保存する
+        setReg(14, pcOrg);
+        setSPSR(spsrOrg);
+
+        //FIQ 例外ベクタへ
+        if (getStdCoProc().isHighVector()) {
+            setPC(0xffff001c);
+        } else {
+            setPC(0x0000001c);
+        }
 
         //tentative...
         //TODO: Not implemented

@@ -6,6 +6,8 @@ package net.katsuster.semu;
  * @author katsuhiro
  */
 public class StdCoProc extends CoProc {
+    private boolean highvector;
+
     //----------------------------------------------------------------------
     //crn00: ID コード、キャッシュタイプ、読み取り専用
     //----------------------------------------------------------------------
@@ -146,6 +148,8 @@ public class StdCoProc extends CoProc {
     public StdCoProc(int no, CPU p) {
         super(no, p);
 
+        highvector = false;
+
         //------------------------------------------------------------
         //crn00: ID コードレジスタ（読み取り専用）
         //------------------------------------------------------------
@@ -254,19 +258,46 @@ public class StdCoProc extends CoProc {
      * @param val 新たなレジスタの値
      */
     public void setSCTLR(int val) {
+        boolean v = BitOp.getBit(val, 13);
         boolean r = BitOp.getBit(val, 9);
         boolean s = BitOp.getBit(val, 8);
         boolean a = BitOp.getBit(val, 1);
         boolean m = BitOp.getBit(val, 0);
 
         System.out.printf("SCTLR    : 0x%x.\n", val);
+        System.out.printf("  V      : %b.\n", v);
         System.out.printf("  R      : %b.\n", r);
         System.out.printf("  S      : %b.\n", s);
         System.out.printf("  A      : %b.\n", a);
         System.out.printf("  M      : %b.\n", m);
 
-        //m: MMU イネーブルビット
+        //v: ハイベクタビット、0: 正規ベクタ、1: ハイベクタ
+        setHighVector(v);
+
+        //m: MMU イネーブルビット、0: 無効、1: 有効
         getCPU().getMMU().setEnable(m);
+    }
+
+    /**
+     * 例外ベクタの位置が、ハイベクタ 0xffff0000～0xffff001c にあるか、
+     * 正規ベクタ 0x00000000～0x0000001c にあるかを取得します。
+     *
+     * @return 例外ベクタの位置、ハイベクタの場合は true、
+     * 正規ベクタの場合は false
+     */
+    public boolean isHighVector() {
+        return highvector;
+    }
+
+    /**
+     * 例外ベクタの位置が、ハイベクタ 0xffff0000～0xffff001c にあるか、
+     * 正規ベクタ 0x00000000～0x0000001c にあるかを取得します。
+     *
+     * @param m 新たな例外ベクタの位置、ハイベクタの場合は true、
+     *          正規ベクタの場合は false
+     */
+    public void setHighVector(boolean m) {
+        highvector = m;
     }
 
     /**
