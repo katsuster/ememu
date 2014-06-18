@@ -229,7 +229,7 @@ public class StdCoProc extends CoProc {
             System.out.printf("I&D-cache: all invalidated.\n");
             break;
         case CR07_ICH_INVALL:
-            System.out.println("I-cache  : all invalidated.\n");
+            System.out.printf("I-cache  : all invalidated.\n");
             break;
         case CR07_DCH_INVALL:
             System.out.printf("D-cache  : all invalidated.\n");
@@ -276,6 +276,8 @@ public class StdCoProc extends CoProc {
 
         //m: MMU イネーブルビット、0: 無効、1: 有効
         getCPU().getMMU().setEnable(m);
+
+        super.setCReg(CR01_MMU_SCTLR, val);
     }
 
     /**
@@ -310,6 +312,13 @@ public class StdCoProc extends CoProc {
 
         System.out.printf("TTBR0    : 0x%x.\n", val);
         System.out.printf("  base   : 0x%x.\n", base);
+
+        super.setCReg(CR02_MMU_TTBR0, val);
+
+        //TODO: MMU とレジスタを更新する順序がわかりづらい、再考余地あり
+
+        //MMU の状態を更新する
+        getCPU().getMMU().update();
     }
 
     /**
@@ -329,5 +338,7 @@ public class StdCoProc extends CoProc {
         for (int i = 0; i < 16; i++) {
             System.out.printf("  dom%2d  : 0x%x.\n", i, dom[i]);
         }
+
+        super.setCReg(CR03_MMU_DACR, val);
     }
 }
