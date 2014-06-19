@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE project>
+
+<project name="all" default="dist">
+    <fileset id="subdirs" dir="." includes="*/build.xml"/>
+    <target name="init">
+        <echo message="----- init in ${ant.project.name} -----"/>
+        <subant target="init">
+            <fileset refid="subdirs"/>
+        </subant>
+    </target>
+
+    <target name="compile">
+        <echo message="----- compile in ${ant.project.name} -----"/>
+        <subant target="compile">
+            <fileset refid="subdirs"/>
+        </subant>
+    </target>
+
+    <target name="test">
+        <echo message="----- test in ${ant.project.name} -----"/>
+        <subant target="test">
+            <fileset refid="subdirs"/>
+        </subant>
+    </target>
+
+    <target name="dist">
+        <echo message="----- dist in ${ant.project.name} -----"/>
+        <subant target="dist">
+            <fileset refid="subdirs"/>
+        </subant>
+    </target>
+
+    <target name="clean">
+        <echo message="----- clean in ${ant.project.name} -----"/>
+        <subant target="clean">
+            <fileset refid="subdirs"/>
+        </subant>
+    </target>
+</project>
