@@ -36,7 +36,7 @@ public class CoProc {
     /**
      * コプロセッサが接続されている CPU を取得します。
      *
-     * @return コプロセッサが取得されている CPU
+     * @return コプロセッサが接続されている CPU
      */
     public CPU getCPU() {
         return cpu;
