@@ -31,10 +31,7 @@ public class RAM<T extends ByteSeq> implements SlaveCore<T> {
         masterBus = bus;
     }
 
-    @Override
-    public T read(long addr) {
-        int wordAddr;
-
+    protected void checkAddress(long addr) {
         if (addr % lenWord != 0) {
             throw new IllegalArgumentException(String.format(
                     "addr(0x%08x) is not aligned %d.", addr, lenWord));
@@ -43,6 +40,26 @@ public class RAM<T extends ByteSeq> implements SlaveCore<T> {
             throw new IllegalArgumentException(String.format(
                     "addr(0x%08x) is too large.", addr));
         }
+    }
+
+    public boolean tryAccess(long addr) {
+        int wordAddr;
+
+        wordAddr = (int)(addr / lenWord);
+
+        return words.length > wordAddr;
+    }
+
+    @Override
+    public boolean tryRead(long addr) {
+        return tryAccess(addr);
+    }
+
+    @Override
+    public T read(long addr) {
+        int wordAddr;
+
+        checkAddress(addr);
 
         wordAddr = (int)(addr / lenWord);
 
@@ -50,17 +67,15 @@ public class RAM<T extends ByteSeq> implements SlaveCore<T> {
     }
 
     @Override
+    public boolean tryWrite(long addr) {
+        return tryAccess(addr);
+    }
+
+    @Override
     public void write(long addr, T data) {
         int wordAddr;
 
-        if (addr % lenWord != 0) {
-            throw new IllegalArgumentException(String.format(
-                    "addr(0x%08x) is not aligned %d.", addr, lenWord));
-        }
-        if (addr / lenWord > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException(String.format(
-                    "addr(0x%08x) is too large.", addr));
-        }
+        checkAddress(addr);
 
         wordAddr = (int)(addr / lenWord);
 
