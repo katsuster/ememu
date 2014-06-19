@@ -51,20 +51,20 @@ public class Main {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
 
         CPU cpu = new CPU();
-        RAM<Word64> ramSystem = new RAM<Word64>(createRAM(32 * 1024));
+        RAM<Word64> ramLow = new RAM<Word64>(createRAM(32 * 1024));
         RAM<Word64> ramMain = new RAM<Word64>(createRAM(16 * 1024 * 1024));
         Bus<Word64> bus = new Bus<Word64>();
         int addrAtags = 0x00004000;
 
         cpu.setSlaveBus(bus);
         //RAM Image(tentative)
-        //  0x00000000 - 0x00008000: low mem
+        //  0x00000000 - 0x00008000: Low mem
         //    0x00000000 - 0x00001000: vector
         //    0x00004000 - 0x00005000: ATAG_XXX
         //  0x10000000 - 0x11000000: Main
         //    0x10000000 - 0x10008000: Linux pagetable
         //    0x10008000 - 0x10500000: Linux Image
-        bus.addSlaveCore(ramSystem, 0x00000000L, 0x00008000L);
+        bus.addSlaveCore(ramLow, 0x00000000L, 0x00008000L);
         bus.addSlaveCore(ramMain, 0x10000000L, 0x11000000L);
 
         //reset
