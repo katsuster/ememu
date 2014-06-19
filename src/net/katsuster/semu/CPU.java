@@ -32,6 +32,10 @@ public class CPU extends MasterCore64 implements Runnable {
     private boolean flagPrintReg;
 
     public CPU() {
+        StdCoProc stdCp;
+
+        stdCp = new StdCoProc(15, this);
+
         regs = new int[17];
         regs_svc = new int[17];
         regs_abt = new int[17];
@@ -39,8 +43,8 @@ public class CPU extends MasterCore64 implements Runnable {
         regs_irq = new int[17];
         regs_fiq = new int[17];
         coProcs = new CoProc[16];
-        coProcs[15] = new StdCoProc(15, this);
-        mmu = new MMU(this);
+        coProcs[15] = stdCp;
+        mmu = new MMU(this, stdCp);
     }
 
     public boolean isDisasmMode() {
@@ -2054,7 +2058,7 @@ public class CPU extends MasterCore64 implements Runnable {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr);
+        paddr = getMMU().translate(vaddr, false);
         value = (int)(read8(paddr)) & 0xff;
 
         setReg(rd, value);
@@ -2096,7 +2100,7 @@ public class CPU extends MasterCore64 implements Runnable {
         }
         rot = vaddr & 0x3;
 
-        paddr = getMMU().translate(vaddr);
+        paddr = getMMU().translate(vaddr, false);
         value = read32(paddr);
         switch (rot) {
         case 0:
@@ -2185,7 +2189,7 @@ public class CPU extends MasterCore64 implements Runnable {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr);
+        paddr = getMMU().translate(vaddr, false);
         write8(paddr, (byte) getReg(rd));
 
         if (!p || w) {
@@ -2224,7 +2228,7 @@ public class CPU extends MasterCore64 implements Runnable {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr);
+        paddr = getMMU().translate(vaddr, false);
         write32(paddr, getReg(rd));
 
         if (!p || w) {
@@ -2263,7 +2267,7 @@ public class CPU extends MasterCore64 implements Runnable {
             if ((rlist & (1 << i)) == 0) {
                 continue;
             }
-            paddr = getMMU().translate(vaddr);
+            paddr = getMMU().translate(vaddr, false);
             setReg(i, read32(paddr));
             vaddr += 4;
         }
@@ -2271,7 +2275,7 @@ public class CPU extends MasterCore64 implements Runnable {
         if (BitOp.getBit(rlist, 15)) {
             int v;
 
-            paddr = getMMU().translate(vaddr);
+            paddr = getMMU().translate(vaddr, false);
             v = read32(paddr);
 
             setPC(v & 0xfffffffe);
@@ -2322,7 +2326,7 @@ public class CPU extends MasterCore64 implements Runnable {
             if ((rlist & (1 << i)) == 0) {
                 continue;
             }
-            paddr = getMMU().translate(vaddr);
+            paddr = getMMU().translate(vaddr, false);
             write32(paddr, getReg(i));
             vaddr += 4;
         }
@@ -2962,7 +2966,7 @@ public class CPU extends MasterCore64 implements Runnable {
         int target_address = 0xc015dbb0;
 
         vaddr = getPC() - 8;
-        paddr = getMMU().translate(vaddr);
+        paddr = getMMU().translate(vaddr, true);
         v = read32(paddr);
         inst = new Instruction(v);
         try {
