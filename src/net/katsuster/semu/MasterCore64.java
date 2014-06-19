@@ -128,6 +128,18 @@ public abstract class MasterCore64 implements MasterCore<Word64> {
     }
 
     /**
+     * 指定されたアドレスからデータを読み出せるかどうかを取得します。
+     *
+     * @param addr アドレス
+     * @return 読み出しが可能ならば true、不可能ならば false
+     */
+    public boolean tryRead(int addr) {
+        long addrl = addr & 0xffffffffL;
+        addrl &= getAddressMask(getBusBits());
+        return slaveBus.tryRead(addrl, 8);
+    }
+
+    /**
      * 指定したアドレスから 1バイトを読み出します。
      *
      * @param addr アドレス
@@ -259,7 +271,20 @@ public abstract class MasterCore64 implements MasterCore<Word64> {
     }
 
     /**
+     * 指定したアドレスにデータを書き込めるかどうかを取得します。
+     *
+     * @param addr アドレス
+     * @return 書き込みが可能ならば true、不可能ならば false
+     */
+    public boolean tryWrite(int addr) {
+        long addrl = addr & 0xffffffffL;
+        addrl &= getAddressMask(getBusBits());
+        return slaveBus.tryWrite(addrl, 8);
+    }
+
+    /**
      * 指定したアドレスに 1バイトを書き込みます。
+     *
      * @param addr アドレス
      * @param data 書き込むデータ
      */
@@ -272,6 +297,7 @@ public abstract class MasterCore64 implements MasterCore<Word64> {
 
     /**
      * 指定したアドレスに 2バイトを書き込みます。
+     *
      * @param addr アドレス
      * @param data 書き込むデータ
      */
@@ -284,6 +310,7 @@ public abstract class MasterCore64 implements MasterCore<Word64> {
 
     /**
      * 指定したアドレスに 4バイトを書き込みます。
+     *
      * @param addr アドレス
      * @param data 書き込むデータ
      */
@@ -296,6 +323,7 @@ public abstract class MasterCore64 implements MasterCore<Word64> {
 
     /**
      * 指定したアドレスに 8バイトを書き込みます。
+     *
      * @param addr アドレス
      * @param data 書き込むデータ
      */

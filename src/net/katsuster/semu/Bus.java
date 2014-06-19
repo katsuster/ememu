@@ -23,6 +23,20 @@ public class Bus<T extends ByteSeq> {
         master = core;
     }
 
+    public boolean tryRead(long addr, int len) {
+        SlaveCoreAddress<T> sca;
+        long offSt, offEd;
+
+        sca = findSlaveCore(addr, addr + len - 1);
+        if (sca == null) {
+            return false;
+        }
+
+        offSt = addr - sca.start;
+        offEd = offSt + len - 1;
+        return sca.slave.tryRead(offSt);
+    }
+
     public T read(long addr, int len) {
         SlaveCoreAddress<T> sca;
         long offSt, offEd;
@@ -36,6 +50,20 @@ public class Bus<T extends ByteSeq> {
         offSt = addr - sca.start;
         offEd = offSt + len - 1;
         return sca.slave.read(offSt);
+    }
+
+    public boolean tryWrite(long addr, int len) {
+        SlaveCoreAddress<T> sca;
+        long offSt, offEd;
+
+        sca = findSlaveCore(addr, addr + len - 1);
+        if (sca == null) {
+            return false;
+        }
+
+        offSt = addr - sca.start;
+        offEd = offSt + len - 1;
+        return sca.slave.tryWrite(offSt);
     }
 
     public void write(long addr, T data) {
