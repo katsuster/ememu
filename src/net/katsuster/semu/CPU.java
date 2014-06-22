@@ -2559,21 +2559,20 @@ public class CPU extends MasterCore64 implements Runnable {
         boolean b4 = inst.getBit(4);
 
         if (!i) {
-            //b4, b7 の値が、
+            //b7, b4 の値が、
             //  0, 0: イミディエートシフト
-            //  0, 1: イミディエートシフト
-            //  1, 0: レジスタシフト
+            //  1, 0: イミディエートシフト
+            //  0, 1: レジスタシフト
             //  1, 1: 算術命令拡張空間: 乗算、追加ロードストア
             if (!b4) {
                 //イミディエートシフト
                 executeSubUseALUShiftImm(inst, exec);
-            } else if (b4 && !b7) {
+            } else if (!b7 && b4) {
                 //レジスタシフト
                 executeSubUseALUShiftReg(inst, exec);
             } else {
-                //乗算、追加ロードストア
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                //算術命令拡張空間: 乗算、追加ロードストア
+                executeSubUseALUExt(inst, exec);
             }
         } else {
             //イミディエート
@@ -2619,6 +2618,120 @@ public class CPU extends MasterCore64 implements Runnable {
         default:
             executeALU(inst, exec, id);
             break;
+        }
+    }
+
+    /**
+     * 算術命令拡張空間（乗算）、
+     * ロードストア命令拡張空間（ハーフワードロード、ストア）、
+     * を実行します。
+     *
+     * bit[7] = 1
+     * bit[4] = 1
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSubUseALUExt(Instruction inst, boolean exec) {
+        int cond = inst.getCondField();
+        boolean p = inst.getBit(24);
+        //U, B, W ビット[23:21]
+        int ubw = (inst.getInst() >> 21) & 0x7;
+        boolean l = inst.getBit(20);
+        int op = (inst.getInst() >> 5) & 0x3;
+
+        if (cond != Instruction.COND_NV && !p && op == 0) {
+            //算術命令拡張空間
+            switch (ubw) {
+            case 1:
+                //mla
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+                //break;
+            case 0:
+                //mul
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+                //break;
+            case 7:
+                //smlal
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+                //break;
+            case 6:
+                //smull
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+                //break;
+            case 5:
+                //umlal
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+                //break;
+            case 4:
+                //umlul
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+                //break;
+            default:
+                //未定義
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            }
+        } else {
+            //ロードストア命令拡張空間
+            if (p && op == 0) {
+                switch (ubw) {
+                case 0:
+                    //swp
+                    //TODO: Not implemented
+                    throw new IllegalArgumentException("Sorry, not implemented.");
+                    //break;
+                case 1:
+                    //swpb
+                    //TODO: Not implemented
+                    throw new IllegalArgumentException("Sorry, not implemented.");
+                    //break;
+                default:
+                    //未定義
+                    //TODO: Not implemented
+                    throw new IllegalArgumentException("Sorry, not implemented.");
+                }
+            } else if (op == 1) {
+                if (l) {
+                    //ldrh
+                    //TODO: Not implemented
+                    throw new IllegalArgumentException("Sorry, not implemented.");
+                } else {
+                    //strh
+                    //TODO: Not implemented
+                    throw new IllegalArgumentException("Sorry, not implemented.");
+                }
+            } else if (op == 2) {
+                if (l) {
+                    //ldrsb
+                    //TODO: Not implemented
+                    throw new IllegalArgumentException("Sorry, not implemented.");
+                } else {
+                    //未定義
+                    //TODO: Not implemented
+                    throw new IllegalArgumentException("Sorry, not implemented.");
+                }
+            } else if (op == 3) {
+                if (l) {
+                    //ldrsh
+                    //TODO: Not implemented
+                    throw new IllegalArgumentException("Sorry, not implemented.");
+                } else {
+                    //未定義
+                    //TODO: Not implemented
+                    throw new IllegalArgumentException("Sorry, not implemented.");
+                }
+            } else {
+                //未定義
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            }
         }
     }
 
@@ -2779,7 +2892,7 @@ public class CPU extends MasterCore64 implements Runnable {
                 executeLdrbt(inst, exec);
             } else if (b) {
                 if (cond == inst.COND_NV && p && !w && rd == 15) {
-                    //PLD
+                    //pld
                     executePld(inst, exec);
                 } else {
                     //ldrb
