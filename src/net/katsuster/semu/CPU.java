@@ -839,7 +839,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (i) {
             //32bits イミディエート
-            return getShifterOperandImm32(inst);
+            return getShifterOperandImm(inst);
         } else if (!b4) {
             //イミディエートシフト
             return getShifterOperandImmShift(inst);
@@ -869,7 +869,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param inst ARM 命令
      * @return イミディエート
      */
-    public int getShifterOperandImm32(Instruction inst) {
+    public int getShifterOperandImm(Instruction inst) {
         int rotR = (inst.getInst() >> 8) & 0xf;
         int imm8 = inst.getInst() & 0xff;
 
@@ -968,7 +968,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (i) {
             //32bits イミディエート
-            return getShifterCarryImm32(inst);
+            return getShifterCarryImm(inst);
         } else if (!b4) {
             //イミディエートシフト
             return getShifterCarryImmShift(inst);
@@ -989,13 +989,13 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param inst ARM 命令
      * @return キャリーアウトする場合は true、そうでなければ false
      */
-    public boolean getShifterCarryImm32(Instruction inst) {
+    public boolean getShifterCarryImm(Instruction inst) {
         int rotR = (inst.getInst() >> 8) & 0xf;
 
         if (rotR == 0) {
             return getCPSR_C();
         } else {
-            return BitOp.getBit(getShifterOperandImm32(inst), 31);
+            return BitOp.getBit(getShifterOperandImm(inst), 31);
         }
     }
 
@@ -1105,7 +1105,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @return イミディエートの文字列表現
      */
     public String getShifterOperandImm32Name(Instruction inst) {
-        int imm32 = getShifterOperandImm32(inst);
+        int imm32 = getShifterOperandImm(inst);
 
         return String.format("#%d    ; 0x%x", imm32, imm32);
     }
@@ -1386,6 +1386,150 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public String getOffsetAddressScaledName(Instruction inst) {
         return getShifterOperandImmShiftName(inst);
+    }
+
+    /**
+     * アドレシングモード 3 - ハーフワードロード/ストア、符号付きバイトロード、
+     * 転送開始アドレスを取得します。
+     *
+     * @param inst ARM 命令
+     * @return アドレス
+     */
+    public int getOffsetHalf(Instruction inst) {
+        boolean u = inst.getBit(23);
+        boolean b = inst.getBit(22);
+        int rn = inst.getRnField();
+        int offset;
+
+        if (b) {
+            //イミディエートオフセット/インデクス
+            offset = getOffsetHalfImm(inst);
+        } else {
+            //レジスタオフセット/インデクス
+            offset = getOffsetHalfReg(inst);
+        }
+
+        if (!u) {
+            offset = -offset;
+        }
+
+        return getReg(rn) + offset;
+    }
+
+    /**
+     * アドレシングモード 3 - ハーフワードロード/ストア、符号付きバイトロード、
+     * イミディエートオフセット/インデクスの転送開始アドレスを取得します。
+     *
+     * @param inst ARM 命令
+     * @return アドレス
+     */
+    public int getOffsetHalfImm(Instruction inst) {
+        int immh = (inst.getInst() >> 8) & 0xf;
+        int imml = inst.getInst() & 0xf;
+
+        return (immh << 4) | imml;
+    }
+
+    /**
+     * アドレシングモード 3 - ハーフワードロード/ストア、符号付きバイトロード、
+     * レジスタオフセット/インデクスの転送開始アドレスを取得します。
+     *
+     * @param inst ARM 命令
+     * @return アドレス
+     */
+    public int getOffsetHalfReg(Instruction inst) {
+        int rm = inst.getRmField();
+
+        return getReg(rm);
+    }
+
+    /**
+     * アドレシングモード 3 - ハーフワードロード/ストア、符号付きバイトロード、
+     * 文字列表記を取得します。
+     *
+     * @param inst ARM 命令
+     * @return アドレス
+     */
+    public String getOffsetHalfName(Instruction inst) {
+        boolean b = inst.getBit(22);
+
+        if (b) {
+            //イミディエートオフセット/インデクス
+            return getOffsetHalfImmName(inst);
+        } else {
+            //レジスタオフセット/インデクス
+            return getOffsetHalfRegName(inst);
+        }
+    }
+
+    /**
+     * アドレシングモード 3 - ハーフワードロード/ストア、符号付きバイトロード、
+     * イミディエートオフセット/インデクスの文字列表記を取得します。
+     *
+     * @param inst ARM 命令
+     * @return アドレス
+     */
+    public String getOffsetHalfImmName(Instruction inst) {
+        boolean p = inst.getBit(24);
+        boolean u = inst.getBit(23);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int imm8 = getOffsetHalfImm(inst);
+
+        if (p && !w) {
+            //オフセット
+            return String.format("[%s, #%s%d]    ; 0x%x",
+                    getRegName(rn), (u) ? "" : "-",
+                    imm8, imm8);
+        } else if (p && w) {
+            //プリインデクス
+            return String.format("[%s, #%s%d]!    ; 0x%x",
+                    getRegName(rn), (u) ? "" : "-",
+                    imm8, imm8);
+        } else if (!p) {
+            //ポストインデクス
+            return String.format("[%s], #%s%d    ; 0x%x",
+                    getRegName(rn), (u) ? "" : "-",
+                    imm8, imm8);
+        } else {
+            throw new IllegalArgumentException("Illegal P,W bits " +
+                    String.format("p:%b, w:%b.", p, w));
+        }
+    }
+
+    /**
+     * アドレシングモード 3 - ハーフワードロード/ストア、符号付きバイトロード、
+     * レジスタオフセット/インデクスの文字列表記を取得します。
+     *
+     * @param inst ARM 命令
+     * @return アドレス
+     */
+    public String getOffsetHalfRegName(Instruction inst) {
+        boolean p = inst.getBit(24);
+        boolean u = inst.getBit(23);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rm = inst.getRmField();
+
+        if (p && !w) {
+            //オフセット
+            return String.format("[%s, %s%s]",
+                    getRegName(rn), (u) ? "" : "-",
+                    getRegName(rm));
+        } else if (p && w) {
+            //プリインデクス
+            return String.format("[%s, %s%s]!",
+                    getRegName(rn), (u) ? "" : "-",
+                    getRegName(rm));
+        } else if (!p) {
+            //ポストインデクス
+            return String.format("[%s], %s%s",
+                    getRegName(rn), (u) ? "" : "-",
+                    getRegName(rm));
+        } else {
+            throw new IllegalArgumentException("Illegal P,W bits " +
+                    String.format("p:%b, w:%b.", p, w));
+        }
     }
 
     /**
@@ -2239,6 +2383,45 @@ public class CPU extends MasterCore64 implements Runnable {
         }
     }
 
+    public void executeStrh(Instruction inst, boolean exec) {
+        boolean p = inst.getBit(24);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetHalf(inst);
+        int vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("str%sh", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetHalfName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        if (p) {
+            //プリインデクス
+            vaddr = offset;
+        } else {
+            //ポストインデクス
+            vaddr = getReg(rn);
+        }
+
+        paddr = getMMU().translate(vaddr, false);
+        write16(paddr, (short)getReg(rd));
+
+        if (!p || w) {
+            //ベースレジスタを更新する
+            //条件は !(p && !w) と等価、つまり P, W ビットが
+            //オフセットアドレス以外の指定なら Rn を書き換える
+            setReg(rn, offset);
+        }
+    }
+
     public void executeLdm1(Instruction inst, boolean exec) {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -2704,8 +2887,7 @@ public class CPU extends MasterCore64 implements Runnable {
                     throw new IllegalArgumentException("Sorry, not implemented.");
                 } else {
                     //strh
-                    //TODO: Not implemented
-                    throw new IllegalArgumentException("Sorry, not implemented.");
+                    executeStrh(inst, exec);
                 }
             } else if (op == 2) {
                 if (l) {
