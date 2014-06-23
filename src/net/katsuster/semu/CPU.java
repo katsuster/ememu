@@ -2174,6 +2174,12 @@ public class CPU extends MasterCore64 implements Runnable {
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
+    /**
+     * レジスタバイトロード命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeLdrb(Instruction inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
@@ -2215,6 +2221,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
     }
 
+    /**
+     * レジスタロード命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeLdr(Instruction inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
@@ -2305,6 +2317,12 @@ public class CPU extends MasterCore64 implements Runnable {
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
+    /**
+     * レジスタバイトストア命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeStrb(Instruction inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
@@ -2344,6 +2362,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
     }
 
+    /**
+     * レジスタストア命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeStr(Instruction inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
@@ -2383,6 +2407,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
     }
 
+    /**
+     * レジスタハーフワードストア命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeStrh(Instruction inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
@@ -2422,6 +2452,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
     }
 
+    /**
+     * ロードマルチプル命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeLdm1(Instruction inst, boolean exec) {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -2481,6 +2517,12 @@ public class CPU extends MasterCore64 implements Runnable {
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
+    /**
+     * ストアマルチプル命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeStm1(Instruction inst, boolean exec) {
         int pu = inst.getPUField();
         boolean w = inst.getBit(21);
@@ -2524,6 +2566,12 @@ public class CPU extends MasterCore64 implements Runnable {
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
+    /**
+     * リンク付き分岐命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeBl(Instruction inst, boolean exec) {
         boolean l = inst.getBit(24);
         int imm24 = inst.getInst() & 0xffffff;
@@ -2548,7 +2596,9 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
-     * BLX(1) 命令。
+     * リンク付き分岐命令。
+     *
+     * Thumb 命令のサブルーチン呼び出しが可能です。
      *
      * 31  30  29  28 |27  26  25 |24 |23               0|
      * ---------------------------------------------------
@@ -2586,6 +2636,12 @@ public class CPU extends MasterCore64 implements Runnable {
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
+    /**
+     * ARM レジスタからコプロセッサへのストア命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeMcr(Instruction inst, boolean exec) {
         int opcode1 = (inst.getInst() >> 21) & 0x7;
         int crn = (inst.getInst() >> 16) & 0xf;
@@ -2628,6 +2684,12 @@ public class CPU extends MasterCore64 implements Runnable {
         cp.setCReg(crid, getReg(rd));
     }
 
+    /**
+     * コプロセッサから ARM レジスタへのロード命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeMrc(Instruction inst, boolean exec) {
         int opcode1 = (inst.getInst() >> 21) & 0x7;
         int crn = (inst.getInst() >> 16) & 0xf;
@@ -2684,6 +2746,12 @@ public class CPU extends MasterCore64 implements Runnable {
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
+    /**
+     * 未定義命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeUnd(Instruction inst, boolean exec) {
         if (!exec) {
             printDisasm(inst,
