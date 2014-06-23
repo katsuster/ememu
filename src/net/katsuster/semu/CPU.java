@@ -2708,7 +2708,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         switch (subcode) {
         case Instruction.SUBCODE_USEALU:
-            executeSubUseALU(inst, exec);
+            executeSubALU(inst, exec);
             return;
         case Instruction.SUBCODE_LDRSTR:
             executeSubLdrStr(inst, exec);
@@ -2736,7 +2736,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubUseALU(Instruction inst, boolean exec) {
+    public void executeSubALU(Instruction inst, boolean exec) {
         boolean i = inst.getIBit();
         boolean b7 = inst.getBit(7);
         boolean b4 = inst.getBit(4);
@@ -2749,17 +2749,17 @@ public class CPU extends MasterCore64 implements Runnable {
             //  1, 1: 算術命令拡張空間: 乗算、追加ロードストア
             if (!b4) {
                 //イミディエートシフト
-                executeSubUseALUShiftImm(inst, exec);
+                executeSubALUShiftImm(inst, exec);
             } else if (!b7 && b4) {
                 //レジスタシフト
-                executeSubUseALUShiftReg(inst, exec);
+                executeSubALUShiftReg(inst, exec);
             } else {
                 //算術命令拡張空間: 乗算、追加ロードストア
-                executeSubUseALUExt(inst, exec);
+                executeSubALUExt(inst, exec);
             }
         } else {
             //イミディエート
-            executeSubUseALUImm32(inst, exec);
+            executeSubALUImm(inst, exec);
         }
     }
 
@@ -2770,12 +2770,12 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubUseALUShiftImm(Instruction inst, boolean exec) {
+    public void executeSubALUShiftImm(Instruction inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
 
         switch (id) {
         case Instruction.OPCODE_S_OTH:
-            executeSubUseALUShiftImmOther(inst, exec);
+            executeSubALUShiftImmOther(inst, exec);
             break;
         default:
             executeALU(inst, exec, id);
@@ -2790,7 +2790,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubUseALUShiftReg(Instruction inst, boolean exec) {
+    public void executeSubALUShiftReg(Instruction inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
 
         switch (id) {
@@ -2815,7 +2815,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubUseALUExt(Instruction inst, boolean exec) {
+    public void executeSubALUExt(Instruction inst, boolean exec) {
         int cond = inst.getCondField();
         boolean p = inst.getBit(24);
         //U, B, W ビット[23:21]
@@ -2927,7 +2927,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubUseALUImm32(Instruction inst, boolean exec) {
+    public void executeSubALUImm(Instruction inst, boolean exec) {
         int id = inst.getOpcodeSBitImmID();
 
         switch (id) {
@@ -2967,7 +2967,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubUseALUShiftImmOther(Instruction inst, boolean exec) {
+    public void executeSubALUShiftImmOther(Instruction inst, boolean exec) {
         int cond = inst.getCondField();
         boolean b22 = BitOp.getBit(inst.getInst(), 22);
         boolean b21 = BitOp.getBit(inst.getInst(), 21);
@@ -2993,7 +2993,7 @@ public class CPU extends MasterCore64 implements Runnable {
                 //TODO: Not implemented
                 throw new IllegalArgumentException("Sorry, not implemented.");
             } else {
-                //und
+                //未定義
                 executeUnd(inst, exec);
             }
             break;
@@ -3003,7 +3003,7 @@ public class CPU extends MasterCore64 implements Runnable {
                 //TODO: Not implemented
                 throw new IllegalArgumentException("Sorry, not implemented.");
             } else {
-                //und
+                //未定義
                 executeUnd(inst, exec);
             }
             break;
@@ -3013,12 +3013,12 @@ public class CPU extends MasterCore64 implements Runnable {
                 //TODO: Not implemented
                 throw new IllegalArgumentException("Sorry, not implemented.");
             } else {
-                //und
+                //未定義
                 executeUnd(inst, exec);
             }
             break;
         default:
-            //und
+            //未定義
             //executeUnd(inst, exec);
             //break;
             //TODO: Not implemented
@@ -3126,7 +3126,7 @@ public class CPU extends MasterCore64 implements Runnable {
         if (!b25) {
             //ロードマルチプル、ストアマルチプル
             if (cond == Instruction.COND_NV) {
-                //未定義命令
+                //未定義
                 executeUnd(inst, exec);
             } else {
                 if (l) {
