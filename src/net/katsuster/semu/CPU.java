@@ -2813,11 +2813,41 @@ public class CPU extends MasterCore64 implements Runnable {
 
         setReg(14, getPC() - 4);
         //T ビットをセット
-        setCPSR(getCPSR() | 0x20);
+        setCPSR_T(true);
         jumpRel(simm24 + vh);
 
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 分岐交換命令。
+     *
+     * Thumb 命令のサブルーチン呼び出しが可能です。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBx(Instruction inst, boolean exec) {
+        int rm = inst.getRmField();
+        int dest;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("bx"),
+                    String.format("%s", rm));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        dest = getReg(rm);
+
+        //T ビットを設定する
+        setCPSR_T((dest & 0x1) == 1);
+        setPC(dest & 0xfffffffe);
     }
 
     public void executeCdp(Instruction inst, boolean exec) {
@@ -3042,7 +3072,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         switch (id) {
         case Instruction.OPCODE_S_OTH:
-            executeSubALUShiftImmOther(inst, exec);
+            executeSubALUOther(inst, exec);
             break;
         default:
             executeALU(inst, exec, id);
@@ -3062,9 +3092,8 @@ public class CPU extends MasterCore64 implements Runnable {
 
         switch (id) {
         case Instruction.OPCODE_S_OTH:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeSubALUOther(inst, exec);
+            break;
         default:
             executeALU(inst, exec, id);
             break;
@@ -3246,8 +3275,8 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
-     * イミディエートシフトオペランドを取るデータ処理命令、
-     * その他の命令を実行します。
+     * その他のデータ処理命令、
+     * を実行します。
      *
      * bit[27:23] = 0b00010
      * bit[20] = 0
@@ -3269,7 +3298,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubALUShiftImmOther(Instruction inst, boolean exec) {
+    public void executeSubALUOther(Instruction inst, boolean exec) {
         int cond = inst.getCondField();
         boolean b22 = BitOp.getBit(inst.getInst(), 22);
         boolean b21 = BitOp.getBit(inst.getInst(), 21);
@@ -3288,8 +3317,7 @@ public class CPU extends MasterCore64 implements Runnable {
         case 0x1:
             if (!b22 && b21) {
                 //bx
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                executeBx(inst, exec);
             } else if (b22 && b21) {
                 //clz
                 //TODO: Not implemented
