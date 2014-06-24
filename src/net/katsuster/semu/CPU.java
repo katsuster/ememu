@@ -2292,6 +2292,149 @@ public class CPU extends MasterCore64 implements Runnable {
         }
     }
 
+    /**
+     * レジスタハーフワードロード命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdrh(Instruction inst, boolean exec) {
+        boolean p = inst.getBit(24);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetHalf(inst);
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("ldr%sh", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetHalfName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        if (p) {
+            //プリインデクス
+            vaddr = offset;
+        } else {
+            //ポストインデクス
+            vaddr = getReg(rn);
+        }
+
+        paddr = getMMU().translate(vaddr, false);
+        value = read16(paddr) & 0xffff;
+
+        setReg(rd, value);
+
+        if (!p || w) {
+            //ベースレジスタを更新する
+            //条件は !(p && !w) と等価、つまり P, W ビットが
+            //オフセットアドレス以外の指定なら Rn を書き換える
+            setReg(rn, offset);
+        }
+    }
+
+    /**
+     * レジスタ符号付きハーフワードロード命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdrsh(Instruction inst, boolean exec) {
+        boolean p = inst.getBit(24);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetHalf(inst);
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("ldr%ssh", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetHalfName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        if (p) {
+            //プリインデクス
+            vaddr = offset;
+        } else {
+            //ポストインデクス
+            vaddr = getReg(rn);
+        }
+
+        paddr = getMMU().translate(vaddr, false);
+        value = read16(paddr);
+
+        setReg(rd, value);
+
+        if (!p || w) {
+            //ベースレジスタを更新する
+            //条件は !(p && !w) と等価、つまり P, W ビットが
+            //オフセットアドレス以外の指定なら Rn を書き換える
+            setReg(rn, offset);
+        }
+    }
+
+    /**
+     * レジスタダブルワードロード命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdrd(Instruction inst, boolean exec) {
+        boolean p = inst.getBit(24);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetHalf(inst);
+        int vaddr, paddr, value1, value2;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("ldr%sh", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetHalfName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        if (p) {
+            //プリインデクス
+            vaddr = offset;
+        } else {
+            //ポストインデクス
+            vaddr = getReg(rn);
+        }
+
+        paddr = getMMU().translate(vaddr, false);
+        value1 = read32(paddr);
+        value2 = read32(paddr + 4);
+
+        setReg(rd, value1);
+        setReg(rd + 1, value2);
+
+        if (!p || w) {
+            //ベースレジスタを更新する
+            //条件は !(p && !w) と等価、つまり P, W ビットが
+            //オフセットアドレス以外の指定なら Rn を書き換える
+            setReg(rn, offset);
+        }
+    }
+
     public void executePld(Instruction inst, boolean exec) {
         boolean r = inst.getBit(22);
 
@@ -2443,6 +2586,52 @@ public class CPU extends MasterCore64 implements Runnable {
 
         paddr = getMMU().translate(vaddr, false);
         write16(paddr, (short)getReg(rd));
+
+        if (!p || w) {
+            //ベースレジスタを更新する
+            //条件は !(p && !w) と等価、つまり P, W ビットが
+            //オフセットアドレス以外の指定なら Rn を書き換える
+            setReg(rn, offset);
+        }
+    }
+
+    /**
+     * レジスタダブルワードストア命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeStrd(Instruction inst, boolean exec) {
+        boolean p = inst.getBit(24);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetHalf(inst);
+        int vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("str%sd", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetHalfName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        if (p) {
+            //プリインデクス
+            vaddr = offset;
+        } else {
+            //ポストインデクス
+            vaddr = getReg(rn);
+        }
+
+        paddr = getMMU().translate(vaddr, false);
+        write32(paddr, getReg(rd));
+        write32(paddr + 4, getReg(rd + 1));
 
         if (!p || w) {
             //ベースレジスタを更新する
@@ -2950,6 +3139,26 @@ public class CPU extends MasterCore64 implements Runnable {
      * bit[24] = 0b0
      * bit[6:5] = 0b00
      *
+     * 各ビットと命令の対応は下記の通りです。
+     *
+     *        |  P  |  U  |  B  |  W  |  L  ||          op1          |
+     *        | 24  | 23  | 22  | 21  | 20  ||  7  |  6  |  5  |  4  |
+     * -------+-----+-----+-----+-----+-----++-----+-----+-----+-----+
+     * SWP    |  1  |  0  |  0  |  0  |  0  ||  1  |  0  |  0  |  1  |
+     * SWPB   |  1  |  0  |  1  |  0  |  0  ||  1  |  0  |  0  |  1  |
+     * -------+-----+-----+-----+-----+-----++-----+-----+-----+-----+
+     * LDRH   |  x  |  x  |  x  |  x  |  1  ||  1  |  0  |  1  |  1  |
+     * STRH   |  x  |  x  |  x  |  x  |  0  ||  1  |  0  |  1  |  1  |
+     * -------+-----+-----+-----+-----+-----++-----+-----+-----+-----+
+     * LDRSB  |  x  |  x  |  x  |  x  |  1  ||  1  |  1  |  0  |  1  |
+     * LDRD   |  x  |  x  |  x  |  x  |  0  ||  1  |  1  |  0  |  1  |
+     * -------+-----+-----+-----+-----+-----++-----+-----+-----+-----+
+     * LDRSH  |  x  |  x  |  x  |  x  |  1  ||  1  |  1  |  1  |  1  |
+     * STRD   |  x  |  x  |  x  |  x  |  0  ||  1  |  1  |  1  |  1  |
+     * -------+-----+-----+-----+-----+-----++-----+-----+-----+-----+
+     *
+     * これ以外のパターンは全て未定義命令です。
+     *
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
@@ -2981,8 +3190,7 @@ public class CPU extends MasterCore64 implements Runnable {
         } else if (op == 1) {
             if (l) {
                 //ldrh
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                executeLdrh(inst, exec);
             } else {
                 //strh
                 executeStrh(inst, exec);
@@ -2993,19 +3201,16 @@ public class CPU extends MasterCore64 implements Runnable {
                 //TODO: Not implemented
                 throw new IllegalArgumentException("Sorry, not implemented.");
             } else {
-                //未定義
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                //ldrd
+                executeLdrd(inst, exec);
             }
         } else if (op == 3) {
             if (l) {
                 //ldrsh
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                executeLdrsh(inst, exec);
             } else {
-                //未定義
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                //strd
+                executeStrd(inst, exec);
             }
         } else {
             //未定義
