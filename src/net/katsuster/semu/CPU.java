@@ -2190,7 +2190,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("ldr%sb", inst.getCondFieldName()),
+                    String.format("ldrb%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetAddressName(inst)));
             return;
@@ -2308,7 +2308,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("ldr%sh", inst.getCondFieldName()),
+                    String.format("ldrh%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
             return;
@@ -2355,7 +2355,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("ldr%ssh", inst.getCondFieldName()),
+                    String.format("ldrsh%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
             return;
@@ -2402,7 +2402,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("ldr%sh", inst.getCondFieldName()),
+                    String.format("ldrd%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
             return;
@@ -2476,7 +2476,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("str%sb", inst.getCondFieldName()),
+                    String.format("strb%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetAddressName(inst)));
             return;
@@ -2566,7 +2566,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("str%sh", inst.getCondFieldName()),
+                    String.format("strh%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
             return;
@@ -2611,7 +2611,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("str%sd", inst.getCondFieldName()),
+                    String.format("strd%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
             return;
@@ -2834,7 +2834,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         if (!exec) {
             printDisasm(inst,
-                    String.format("bx"),
+                    String.format("bx%s", inst.getCondFieldName()),
                     String.format("%s", rm));
             return;
         }
