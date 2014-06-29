@@ -951,8 +951,65 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public int getShifterOperandRegShift(Instruction inst) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int shift = (inst.getInst() >> 5) & 0x3;
+        int rs = (inst.getInst() >> 8) & 0xf;
+        int rm = inst.getRmField();
+        int valRs, valRsLow;
+
+        //Rs[7:0]
+        valRs = getReg(rs) & 0xff;
+        //Rs[4:0]
+        valRsLow = getReg(rs) & 0x1f;
+
+        switch (shift) {
+        case 0:
+            //レジスタ論理左シフト
+            if (valRs == 0) {
+                return getReg(rm);
+            } else if (valRs < 32) {
+                return getReg(rm) << valRs;
+            } else {
+                return 0;
+            }
+        case 1:
+            //レジスタ論理右シフト
+            if (valRs == 0) {
+                return getReg(rm);
+            } else if (valRs < 32) {
+                return getReg(rm) >>> valRs;
+            } else {
+                return 0;
+            }
+        case 2:
+            //レジスタ算術右シフト
+            if (valRs == 0) {
+                return getReg(rm);
+            } else if (valRs < 32) {
+                return getReg(rm) >> valRs;
+            } else {
+                if (BitOp.getBit(getReg(rm), 31)) {
+                    return 0xffffffff;
+                } else {
+                    return 0;
+                }
+            }
+        case 3:
+            //レジスタ右ローテート
+            if (valRs == 0) {
+                return getReg(rm);
+            } else if (valRsLow == 0) {
+                return getReg(rm);
+            } else {
+                return Integer.rotateRight(getReg(rm), valRsLow);
+            }
+        default:
+            //do nothing
+            break;
+        }
+
+        throw new IllegalArgumentException("Unknown Reg Shift " +
+                String.format("0x%08x, shift:%d.",
+                        inst.getInst(), shift));
     }
 
     /**
@@ -1066,8 +1123,61 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public boolean getShifterCarryRegShift(Instruction inst) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int shift = (inst.getInst() >> 5) & 0x3;
+        int rs = (inst.getInst() >> 8) & 0xf;
+        int rm = inst.getRmField();
+        int valRs, valRsLow;
+
+        //Rs[7:0]
+        valRs = getReg(rs) & 0xff;
+        //Rs[4:0]
+        valRsLow = getReg(rs) & 0x1f;
+
+        switch (shift) {
+        case 0:
+            //レジスタ論理左シフト
+            if (valRs == 0) {
+                return getCPSR_C();
+            } else if (valRs <= 32) {
+                return BitOp.getBit(getReg(rm), 32 - valRs);
+            } else {
+                return false;
+            }
+        case 1:
+            //レジスタ論理右シフト
+            if (valRs == 0) {
+                return getCPSR_C();
+            } else if (valRs <= 32) {
+                return BitOp.getBit(getReg(rm), valRs - 1);
+            } else {
+                return false;
+            }
+        case 2:
+            //レジスタ算術右シフト
+            if (valRs == 0) {
+                return getCPSR_C();
+            } else if (valRs <= 32) {
+                return BitOp.getBit(getReg(rm), valRs - 1);
+            } else {
+                return BitOp.getBit(getReg(rm), 31);
+            }
+        case 3:
+            //レジスタ右ローテート
+            if (valRs == 0) {
+                return getCPSR_C();
+            } else if (valRsLow == 0) {
+                return BitOp.getBit(getReg(rm), 31);
+            } else {
+                return BitOp.getBit(getReg(rm), valRsLow - 1);
+            }
+        default:
+            //do nothing
+            break;
+        }
+
+        throw new IllegalArgumentException("Unknown Reg Shift " +
+                String.format("0x%08x, shift:%d.",
+                        inst.getInst(), shift));
     }
 
     /**
@@ -1174,8 +1284,35 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public String getShifterOperandRegShiftName(Instruction inst) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int shift = (inst.getInst() >> 5) & 0x3;
+        int rs = (inst.getInst() >> 8) & 0xf;
+        int rm = inst.getRmField();
+
+        switch (shift) {
+        case 0:
+            //レジスタ論理左シフト
+            return String.format("%s, lsl %s",
+                    getRegName(rm), getRegName(rs));
+        case 1:
+            //レジスタ論理右シフト
+            return String.format("%s, lsr %s",
+                    getRegName(rm), getRegName(rs));
+        case 2:
+            //レジスタ算術右シフト
+            return String.format("%s, asr %s",
+                    getRegName(rm), getRegName(rs));
+        case 3:
+            //レジスタ右ローテート
+            return String.format("%s, ror %s",
+                    getRegName(rm), getRegName(rs));
+        default:
+            //do nothing
+            break;
+        }
+
+        throw new IllegalArgumentException("Unknown Reg Shift " +
+                String.format("0x%08x, shift:%d.",
+                        inst.getInst(), shift));
     }
 
     /**
@@ -1781,9 +1918,8 @@ public class CPU extends MasterCore64 implements Runnable {
             executeALUAdd(inst, exec);
             break;
         case Instruction.OPCODE_S_ADC:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeALUAdc(inst, exec);
+            break;
         case Instruction.OPCODE_S_SBC:
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
@@ -1933,6 +2069,40 @@ public class CPU extends MasterCore64 implements Runnable {
             setCPSR_Z(dest == 0);
             setCPSR_C(carryFrom(left, right));
             setCPSR_V(overflowFrom(left, right, true));
+        }
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * キャリー付き加算命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeALUAdc(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int opr = getShifterOperand(inst);
+        int left, center, right, dest;
+
+        left = getReg(rn);
+        center = opr;
+        right = getCPSR_C() ? 1 : 0;
+        dest = left + center + right;
+
+        if (s && rd == 15) {
+            setCPSR(getSPSR());
+        } else if (s) {
+            int left_center = left + center;
+            boolean lc_c = carryFrom(left, center);
+            boolean lc_v = overflowFrom(left, center, true);
+
+            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_Z(dest == 0);
+            setCPSR_C(lc_c || carryFrom(left_center, right));
+            setCPSR_V(lc_v || overflowFrom(left_center, right, true));
         }
 
         setReg(rd, dest);
