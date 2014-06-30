@@ -61,11 +61,11 @@ public class Main {
         //  0x00000000 - 0x00008000: Low mem
         //    0x00000000 - 0x00001000: vector
         //    0x00004000 - 0x00005000: ATAG_XXX
-        //  0x10000000 - 0x11000000: Main
-        //    0x10000000 - 0x10008000: Linux pagetable
-        //    0x10008000 - 0x10500000: Linux Image
+        //  0x80000000 - 0x81000000: Main
+        //    0x80000000 - 0x80008000: Linux pagetable
+        //    0x80008000 - 0x80500000: Linux Image
         bus.addSlaveCore(ramLow, 0x00000000L, 0x00008000L);
-        bus.addSlaveCore(ramMain, 0x10000000L, 0x11000000L);
+        bus.addSlaveCore(ramMain, 0x80000000L, 0x81000000L);
 
         //reset
         cpu.setDisasmMode(true);
@@ -75,7 +75,7 @@ public class Main {
 
         //tentative boot loader for Linux
         //load Image file
-        loadFile(filename, cpu, 0x10008000);
+        loadFile(filename, cpu, 0x80008000);
 
         //r0: 0
         cpu.setReg(0, 0);
@@ -96,7 +96,7 @@ public class Main {
             cpu.write32(addrAtags + 0x00, 0x00000005);
             cpu.write32(addrAtags + 0x04, 0x54410001);
             cpu.write32(addrAtags + 0x08, 0x01000000);
-            cpu.write32(addrAtags + 0x0c, 0x10000000);
+            cpu.write32(addrAtags + 0x0c, 0x80000000);
             addrAtags += 0x10;
 
             //ATAG_NONE, size, tag
@@ -106,7 +106,7 @@ public class Main {
         }
 
         //pc: entry of stext
-        cpu.setPC(0x10008000);
+        cpu.setPC(0x80008000);
         cpu.setJumped(false);
 
         cpu.run();
