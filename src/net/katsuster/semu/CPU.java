@@ -1921,9 +1921,8 @@ public class CPU extends MasterCore64 implements Runnable {
             executeALUAdc(inst, exec);
             break;
         case Instruction.OPCODE_S_SBC:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeALUSbc(inst, exec);
+            break;
         case Instruction.OPCODE_S_RSC:
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
@@ -2103,6 +2102,40 @@ public class CPU extends MasterCore64 implements Runnable {
             setCPSR_Z(dest == 0);
             setCPSR_C(lc_c || carryFrom(left_center, right));
             setCPSR_V(lc_v || overflowFrom(left_center, right, true));
+        }
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * キャリー付き減算命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeALUSbc(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int opr = getShifterOperand(inst);
+        int left, center, right, dest;
+
+        left = getReg(rn);
+        center = opr;
+        right = BitOp.toInt(!getCPSR_C());
+        dest = left - center - right;
+
+        if (s && rd == 15) {
+            setCPSR(getSPSR());
+        } else if (s) {
+            int left_center = left + center;
+            boolean lc_c = !borrowFrom(left, center);
+            boolean lc_v = overflowFrom(left, center, false);
+
+            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_Z(dest == 0);
+            setCPSR_C(lc_c || !borrowFrom(left_center, right));
+            setCPSR_V(lc_v || overflowFrom(left_center, right, false));
         }
 
         setReg(rd, dest);
@@ -3758,7 +3791,7 @@ public class CPU extends MasterCore64 implements Runnable {
         int v, vaddr, paddr;
 
         //for debug
-        int target_address = 0xc015dbb0;
+        int target_address = 0xc00196e8;
 
         vaddr = getPC() - 8;
         paddr = getMMU().translate(vaddr, true);
