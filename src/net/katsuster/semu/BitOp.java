@@ -9,6 +9,9 @@ public class BitOp {
     /**
      * 整数値の bit ビット目の値を取得します。
      *
+     * ビット位置に 32 ビット以上を指定した場合、
+     * 下位 5 ビットが有効となります。
+     *
      * @param val 整数値
      * @param bit ビット位置
      * @return ビットがセットされていれば true、クリアされていれば false
@@ -19,6 +22,9 @@ public class BitOp {
 
     /**
      * 整数値の bit ビット目の値を設定します。
+     *
+     * ビット位置に 32 ビット以上を指定した場合、
+     * 下位 5 ビットが有効となります。
      *
      * @param val 整数値
      * @param bit ビット位置
@@ -35,6 +41,32 @@ public class BitOp {
     }
 
     /**
+     * 整数値の指定された位置にあるビットフィールドの値を取得します。
+     *
+     * ビット位置に 32 ビット以上を指定した場合、
+     * 下位 5 ビットが有効となります。
+     *
+     * ビットフィールドの長さに 32 ビット以上を指定した場合、
+     * 長さは 32 ビットとなります。
+     *
+     * @param val 整数値
+     * @param pos ビット位置
+     * @param len ビットフィールドの長さ
+     * @return ビットフィールドの値
+     */
+    public static int getField(int val, int pos, int len) {
+        int mask;
+
+        if (len >= 32) {
+            mask = 0xffffffff;
+        } else {
+            mask = (1 << len) - 1;
+        }
+
+        return (val >> pos) & mask;
+    }
+
+    /**
      * ブール値を 1/0 に変換します。
      *
      * ビットフラグを 1 または 0 の数値として扱うときに使用します。
@@ -42,7 +74,7 @@ public class BitOp {
      * @param b ブール値
      * @return true の場合は 1、false の場合は 0
      */
-    public static int toBit(boolean b) {
+    public static int toInt(boolean b) {
         if (b) {
             return 1;
         } else {

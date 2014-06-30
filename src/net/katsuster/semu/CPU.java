@@ -870,8 +870,8 @@ public class CPU extends MasterCore64 implements Runnable {
      * @return イミディエート
      */
     public int getShifterOperandImm(Instruction inst) {
-        int rotR = (inst.getInst() >> 8) & 0xf;
-        int imm8 = inst.getInst() & 0xff;
+        int rotR = inst.getField(8, 4);
+        int imm8 = inst.getField(0, 8);
 
         return Integer.rotateRight(imm8, rotR * 2);
     }
@@ -897,8 +897,8 @@ public class CPU extends MasterCore64 implements Runnable {
      * @return イミディエートシフトオペランド
      */
     public int getShifterOperandImmShift(Instruction inst) {
-        int shift_imm = (inst.getInst() >> 7) & 0x1f;
-        int shift = (inst.getInst() >> 5) & 0x3;
+        int shift_imm = inst.getField(7, 5);
+        int shift = inst.getField(5, 2);
         int rm = inst.getRmField();
 
         switch (shift) {
@@ -951,8 +951,8 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public int getShifterOperandRegShift(Instruction inst) {
-        int shift = (inst.getInst() >> 5) & 0x3;
-        int rs = (inst.getInst() >> 8) & 0xf;
+        int shift = inst.getField(5, 2);
+        int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
         int valRs, valRsLow;
 
@@ -1047,7 +1047,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @return キャリーアウトする場合は true、そうでなければ false
      */
     public boolean getShifterCarryImm(Instruction inst) {
-        int rotR = (inst.getInst() >> 8) & 0xf;
+        int rotR = inst.getField(8, 4);
 
         if (rotR == 0) {
             return getCPSR_C();
@@ -1077,8 +1077,8 @@ public class CPU extends MasterCore64 implements Runnable {
      * @return キャリーアウトする場合は true、そうでなければ false
      */
     public boolean getShifterCarryImmShift(Instruction inst) {
-        int shift_imm = (inst.getInst() >> 7) & 0x1f;
-        int shift = (inst.getInst() >> 5) & 0x3;
+        int shift_imm = inst.getField(7, 5);
+        int shift = inst.getField(5, 2);
         int rm = inst.getRmField();
 
         switch (shift) {
@@ -1123,8 +1123,8 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public boolean getShifterCarryRegShift(Instruction inst) {
-        int shift = (inst.getInst() >> 5) & 0x3;
-        int rs = (inst.getInst() >> 8) & 0xf;
+        int shift = inst.getField(5, 2);
+        int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
         int valRs, valRsLow;
 
@@ -1241,8 +1241,8 @@ public class CPU extends MasterCore64 implements Runnable {
      * @return イミディエートシフトオペランドの名前
      */
     public String getShifterOperandImmShiftName(Instruction inst) {
-        int shift_imm = (inst.getInst() >> 7) & 0x1f;
-        int shift = (inst.getInst() >> 5) & 0x3;
+        int shift_imm = inst.getField(7, 5);
+        int shift = inst.getField(5, 2);
         int rm = inst.getRmField();
 
         switch (shift) {
@@ -1284,8 +1284,8 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     public String getShifterOperandRegShiftName(Instruction inst) {
-        int shift = (inst.getInst() >> 5) & 0x3;
-        int rs = (inst.getInst() >> 8) & 0xf;
+        int shift = inst.getField(5, 2);
+        int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
 
         switch (shift) {
@@ -1336,8 +1336,8 @@ public class CPU extends MasterCore64 implements Runnable {
         boolean i = inst.getIBit();
         boolean u = inst.getBit(23);
         int rn = inst.getRnField();
-        int shift_imm = (inst.getInst() >> 7) & 0x1f;
-        int shift = (inst.getInst() >> 5) & 0x3;
+        int shift_imm = inst.getField(7, 5);
+        int shift = inst.getField(5, 2);
         int offset;
 
         if (!i) {
@@ -1367,7 +1367,7 @@ public class CPU extends MasterCore64 implements Runnable {
      * @return イミディエートオフセットアドレス
      */
     public int getOffsetAddressImm(Instruction inst) {
-        int offset12 = inst.getInst() & 0xfff;
+        int offset12 = inst.getField(0, 12);
 
         return offset12;
     }
@@ -1418,8 +1418,8 @@ public class CPU extends MasterCore64 implements Runnable {
         boolean b = inst.getBit(22);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
-        int shift_imm = (inst.getInst() >> 7) & 0x1f;
-        int shift = (inst.getInst() >> 5) & 0x3;
+        int shift_imm = inst.getField(7, 5);
+        int shift = inst.getField(5, 2);
         int rm = inst.getRmField();
         String strOffset;
 
@@ -1474,7 +1474,7 @@ public class CPU extends MasterCore64 implements Runnable {
         boolean b = inst.getBit(22);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
-        int offset12 = inst.getInst() & 0xfff;
+        int offset12 = inst.getField(0, 12);
 
         if (p && !w) {
             //イミディエートオフセット
@@ -1561,8 +1561,8 @@ public class CPU extends MasterCore64 implements Runnable {
      * @return アドレス
      */
     public int getOffsetHalfImm(Instruction inst) {
-        int immh = (inst.getInst() >> 8) & 0xf;
-        int imml = inst.getInst() & 0xf;
+        int immh = inst.getField(8, 4);
+        int imml = inst.getField(0, 4);
 
         return (immh << 4) | imml;
     }
@@ -1730,7 +1730,7 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeMrs(Instruction inst, boolean exec) {
         boolean r = inst.getBit(22);
-        int sbo = (inst.getInst() >> 16) & 0xf;
+        int sbo = inst.getField(16, 4);
         int rd = inst.getRdField();
         int dest;
 
@@ -1773,7 +1773,7 @@ public class CPU extends MasterCore64 implements Runnable {
         boolean mask_s = inst.getBit(18);
         boolean mask_x = inst.getBit(17);
         boolean mask_c = inst.getBit(16);
-        int sbo = (inst.getInst() >> 12) & 0xf;
+        int sbo = inst.getField(12, 4);
         int opr = getShifterOperand(inst);
         int dest, m = 0;
 
@@ -2089,7 +2089,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         left = getReg(rn);
         center = opr;
-        right = getCPSR_C() ? 1 : 0;
+        right = BitOp.toInt(getCPSR_C());
         dest = left + center + right;
 
         if (s && rd == 15) {
@@ -2116,7 +2116,7 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeALUTst(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
-        int sbz = (inst.getInst() >> 12) & 0xf;
+        int sbz = inst.getField(12, 4);
         int opr = getShifterOperand(inst);
         int left, right, dest;
 
@@ -2143,7 +2143,7 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeALUTeq(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
-        int sbz = (inst.getInst() >> 12) & 0xf;
+        int sbz = inst.getField(12, 4);
         int opr = getShifterOperand(inst);
         int left, right, dest;
 
@@ -2170,7 +2170,7 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeALUCmp(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
-        int sbz = (inst.getInst() >> 12) & 0xf;
+        int sbz = inst.getField(12, 4);
         int opr = getShifterOperand(inst);
         int left, right, dest;
 
@@ -2197,7 +2197,7 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeALUCmn(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
-        int sbz = (inst.getInst() >> 12) & 0xf;
+        int sbz = inst.getField(12, 4);
         int opr = getShifterOperand(inst);
         int left, right, dest;
 
@@ -2253,7 +2253,7 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeALUMov(Instruction inst, boolean exec) {
         boolean s = inst.getSBit();
-        int sbz = (inst.getInst() >> 16) & 0xf;
+        int sbz = inst.getField(16, 4);
         int rd = inst.getRdField();
         int opr = getShifterOperand(inst);
         int right, dest;
@@ -2933,7 +2933,7 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeBl(Instruction inst, boolean exec) {
         boolean l = inst.getBit(24);
-        int imm24 = inst.getInst() & 0xffffff;
+        int imm24 = inst.getField(0, 24);
         int simm24 = (int)signext(imm24, 24) << 2;
 
         if (!exec) {
@@ -2968,8 +2968,8 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeBlx1(Instruction inst, boolean exec) {
         boolean h = inst.getBit(24);
-        int vh = BitOp.toBit(h) << 1;
-        int imm24 = inst.getInst() & 0xffffff;
+        int vh = BitOp.toInt(h) << 1;
+        int imm24 = inst.getField(0, 24);
         int simm24 = (int)signext(imm24, 24) << 2;
 
         if (!exec) {
@@ -3032,12 +3032,12 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeMcr(Instruction inst, boolean exec) {
-        int opcode1 = (inst.getInst() >> 21) & 0x7;
-        int crn = (inst.getInst() >> 16) & 0xf;
+        int opcode1 = inst.getField(21, 3);
+        int crn = inst.getField(16, 4);
         int rd = inst.getRdField();
-        int cpnum = (inst.getInst() >> 8) & 0xf;
-        int opcode2 = (inst.getInst() >> 5) & 0x7;
-        int crm = inst.getInst() & 0xf;
+        int cpnum = inst.getField(8, 4);
+        int opcode2 = inst.getField(5, 3);
+        int crm = inst.getField(0, 4);
         CoProc cp;
         int crid;
 
@@ -3080,12 +3080,12 @@ public class CPU extends MasterCore64 implements Runnable {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeMrc(Instruction inst, boolean exec) {
-        int opcode1 = (inst.getInst() >> 21) & 0x7;
-        int crn = (inst.getInst() >> 16) & 0xf;
+        int opcode1 = inst.getField(21, 3);
+        int crn = inst.getField(16, 4);
         int rd = inst.getRdField();
-        int cpnum = (inst.getInst() >> 8) & 0xf;
-        int opcode2 = (inst.getInst() >> 5) & 0x7;
-        int crm = inst.getInst() & 0xf;
+        int cpnum = inst.getField(8, 4);
+        int opcode2 = inst.getField(5, 3);
+        int crm = inst.getField(0, 4);
         CoProc cp;
         int crid, crval, rval;
 
@@ -3214,7 +3214,7 @@ public class CPU extends MasterCore64 implements Runnable {
                 //算術命令拡張空間、ロードストア命令拡張空間
                 int cond = inst.getCondField();
                 boolean p = inst.getBit(24);
-                int op = (inst.getInst() >> 5) & 0x3;
+                int op = inst.getField(5, 2);
 
                 if (cond != Instruction.COND_NV && !p && op == 0) {
                     //算術命令拡張空間
@@ -3283,7 +3283,7 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeSubExtALU(Instruction inst, boolean exec) {
         //U, B, W ビット[23:21]
-        int ubw = (inst.getInst() >> 21) & 0x7;
+        int ubw = inst.getField(21, 3);
 
         //算術命令拡張空間
         switch (ubw) {
@@ -3364,9 +3364,9 @@ public class CPU extends MasterCore64 implements Runnable {
     public void executeSubExtLdrStr(Instruction inst, boolean exec) {
         boolean p = inst.getBit(24);
         //U, B, W ビット[23:21]
-        int ubw = (inst.getInst() >> 21) & 0x7;
+        int ubw = inst.getField(21, 3);
         boolean l = inst.getBit(20);
-        int op = (inst.getInst() >> 5) & 0x3;
+        int op = inst.getField(5, 2);
 
         //ロードストア命令拡張空間
         if (p && op == 0) {
@@ -3470,9 +3470,9 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeSubALUOther(Instruction inst, boolean exec) {
         int cond = inst.getCondField();
-        boolean b22 = BitOp.getBit(inst.getInst(), 22);
-        boolean b21 = BitOp.getBit(inst.getInst(), 21);
-        int type = (inst.getInst() >> 4) & 0xf;
+        boolean b22 = inst.getBit(22);
+        boolean b21 = inst.getBit(21);
+        int type = inst.getField(4, 4);
 
         switch (type) {
         case 0x0:
@@ -3711,7 +3711,7 @@ public class CPU extends MasterCore64 implements Runnable {
      */
     public void executeSubCopSwi(Instruction inst, boolean exec) {
         int cond = inst.getCondField();
-        int subsub = (inst.getInst() >> 24) & 0x3;
+        int subsub = inst.getField(24, 2);
         boolean b20 = inst.getBit(20);
         boolean b4 = inst.getBit(4);
 
