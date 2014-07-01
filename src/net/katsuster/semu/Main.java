@@ -71,7 +71,7 @@ public class Main {
         cpu.setDisasmMode(true);
         cpu.setPrintingDisasm(true);
         cpu.setPrintingRegs(false);
-        cpu.exceptionReset("Init.");
+        cpu.doExceptionReset("Init.");
 
         //tentative boot loader for Linux
         //load Image file

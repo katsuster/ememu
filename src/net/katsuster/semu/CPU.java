@@ -25,6 +25,8 @@ public class CPU extends MasterCore64 implements Runnable {
     private CoProc[] coProcs;
     private MMU mmu;
 
+    private boolean exceptions[];
+    private String exceptionReasons[];
     private boolean jumped;
 
     private boolean flagDisasm;
@@ -45,6 +47,10 @@ public class CPU extends MasterCore64 implements Runnable {
         coProcs = new CoProc[16];
         coProcs[15] = stdCp;
         mmu = new MMU(this, stdCp);
+
+        exceptions = new boolean[7];
+        exceptionReasons = new String[7];
+        jumped = false;
     }
 
     public boolean isDisasmMode() {
@@ -2412,6 +2418,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
 
         paddr = getMMU().translate(vaddr, false);
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("ldrb [%08x]", paddr));
+            return;
+        }
+
         value = (int)(read8(paddr)) & 0xff;
 
         setReg(rd, value);
@@ -2460,7 +2472,14 @@ public class CPU extends MasterCore64 implements Runnable {
         rot = vaddr & 0x3;
 
         paddr = getMMU().translate(vaddr, false);
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("ldr [%08x]", paddr));
+            return;
+        }
+
         value = read32(paddr);
+
         switch (rot) {
         case 0:
             //do nothing
@@ -2530,6 +2549,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
 
         paddr = getMMU().translate(vaddr, false);
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("ldrh [%08x]", paddr));
+            return;
+        }
+
         value = read16(paddr) & 0xffff;
 
         setReg(rd, value);
@@ -2577,6 +2602,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
 
         paddr = getMMU().translate(vaddr, false);
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("ldrsh [%08x]", paddr));
+            return;
+        }
+
         value = read16(paddr);
 
         setReg(rd, value);
@@ -2624,6 +2655,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
 
         paddr = getMMU().translate(vaddr, false);
+        if (!tryRead(paddr) || !tryRead(paddr + 4)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("ldrd [%08x]", paddr));
+            return;
+        }
+
         value1 = read32(paddr);
         value2 = read32(paddr + 4);
 
@@ -2698,6 +2735,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
 
         paddr = getMMU().translate(vaddr, false);
+        if (!tryWrite(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("strb [%08x]", paddr));
+            return;
+        }
+
         write8(paddr, (byte) getReg(rd));
 
         if (!p || w) {
@@ -2743,6 +2786,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
 
         paddr = getMMU().translate(vaddr, false);
+        if (!tryWrite(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("str [%08x]", paddr));
+            return;
+        }
+
         write32(paddr, getReg(rd));
 
         if (!p || w) {
@@ -2788,6 +2837,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
 
         paddr = getMMU().translate(vaddr, false);
+        if (!tryWrite(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("strh [%08x]", paddr));
+            return;
+        }
+
         write16(paddr, (short)getReg(rd));
 
         if (!p || w) {
@@ -2833,6 +2888,12 @@ public class CPU extends MasterCore64 implements Runnable {
         }
 
         paddr = getMMU().translate(vaddr, false);
+        if (!tryWrite(paddr) || !tryWrite(paddr + 4)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("strd [%08x]", paddr));
+            return;
+        }
+
         write32(paddr, getReg(rd));
         write32(paddr + 4, getReg(rd + 1));
 
@@ -2878,7 +2939,14 @@ public class CPU extends MasterCore64 implements Runnable {
             if ((rlist & (1 << i)) == 0) {
                 continue;
             }
+
             paddr = getMMU().translate(vaddr, false);
+            if (!tryRead(paddr)) {
+                raiseException(EXCEPT_ABT_DATA,
+                        String.format("ldm(1) [%08x]", paddr));
+                return;
+            }
+
             setReg(i, read32(paddr));
             vaddr += 4;
         }
@@ -2887,6 +2955,12 @@ public class CPU extends MasterCore64 implements Runnable {
             int v;
 
             paddr = getMMU().translate(vaddr, false);
+            if (!tryRead(paddr)) {
+                raiseException(EXCEPT_ABT_DATA,
+                        String.format("ldm(1) [%08x]", paddr));
+                return;
+            }
+
             v = read32(paddr);
 
             setPC(v & 0xfffffffe);
@@ -2943,7 +3017,14 @@ public class CPU extends MasterCore64 implements Runnable {
             if ((rlist & (1 << i)) == 0) {
                 continue;
             }
+
             paddr = getMMU().translate(vaddr, false);
+            if (!tryWrite(paddr)) {
+                raiseException(EXCEPT_ABT_DATA,
+                        String.format("stm(1) [%08x]", paddr));
+                return;
+            }
+
             write32(paddr, getReg(i));
             vaddr += 4;
         }
@@ -3090,14 +3171,14 @@ public class CPU extends MasterCore64 implements Runnable {
 
         cp = getCoproc(cpnum);
         if (cp == null) {
-            exceptionUndefined("Unimplemented coprocessor, " +
+            raiseException(EXCEPT_UND, "Unimplemented coprocessor, " +
                     String.format("p%d selected.", cpnum));
             return;
         }
 
         crid = CoProc.getCRegID(crn, opcode1, crm, opcode2);
         if (!cp.validCRegNumber(crid)) {
-            exceptionUndefined("Unimplemented coprocessor register, " +
+            raiseException(EXCEPT_UND, "Unimplemented coprocessor register, " +
                     String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
                             cpnum, crid, crn, opcode1, crm, opcode2));
             return;
@@ -3125,8 +3206,8 @@ public class CPU extends MasterCore64 implements Runnable {
         if (!exec) {
             printDisasm(inst,
                     String.format("mrc%s", inst.getCondFieldName()),
-                    String.format("%s, %d, %s, %s, %s, {%d}",
-                            getCoproc(cpnum).toString(), opcode1,
+                    String.format("p%d, %d, %s, %s, %s, {%d}",
+                            cpnum, opcode1,
                             getRegName(rd), getCoprocRegName(cpnum, crn),
                             getCoprocRegName(cpnum, crm), opcode2));
             return;
@@ -3138,14 +3219,14 @@ public class CPU extends MasterCore64 implements Runnable {
 
         cp = getCoproc(cpnum);
         if (cp == null) {
-            exceptionUndefined("Unimplemented coprocessor, " +
+            raiseException(EXCEPT_UND, "Unimplemented coprocessor, " +
                     String.format("p%d selected.", cpnum));
             return;
         }
 
         crid = CoProc.getCRegID(crn, opcode1, crm, opcode2);
         if (!cp.validCRegNumber(crid)) {
-            exceptionUndefined("Unimplemented coprocessor register, " +
+            raiseException(EXCEPT_UND, "Unimplemented coprocessor register, " +
                     String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
                             cpnum, crid, crn, opcode1, crm, opcode2));
             return;
@@ -3182,7 +3263,7 @@ public class CPU extends MasterCore64 implements Runnable {
             return;
         }
 
-        exceptionPrefetch("Warning: Undefined instruction " +
+        raiseException(EXCEPT_ABT_INST, "Warning: Undefined instruction " +
                 String.format("inst:0x%08x.", inst.getInst()));
     }
 
@@ -3795,6 +3876,12 @@ public class CPU extends MasterCore64 implements Runnable {
 
         vaddr = getPC() - 8;
         paddr = getMMU().translate(vaddr, true);
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_INST,
+                    String.format("exec [%08x]", paddr));
+            return;
+        }
+
         v = read32(paddr);
         inst = new Instruction(v);
         try {
@@ -3825,6 +3912,10 @@ public class CPU extends MasterCore64 implements Runnable {
             throw e;
         }
 
+        //例外を発生させる必要があれば発生させます
+        doImportantException();
+
+        //次の命令へ
         nextPC();
     }
 
@@ -3834,12 +3925,82 @@ public class CPU extends MasterCore64 implements Runnable {
         }
     }
 
+    public static final int EXCEPT_RST = 0;
+    public static final int EXCEPT_ABT_DATA = 1;
+    public static final int EXCEPT_FIQ = 2;
+    public static final int EXCEPT_IRQ = 3;
+    public static final int EXCEPT_ABT_INST = 4;
+    public static final int EXCEPT_UND = 5;
+    public static final int EXCEPT_SVC = 6;
+
+    /**
+     * 例外を発生させます。
+     *
+     * @param num    例外番号（EXCEPT_xxxx）
+     * @param dbgmsg デバッグ用のメッセージ
+     */
+    public void raiseException(int num, String dbgmsg) {
+        if (num < 0 || exceptions.length <= num) {
+            throw new IllegalArgumentException("Illegal exception number " + num);
+        }
+
+        exceptions[num] = true;
+        exceptionReasons[num] = dbgmsg;
+    }
+
+    /**
+     * 最も優先度の高い例外を 1つだけ発生させます。
+     *
+     * 優先度の低い例外は後回しにされます。
+     */
+    public void doImportantException() {
+        boolean found = false;
+        int i;
+
+        for (i = 0; i < exceptions.length; i++) {
+            if (exceptions[i]) {
+                exceptions[i] = false;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return;
+        }
+
+        switch (i) {
+        case EXCEPT_RST:
+            doExceptionReset(exceptionReasons[i]);
+            break;
+        case EXCEPT_UND:
+            doExceptionUndefined(exceptionReasons[i]);
+            break;
+        case EXCEPT_SVC:
+            doExceptionSoftware(exceptionReasons[i]);
+            break;
+        case EXCEPT_ABT_INST:
+            doExceptionPrefetch(exceptionReasons[i]);
+            break;
+        case EXCEPT_ABT_DATA:
+            doExceptionData(exceptionReasons[i]);
+            break;
+        case EXCEPT_IRQ:
+            doExceptionIRQ(exceptionReasons[i]);
+            break;
+        case EXCEPT_FIQ:
+            doExceptionFIQ(exceptionReasons[i]);
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal exception number " + i);
+        }
+    }
+
     /**
      * リセット例外を発生させます。
      *
      * @param dbgmsg デバッグ用のメッセージ
      */
-    public void exceptionReset(String dbgmsg) {
+    public void doExceptionReset(String dbgmsg) {
         int spsrOrg;
 
         System.out.printf("Exception: Reset by '%s'.\n",
@@ -3874,10 +4035,10 @@ public class CPU extends MasterCore64 implements Runnable {
      *
      * @param dbgmsg デバッグ用のメッセージ
      */
-    public void exceptionUndefined(String dbgmsg) {
+    public void doExceptionUndefined(String dbgmsg) {
         int pcOrg, spsrOrg;
 
-        System.out.printf("Exception: Undefined by '%s'.\n",
+        System.out.printf("Exception: Undefined instruction by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
@@ -3901,10 +4062,6 @@ public class CPU extends MasterCore64 implements Runnable {
         } else {
             setPC(0x00000004);
         }
-
-        //tentative...
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     /**
@@ -3914,10 +4071,10 @@ public class CPU extends MasterCore64 implements Runnable {
      *
      * @param dbgmsg デバッグ用のメッセージ
      */
-    public void exceptionSoftware(String dbgmsg) {
+    public void doExceptionSoftware(String dbgmsg) {
         int pcOrg, spsrOrg;
 
-        System.out.printf("Exception: Software by '%s'.\n",
+        System.out.printf("Exception: Software interrupt by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
@@ -3954,10 +4111,10 @@ public class CPU extends MasterCore64 implements Runnable {
      *
      * @param dbgmsg デバッグ用のメッセージ
      */
-    public void exceptionPrefetch(String dbgmsg) {
+    public void doExceptionPrefetch(String dbgmsg) {
         int pcOrg, spsrOrg;
 
-        System.out.printf("Exception: Prefetch by '%s'.\n",
+        System.out.printf("Exception: Prefetch abort by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
@@ -3994,10 +4151,10 @@ public class CPU extends MasterCore64 implements Runnable {
      *
      * @param dbgmsg デバッグ用のメッセージ
      */
-    public void exceptionData(String dbgmsg) {
+    public void doExceptionData(String dbgmsg) {
         int pcOrg, spsrOrg;
 
-        System.out.printf("Exception: Data by '%s'.\n",
+        System.out.printf("Exception: Data abort by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
@@ -4021,10 +4178,6 @@ public class CPU extends MasterCore64 implements Runnable {
         } else {
             setPC(0x00000010);
         }
-
-        //tentative...
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     /**
@@ -4034,7 +4187,7 @@ public class CPU extends MasterCore64 implements Runnable {
      *
      * @param dbgmsg デバッグ用のメッセージ
      */
-    public void exceptionIRQ(String dbgmsg) {
+    public void doExceptionIRQ(String dbgmsg) {
         int pcOrg, spsrOrg;
 
         System.out.printf("Exception: IRQ by '%s'.\n",
@@ -4074,7 +4227,7 @@ public class CPU extends MasterCore64 implements Runnable {
      *
      * @param dbgmsg デバッグ用のメッセージ
      */
-    public void exceptionFIQ(String dbgmsg) {
+    public void doExceptionFIQ(String dbgmsg) {
         int pcOrg, spsrOrg;
 
         System.out.printf("Exception: FIQ by '%s'.\n",
