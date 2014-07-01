@@ -51,6 +51,7 @@ public class Main {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
 
         CPU cpu = new CPU();
+        //UART uart = new UART();
         RAM<Word64> ramLow = new RAM<Word64>(createRAM(32 * 1024));
         RAM<Word64> ramMain = new RAM<Word64>(createRAM(16 * 1024 * 1024));
         Bus<Word64> bus = new Bus<Word64>();
@@ -58,13 +59,16 @@ public class Main {
 
         cpu.setSlaveBus(bus);
         //RAM Image(tentative)
-        //  0x00000000 - 0x00008000: Low mem
-        //    0x00000000 - 0x00001000: vector
-        //    0x00004000 - 0x00005000: ATAG_XXX
-        //  0x80000000 - 0x81000000: Main
-        //    0x80000000 - 0x80008000: Linux pagetable
-        //    0x80008000 - 0x80500000: Linux Image
+        //  0x00000000 - 0x00007fff: Low mem
+        //    0x00000000 - 0x00000fff: vector
+        //    0x00004000 - 0x00004fff: ATAG_XXX
+        //  0x10000000 - 0x13ffffff: CS5
+        //    0x101f1000 - 0x101f1fff: UART
+        //  0x80000000 - 0x80ffffff: Main
+        //    0x80000000 - 0x80007fff: Linux pagetable
+        //    0x80008000 - 0x804fffff: Linux Image
         bus.addSlaveCore(ramLow, 0x00000000L, 0x00008000L);
+        //bus.addSlaveCore(uart, 0x101f1000L, 0x101f2000L);
         bus.addSlaveCore(ramMain, 0x80000000L, 0x81000000L);
 
         //reset
