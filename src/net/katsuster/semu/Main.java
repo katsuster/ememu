@@ -34,29 +34,25 @@ public class Main {
 
         CPU cpu = new CPU();
         UART uart = new UART();
-        RAM ramLow = new RAM(32 * 1024);
-        RAM ramMain = new RAM(16 * 1024 * 1024);
+        RAM ramMain = new RAM(48 * 1024 * 1024);
         Bus64 bus = new Bus64();
-        int addrAtags = 0x00004000;
+        int addrAtags = 0x82ffff00;
 
         cpu.setSlaveBus(bus);
 
         //RAM Image(tentative)
-        //  0x00000000 - 0x00007fff: Low mem
-        //    0x00000000 - 0x00000fff: vector
-        //    0x00004000 - 0x00004fff: ATAG_XXX
         //  0x10000000 - 0x13ffffff: CS5
         //    0x101f1000 - 0x101f1fff: UART
-        //  0x80000000 - 0x80ffffff: Main
+        //  0x80000000 - 0x82ffffff: Main
         //    0x80000000 - 0x80007fff: Linux pagetable
         //    0x80008000 - 0x804fffff: Linux Image
-        bus.addSlaveCore(ramLow, 0x00000000L, 0x00008000L);
+        //    0x82ffff00 - 0x82ffffff: ATAG_XXX
         bus.addSlaveCore(uart, 0x101f1000L, 0x101f2000L);
-        bus.addSlaveCore(ramMain, 0x80000000L, 0x81000000L);
+        bus.addSlaveCore(ramMain, 0x80000000L, 0x83000000L);
 
         //reset
-        cpu.setDisasmMode(true);
-        cpu.setPrintingDisasm(true);
+        cpu.setDisasmMode(false);
+        cpu.setPrintingDisasm(false);
         cpu.setPrintingRegs(false);
         cpu.doExceptionReset("Init.");
 
@@ -66,8 +62,13 @@ public class Main {
 
         //r0: 0
         cpu.setReg(0, 0);
-        //r1: machine nr
-        cpu.setReg(1, 0);
+
+        //r1: machine type
+        //ARM-Versatile PB
+        cpu.setReg(1, 0x00000183);
+        //ARM-Versatile AB
+        //cpu.setReg(1, 0x0000025e);
+
         //r2: atags or dtb pointer.
         cpu.setReg(2, addrAtags);
         {
@@ -80,11 +81,20 @@ public class Main {
             addrAtags += 0x14;
 
             //ATAG_MEM, size, tag, size, start
-            cpu.write32(addrAtags + 0x00, 0x00000005);
-            cpu.write32(addrAtags + 0x04, 0x54410001);
-            cpu.write32(addrAtags + 0x08, 0x01000000);
+            cpu.write32(addrAtags + 0x00, 0x00000004);
+            cpu.write32(addrAtags + 0x04, 0x54410002);
+            cpu.write32(addrAtags + 0x08, 0x03000000);
             cpu.write32(addrAtags + 0x0c, 0x80000000);
             addrAtags += 0x10;
+
+            //ATAG_REVISION, size, tag, rev
+            cpu.write32(addrAtags + 0x00, 0x00000003);
+            cpu.write32(addrAtags + 0x04, 0x54410007);
+            //ARM-Versatile PB
+            cpu.write32(addrAtags + 0x08, 0x00000183);
+            //ARM-Versatile AB
+            //cpu.write32(addrAtags + 0x08, 0x0000025e);
+            addrAtags += 0x0c;
 
             //ATAG_NONE, size, tag
             cpu.write32(addrAtags + 0x00, 0x00000002);
