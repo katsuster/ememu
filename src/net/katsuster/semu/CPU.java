@@ -2373,6 +2373,136 @@ public class CPU extends MasterCore64 implements Runnable {
         setReg(rd, dest);
     }
 
+    /**
+     * 積和命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeMla(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rd = inst.getField(16, 4);
+        int rn = inst.getField(12, 4);
+        int rs = inst.getField(8, 4);
+        int rm = inst.getRmField();
+        int left, center, right, dest;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("mla%s%s", inst.getCondFieldName(),
+                            (s) ? "s" : ""),
+                    String.format("%s, %s, %s, %s",
+                            getRegName(rd), getRegName(rm),
+                            getRegName(rs), getRegName(rn)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        left = getReg(rm);
+        center = getReg(rs);
+        right = getReg(rn);
+        dest = left * center + right;
+
+        if (s) {
+            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_Z(dest == 0);
+            //C flag is unaffected
+            //V flag is unaffected
+        }
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * 乗算命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeMul(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rd = inst.getField(16, 4);
+        int rs = inst.getField(8, 4);
+        int rm = inst.getRmField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("mul%s%s", inst.getCondFieldName(),
+                            (s) ? "s" : ""),
+                    String.format("%s, %s, %s",
+                            getRegName(rd), getRegName(rm),
+                            getRegName(rs)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        left = getReg(rm);
+        right = getReg(rs);
+        dest = left * right;
+
+        if (s) {
+            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_Z(dest == 0);
+            //C flag is unaffected
+            //V flag is unaffected
+        }
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * 符号無し乗算ロング命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeUmull(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rdhi = inst.getField(16, 4);
+        int rdlo = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        int rm = inst.getRmField();
+        int left, right, desthi, destlo;
+        long dest;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("umull%s%s", inst.getCondFieldName(),
+                            (s) ? "s" : ""),
+                    String.format("%s, %s, %s, %s",
+                            getRegName(rdlo), getRegName(rdhi),
+                            getRegName(rm), getRegName(rs)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        left = getReg(rm);
+        right = getReg(rs);
+        dest = left * right;
+        desthi = (int)(dest >>> 32);
+        destlo = (int)dest;
+
+        if (s) {
+            setCPSR_N(BitOp.getBit(desthi, 31));
+            setCPSR_Z(dest == 0);
+            //C flag is unaffected
+            //V flag is unaffected
+        }
+
+        setReg(rdhi, desthi);
+        setReg(rdlo, destlo);
+    }
+
     public void executeLdrt(Instruction inst, boolean exec) {
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
@@ -3105,6 +3235,41 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
+     * リンク付き分岐命令。
+     *
+     * Thumb 命令のサブルーチン呼び出しが可能です。
+     *
+     * 27  26  25  24 |23  22  21  20 | 7   6   5   4|
+     * ----------------------------------------------
+     *  0   0   0   1 | 0   0   1   0 | 0   0   1   1|
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBlx2(Instruction inst, boolean exec) {
+        int rm = inst.getRmField();
+        int dest;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("blx"),
+                    String.format("%s", getRegName(rm)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        dest = getReg(rm);
+
+        setReg(14, getPC() - 4);
+        //T ビットをセット
+        setCPSR_T(BitOp.getBit(dest, 0));
+        setPC(dest & 0xfffffffe);
+    }
+
+    /**
      * 分岐交換命令。
      *
      * Thumb 命令のサブルーチン呼び出しが可能です。
@@ -3403,14 +3568,12 @@ public class CPU extends MasterCore64 implements Runnable {
         switch (ubw) {
         case 1:
             //mla
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeMla(inst, exec);
+            break;
         case 0:
             //mul
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeMul(inst, exec);
+            break;
         case 7:
             //smlal
             //TODO: Not implemented
@@ -3427,10 +3590,9 @@ public class CPU extends MasterCore64 implements Runnable {
             throw new IllegalArgumentException("Sorry, not implemented.");
             //break;
         case 4:
-            //umlul
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            //umull
+            executeUmull(inst, exec);
+            break;
         default:
             //未定義
             //TODO: Not implemented
@@ -3614,8 +3776,7 @@ public class CPU extends MasterCore64 implements Runnable {
         case 0x3:
             if (!b22 && b21) {
                 //blx(2)
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                executeBlx2(inst, exec);
             } else {
                 //未定義
                 executeUnd(inst, exec);
@@ -3872,7 +4033,8 @@ public class CPU extends MasterCore64 implements Runnable {
         int v, vaddr, paddr;
 
         //for debug
-        int target_address = 0xc00196e8;
+        int target_address1 = 0xc0163684; //<_parse_integer>
+        int target_address2 = 0xc01636c0;
 
         vaddr = getPC() - 8;
         paddr = getMMU().translate(vaddr, true);
@@ -3886,8 +4048,12 @@ public class CPU extends MasterCore64 implements Runnable {
         inst = new Instruction(v);
         try {
             //表示調整用
-            if (getPC() - 8 == target_address) {
+            if (getPC() - 8 == target_address1) {
+                setDisasmMode(true);
                 setPrintingDisasm(true);
+            }
+
+            if (getPC() - 8 == target_address2) {
                 setPrintingRegs(true);
             }
 
