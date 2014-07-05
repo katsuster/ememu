@@ -1911,9 +1911,8 @@ public class CPU extends MasterCore64 implements Runnable {
             executeALUAnd(inst, exec);
             break;
         case Instruction.OPCODE_S_EOR:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeALUEor(inst, exec);
+            break;
         case Instruction.OPCODE_S_SUB:
             executeALUSub(inst, exec);
             break;
@@ -1979,6 +1978,35 @@ public class CPU extends MasterCore64 implements Runnable {
         left = getReg(rn);
         right = opr;
         dest = left & right;
+
+        if (s && rd == 15) {
+            setCPSR(getSPSR());
+        } else if (s) {
+            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_Z(dest == 0);
+            setCPSR_C(getShifterCarry(inst));
+            //V flag is unaffected
+        }
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * 排他的論理和命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeALUEor(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int opr = getShifterOperand(inst);
+        int left, right, dest;
+
+        left = getReg(rn);
+        right = opr;
+        dest = left ^ right;
 
         if (s && rd == 15) {
             setCPSR(getSPSR());
@@ -4033,8 +4061,8 @@ public class CPU extends MasterCore64 implements Runnable {
         int v, vaddr, paddr;
 
         //for debug
-        int target_address1 = 0xc0163684; //<_parse_integer>
-        int target_address2 = 0xc01636c0;
+        int target_address1 = 0xc0153028; //<_find_next_bit_le>
+        int target_address2 = 0xc015302c; //<_find_next_bit_le>
 
         vaddr = getPC() - 8;
         paddr = getMMU().translate(vaddr, true);
