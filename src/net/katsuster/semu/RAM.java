@@ -12,7 +12,6 @@ public class RAM extends SlaveCore64 {
     public static final int LEN_WORD_BITS = LEN_WORD * 8;
 
     private long[] words;
-    private Bus64 masterBus;
 
     public RAM(int size) {
         if (size < 0) {
@@ -20,16 +19,6 @@ public class RAM extends SlaveCore64 {
         }
 
         this.words = new long[size];
-    }
-
-    @Override
-    public Bus64 getMasterBus() {
-        return masterBus;
-    }
-
-    @Override
-    public void setMasterBus(Bus64 bus) {
-        masterBus = bus;
     }
 
     /**
@@ -98,17 +87,6 @@ public class RAM extends SlaveCore64 {
         return readWord(addr);
     }
 
-    public long readWord(long addr) {
-        int wordAddr;
-
-        addr &= getAddressMask(LEN_WORD_BITS);
-        checkAddress(addr);
-
-        wordAddr = (int)(addr / LEN_WORD);
-
-        return words[wordAddr];
-    }
-
     @Override
     public boolean tryWrite(long addr) {
         return tryAccess(addr);
@@ -141,6 +119,17 @@ public class RAM extends SlaveCore64 {
     @Override
     public void write64(long addr, long data) {
         writeWord(addr, data);
+    }
+
+    public long readWord(long addr) {
+        int wordAddr;
+
+        addr &= getAddressMask(LEN_WORD_BITS);
+        checkAddress(addr);
+
+        wordAddr = (int)(addr / LEN_WORD);
+
+        return words[wordAddr];
     }
 
     public void writeWord(long addr, long data) {
