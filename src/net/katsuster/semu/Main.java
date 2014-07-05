@@ -3,24 +3,6 @@ package net.katsuster.semu;
 import java.io.*;
 
 public class Main {
-    public static Word64[] createRAM(long size) {
-        int lenWords;
-        Word64[] ramWords;
-
-        if (size > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Size is too large " +
-                    size + ".");
-        }
-
-        lenWords = (int)(size / 8);
-        ramWords = new Word64[lenWords];
-        for (int i = 0; i < ramWords.length; i++) {
-            ramWords[i] = new Word64(0);
-        }
-
-        return ramWords;
-    }
-
     public static void loadFile(String filename, CPU cpu, int addr) {
         int lenWords;
 
@@ -51,13 +33,14 @@ public class Main {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
 
         CPU cpu = new CPU();
-        //UART uart = new UART();
-        RAM<Word64> ramLow = new RAM<Word64>(createRAM(32 * 1024));
-        RAM<Word64> ramMain = new RAM<Word64>(createRAM(16 * 1024 * 1024));
-        Bus<Word64> bus = new Bus<Word64>();
+        UART uart = new UART();
+        RAM ramLow = new RAM(32 * 1024);
+        RAM ramMain = new RAM(16 * 1024 * 1024);
+        Bus64 bus = new Bus64();
         int addrAtags = 0x00004000;
 
         cpu.setSlaveBus(bus);
+
         //RAM Image(tentative)
         //  0x00000000 - 0x00007fff: Low mem
         //    0x00000000 - 0x00000fff: vector
@@ -68,7 +51,7 @@ public class Main {
         //    0x80000000 - 0x80007fff: Linux pagetable
         //    0x80008000 - 0x804fffff: Linux Image
         bus.addSlaveCore(ramLow, 0x00000000L, 0x00008000L);
-        //bus.addSlaveCore(uart, 0x101f1000L, 0x101f2000L);
+        bus.addSlaveCore(uart, 0x101f1000L, 0x101f2000L);
         bus.addSlaveCore(ramMain, 0x80000000L, 0x81000000L);
 
         //reset
