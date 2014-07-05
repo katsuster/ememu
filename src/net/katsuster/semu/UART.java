@@ -11,6 +11,8 @@ public class UART extends SlaveCore64 {
     //データ幅（ビット単位）
     public static final int LEN_WORD_BITS = LEN_WORD * 8;
 
+    private StringBuilder strBuffer;
+
     public static final int REG_UARTDR        = 0x000;
     public static final int REG_UARTRSR       = 0x004;
     public static final int REG_UARTFR        = 0x018;
@@ -35,7 +37,7 @@ public class UART extends SlaveCore64 {
     public static final int REG_UARTPCellID3  = 0xffc;
 
     public UART() {
-
+        strBuffer = new StringBuilder();
     }
 
     @Override
@@ -75,24 +77,21 @@ public class UART extends SlaveCore64 {
 
     @Override
     public void write8(long addr, byte data) {
-        long v = readWord(addr);
-        long w = writeMasked(addr, v, data, LEN_WORD_BITS, 8);
+        long w = writeMasked(addr, 0, data, LEN_WORD_BITS, 8);
 
         writeWord(addr, w);
     }
 
     @Override
     public void write16(long addr, short data) {
-        long v = readWord(addr);
-        long w = writeMasked(addr, v, data, LEN_WORD_BITS, 16);
+        long w = writeMasked(addr, 0, data, LEN_WORD_BITS, 16);
 
         writeWord(addr, w);
     }
 
     @Override
     public void write32(long addr, int data) {
-        long v = readWord(addr);
-        long w = writeMasked(addr, v, data, LEN_WORD_BITS, 32);
+        long w = writeMasked(addr, 0, data, LEN_WORD_BITS, 32);
 
         writeWord(addr, w);
     }
@@ -130,12 +129,15 @@ public class UART extends SlaveCore64 {
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
             //break;
+        case REG_UARTFR:
+            result = 0;
+            break;
         default:
             throw new IllegalArgumentException(String.format("Illegal address 0x%08x.",
                     regaddr));
         }
 
-        //return result;
+        return result;
     }
 
     public void writeWord(long addr, long data) {
@@ -145,9 +147,12 @@ public class UART extends SlaveCore64 {
 
         switch (regaddr) {
         case REG_UARTDR:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            char ascii = (char)(data & 0xff);
+
+            strBuffer.append(ascii);
+            System.out.printf("%c", ascii);
+
+            break;
         default:
             throw new IllegalArgumentException(String.format("Illegal address 0x%08x.",
                     regaddr));
