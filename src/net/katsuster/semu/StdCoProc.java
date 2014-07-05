@@ -83,6 +83,8 @@ public class StdCoProc extends CoProc {
     public static final int CR07_DCH_CLNV = 0x000070a1;
     //データキャッシュラインのクリーン（セット/インデクス）
     public static final int CR07_DCH_CLNS = 0x000070a2;
+    //データキャッシュラインのテスト、クリーン
+    public static final int CR07_DCH_TSTCLN = 0x000070a3;
     //ライトバッファの排出
     public static final int CR07_WB_PUR = 0x000070a4;
     //統合キャッシュラインのクリーン（仮想アドレス）
@@ -95,6 +97,8 @@ public class StdCoProc extends CoProc {
     public static final int CR07_DCH_CLNINVV = 0x000070e1;
     //データキャッシュラインのクリーン/無効化（セット/インデクス）
     public static final int CR07_DCH_CLNINVS = 0x000070e2;
+    //データキャッシュラインのテスト、クリーン、無効化
+    public static final int CR07_DCH_TSTCLNINV = 0x000070e3;
     //統合キャッシュラインのクリーン/無効化（仮想アドレス）
     public static final int CR07_UCH_CLNINVV = 0x000070f1;
     //統合キャッシュラインのクリーン/無効化（セット/インデクス）
@@ -193,12 +197,16 @@ public class StdCoProc extends CoProc {
         addCReg(CR07_UCH_INVS, "UCH_INVS", 0x00000000);
         addCReg(CR07_DCH_CLNV, "DCH_CLNV", 0x00000000);
         addCReg(CR07_DCH_CLNS, "DCH_CLNS", 0x00000000);
+        //必ず Z ビットをセット（データキャッシュは全てクリーン）
+        addCReg(CR07_DCH_TSTCLN, "DCH_TSTCLN", 0x40000000);
         addCReg(CR07_WB_PUR, "WB_PUR", 0x00000000);
         addCReg(CR07_UCH_CLNV, "UCH_CLNV", 0x00000000);
         addCReg(CR07_UCH_CLNS, "UCH_CLNS", 0x00000000);
         addCReg(CR07_ICH_PREV, "ICH_PREV", 0x00000000);
         addCReg(CR07_DCH_CLNINVV, "DCH_CLNINVV", 0x00000000);
         addCReg(CR07_DCH_CLNINVS, "DCH_CLNINVS", 0x00000000);
+        //必ず Z ビットをセット（データキャッシュは全てクリーン）
+        addCReg(CR07_DCH_TSTCLNINV, "DCH_TSTCLNINV", 0x40000000);
         addCReg(CR07_UCH_CLNINVV, "UCH_CLNINVV", 0x00000000);
         addCReg(CR07_UCH_CLNINVS, "UCH_CLNINVS", 0x00000000);
 
