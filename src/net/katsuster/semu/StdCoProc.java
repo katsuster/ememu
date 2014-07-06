@@ -149,7 +149,7 @@ public class StdCoProc extends CoProc {
     //crn15: 実装ごとに定義
     //----------------------------------------------------------------------
 
-    public StdCoProc(int no, CPU p) {
+    public StdCoProc(int no, ARM9 p) {
         super(no, p);
 
         highvector = false;

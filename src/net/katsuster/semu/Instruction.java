@@ -143,10 +143,10 @@ public class Instruction {
      * @return 条件を満たしていれば true、満たしていなければ false
      */
     public static boolean satisfiesCond(int cond, int psr) {
-        boolean n = BitOp.getBit(psr, CPU.PSR_BIT_N);
-        boolean z = BitOp.getBit(psr, CPU.PSR_BIT_Z);
-        boolean c = BitOp.getBit(psr, CPU.PSR_BIT_C);
-        boolean v = BitOp.getBit(psr, CPU.PSR_BIT_V);
+        boolean n = BitOp.getBit(psr, ARM9.PSR_BIT_N);
+        boolean z = BitOp.getBit(psr, ARM9.PSR_BIT_Z);
+        boolean c = BitOp.getBit(psr, ARM9.PSR_BIT_C);
+        boolean v = BitOp.getBit(psr, ARM9.PSR_BIT_V);
 
         switch (cond) {
         case Instruction.COND_EQ:

@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class CoProc {
     private int no;
-    private CPU cpu;
+    private ARM9 cpu;
     private Map<Integer, Register> cregs;
 
     /**
@@ -18,7 +18,7 @@ public class CoProc {
      * @param no  コプロセッサ番号
      * @param cpu コプロセッサが接続されている CPU
      */
-    public CoProc(int no, CPU cpu) {
+    public CoProc(int no, ARM9 cpu) {
         this.no = no;
         this.cpu = cpu;
         this.cregs = new HashMap<Integer, Register>();
@@ -38,7 +38,7 @@ public class CoProc {
      *
      * @return コプロセッサが接続されている CPU
      */
-    public CPU getCPU() {
+    public ARM9 getCPU() {
         return cpu;
     }
 

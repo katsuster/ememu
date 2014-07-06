@@ -32,7 +32,7 @@ public class Main {
     public static void main(String[] args) {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
 
-        CPU cpu = new CPU();
+        ARM9 cpu = new ARM9();
         UART uart = new UART();
         RAM ramMain = new RAM(48 * 1024 * 1024);
         Bus64 bus = new Bus64();
