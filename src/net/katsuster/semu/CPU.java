@@ -2486,6 +2486,53 @@ public class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
+     * 符号無し積和ロング命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeUmlal(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rdhi = inst.getField(16, 4);
+        int rdlo = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        int rm = inst.getRmField();
+        int left, right, desthi, destlo;
+        long dest;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("umlal%s%s", inst.getCondFieldName(),
+                            (s) ? "s" : ""),
+                    String.format("%s, %s, %s, %s",
+                            getRegName(rdlo), getRegName(rdhi),
+                            getRegName(rm), getRegName(rs)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        left = getReg(rm);
+        right = getReg(rs);
+        dest = ((long)getReg(rdhi) << 32) + (getReg(rdlo) & 0xffffffffL);
+        dest += (left & 0xffffffffL) * (right & 0xffffffffL);
+        desthi = (int)(dest >>> 32);
+        destlo = (int)dest;
+
+        if (s) {
+            setCPSR_N(BitOp.getBit(desthi, 31));
+            setCPSR_Z(dest == 0);
+            //C flag is unaffected
+            //V flag is unaffected
+        }
+
+        setReg(rdhi, desthi);
+        setReg(rdlo, destlo);
+    }
+
+    /**
      * 符号無し乗算ロング命令。
      *
      * @param inst ARM 命令
@@ -2516,7 +2563,7 @@ public class CPU extends MasterCore64 implements Runnable {
 
         left = getReg(rm);
         right = getReg(rs);
-        dest = left * right;
+        dest = (left & 0xffffffffL) * (right & 0xffffffffL);
         desthi = (int)(dest >>> 32);
         destlo = (int)dest;
 
@@ -2529,6 +2576,67 @@ public class CPU extends MasterCore64 implements Runnable {
 
         setReg(rdhi, desthi);
         setReg(rdlo, destlo);
+    }
+
+    /**
+     * スワップ命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSwp(Instruction inst, boolean exec) {
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int rm = inst.getRmField();
+        int left, right, rot;
+        int vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("swp%s", inst.getCondFieldName()),
+                    String.format("%s, %s, [%s]",
+                            getRegName(rd), getRegName(rm), getRegName(rn)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        left = getReg(rm);
+        rot = getReg(rn) & 0x3;
+
+        vaddr = getReg(rn);
+        paddr = getMMU().translate(vaddr, false);
+        if (!tryRead(paddr) || !tryWrite(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("swp [%08x]", paddr));
+            return;
+        }
+
+        right = read32(paddr);
+
+        switch (rot) {
+        case 0:
+            //do nothing
+            break;
+        case 1:
+            right = Integer.rotateRight(right, 8);
+            break;
+        case 2:
+            right = Integer.rotateRight(right, 16);
+            break;
+        case 3:
+            right = Integer.rotateRight(right, 24);
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal address " +
+                    String.format("inst:0x%08x, rn:%d, rot:%d.",
+                            inst.getInst(), rn, rot));
+        }
+
+        write32(paddr, left);
+        setReg(rd, right);
     }
 
     public void executeLdrt(Instruction inst, boolean exec) {
@@ -3312,7 +3420,7 @@ public class CPU extends MasterCore64 implements Runnable {
         if (!exec) {
             printDisasm(inst,
                     String.format("bx%s", inst.getCondFieldName()),
-                    String.format("%s", rm));
+                    String.format("%s", getRegName(rm)));
             return;
         }
 
@@ -3325,6 +3433,34 @@ public class CPU extends MasterCore64 implements Runnable {
         //T ビットを設定する
         setCPSR_T((dest & 0x1) == 1);
         setPC(dest & 0xfffffffe);
+    }
+
+    /**
+     * 先行ゼロカウント命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeClz(Instruction inst, boolean exec) {
+        int rd = inst.getRdField();
+        int rm = inst.getRmField();
+        int dest;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("clz%s", inst.getCondFieldName()),
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        dest = Integer.numberOfLeadingZeros(getReg(rm));
+
+        setReg(rd, dest);
     }
 
     public void executeCdp(Instruction inst, boolean exec) {
@@ -3614,9 +3750,8 @@ public class CPU extends MasterCore64 implements Runnable {
             //break;
         case 5:
             //umlal
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeUmlal(inst, exec);
+            break;
         case 4:
             //umull
             executeUmull(inst, exec);
@@ -3677,9 +3812,8 @@ public class CPU extends MasterCore64 implements Runnable {
             switch (ubw) {
             case 0:
                 //swp
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
-                //break;
+                executeSwp(inst, exec);
+                break;
             case 1:
                 //swpb
                 //TODO: Not implemented
@@ -3794,8 +3928,7 @@ public class CPU extends MasterCore64 implements Runnable {
                 executeBx(inst, exec);
             } else if (b22 && b21) {
                 //clz
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                executeClz(inst, exec);
             } else {
                 //未定義
                 executeUnd(inst, exec);
@@ -4061,8 +4194,8 @@ public class CPU extends MasterCore64 implements Runnable {
         int v, vaddr, paddr;
 
         //for debug
-        int target_address1 = 0xc0153028; //<_find_next_bit_le>
-        int target_address2 = 0xc015302c; //<_find_next_bit_le>
+        int target_address1 = 0xc001e6c4; //<versatile_read_sched_clock>
+        int target_address2 = 0xc001e6c4; //<versatile_read_sched_clock>
 
         vaddr = getPC() - 8;
         paddr = getMMU().translate(vaddr, true);
