@@ -3,6 +3,8 @@ package net.katsuster.semu;
 /**
  * debug UART
  *
+ * 参考: ARM PrimeCell UART (PL011)
+ *
  * @author katsuhiro
  */
 public class UART extends SlaveCore64 {
