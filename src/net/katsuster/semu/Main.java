@@ -33,7 +33,8 @@ public class Main {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
 
         ARM9 cpu = new ARM9();
-        UART uart = new UART();
+        VersatileSystem sys = new VersatileSystem();
+        UART uart0 = new UART();
         RAM ramMain = new RAM(48 * 1024 * 1024);
         Bus64 bus = new Bus64();
         int addrAtags = 0x82ffff00;
@@ -42,12 +43,16 @@ public class Main {
 
         //RAM Image(tentative)
         //  0x10000000 - 0x13ffffff: CS5
-        //    0x101f1000 - 0x101f1fff: UART
+        //    0x10000000 - 0x10000fff: System Registers
+        //    0x101f1000 - 0x101f1fff: UART0
+        //    0x101f2000 - 0x101f2fff: UART1
+        //    0x101f3000 - 0x101f3fff: UART2
         //  0x80000000 - 0x82ffffff: Main
         //    0x80000000 - 0x80007fff: Linux pagetable
         //    0x80008000 - 0x804fffff: Linux Image
         //    0x82ffff00 - 0x82ffffff: ATAG_XXX
-        bus.addSlaveCore(uart, 0x101f1000L, 0x101f2000L);
+        bus.addSlaveCore(sys, 0x10000000L, 0x10001000L);
+        bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
         bus.addSlaveCore(ramMain, 0x80000000L, 0x83000000L);
 
         //reset
