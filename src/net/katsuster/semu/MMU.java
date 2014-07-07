@@ -8,11 +8,11 @@ package net.katsuster.semu;
 public class MMU {
     private boolean enable;
 
-    private CPU cpu;
+    private ARM9 cpu;
     private StdCoProc stdCp;
     private int tableBase;
 
-    public MMU(CPU cpu, StdCoProc cp) {
+    public MMU(ARM9 cpu, StdCoProc cp) {
         this.enable = false;
 
         this.cpu = cpu;
@@ -43,7 +43,7 @@ public class MMU {
      *
      * @return MMU が接続されている CPU
      */
-    public CPU getCPU() {
+    public ARM9 getCPU() {
         return cpu;
     }
 
@@ -89,11 +89,12 @@ public class MMU {
 
         paL1 = getL1Address(va);
         if (!getCPU().tryRead(paL1)) {
-            //TODO: アボートを通知する
+            getCPU().raiseException(ARM9.EXCEPT_ABT_DATA,
+                    String.format("MMU read L1 [%08x]", paL1));
             return 0;
         }
         entryL1 = getCPU().read32(paL1);
-        typeL1 = entryL1 & 0x3;
+        typeL1 = BitOp.getField(entryL1, 0, 2);
 
         switch (typeL1) {
         case 0:
@@ -103,9 +104,8 @@ public class MMU {
             //break;
         case 1:
             //概略ページテーブル
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            pa = translateCoarse(va, entryL1);
+            break;
         case 2:
             //セクション
             pa = translateSection(va, entryL1);
@@ -116,9 +116,9 @@ public class MMU {
             throw new IllegalArgumentException("Sorry, not implemented.");
             //break;
         default:
-            throw new IllegalArgumentException("Unknown tblType " +
-                    String.format("addr:0x%08x, entry:0x%08x, type:%d.",
-                            paL1, entryL1, typeL1));
+            throw new IllegalArgumentException("Unknown L1 table " +
+                    String.format("va:0x%08x, paL1:0x%08x, entryL1:0x%08x, typeL1:%d.",
+                            va, paL1, entryL1, typeL1));
         }
 
         return pa;
@@ -137,10 +137,10 @@ public class MMU {
      * @return 第 1 レベル記述子
      */
     protected int getL1Address(int va) {
-        int tblBase, tblIndex, pa;
+        int tblBase = BitOp.getField(tableBase, 14, 18);
+        int tblIndex = BitOp.getField(va, 20, 12);
+        int pa;
 
-        tblBase = (tableBase >> 14) & 0x3ffff;
-        tblIndex = (va >> 20) & 0xfff;
         pa = (tblBase << 14) | (tblIndex << 2);
 
         return pa;
@@ -160,10 +160,10 @@ public class MMU {
      * @return 概略ページテーブルの第 2 レベル記述子のアドレス
      */
     protected int getL2AddressCoarse(int va, int entryL1) {
-        int base = (entryL1 >> 10) & 0x3fffff;
-        int tblIndex, pa;
+        int base = BitOp.getField(entryL1, 10, 22);
+        int tblIndex = BitOp.getField(va, 12, 8);
+        int pa;
 
-        tblIndex = (va >> 12) & 0xff;
         pa = (base << 10) | (tblIndex << 2);
 
         return pa;
@@ -183,10 +183,10 @@ public class MMU {
      * @return 詳細ページテーブルの第 2 レベル記述子のアドレス
      */
     protected int getL2AddressFine(int va, int entryL1) {
-        int base = (entryL1 >> 14) & 0xfffff;
-        int tblIndex, pa;
+        int base = BitOp.getField(entryL1, 14, 20);
+        int tblIndex = BitOp.getField(va, 10, 10);
+        int pa;
 
-        tblIndex = (va >> 10) & 0x3ff;
         pa = (base << 12) | (tblIndex << 2);
 
         return pa;
@@ -200,10 +200,10 @@ public class MMU {
      * @return 大ページの物理アドレス
      */
     protected int getPageAddressLarge(int va, int entryL2) {
-        int base = (entryL2 >> 16) & 0xffff;
-        int tblIndex, pa;
+        int base = BitOp.getField(entryL2, 16, 16);
+        int tblIndex = BitOp.getField(va, 0, 16);
+        int pa;
 
-        tblIndex = va & 0xffff;
         pa = (base << 16) | tblIndex;
 
         return pa;
@@ -217,10 +217,10 @@ public class MMU {
      * @return 小ページの物理アドレス
      */
     protected int getPageAddressSmall(int va, int entryL2) {
-        int base = (entryL2 >> 12) & 0xfffff;
+        int base = BitOp.getField(entryL2, 12, 20);
         int tblIndex, pa;
 
-        tblIndex = va & 0xfff;
+        tblIndex = BitOp.getField(va, 0, 12);
         pa = (base << 12) | tblIndex;
 
         return pa;
@@ -234,10 +234,10 @@ public class MMU {
      * @return 極小ページの物理アドレス
      */
     protected int getPageAddressTiny(int va, int entryL2) {
-        int base = (entryL2 >> 10) & 0x3fffff;
-        int tblIndex, pa;
+        int base = BitOp.getField(entryL2, 10, 22);
+        int tblIndex = BitOp.getField(va, 0, 10);
+        int pa;
 
-        tblIndex = va & 0x3ff;
         pa = (base << 10) | tblIndex;
 
         return pa;
@@ -253,13 +253,14 @@ public class MMU {
      * @return 物理アドレス
      */
     protected int translateSection(int va, int entryL1) {
-        int base = (entryL1 >> 20) & 0xfff;
-        int ap = (entryL1 >> 10) & 0x3;
-        int dom = (entryL1 >> 5) & 0xf;
+        int base = BitOp.getField(entryL1, 20, 12);
+        int ap = BitOp.getField(entryL1, 10, 2);
+        int dom = BitOp.getField(entryL1, 5, 4);
         boolean imp = BitOp.getBit(entryL1, 4);
         boolean c = BitOp.getBit(entryL1, 3);
         boolean b = BitOp.getBit(entryL1, 2);
-        int tblIndex, pa;
+        int tblIndex = BitOp.getField(va, 0, 20);
+        int pa;
 
         //TODO: アクセスチェック
         //if (cond) {
@@ -267,8 +268,59 @@ public class MMU {
         //}
 
         //物理アドレス
-        tblIndex = va & 0xfffff;
         pa = (base << 20) | tblIndex;
+
+        return pa;
+    }
+
+    /**
+     * 概略ページテーブルのアドレスを変換します。
+     *
+     * 第 2 レベル記述子は、大ページ（64KB）または、
+     * 小ページ（4KB）が存在します。
+     *
+     * @param va      仮想アドレス
+     * @param entryL1 第 1 レベル記述子
+     * @return 物理アドレス
+     */
+    protected int translateCoarse(int va, int entryL1) {
+        int paL2, entryL2, typeL2;
+        int pa;
+
+        //TODO: アクセスチェック
+        //if (cond) {
+        //TODO: 違反ならデータアボート
+        //}
+
+        paL2 = getL2AddressCoarse(va, entryL1);
+
+        entryL2 = getCPU().read32(paL2);
+        typeL2 = BitOp.getField(entryL2, 0, 2);
+
+        switch (typeL2) {
+        case 0:
+            //フォルト
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case 1:
+            //大ページ
+            pa = getPageAddressLarge(va, entryL2);
+            break;
+        case 2:
+            //小ページ
+            pa = getPageAddressSmall(va, entryL2);
+            break;
+        case 3:
+            //極小ページ（使用禁止）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        default:
+            throw new IllegalArgumentException("Unknown L2 table " +
+                    String.format("va:0x%08x, L1:0x%08x, paL2:0x%08x, L2:0x%08x typeL2:%d.",
+                            va, entryL1, paL2, entryL2, typeL2));
+        }
 
         return pa;
     }
