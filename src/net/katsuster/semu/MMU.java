@@ -67,6 +67,58 @@ public class MMU {
         tableBase = getStdCoProc().getCReg(StdCoProc.CR02_MMU_TTBR0);
     }
 
+    public static final int FS_TERM = 0x2;
+    public static final int FS_VECT = 0x0;
+    public static final int FS_ALIGN1 = 0x1;
+    public static final int FS_ALIGN2 = 0x3;
+    public static final int FS_TRANS_L1 = 0xc;
+    public static final int FS_TRANS_L2 = 0xe;
+    public static final int FS_TRANS_SEC = 0x5;
+    public static final int FS_TRANS_PAGE = 0x7;
+    public static final int FS_DOM_SEC = 0x9;
+    public static final int FS_DOM_PAGE = 0xb;
+    public static final int FS_PERM_SEC = 0xd;
+    public static final int FS_PERM_PAGE = 0xf;
+    public static final int FS_LINE_SEC = 0x4;
+    public static final int FS_LINE_PAGE = 0x6;
+    public static final int FS_ABORT_SEC = 0x8;
+    public static final int FS_ABORT_PAGE = 0xa;
+
+    /**
+     * MMU フォルトを発生させます。
+     *
+     * CPU に対しては、プリフェッチアボート例外、
+     * またはデータアボート例外を発生させます。
+     *
+     * @param fs   フォルトステータス
+     * @param dom  ドメイン、存在しない場合は 0
+     * @param va   仮想アドレス（VA）
+     * @param inst 命令の場合は true、データの場合は false
+     * @param dbgmsg デバッグ用のメッセージ
+     */
+    public void faultMMU(int fs, int dom, int va, boolean inst, String dbgmsg) {
+        int val, num;
+
+        //フォルトステータス
+        val = stdCp.getCReg(5);
+        BitOp.setField(val, 4, 3, dom);
+        BitOp.setField(val, 0, 3, fs);
+        stdCp.setCReg(5, val);
+
+        //フォルトアドレス
+        stdCp.setCReg(6, va);
+
+        //例外を発生させる
+        if (inst) {
+            //プリフェッチアボート例外
+            num = ARM9.EXCEPT_ABT_INST;
+        } else {
+            //データアボート例外
+            num = ARM9.EXCEPT_ABT_DATA;
+        }
+        getCPU().raiseException(num, dbgmsg);
+    }
+
     /**
      * アドレス変換を行います。
      *
@@ -89,7 +141,7 @@ public class MMU {
 
         paL1 = getL1Address(va);
         if (!getCPU().tryRead(paL1)) {
-            getCPU().raiseException(ARM9.EXCEPT_ABT_DATA,
+            faultMMU(FS_TRANS_L1, 0, va, inst,
                     String.format("MMU read L1 [%08x]", paL1));
             return 0;
         }
