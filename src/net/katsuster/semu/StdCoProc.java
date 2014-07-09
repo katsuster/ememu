@@ -236,11 +236,26 @@ public class StdCoProc extends CoProc {
         case CR07_UCH_INVALL:
             System.out.printf("I&D-cache: all invalidated.\n");
             break;
+        case CR07_UCH_INVV:
+            System.out.printf("I&D-cache: invalidated 0x%08x.\n", val);
+            break;
         case CR07_ICH_INVALL:
             System.out.printf("I-cache  : all invalidated.\n");
             break;
+        case CR07_ICH_INVV:
+            System.out.printf("I-cache  : invalidated 0x%08x.\n", val);
+            break;
         case CR07_DCH_INVALL:
             System.out.printf("D-cache  : all invalidated.\n");
+            break;
+        case CR07_DCH_INVV:
+            System.out.printf("D-cache  : invalidated 0x%08x.\n", val);
+            break;
+        case CR07_DCH_TSTCLN:
+            System.out.printf("D-cache  : test & clean.\n");
+            break;
+        case CR07_DCH_TSTCLNINV:
+            System.out.printf("D-cache  : test & clean & invalidated.\n");
             break;
         case CR07_WB_PUR:
             System.out.printf("W-buffer : all purged.\n");
@@ -248,11 +263,20 @@ public class StdCoProc extends CoProc {
         case CR08_UTLB_INVALL:
             System.out.printf("I&D-TLB  : all invalidated.\n");
             break;
+        case CR08_UTLB_INVV:
+            System.out.printf("i&D-TLB  : invalidated 0x%08x.\n", val);
+            break;
         case CR08_ITLB_INVALL:
             System.out.printf("I-TLB    : all invalidated.\n");
             break;
+        case CR08_ITLB_INVV:
+            System.out.printf("I-TLB    : invalidated 0x%08x.\n", val);
+            break;
         case CR08_DTLB_INVALL:
             System.out.printf("D-TLB    : all invalidated.\n");
+            break;
+        case CR08_DTLB_INVV:
+            System.out.printf("D-TLB    : invalidated 0x%08x.\n", val);
             break;
         default:
             super.setCReg(cn, val);
