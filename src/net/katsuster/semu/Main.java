@@ -35,9 +35,9 @@ public class Main {
         ARM9 cpu = new ARM9();
         VersatileSystem sys = new VersatileSystem();
         UART uart0 = new UART();
-        RAM ramMain = new RAM(48 * 1024 * 1024);
+        RAM ramMain = new RAM(16 * 1024 * 1024); //64MB
         Bus64 bus = new Bus64();
-        int addrAtags = 0x82ffff00;
+        int addrAtags = 0x83ffff00;
 
         cpu.setSlaveBus(bus);
 
@@ -50,10 +50,10 @@ public class Main {
         //  0x80000000 - 0x82ffffff: Main
         //    0x80000000 - 0x80007fff: Linux pagetable
         //    0x80008000 - 0x804fffff: Linux Image
-        //    0x82ffff00 - 0x82ffffff: ATAG_XXX
+        //    0x80ffff00 - 0x83ffffff: ATAG_XXX
         bus.addSlaveCore(sys, 0x10000000L, 0x10001000L);
         bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
-        bus.addSlaveCore(ramMain, 0x80000000L, 0x83000000L);
+        bus.addSlaveCore(ramMain, 0x80000000L, 0x84000000L);
 
         //reset
         cpu.setDisasmMode(false);
@@ -88,7 +88,7 @@ public class Main {
             //ATAG_MEM, size, tag, size, start
             cpu.write32(addrAtags + 0x00, 0x00000004);
             cpu.write32(addrAtags + 0x04, 0x54410002);
-            cpu.write32(addrAtags + 0x08, 0x03000000);
+            cpu.write32(addrAtags + 0x08, 0x04000000);
             cpu.write32(addrAtags + 0x0c, 0x80000000);
             addrAtags += 0x10;
 
