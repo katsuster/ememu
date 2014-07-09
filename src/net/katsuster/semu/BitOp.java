@@ -67,6 +67,34 @@ public class BitOp {
     }
 
     /**
+     * 整数値の指定された位置にあるビットフィールドの値を設定します。
+     *
+     * ビット位置に 32 ビット以上を指定した場合、
+     * 下位 5 ビットが有効となります。
+     *
+     * ビットフィールドの長さに 32 ビット以上を指定した場合、
+     * 長さは 32 ビットとなります。
+     *
+     * @param val 整数値
+     * @param pos ビット位置
+     * @param len ビットフィールドの長さ
+     * @param nv  ビットフィールドに設定する値
+     */
+    public static int setField(int val, int pos, int len, int nv) {
+        int mask;
+
+        if (len >= 32) {
+            mask = 0xffffffff;
+        } else {
+            mask = (1 << len) - 1;
+        }
+        mask <<= pos;
+        nv <<= pos;
+
+        return (val & ~mask) | (nv & mask);
+    }
+
+    /**
      * ブール値を 1/0 に変換します。
      *
      * ビットフラグを 1 または 0 の数値として扱うときに使用します。
