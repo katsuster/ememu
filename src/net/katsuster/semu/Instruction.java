@@ -28,7 +28,7 @@ public class Instruction {
      * @return 指定されたビットがセットされていれば true、そうでなければ false
      */
     public boolean getBit(int bit) {
-        return BitOp.getBit(rawInst, bit);
+        return BitOp.getBit32(rawInst, bit);
     }
 
     /**
@@ -143,10 +143,10 @@ public class Instruction {
      * @return 条件を満たしていれば true、満たしていなければ false
      */
     public static boolean satisfiesCond(int cond, int psr) {
-        boolean n = BitOp.getBit(psr, ARM9.PSR_BIT_N);
-        boolean z = BitOp.getBit(psr, ARM9.PSR_BIT_Z);
-        boolean c = BitOp.getBit(psr, ARM9.PSR_BIT_C);
-        boolean v = BitOp.getBit(psr, ARM9.PSR_BIT_V);
+        boolean n = BitOp.getBit32(psr, ARM9.PSR_BIT_N);
+        boolean z = BitOp.getBit32(psr, ARM9.PSR_BIT_Z);
+        boolean c = BitOp.getBit32(psr, ARM9.PSR_BIT_C);
+        boolean v = BitOp.getBit32(psr, ARM9.PSR_BIT_V);
 
         switch (cond) {
         case Instruction.COND_EQ:
@@ -238,7 +238,7 @@ public class Instruction {
      * @return I ビットがセットされていれば true, そうでなければ false
      */
     public static boolean getIBit(int inst) {
-        return BitOp.getBit(inst, 25);
+        return BitOp.getBit32(inst, 25);
     }
 
     public static final int OPCODE_AND = 0;
@@ -530,7 +530,7 @@ public class Instruction {
      * @return S ビットがセットされていれば true, そうでなければ false
      */
     public static boolean getSBit(int inst) {
-        return BitOp.getBit(inst, 20);
+        return BitOp.getBit32(inst, 20);
     }
 
     /**
@@ -555,7 +555,7 @@ public class Instruction {
      * @return L ビットがセットされていれば true, そうでなければ false
      */
     public static boolean getLBit(int inst) {
-        return BitOp.getBit(inst, 20);
+        return BitOp.getBit32(inst, 20);
     }
 
     /**
@@ -677,7 +677,7 @@ public class Instruction {
 
         cnt = 0;
         for (i = 0; i < 16; i++) {
-            if (BitOp.getBit(rlist, i)) {
+            if (BitOp.getBit32(rlist, i)) {
                 if (cnt != 0) {
                     sb.append(", ");
                 }

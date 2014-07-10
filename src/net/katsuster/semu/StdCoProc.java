@@ -290,11 +290,11 @@ public class StdCoProc extends CoProc {
      * @param val 新たなレジスタの値
      */
     public void setSCTLR(int val) {
-        boolean v = BitOp.getBit(val, 13);
-        boolean r = BitOp.getBit(val, 9);
-        boolean s = BitOp.getBit(val, 8);
-        boolean a = BitOp.getBit(val, 1);
-        boolean m = BitOp.getBit(val, 0);
+        boolean v = BitOp.getBit32(val, 13);
+        boolean r = BitOp.getBit32(val, 9);
+        boolean s = BitOp.getBit32(val, 8);
+        boolean a = BitOp.getBit32(val, 1);
+        boolean m = BitOp.getBit32(val, 0);
 
         System.out.printf("SCTLR    : 0x%x.\n", val);
         System.out.printf("  V      : %b.\n", v);

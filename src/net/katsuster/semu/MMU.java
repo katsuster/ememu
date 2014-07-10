@@ -308,9 +308,9 @@ public class MMU {
         int base = BitOp.getField32(entryL1, 20, 12);
         int ap = BitOp.getField32(entryL1, 10, 2);
         int dom = BitOp.getField32(entryL1, 5, 4);
-        boolean imp = BitOp.getBit(entryL1, 4);
-        boolean c = BitOp.getBit(entryL1, 3);
-        boolean b = BitOp.getBit(entryL1, 2);
+        boolean imp = BitOp.getBit32(entryL1, 4);
+        boolean c = BitOp.getBit32(entryL1, 3);
+        boolean b = BitOp.getBit32(entryL1, 2);
         int tblIndex = BitOp.getField32(va, 0, 20);
         int pa;
 

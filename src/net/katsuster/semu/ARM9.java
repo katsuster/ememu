@@ -469,13 +469,13 @@ public class ARM9 extends CPU {
      */
     public static String getPSRName(int val) {
         return String.format("%s%s%s%s_%s%s%s%5s",
-                BitOp.getBit(val, PSR_BIT_N) ? "N" : "n",
-                BitOp.getBit(val, PSR_BIT_Z) ? "Z" : "z",
-                BitOp.getBit(val, PSR_BIT_C) ? "C" : "c",
-                BitOp.getBit(val, PSR_BIT_V) ? "V" : "v",
-                BitOp.getBit(val, PSR_BIT_I) ? "I" : "i",
-                BitOp.getBit(val, PSR_BIT_F) ? "F" : "f",
-                BitOp.getBit(val, PSR_BIT_T) ? "T" : "t",
+                BitOp.getBit32(val, PSR_BIT_N) ? "N" : "n",
+                BitOp.getBit32(val, PSR_BIT_Z) ? "Z" : "z",
+                BitOp.getBit32(val, PSR_BIT_C) ? "C" : "c",
+                BitOp.getBit32(val, PSR_BIT_V) ? "V" : "v",
+                BitOp.getBit32(val, PSR_BIT_I) ? "I" : "i",
+                BitOp.getBit32(val, PSR_BIT_F) ? "F" : "f",
+                BitOp.getBit32(val, PSR_BIT_T) ? "T" : "t",
                 getPSR_ModeName(getPSR_Mode(val)));
     }
 
@@ -490,7 +490,7 @@ public class ARM9 extends CPU {
      * @return N ビットがセットされていれば true, そうでなければ false
      */
     public boolean getCPSR_N() {
-        return BitOp.getBit(getCPSR(), PSR_BIT_N);
+        return BitOp.getBit32(getCPSR(), PSR_BIT_N);
     }
 
     /**
@@ -504,7 +504,7 @@ public class ARM9 extends CPU {
      * @param nv N ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_N(boolean nv) {
-        setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_N, nv));
+        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_N, nv));
     }
 
     /**
@@ -517,7 +517,7 @@ public class ARM9 extends CPU {
      * @return Z ビットがセットされていれば true, そうでなければ false
      */
     public boolean getCPSR_Z() {
-        return BitOp.getBit(getCPSR(), PSR_BIT_Z);
+        return BitOp.getBit32(getCPSR(), PSR_BIT_Z);
     }
 
     /**
@@ -530,7 +530,7 @@ public class ARM9 extends CPU {
      * @param nv Z ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_Z(boolean nv) {
-        setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_Z, nv));
+        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_Z, nv));
     }
 
     /**
@@ -553,7 +553,7 @@ public class ARM9 extends CPU {
      * @return C ビットがセットされていれば true, そうでなければ false
      */
     public boolean getCPSR_C() {
-        return BitOp.getBit(getCPSR(), PSR_BIT_C);
+        return BitOp.getBit32(getCPSR(), PSR_BIT_C);
     }
 
     /**
@@ -576,7 +576,7 @@ public class ARM9 extends CPU {
      * @param nv C ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_C(boolean nv) {
-        setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_C, nv));
+        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_C, nv));
     }
 
     /**
@@ -592,7 +592,7 @@ public class ARM9 extends CPU {
      * @return V ビットがセットされていれば true, そうでなければ false
      */
     public boolean getCPSR_V() {
-        return BitOp.getBit(getCPSR(), PSR_BIT_V);
+        return BitOp.getBit32(getCPSR(), PSR_BIT_V);
     }
 
     /**
@@ -608,7 +608,7 @@ public class ARM9 extends CPU {
      * @param nv V ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_V(boolean nv) {
-        setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_V, nv));
+        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_V, nv));
     }
 
     /**
@@ -621,7 +621,7 @@ public class ARM9 extends CPU {
      * @return I ビットがセットされていれば true, そうでなければ false
      */
     public boolean getCPSR_I() {
-        return BitOp.getBit(getCPSR(), PSR_BIT_I);
+        return BitOp.getBit32(getCPSR(), PSR_BIT_I);
     }
 
     /**
@@ -634,7 +634,7 @@ public class ARM9 extends CPU {
      * @param nv I ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_I(boolean nv) {
-        setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_I, nv));
+        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_I, nv));
     }
 
     /**
@@ -647,7 +647,7 @@ public class ARM9 extends CPU {
      * @return F ビットがセットされていれば true, そうでなければ false
      */
     public boolean getCPSR_F() {
-        return BitOp.getBit(getCPSR(), PSR_BIT_F);
+        return BitOp.getBit32(getCPSR(), PSR_BIT_F);
     }
 
     /**
@@ -660,7 +660,7 @@ public class ARM9 extends CPU {
      * @param nv F ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_F(boolean nv) {
-        setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_F, nv));
+        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_F, nv));
     }
 
     /**
@@ -676,7 +676,7 @@ public class ARM9 extends CPU {
      * @return T ビットがセットされていれば true, そうでなければ false
      */
     public boolean getCPSR_T() {
-        return BitOp.getBit(getCPSR(), PSR_BIT_T);
+        return BitOp.getBit32(getCPSR(), PSR_BIT_T);
     }
 
     /**
@@ -692,7 +692,7 @@ public class ARM9 extends CPU {
      * @param nv T ビットをセットするなら true, クリアするなら false
      */
     public void setCPSR_T(boolean nv) {
-        setCPSR(BitOp.setBit(getCPSR(), PSR_BIT_T, nv));
+        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_T, nv));
     }
 
     /**
@@ -811,7 +811,7 @@ public class ARM9 extends CPU {
         case 2:
             //イミディエート算術右シフト
             if (shift_imm == 0) {
-                if (BitOp.getBit(getReg(rm), 31)) {
+                if (BitOp.getBit32(getReg(rm), 31)) {
                     return 0xffffffff;
                 } else {
                     return 0;
@@ -878,7 +878,7 @@ public class ARM9 extends CPU {
             } else if (valRs < 32) {
                 return getReg(rm) >> valRs;
             } else {
-                if (BitOp.getBit(getReg(rm), 31)) {
+                if (BitOp.getBit32(getReg(rm), 31)) {
                     return 0xffffffff;
                 } else {
                     return 0;
@@ -943,7 +943,7 @@ public class ARM9 extends CPU {
         if (rotR == 0) {
             return getCPSR_C();
         } else {
-            return BitOp.getBit(getShifterOperandImm(inst), 31);
+            return BitOp.getBit32(getShifterOperandImm(inst), 31);
         }
     }
 
@@ -979,29 +979,29 @@ public class ARM9 extends CPU {
                 return getCPSR_C();
             } else {
                 //イミディエート論理左シフト
-                return BitOp.getBit(getReg(rm), 32 - shift_imm);
+                return BitOp.getBit32(getReg(rm), 32 - shift_imm);
             }
         case 1:
             //イミディエート論理右シフト
             if (shift_imm == 0) {
-                return BitOp.getBit(getReg(rm), 31);
+                return BitOp.getBit32(getReg(rm), 31);
             } else {
-                return BitOp.getBit(getReg(rm), shift_imm - 1);
+                return BitOp.getBit32(getReg(rm), shift_imm - 1);
             }
         case 2:
             //イミディエート算術右シフト
             if (shift_imm == 0) {
-                return BitOp.getBit(getReg(rm), 31);
+                return BitOp.getBit32(getReg(rm), 31);
             } else {
-                return BitOp.getBit(getReg(rm), shift_imm - 1);
+                return BitOp.getBit32(getReg(rm), shift_imm - 1);
             }
         case 3:
             if (shift_imm == 0) {
                 //拡張付き右ローテート
-                return BitOp.getBit(getReg(rm), 0);
+                return BitOp.getBit32(getReg(rm), 0);
             } else {
                 //イミディエート右ローテート
-                return BitOp.getBit(getReg(rm), shift_imm - 1);
+                return BitOp.getBit32(getReg(rm), shift_imm - 1);
             }
         default:
             //do nothing
@@ -1030,7 +1030,7 @@ public class ARM9 extends CPU {
             if (valRs == 0) {
                 return getCPSR_C();
             } else if (valRs <= 32) {
-                return BitOp.getBit(getReg(rm), 32 - valRs);
+                return BitOp.getBit32(getReg(rm), 32 - valRs);
             } else {
                 return false;
             }
@@ -1039,7 +1039,7 @@ public class ARM9 extends CPU {
             if (valRs == 0) {
                 return getCPSR_C();
             } else if (valRs <= 32) {
-                return BitOp.getBit(getReg(rm), valRs - 1);
+                return BitOp.getBit32(getReg(rm), valRs - 1);
             } else {
                 return false;
             }
@@ -1048,18 +1048,18 @@ public class ARM9 extends CPU {
             if (valRs == 0) {
                 return getCPSR_C();
             } else if (valRs <= 32) {
-                return BitOp.getBit(getReg(rm), valRs - 1);
+                return BitOp.getBit32(getReg(rm), valRs - 1);
             } else {
-                return BitOp.getBit(getReg(rm), 31);
+                return BitOp.getBit32(getReg(rm), 31);
             }
         case 3:
             //レジスタ右ローテート
             if (valRs == 0) {
                 return getCPSR_C();
             } else if (valRsLow == 0) {
-                return BitOp.getBit(getReg(rm), 31);
+                return BitOp.getBit32(getReg(rm), 31);
             } else {
-                return BitOp.getBit(getReg(rm), valRsLow - 1);
+                return BitOp.getBit32(getReg(rm), valRsLow - 1);
             }
         default:
             //do nothing
@@ -1867,7 +1867,7 @@ public class ARM9 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(getShifterCarry(inst));
             //V flag is unaffected
@@ -1896,7 +1896,7 @@ public class ARM9 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(getShifterCarry(inst));
             //V flag is unaffected
@@ -1925,7 +1925,7 @@ public class ARM9 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(!borrowFrom32(left, right));
             setCPSR_V(overflowFrom32(left, right, false));
@@ -1954,7 +1954,7 @@ public class ARM9 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(!borrowFrom32(left, right));
             setCPSR_V(overflowFrom32(left, right, false));
@@ -1983,7 +1983,7 @@ public class ARM9 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(carryFrom32(left, right));
             setCPSR_V(overflowFrom32(left, right, true));
@@ -2017,7 +2017,7 @@ public class ARM9 extends CPU {
             boolean lc_c = carryFrom32(left, center);
             boolean lc_v = overflowFrom32(left, center, true);
 
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(lc_c || carryFrom32(left_center, right));
             setCPSR_V(lc_v || overflowFrom32(left_center, right, true));
@@ -2051,7 +2051,7 @@ public class ARM9 extends CPU {
             boolean lc_c = !borrowFrom32(left, center);
             boolean lc_v = overflowFrom32(left, center, false);
 
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(lc_c || !borrowFrom32(left_center, right));
             setCPSR_V(lc_v || overflowFrom32(left_center, right, false));
@@ -2081,7 +2081,7 @@ public class ARM9 extends CPU {
         right = opr;
         dest = left & right;
 
-        setCPSR_N(BitOp.getBit(dest, 31));
+        setCPSR_N(BitOp.getBit32(dest, 31));
         setCPSR_Z(dest == 0);
         setCPSR_C(getShifterCarry(inst));
         //V flag is unaffected
@@ -2108,7 +2108,7 @@ public class ARM9 extends CPU {
         right = opr;
         dest = left ^ right;
 
-        setCPSR_N(BitOp.getBit(dest, 31));
+        setCPSR_N(BitOp.getBit32(dest, 31));
         setCPSR_Z(dest == 0);
         setCPSR_C(getShifterCarry(inst));
         //V flag is unaffected
@@ -2135,7 +2135,7 @@ public class ARM9 extends CPU {
         right = opr;
         dest = left - right;
 
-        setCPSR_N(BitOp.getBit(dest, 31));
+        setCPSR_N(BitOp.getBit32(dest, 31));
         setCPSR_Z(dest == 0);
         setCPSR_C(!borrowFrom32(left, right));
         setCPSR_V(overflowFrom32(left, right, false));
@@ -2162,7 +2162,7 @@ public class ARM9 extends CPU {
         right = opr;
         dest = left + right;
 
-        setCPSR_N(BitOp.getBit(dest, 31));
+        setCPSR_N(BitOp.getBit32(dest, 31));
         setCPSR_Z(dest == 0);
         setCPSR_C(carryFrom32(left, right));
         setCPSR_V(overflowFrom32(left, right, true));
@@ -2188,7 +2188,7 @@ public class ARM9 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(getShifterCarry(inst));
             //V flag is unaffected
@@ -2221,7 +2221,7 @@ public class ARM9 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(getShifterCarry(inst));
             //V flag is unaffected
@@ -2250,7 +2250,7 @@ public class ARM9 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(getShifterCarry(inst));
             //V flag is unaffected
@@ -2277,7 +2277,7 @@ public class ARM9 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             setCPSR_C(getShifterCarry(inst));
             //V flag is unaffected
@@ -2320,7 +2320,7 @@ public class ARM9 extends CPU {
         dest = left * center + right;
 
         if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             //C flag is unaffected
             //V flag is unaffected
@@ -2361,7 +2361,7 @@ public class ARM9 extends CPU {
         dest = left * right;
 
         if (s) {
-            setCPSR_N(BitOp.getBit(dest, 31));
+            setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
             //C flag is unaffected
             //V flag is unaffected
@@ -2407,7 +2407,7 @@ public class ARM9 extends CPU {
         destlo = (int)dest;
 
         if (s) {
-            setCPSR_N(BitOp.getBit(desthi, 31));
+            setCPSR_N(BitOp.getBit32(desthi, 31));
             setCPSR_Z(dest == 0);
             //C flag is unaffected
             //V flag is unaffected
@@ -2453,7 +2453,7 @@ public class ARM9 extends CPU {
         destlo = (int)dest;
 
         if (s) {
-            setCPSR_N(BitOp.getBit(desthi, 31));
+            setCPSR_N(BitOp.getBit32(desthi, 31));
             setCPSR_Z(dest == 0);
             //C flag is unaffected
             //V flag is unaffected
@@ -2652,7 +2652,7 @@ public class ARM9 extends CPU {
 
         if (rd == 15) {
             setPC(value & 0xfffffffe);
-            setCPSR_T(BitOp.getBit(value, 0));
+            setCPSR_T(BitOp.getBit32(value, 0));
         } else {
             setReg(rd, value);
         }
@@ -3102,7 +3102,7 @@ public class ARM9 extends CPU {
             vaddr += 4;
         }
         //r15
-        if (BitOp.getBit(rlist, 15)) {
+        if (BitOp.getBit32(rlist, 15)) {
             int v;
 
             paddr = getMMU().translate(vaddr, false);
@@ -3115,7 +3115,7 @@ public class ARM9 extends CPU {
             v = read32(paddr);
 
             setPC(v & 0xfffffffe);
-            setCPSR_T(BitOp.getBit(v, 0));
+            setCPSR_T(BitOp.getBit32(v, 0));
             vaddr += 4;
         }
 
@@ -3286,7 +3286,7 @@ public class ARM9 extends CPU {
 
         setReg(14, getPC() - 4);
         //T ビットをセット
-        setCPSR_T(BitOp.getBit(dest, 0));
+        setCPSR_T(BitOp.getBit32(dest, 0));
         setPC(dest & 0xfffffffe);
     }
 

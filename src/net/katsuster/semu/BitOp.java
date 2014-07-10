@@ -16,7 +16,7 @@ public class BitOp {
      * @param bit ビット位置
      * @return ビットがセットされていれば true、クリアされていれば false
      */
-    public static boolean getBit(int val, int bit) {
+    public static boolean getBit32(int val, int bit) {
         return ((val >> bit) & 0x1) == 1;
     }
 
@@ -30,7 +30,7 @@ public class BitOp {
      * @param bit ビット位置
      * @param nv  新しいビットの値、セットするなら true、クリアするなら false
      */
-    public static int setBit(int val, int bit, boolean nv) {
+    public static int setBit32(int val, int bit, boolean nv) {
         int m = 1 << bit;
 
         if (nv) {
