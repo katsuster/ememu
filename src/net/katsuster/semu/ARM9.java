@@ -1,12 +1,12 @@
 package net.katsuster.semu;
 
 /**
- * ARM9 CPU
- *
- * 命令セット: ARMv5TE
+ * ARMv5TE CPU
  *
  * ARM アーキテクチャリファレンスマニュアル Second Edition による。
- * （文章番号 ARM DDI 0100DJ-00）
+ * ARM DDI0100DJ-00
+ *
+ * 最新版は、日本語版 ARM DDI0100HJ, 英語版 ARM DDI0100I
  *
  * T は Thumb 命令、
  * E はエンハンスド DSP 命令、

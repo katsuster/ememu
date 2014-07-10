@@ -4,6 +4,7 @@ package net.katsuster.semu;
  * debug UART
  *
  * 参考: ARM PrimeCell UART (PL011)
+ * 日本語版は ARM DDI0183AJ, 英語版は ARM DDI0183G
  *
  * @author katsuhiro
  */

@@ -4,7 +4,7 @@ package net.katsuster.semu;
  * システムレジスタ
  *
  * 参考: Versatile Application Baseboard for ARM926EJ-S User Guide
- * HBI-0118
+ * ARM DUI0225D
  *
  * @author katsuhiro
  */
