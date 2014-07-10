@@ -101,8 +101,8 @@ public class MMU {
 
         //フォルトステータス
         val = stdCp.getCReg(5);
-        BitOp.setField(val, 4, 3, dom);
-        BitOp.setField(val, 0, 3, fs);
+        BitOp.setField32(val, 4, 3, dom);
+        BitOp.setField32(val, 0, 3, fs);
         stdCp.setCReg(5, val);
 
         //フォルトアドレス
@@ -146,7 +146,7 @@ public class MMU {
             return 0;
         }
         entryL1 = getCPU().read32(paL1);
-        typeL1 = BitOp.getField(entryL1, 0, 2);
+        typeL1 = BitOp.getField32(entryL1, 0, 2);
 
         switch (typeL1) {
         case 0:
@@ -189,8 +189,8 @@ public class MMU {
      * @return 第 1 レベル記述子
      */
     protected int getL1Address(int va) {
-        int tblBase = BitOp.getField(tableBase, 14, 18);
-        int tblIndex = BitOp.getField(va, 20, 12);
+        int tblBase = BitOp.getField32(tableBase, 14, 18);
+        int tblIndex = BitOp.getField32(va, 20, 12);
         int pa;
 
         pa = (tblBase << 14) | (tblIndex << 2);
@@ -212,8 +212,8 @@ public class MMU {
      * @return 概略ページテーブルの第 2 レベル記述子のアドレス
      */
     protected int getL2AddressCoarse(int va, int entryL1) {
-        int base = BitOp.getField(entryL1, 10, 22);
-        int tblIndex = BitOp.getField(va, 12, 8);
+        int base = BitOp.getField32(entryL1, 10, 22);
+        int tblIndex = BitOp.getField32(va, 12, 8);
         int pa;
 
         pa = (base << 10) | (tblIndex << 2);
@@ -235,8 +235,8 @@ public class MMU {
      * @return 詳細ページテーブルの第 2 レベル記述子のアドレス
      */
     protected int getL2AddressFine(int va, int entryL1) {
-        int base = BitOp.getField(entryL1, 14, 20);
-        int tblIndex = BitOp.getField(va, 10, 10);
+        int base = BitOp.getField32(entryL1, 14, 20);
+        int tblIndex = BitOp.getField32(va, 10, 10);
         int pa;
 
         pa = (base << 12) | (tblIndex << 2);
@@ -252,8 +252,8 @@ public class MMU {
      * @return 大ページの物理アドレス
      */
     protected int getPageAddressLarge(int va, int entryL2) {
-        int base = BitOp.getField(entryL2, 16, 16);
-        int tblIndex = BitOp.getField(va, 0, 16);
+        int base = BitOp.getField32(entryL2, 16, 16);
+        int tblIndex = BitOp.getField32(va, 0, 16);
         int pa;
 
         pa = (base << 16) | tblIndex;
@@ -269,10 +269,10 @@ public class MMU {
      * @return 小ページの物理アドレス
      */
     protected int getPageAddressSmall(int va, int entryL2) {
-        int base = BitOp.getField(entryL2, 12, 20);
+        int base = BitOp.getField32(entryL2, 12, 20);
         int tblIndex, pa;
 
-        tblIndex = BitOp.getField(va, 0, 12);
+        tblIndex = BitOp.getField32(va, 0, 12);
         pa = (base << 12) | tblIndex;
 
         return pa;
@@ -286,8 +286,8 @@ public class MMU {
      * @return 極小ページの物理アドレス
      */
     protected int getPageAddressTiny(int va, int entryL2) {
-        int base = BitOp.getField(entryL2, 10, 22);
-        int tblIndex = BitOp.getField(va, 0, 10);
+        int base = BitOp.getField32(entryL2, 10, 22);
+        int tblIndex = BitOp.getField32(va, 0, 10);
         int pa;
 
         pa = (base << 10) | tblIndex;
@@ -305,13 +305,13 @@ public class MMU {
      * @return 物理アドレス
      */
     protected int translateSection(int va, int entryL1) {
-        int base = BitOp.getField(entryL1, 20, 12);
-        int ap = BitOp.getField(entryL1, 10, 2);
-        int dom = BitOp.getField(entryL1, 5, 4);
+        int base = BitOp.getField32(entryL1, 20, 12);
+        int ap = BitOp.getField32(entryL1, 10, 2);
+        int dom = BitOp.getField32(entryL1, 5, 4);
         boolean imp = BitOp.getBit(entryL1, 4);
         boolean c = BitOp.getBit(entryL1, 3);
         boolean b = BitOp.getBit(entryL1, 2);
-        int tblIndex = BitOp.getField(va, 0, 20);
+        int tblIndex = BitOp.getField32(va, 0, 20);
         int pa;
 
         //TODO: アクセスチェック
@@ -347,7 +347,7 @@ public class MMU {
         paL2 = getL2AddressCoarse(va, entryL1);
 
         entryL2 = getCPU().read32(paL2);
-        typeL2 = BitOp.getField(entryL2, 0, 2);
+        typeL2 = BitOp.getField32(entryL2, 0, 2);
 
         switch (typeL2) {
         case 0:

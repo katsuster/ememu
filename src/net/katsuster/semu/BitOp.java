@@ -54,7 +54,7 @@ public class BitOp {
      * @param len ビットフィールドの長さ
      * @return ビットフィールドの値
      */
-    public static int getField(int val, int pos, int len) {
+    public static int getField32(int val, int pos, int len) {
         int mask;
 
         if (len >= 32) {
@@ -80,7 +80,7 @@ public class BitOp {
      * @param len ビットフィールドの長さ
      * @param nv  ビットフィールドに設定する値
      */
-    public static int setField(int val, int pos, int len, int nv) {
+    public static int setField32(int val, int pos, int len, int nv) {
         int mask;
 
         if (len >= 32) {

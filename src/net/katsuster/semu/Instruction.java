@@ -39,7 +39,7 @@ public class Instruction {
      * @return ビットフィールドの値
      */
     public int getField(int pos, int len) {
-        return BitOp.getField(rawInst, pos, len);
+        return BitOp.getField32(rawInst, pos, len);
     }
 
     public static final int COND_EQ = 0;
@@ -77,7 +77,7 @@ public class Instruction {
      * @return cond フィールド
      */
     public static int getCondField(int inst) {
-        return BitOp.getField(inst, 28, 4);
+        return BitOp.getField32(inst, 28, 4);
     }
 
     /**
@@ -213,7 +213,7 @@ public class Instruction {
      * @return サブコード
      */
     public static int getSubCodeField(int inst) {
-        return BitOp.getField(inst, 26, 2);
+        return BitOp.getField32(inst, 26, 2);
     }
 
     /**
@@ -278,7 +278,7 @@ public class Instruction {
      * @return オペコード
      */
     public static int getOpcodeField(int inst) {
-        return BitOp.getField(inst, 21, 4);
+        return BitOp.getField32(inst, 21, 4);
     }
 
     /**
@@ -406,7 +406,7 @@ public class Instruction {
      * @return 演算を示す ID
      */
     public static int getOpcodeSBitShiftID(int inst) {
-        return opcodeSBitShiftTable[BitOp.getField(inst, 20, 5)];
+        return opcodeSBitShiftTable[BitOp.getField32(inst, 20, 5)];
     }
 
     /**
@@ -433,7 +433,7 @@ public class Instruction {
      * @return 演算を示す ID
      */
     public static int getOpcodeSBitImmID(int inst) {
-        return opcodeSBitImmTable[BitOp.getField(inst, 20, 5)];
+        return opcodeSBitImmTable[BitOp.getField32(inst, 20, 5)];
     }
 
     public static final int PU_ADDR4_IA = 1;
@@ -465,7 +465,7 @@ public class Instruction {
      * @return P, U ビット
      */
     public static int getPUField(int inst) {
-        return BitOp.getField(inst, 23, 2);
+        return BitOp.getField32(inst, 23, 2);
     }
 
     /**
@@ -574,7 +574,7 @@ public class Instruction {
      * @return Rn フィールド
      */
     public static int getRnField(int inst) {
-        return BitOp.getField(inst, 16, 4);
+        return BitOp.getField32(inst, 16, 4);
     }
 
     /**
@@ -593,7 +593,7 @@ public class Instruction {
      * @return Rd フィールド
      */
     public static int getRdField(int inst) {
-        return BitOp.getField(inst, 12, 4);
+        return BitOp.getField32(inst, 12, 4);
     }
 
     /**
@@ -622,7 +622,7 @@ public class Instruction {
      * @return Rm フィールド
      */
     public static int getRmField(int inst) {
-        return BitOp.getField(inst, 0, 4);
+        return BitOp.getField32(inst, 0, 4);
     }
 
     /**
@@ -647,7 +647,7 @@ public class Instruction {
      * @return レジスタリストフィールド
      */
     public static int getRegListField(int inst) {
-        return BitOp.getField(inst, 0, 16);
+        return BitOp.getField32(inst, 0, 16);
     }
 
     /**
