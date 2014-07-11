@@ -30,9 +30,9 @@ public class ARMv5 extends CPU {
     private boolean jumped;
 
     public ARMv5() {
-        StdCoProc stdCp;
+        CoProcStdv5 cpStd;
 
-        stdCp = new StdCoProc(15, this);
+        cpStd = new CoProcStdv5(15, this);
 
         regs = new int[17];
         regs_svc = new int[17];
@@ -41,8 +41,8 @@ public class ARMv5 extends CPU {
         regs_irq = new int[17];
         regs_fiq = new int[17];
         coProcs = new CoProc[16];
-        coProcs[15] = stdCp;
-        mmu = new MMU(this, stdCp);
+        coProcs[15] = cpStd;
+        mmu = new MMU(this, cpStd);
 
         exceptions = new boolean[7];
         exceptionReasons = new String[7];
@@ -248,8 +248,8 @@ public class ARMv5 extends CPU {
      *
      * @return 標準コプロセッサ
      */
-    public StdCoProc getStdCoProc() {
-        return (StdCoProc)coProcs[15];
+    public CoProcStdv5 getCoProcStd() {
+        return (CoProcStdv5)coProcs[15];
     }
 
     /**
@@ -4227,7 +4227,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //リセット例外ベクタへ
-        if (getStdCoProc().isHighVector()) {
+        if (getCoProcStd().isHighVector()) {
             setPC(0xffff0000);
         } else {
             setPC(0x00000000);
@@ -4264,7 +4264,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //未定義例外ベクタへ
-        if (getStdCoProc().isHighVector()) {
+        if (getCoProcStd().isHighVector()) {
             setPC(0xffff0004);
         } else {
             setPC(0x00000004);
@@ -4300,7 +4300,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //ソフトウェア割り込み例外ベクタへ
-        if (getStdCoProc().isHighVector()) {
+        if (getCoProcStd().isHighVector()) {
             setPC(0xffff0008);
         } else {
             setPC(0x00000008);
@@ -4340,7 +4340,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //プリフェッチアボート例外ベクタへ
-        if (getStdCoProc().isHighVector()) {
+        if (getCoProcStd().isHighVector()) {
             setPC(0xffff000c);
         } else {
             setPC(0x0000000c);
@@ -4380,7 +4380,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //データアボート例外ベクタへ
-        if (getStdCoProc().isHighVector()) {
+        if (getCoProcStd().isHighVector()) {
             setPC(0xffff0010);
         } else {
             setPC(0x00000010);
@@ -4416,7 +4416,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //IRQ 例外ベクタへ
-        if (getStdCoProc().isHighVector()) {
+        if (getCoProcStd().isHighVector()) {
             setPC(0xffff0018);
         } else {
             setPC(0x00000018);
@@ -4456,7 +4456,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //FIQ 例外ベクタへ
-        if (getStdCoProc().isHighVector()) {
+        if (getCoProcStd().isHighVector()) {
             setPC(0xffff001c);
         } else {
             setPC(0x0000001c);

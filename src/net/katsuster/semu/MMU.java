@@ -14,14 +14,14 @@ public class MMU {
     private boolean enable;
 
     private ARMv5 cpu;
-    private StdCoProc stdCp;
+    private CoProcStdv5 cpStd;
     private int tableBase;
 
-    public MMU(ARMv5 cpu, StdCoProc cp) {
+    public MMU(ARMv5 cpu, CoProcStdv5 cp) {
         this.enable = false;
 
         this.cpu = cpu;
-        this.stdCp = cp;
+        this.cpStd = cp;
         this.tableBase = 0;
     }
 
@@ -57,8 +57,8 @@ public class MMU {
      *
      * @return MMU が接続されている標準コプロセッサ
      */
-    public StdCoProc getStdCoProc() {
-        return stdCp;
+    public CoProcStdv5 getCoProcStd() {
+        return cpStd;
     }
 
     /**
@@ -69,7 +69,7 @@ public class MMU {
      * - TTBR0: 変換テーブルベース（Cp15 レジスタ 2）
      */
     public void update() {
-        tableBase = getStdCoProc().getCReg(StdCoProc.CR02_MMU_TTBR0);
+        tableBase = getCoProcStd().getCReg(CoProcStdv5.CR02_MMU_TTBR0);
     }
 
     public static final int FS_TERM = 0x2;
@@ -105,13 +105,13 @@ public class MMU {
         int val, num;
 
         //フォルトステータス
-        val = stdCp.getCReg(5);
+        val = cpStd.getCReg(5);
         BitOp.setField32(val, 4, 3, dom);
         BitOp.setField32(val, 0, 3, fs);
-        stdCp.setCReg(5, val);
+        cpStd.setCReg(5, val);
 
         //フォルトアドレス
-        stdCp.setCReg(6, va);
+        cpStd.setCReg(6, va);
 
         //例外を発生させる
         if (inst) {

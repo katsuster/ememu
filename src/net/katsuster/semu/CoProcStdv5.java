@@ -8,7 +8,7 @@ package net.katsuster.semu;
  *
  * @author katsuhiro
  */
-public class StdCoProc extends CoProc {
+public class CoProcStdv5 extends CoProc {
     private boolean highvector;
 
     //----------------------------------------------------------------------
@@ -152,7 +152,7 @@ public class StdCoProc extends CoProc {
     //crn15: 実装ごとに定義
     //----------------------------------------------------------------------
 
-    public StdCoProc(int no, ARMv5 p) {
+    public CoProcStdv5(int no, ARMv5 p) {
         super(no, p);
 
         highvector = false;
