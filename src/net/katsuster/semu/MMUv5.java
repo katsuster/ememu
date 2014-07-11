@@ -108,10 +108,10 @@ public class MMUv5 {
         val = cpStd.getCReg(5);
         BitOp.setField32(val, 4, 3, dom);
         BitOp.setField32(val, 0, 3, fs);
-        cpStd.setCReg(5, val);
+        cpStd.setCReg(CoProcStdv5.CR05_MMU_FSR, val);
 
         //フォルトアドレス
-        cpStd.setCReg(6, va);
+        cpStd.setCReg(CoProcStdv5.CR06_MMU_FAR, va);
 
         //例外を発生させる
         if (inst) {
