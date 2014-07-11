@@ -10,14 +10,14 @@ package net.katsuster.semu;
  *
  * @author katsuhiro
  */
-public class MMU {
+public class MMUv5 {
     private boolean enable;
 
     private ARMv5 cpu;
     private CoProcStdv5 cpStd;
     private int tableBase;
 
-    public MMU(ARMv5 cpu, CoProcStdv5 cp) {
+    public MMUv5(ARMv5 cpu, CoProcStdv5 cp) {
         this.enable = false;
 
         this.cpu = cpu;

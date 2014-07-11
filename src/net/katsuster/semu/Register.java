@@ -1,7 +1,7 @@
 package net.katsuster.semu;
 
 /**
- * レジスタ。
+ * 32ビットレジスタ。
  *
  * @author katsuhiro
  */

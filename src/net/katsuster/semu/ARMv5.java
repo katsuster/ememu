@@ -23,7 +23,7 @@ public class ARMv5 extends CPU {
     private int[] regs_fiq;
     private int cpsr;
     private CoProc[] coProcs;
-    private MMU mmu;
+    private MMUv5 mmu;
 
     private boolean exceptions[];
     private String exceptionReasons[];
@@ -42,7 +42,7 @@ public class ARMv5 extends CPU {
         regs_fiq = new int[17];
         coProcs = new CoProc[16];
         coProcs[15] = cpStd;
-        mmu = new MMU(this, cpStd);
+        mmu = new MMUv5(this, cpStd);
 
         exceptions = new boolean[7];
         exceptionReasons = new String[7];
@@ -257,7 +257,7 @@ public class ARMv5 extends CPU {
      *
      * @return MMU
      */
-    public MMU getMMU() {
+    public MMUv5 getMMU() {
         return mmu;
     }
 
