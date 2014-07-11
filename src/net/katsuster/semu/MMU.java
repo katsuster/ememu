@@ -5,6 +5,9 @@ package net.katsuster.semu;
  *
  * VMSA: 仮想メモリシステムアーキテクチャ
  *
+ * 参考: ARM アーキテクチャリファレンスマニュアル Second Edition
+ * ARM DDI0100DJ
+ *
  * @author katsuhiro
  */
 public class MMU {

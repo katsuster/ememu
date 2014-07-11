@@ -3,8 +3,8 @@ package net.katsuster.semu;
 /**
  * ARMv5TE CPU
  *
- * ARM アーキテクチャリファレンスマニュアル Second Edition による。
- * ARM DDI0100DJ-00
+ * 参考: ARM アーキテクチャリファレンスマニュアル Second Edition
+ * ARM DDI0100DJ
  *
  * 最新版は、日本語版 ARM DDI0100HJ, 英語版 ARM DDI0100I
  *

@@ -3,6 +3,9 @@ package net.katsuster.semu;
 /**
  * ARM コプロセッサ 15: 標準コプロセッサ。
  *
+ * 参考: ARM アーキテクチャリファレンスマニュアル Second Edition
+ * ARM DDI0100DJ
+ *
  * @author katsuhiro
  */
 public class StdCoProc extends CoProc {
