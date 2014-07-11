@@ -10,7 +10,7 @@ import java.util.*;
 public class CoProc {
     private int no;
     private ARMv5 cpu;
-    private Map<Integer, Register> cregs;
+    private Map<Integer, Reg32> cregs;
 
     /**
      * コプロセッサを生成します。
@@ -21,7 +21,7 @@ public class CoProc {
     public CoProc(int no, ARMv5 cpu) {
         this.no = no;
         this.cpu = cpu;
-        this.cregs = new HashMap<Integer, Register>();
+        this.cregs = new HashMap<Integer, Reg32>();
     }
 
     /**
@@ -49,7 +49,7 @@ public class CoProc {
      * @param name レジスタ名
      */
     public void addCReg(int cn, String name) {
-        cregs.put(cn, new Register(name, 0));
+        cregs.put(cn, new Reg32(name, 0));
     }
 
     /**
@@ -60,7 +60,7 @@ public class CoProc {
      * @param val  レジスタの初期値
      */
     public void addCReg(int cn, String name, int val) {
-        cregs.put(cn, new Register(name, val));
+        cregs.put(cn, new Reg32(name, val));
     }
 
     /**
@@ -110,7 +110,7 @@ public class CoProc {
      * @return レジスタの値
      */
     public int getCReg(int cn) {
-        Register r;
+        Reg32 r;
 
         r = cregs.get(cn);
         if (r == null) {
@@ -135,7 +135,7 @@ public class CoProc {
      * @param val 新しいレジスタの値
      */
     public void setCReg(int cn, int val) {
-        Register r;
+        Reg32 r;
 
         r = cregs.get(cn);
         if (r == null) {

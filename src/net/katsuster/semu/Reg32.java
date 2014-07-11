@@ -5,15 +5,15 @@ package net.katsuster.semu;
  *
  * @author katsuhiro
  */
-public class Register {
+public class Reg32 {
     private String name;
     private int val;
 
-    public Register() {
+    public Reg32() {
         this("", 0);
     }
 
-    public Register(String name, int val) {
+    public Reg32(String name, int val) {
         this.name = name;
         this.val = val;
     }
