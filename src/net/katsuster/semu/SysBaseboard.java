@@ -8,7 +8,7 @@ package net.katsuster.semu;
  *
  * @author katsuhiro
  */
-public class VersatileSystem extends SlaveCore64 {
+public class SysBaseboard extends SlaveCore64 {
     //データ幅（バイト単位）
     public static final int LEN_WORD = 4;
     //データ幅（ビット単位）
@@ -18,7 +18,7 @@ public class VersatileSystem extends SlaveCore64 {
 
     public static final int REG_SYS_24MHZ        = 0x005c;
 
-    public VersatileSystem() {
+    public SysBaseboard() {
         start24MHz = System.nanoTime();
     }
 

@@ -33,7 +33,7 @@ public class Main {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
 
         ARM9 cpu = new ARM9();
-        VersatileSystem sys = new VersatileSystem();
+        SysBaseboard sys = new SysBaseboard();
         UART uart0 = new UART();
         RAM ramMain = new RAM(16 * 1024 * 1024); //64MB
         Bus64 bus = new Bus64();
