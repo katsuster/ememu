@@ -32,7 +32,7 @@ public class Main {
     public static void main(String[] args) {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
 
-        ARM9 cpu = new ARM9();
+        ARMv5 cpu = new ARMv5();
         SysBaseboard sysBoard = new SysBaseboard();
         SysController sysCtrl = new SysController();
         UART uart0 = new UART();

@@ -14,7 +14,7 @@ package net.katsuster.semu;
  *
  * @author katsuhiro
  */
-public class ARM9 extends CPU {
+public class ARMv5 extends CPU {
     private int[] regs;
     private int[] regs_svc;
     private int[] regs_abt;
@@ -29,7 +29,7 @@ public class ARM9 extends CPU {
     private String exceptionReasons[];
     private boolean jumped;
 
-    public ARM9() {
+    public ARMv5() {
         StdCoProc stdCp;
 
         stdCp = new StdCoProc(15, this);

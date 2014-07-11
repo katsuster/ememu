@@ -1,18 +1,20 @@
 package net.katsuster.semu;
 
 /**
- * ARM MMU
+ * ARMv5 VMSA
+ *
+ * VMSA: 仮想メモリシステムアーキテクチャ
  *
  * @author katsuhiro
  */
 public class MMU {
     private boolean enable;
 
-    private ARM9 cpu;
+    private ARMv5 cpu;
     private StdCoProc stdCp;
     private int tableBase;
 
-    public MMU(ARM9 cpu, StdCoProc cp) {
+    public MMU(ARMv5 cpu, StdCoProc cp) {
         this.enable = false;
 
         this.cpu = cpu;
@@ -43,7 +45,7 @@ public class MMU {
      *
      * @return MMU が接続されている CPU
      */
-    public ARM9 getCPU() {
+    public ARMv5 getCPU() {
         return cpu;
     }
 
@@ -111,10 +113,10 @@ public class MMU {
         //例外を発生させる
         if (inst) {
             //プリフェッチアボート例外
-            num = ARM9.EXCEPT_ABT_INST;
+            num = ARMv5.EXCEPT_ABT_INST;
         } else {
             //データアボート例外
-            num = ARM9.EXCEPT_ABT_DATA;
+            num = ARMv5.EXCEPT_ABT_DATA;
         }
         getCPU().raiseException(num, dbgmsg);
     }
