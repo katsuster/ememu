@@ -1814,9 +1814,8 @@ public class ARMv5 extends CPU {
             executeALUSbc(inst, exec);
             break;
         case Instruction.OPCODE_S_RSC:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeALURsc(inst, exec);
+            break;
         case Instruction.OPCODE_S_TST:
             executeALUTst(inst, exec);
             break;
@@ -2041,6 +2040,40 @@ public class ARMv5 extends CPU {
 
         left = getReg(rn);
         center = opr;
+        right = BitOp.toInt(!getCPSR_C());
+        dest = left - center - right;
+
+        if (s && rd == 15) {
+            setCPSR(getSPSR());
+        } else if (s) {
+            int left_center = left + center;
+            boolean lc_c = !borrowFrom32(left, center);
+            boolean lc_v = overflowFrom32(left, center, false);
+
+            setCPSR_N(BitOp.getBit32(dest, 31));
+            setCPSR_Z(dest == 0);
+            setCPSR_C(lc_c || !borrowFrom32(left_center, right));
+            setCPSR_V(lc_v || overflowFrom32(left_center, right, false));
+        }
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * キャリー付き逆減算命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeALURsc(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int opr = getShifterOperand(inst);
+        int left, center, right, dest;
+
+        left = opr;
+        center = getReg(rn);
         right = BitOp.toInt(!getCPSR_C());
         dest = left - center - right;
 
@@ -2707,6 +2740,59 @@ public class ARMv5 extends CPU {
         }
 
         value = read16(paddr) & 0xffff;
+
+        setReg(rd, value);
+
+        if (!p || w) {
+            //ベースレジスタを更新する
+            //条件は !(p && !w) と等価、つまり P, W ビットが
+            //オフセットアドレス以外の指定なら Rn を書き換える
+            setReg(rn, offset);
+        }
+    }
+
+    /**
+     * レジスタ符号付きバイトロード命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdrsb(Instruction inst, boolean exec) {
+        boolean p = inst.getBit(24);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetHalf(inst);
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("ldrsb%s", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetHalfName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        if (p) {
+            //プリインデクス
+            vaddr = offset;
+        } else {
+            //ポストインデクス
+            vaddr = getReg(rn);
+        }
+
+        paddr = getMMU().translate(vaddr, false);
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("ldrsb [%08x]", paddr));
+            return;
+        }
+
+        value = read8(paddr);
 
         setReg(rd, value);
 
@@ -3720,8 +3806,7 @@ public class ARMv5 extends CPU {
         } else if (op == 2) {
             if (l) {
                 //ldrsb
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                executeLdrsb(inst, exec);
             } else {
                 //ldrd
                 executeLdrd(inst, exec);
@@ -4080,8 +4165,8 @@ public class ARMv5 extends CPU {
         int v, vaddr, paddr;
 
         //for debug
-        int target_address1 = 0xc001e6c4; //<versatile_read_sched_clock>
-        int target_address2 = 0xc001e6c4; //<versatile_read_sched_clock>
+        int target_address1 = 0xc03762b0; //<__vic_init>
+        int target_address2 = 0xc03762d0; //<__vic_init>
 
         vaddr = getPC() - 8;
         paddr = getMMU().translate(vaddr, true);
