@@ -14,9 +14,9 @@ public class SysBaseboard extends SlaveCore64 {
     //データ幅（ビット単位）
     public static final int LEN_WORD_BITS = LEN_WORD * 8;
 
-    private long start24MHz;
-
     public static final int REG_SYS_24MHZ        = 0x005c;
+
+    private long start24MHz;
 
     public SysBaseboard() {
         start24MHz = System.nanoTime();

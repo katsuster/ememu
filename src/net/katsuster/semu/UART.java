@@ -14,8 +14,6 @@ public class UART extends SlaveCore64 {
     //データ幅（ビット単位）
     public static final int LEN_WORD_BITS = LEN_WORD * 8;
 
-    private StringBuilder strBuffer;
-
     public static final int REG_UARTDR        = 0x000;
     public static final int REG_UARTRSR       = 0x004;
     public static final int REG_UARTFR        = 0x018;
@@ -38,6 +36,8 @@ public class UART extends SlaveCore64 {
     public static final int REG_UARTPCellID1  = 0xff4;
     public static final int REG_UARTPCellID2  = 0xff8;
     public static final int REG_UARTPCellID3  = 0xffc;
+
+    private StringBuilder strBuffer;
 
     public UART() {
         strBuffer = new StringBuilder();

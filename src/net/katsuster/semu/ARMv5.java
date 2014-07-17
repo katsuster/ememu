@@ -4165,8 +4165,8 @@ public class ARMv5 extends CPU {
         int v, vaddr, paddr;
 
         //for debug
-        int target_address1 = 0xc03762b0; //<__vic_init>
-        int target_address2 = 0xc03762d0; //<__vic_init>
+        int target_address1 = 0xc0376184; //<vic_disable>
+        int target_address2 = 0xc0376184; //<vic_disable>
 
         vaddr = getPC() - 8;
         paddr = getMMU().translate(vaddr, true);
