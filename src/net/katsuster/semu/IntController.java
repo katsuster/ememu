@@ -57,6 +57,11 @@ public class IntController extends SlaveCore64 {
     public static final int REG_VICVECTCNTL13   = 0x234;
     public static final int REG_VICVECTCNTL14   = 0x238;
     public static final int REG_VICVECTCNTL15   = 0x23c;
+    public static final int REG_VICITCR         = 0x300;
+    public static final int REG_VICITIP1        = 0x304;
+    public static final int REG_VICITIP2        = 0x308;
+    public static final int REG_VICITOP1        = 0x30c;
+    public static final int REG_VICITOP2        = 0x310;
     public static final int REG_VICPERIPHID0    = 0xfe0;
     public static final int REG_VICPERIPHID1    = 0xfe4;
     public static final int REG_VICPERIPHID2    = 0xfe8;
@@ -138,15 +143,30 @@ public class IntController extends SlaveCore64 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_VICINTSELECT:
+        case REG_VICINTENABLE:
+        case REG_VICINTENCLEAR:
+        case REG_VICSOFTINTCLEAR:
+        case REG_VICVECTADDR:
+        case REG_VICDEFVECTADDR:
+
+        case REG_VICITCR:
+
         case REG_VICPERIPHID0:
         case REG_VICPERIPHID1:
         case REG_VICPERIPHID2:
         case REG_VICPERIPHID3:
             return true;
         default:
-            throw new IllegalArgumentException(String.format("Illegal address 0x%08x.",
-                    regaddr));
+            //do nothing
         }
+
+        if (REG_VICVECTCNTL0 <= regaddr && regaddr <= REG_VICVECTCNTL15) {
+            return true;
+        }
+
+        throw new IllegalArgumentException(String.format("Illegal address 0x%08x.",
+                regaddr));
     }
 
     public int readWord(long addr) {
@@ -156,6 +176,16 @@ public class IntController extends SlaveCore64 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_VICVECTADDR:
+            //TODO: not implemented
+            System.out.printf("VICVECTADDR: read 0x%08x\n", 0);
+            result = 0x0;
+            break;
+        case REG_VICDEFVECTADDR:
+            //TODO: not implemented
+            System.out.printf("VICDEFVECTADDR: read 0x%08x\n", 0);
+            result = 0x0;
+            break;
         case REG_VICPERIPHID0:
             //[ 7: 0]: Partnumber0: must be 0x90
             result = 0x90;
@@ -185,11 +215,40 @@ public class IntController extends SlaveCore64 {
     }
 
     public void writeWord(long addr, long data) {
+        boolean notfound = false;
         int regaddr;
 
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+        regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_VICINTSELECT:
+            //TODO: not implemented
+            System.out.printf("VICINTSELECT: 0x%08x\n", data);
+            break;
+        case REG_VICINTENABLE:
+            //TODO: not implemented
+            System.out.printf("VICINTENABLE: 0x%08x\n", data);
+            break;
+        case REG_VICINTENCLEAR:
+            //TODO: not implemented
+            System.out.printf("VICINTENCLEAR: 0x%08x\n", data);
+            break;
+        case REG_VICSOFTINTCLEAR:
+            //TODO: not implemented
+            System.out.printf("VICSOFTINTCLEAR: 0x%08x\n", data);
+            break;
+        case REG_VICVECTADDR:
+            //TODO: not implemented
+            System.out.printf("VICVECTADDR: 0x%08x\n", data);
+            break;
+        case REG_VICDEFVECTADDR:
+            //TODO: not implemented
+            System.out.printf("VICDEFVECTADDR: 0x%08x\n", data);
+            break;
+        case REG_VICITCR:
+            //TODO: not implemented
+            System.out.printf("VICITCR: 0x%08x\n", data);
+            break;
         case REG_VICPERIPHID0:
         case REG_VICPERIPHID1:
         case REG_VICPERIPHID2:
@@ -197,6 +256,18 @@ public class IntController extends SlaveCore64 {
             //read only
             break;
         default:
+            notfound = true;
+        }
+
+        if (REG_VICVECTCNTL0 <= regaddr && regaddr <= REG_VICVECTCNTL15) {
+            notfound = false;
+
+            //TODO: not implemented
+            System.out.printf("VICVECTCNTL[%d]: 0x%08x\n",
+                    (regaddr - REG_VICVECTCNTL0) / 4, data);
+        }
+
+        if (notfound) {
             throw new IllegalArgumentException(String.format("Illegal address 0x%08x.",
                     regaddr));
         }
