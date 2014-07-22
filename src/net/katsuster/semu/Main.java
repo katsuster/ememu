@@ -35,6 +35,7 @@ public class Main {
         ARMv5 cpu = new ARMv5();
         SysBaseboard sysBoard = new SysBaseboard();
         IntController intCtrl = new IntController();
+        IntController2nd intCtrl2nd = new IntController2nd();
         SysController sysCtrl = new SysController();
         UART uart0 = new UART();
         RAM ramMain = new RAM(16 * 1024 * 1024); //64MB
@@ -46,8 +47,9 @@ public class Main {
         //RAM Image(tentative)
         //  0x10000000 - 0x13ffffff: CS5
         //    0x10000000 - 0x10000fff: System Registers
-        //    0x10140000 - 0x1014ffff: Vectored Interrupt Contoroller
-        //    0x101e0000 - 0x101e1000: System Controller
+        //    0x10003000 - 0x10003fff: Secondary Interrupt Controller
+        //    0x10140000 - 0x1014ffff: Primary Interrupt Contoroller (PL190)
+        //    0x101e0000 - 0x101e1000: System Controller (SP810)
         //    0x101f1000 - 0x101f1fff: UART0
         //    0x101f2000 - 0x101f2fff: UART1
         //    0x101f3000 - 0x101f3fff: UART2
@@ -56,6 +58,7 @@ public class Main {
         //    0x80008000 - 0x804fffff: Linux Image
         //    0x80ffff00 - 0x83ffffff: ATAG_XXX
         bus.addSlaveCore(sysBoard, 0x10000000L, 0x10001000L);
+        bus.addSlaveCore(intCtrl2nd, 0x10003000L, 0x10004000L);
         bus.addSlaveCore(intCtrl, 0x10140000L, 0x10150000L);
         bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e1000L);
         bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
