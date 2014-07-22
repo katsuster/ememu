@@ -37,6 +37,8 @@ public class Main {
         IntController intCtrl = new IntController();
         IntController2nd intCtrl2nd = new IntController2nd();
         SysController sysCtrl = new SysController();
+        DualTimer timer0_1 = new DualTimer();
+        DualTimer timer2_3 = new DualTimer();
         UART uart0 = new UART();
         RAM ramMain = new RAM(16 * 1024 * 1024); //64MB
         Bus64 bus = new Bus64();
@@ -50,6 +52,8 @@ public class Main {
         //    0x10003000 - 0x10003fff: Secondary Interrupt Controller
         //    0x10140000 - 0x1014ffff: Primary Interrupt Contoroller (PL190)
         //    0x101e0000 - 0x101e1000: System Controller (SP810)
+        //    0x101e2000 - 0x101e2fff: Dual-Timer 0 and 1 (SP804)
+        //    0x101e3000 - 0x101e3fff: Dual-Timer 2 and 3 (SP804)
         //    0x101f1000 - 0x101f1fff: UART0
         //    0x101f2000 - 0x101f2fff: UART1
         //    0x101f3000 - 0x101f3fff: UART2
@@ -61,6 +65,8 @@ public class Main {
         bus.addSlaveCore(intCtrl2nd, 0x10003000L, 0x10004000L);
         bus.addSlaveCore(intCtrl, 0x10140000L, 0x10150000L);
         bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e1000L);
+        bus.addSlaveCore(timer0_1, 0x101e2000L, 0x101e3000L);
+        bus.addSlaveCore(timer2_3, 0x101e3000L, 0x101e4000L);
         bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
         bus.addSlaveCore(ramMain, 0x80000000L, 0x84000000L);
 
