@@ -2404,6 +2404,53 @@ public class ARMv5 extends CPU {
     }
 
     /**
+     * 符号付き積和ロング命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSmlal(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rdhi = inst.getField(16, 4);
+        int rdlo = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        int rm = inst.getRmField();
+        int left, right, desthi, destlo;
+        long dest;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("smlal%s%s", inst.getCondFieldName(),
+                            (s) ? "s" : ""),
+                    String.format("%s, %s, %s, %s",
+                            getRegName(rdlo), getRegName(rdhi),
+                            getRegName(rm), getRegName(rs)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        left = getReg(rm);
+        right = getReg(rs);
+        dest = ((long)getReg(rdhi) << 32) + (getReg(rdlo) & 0xffffffffL);
+        dest += (long)left * (long)right;
+        desthi = (int)(dest >>> 32);
+        destlo = (int)dest;
+
+        if (s) {
+            setCPSR_N(BitOp.getBit32(desthi, 31));
+            setCPSR_Z(dest == 0);
+            //C flag is unaffected
+            //V flag is unaffected
+        }
+
+        setReg(rdhi, desthi);
+        setReg(rdlo, destlo);
+    }
+
+    /**
      * 符号無し積和ロング命令。
      *
      * @param inst ARM 命令
@@ -3711,9 +3758,8 @@ public class ARMv5 extends CPU {
             break;
         case 7:
             //smlal
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeSmlal(inst, exec);
+            break;
         case 6:
             //smull
             //TODO: Not implemented
@@ -4165,8 +4211,8 @@ public class ARMv5 extends CPU {
         int v, vaddr, paddr;
 
         //for debug
-        int target_address1 = 0xc0376184; //<vic_disable>
-        int target_address2 = 0xc0376184; //<vic_disable>
+        int target_address1 = 0;//0xc036aee8; //<versatile_init_irq>
+        int target_address2 = 0;//0xc036aee8; //<versatile_init_irq>
 
         vaddr = getPC() - 8;
         paddr = getMMU().translate(vaddr, true);
