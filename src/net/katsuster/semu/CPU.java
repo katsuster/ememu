@@ -132,6 +132,7 @@ public abstract class CPU extends MasterCore64 implements Runnable {
      */
     public abstract void step();
 
+    @Override
     public void run() {
         while (true) {
             step();
