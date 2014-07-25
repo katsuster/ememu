@@ -8,7 +8,7 @@ package net.katsuster.semu;
  *
  * @author katsuhiro
  */
-public class IntController2nd extends Controller64Reg32 {
+public class SecondaryINTC extends Controller64Reg32 {
     public static final int REG_SIC_STATUS     = 0x000;
     public static final int REG_SIC_RAWSTAT    = 0x004;
     public static final int REG_SIC_ENABLE     = 0x008;
@@ -20,7 +20,7 @@ public class IntController2nd extends Controller64Reg32 {
     public static final int REG_SIC_PICENSET   = 0x020;
     public static final int REG_SIC_PICENCLR   = 0x024;
 
-    public IntController2nd() {
+    public SecondaryINTC() {
         addReg(REG_SIC_ENCLR, "SIC_ENCLR", 0x00000000);
         addReg(REG_SIC_PICENSET, "SIC_PICENSET", 0x00000000);
     }

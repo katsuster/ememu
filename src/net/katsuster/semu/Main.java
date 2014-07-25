@@ -34,8 +34,8 @@ public class Main {
 
         ARMv5 cpu = new ARMv5();
         SysBaseboard sysBoard = new SysBaseboard();
-        IntController intCtrl = new IntController();
-        IntController2nd intCtrl2nd = new IntController2nd();
+        SecondaryINTC intc2nd = new SecondaryINTC();
+        PrimaryINTC intc1st = new PrimaryINTC();
         SysController sysCtrl = new SysController();
         DualTimer timer0_1 = new DualTimer();
         DualTimer timer2_3 = new DualTimer();
@@ -62,8 +62,8 @@ public class Main {
         //    0x80008000 - 0x804fffff: Linux Image
         //    0x80ffff00 - 0x83ffffff: ATAG_XXX
         bus.addSlaveCore(sysBoard, 0x10000000L, 0x10001000L);
-        bus.addSlaveCore(intCtrl2nd, 0x10003000L, 0x10004000L);
-        bus.addSlaveCore(intCtrl, 0x10140000L, 0x10150000L);
+        bus.addSlaveCore(intc2nd, 0x10003000L, 0x10004000L);
+        bus.addSlaveCore(intc1st, 0x10140000L, 0x10150000L);
         bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e1000L);
         bus.addSlaveCore(timer0_1, 0x101e2000L, 0x101e3000L);
         bus.addSlaveCore(timer2_3, 0x101e3000L, 0x101e4000L);

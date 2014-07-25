@@ -8,7 +8,7 @@ package net.katsuster.semu;
  *
  * @author katsuhiro
  */
-public class IntController extends Controller64Reg32 {
+public class PrimaryINTC extends Controller64Reg32 {
     public static final int REG_VICIRQSTATUS    = 0x000;
     public static final int REG_VICFIQSTATUS    = 0x004;
     public static final int REG_VICRAWINTR      = 0x008;
@@ -66,7 +66,7 @@ public class IntController extends Controller64Reg32 {
     public static final int REG_VICPCELLID2     = 0xff8;
     public static final int REG_VICPCELLID3     = 0xffc;
 
-    public IntController() {
+    public PrimaryINTC() {
         addReg(REG_VICINTSELECT, "VICINTSELECT", 0x00000000);
         addReg(REG_VICINTENABLE, "VICINTENABLE", 0x00000000);
         addReg(REG_VICINTENCLEAR, "VICINTENCLEAR", 0x00000000);
