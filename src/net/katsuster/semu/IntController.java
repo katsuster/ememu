@@ -8,12 +8,7 @@ package net.katsuster.semu;
  *
  * @author katsuhiro
  */
-public class IntController extends SlaveCore64 {
-    //データ幅（バイト単位）
-    public static final int LEN_WORD = 4;
-    //データ幅（ビット単位）
-    public static final int LEN_WORD_BITS = LEN_WORD * 8;
-
+public class IntController extends Controller64Reg32 {
     public static final int REG_VICIRQSTATUS    = 0x000;
     public static final int REG_VICFIQSTATUS    = 0x004;
     public static final int REG_VICRAWINTR      = 0x008;
@@ -72,7 +67,53 @@ public class IntController extends SlaveCore64 {
     public static final int REG_VICPCELLID3     = 0xffc;
 
     public IntController() {
+        addReg(REG_VICINTSELECT, "VICINTSELECT", 0x00000000);
+        addReg(REG_VICINTENABLE, "VICINTENABLE", 0x00000000);
+        addReg(REG_VICINTENCLEAR, "VICINTENCLEAR", 0x00000000);
+        addReg(REG_VICSOFTINTCLEAR, "VICSOFTINTCLEAR", 0x00000000);
+        addReg(REG_VICVECTADDR, "VICVECTADDR", 0x00000000);
+        addReg(REG_VICDEFVECTADDR, "VICDEFVECTADDR", 0x00000000);
 
+        addReg(REG_VICVECTCNTL0, "VICVECTCNTL0", 0x00000000);
+        addReg(REG_VICVECTCNTL1, "VICVECTCNTL1", 0x00000000);
+        addReg(REG_VICVECTCNTL2, "VICVECTCNTL2", 0x00000000);
+        addReg(REG_VICVECTCNTL3, "VICVECTCNTL3", 0x00000000);
+        addReg(REG_VICVECTCNTL4, "VICVECTCNTL4", 0x00000000);
+        addReg(REG_VICVECTCNTL5, "VICVECTCNTL5", 0x00000000);
+        addReg(REG_VICVECTCNTL6, "VICVECTCNTL6", 0x00000000);
+        addReg(REG_VICVECTCNTL7, "VICVECTCNTL7", 0x00000000);
+        addReg(REG_VICVECTCNTL8, "VICVECTCNTL8", 0x00000000);
+        addReg(REG_VICVECTCNTL9, "VICVECTCNTL9", 0x00000000);
+        addReg(REG_VICVECTCNTL10, "VICVECTCNTL10", 0x00000000);
+        addReg(REG_VICVECTCNTL11, "VICVECTCNTL11", 0x00000000);
+        addReg(REG_VICVECTCNTL12, "VICVECTCNTL12", 0x00000000);
+        addReg(REG_VICVECTCNTL13, "VICVECTCNTL13", 0x00000000);
+        addReg(REG_VICVECTCNTL14, "VICVECTCNTL14", 0x00000000);
+        addReg(REG_VICVECTCNTL15, "VICVECTCNTL15", 0x00000000);
+
+        addReg(REG_VICITCR, "VICITCR", 0x00000000);
+
+        //[ 7: 0]: Partnumber0: must be 0x90
+        addReg(REG_VICPERIPHID0, "VICPERIPHID0", 0x00000090);
+        //[ 7: 4]: Designer0  : must be 0x1
+        //[ 3: 0]: Partnumber1: must be 0x1
+        addReg(REG_VICPERIPHID1, "VICPERIPHID1", 0x00000011);
+        //レジスタの説明（3.3.14）とリセット後の初期値（Table 3-1）が
+        //矛盾しているため、レジスタの説明を正しいものとして実装する
+        //[ 7: 4]: Revision   : must be 0x1
+        //[ 3: 0]: Designer1  : must be 0x0
+        addReg(REG_VICPERIPHID2, "VICPERIPHID2", 0x00000010);
+        //[ 7: 0]: Configuration: must be 0x00
+        addReg(REG_VICPERIPHID3, "VICPERIPHID3", 0x00000000);
+
+        //[ 7: 0]: VICPCellID0: must be 0x0d
+        addReg(REG_VICPCELLID0, "VICPCELLID0", 0x0000000d);
+        //[ 7: 0]: VICPCellID1: must be 0xf0
+        addReg(REG_VICPCELLID1, "VICPCELLID1", 0x000000f0);
+        //[ 7: 0]: VICPCellID2: must be 0x05
+        addReg(REG_VICPCELLID2, "VICPCELLID2", 0x00000005);
+        //[ 7: 0]: VICPCellID3: must be 0xb1
+        addReg(REG_VICPCELLID3, "VICPCELLID3", 0x000000b1);
     }
 
     @Override
@@ -81,60 +122,8 @@ public class IntController extends SlaveCore64 {
     }
 
     @Override
-    public byte read8(long addr) {
-        long v = readWord(addr);
-
-        return (byte)readMasked(addr, v, LEN_WORD_BITS, 8);
-    }
-
-    @Override
-    public short read16(long addr) {
-        long v = readWord(addr);
-
-        return (byte)readMasked(addr, v, LEN_WORD_BITS, 16);
-    }
-
-    @Override
-    public int read32(long addr) {
-        return readWord(addr);
-    }
-
-    @Override
-    public long read64(long addr) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
-    }
-
-    @Override
     public boolean tryWrite(long addr) {
         return tryAccess(addr);
-    }
-
-    @Override
-    public void write8(long addr, byte data) {
-        long w = writeMasked(addr, 0, data, LEN_WORD_BITS, 8);
-
-        writeWord(addr, w);
-    }
-
-    @Override
-    public void write16(long addr, short data) {
-        long w = writeMasked(addr, 0, data, LEN_WORD_BITS, 16);
-
-        writeWord(addr, w);
-    }
-
-    @Override
-    public void write32(long addr, int data) {
-        long w = writeMasked(addr, 0, data, LEN_WORD_BITS, 32);
-
-        writeWord(addr, w);
-    }
-
-    @Override
-    public void write64(long addr, long data) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     public boolean tryAccess(long addr) {
@@ -143,32 +132,12 @@ public class IntController extends SlaveCore64 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
-        case REG_VICINTSELECT:
-        case REG_VICINTENABLE:
-        case REG_VICINTENCLEAR:
-        case REG_VICSOFTINTCLEAR:
-        case REG_VICVECTADDR:
-        case REG_VICDEFVECTADDR:
-
-        case REG_VICITCR:
-
-        case REG_VICPERIPHID0:
-        case REG_VICPERIPHID1:
-        case REG_VICPERIPHID2:
-        case REG_VICPERIPHID3:
-            return true;
         default:
-            //do nothing
+            return super.isValidReg(regaddr);
         }
-
-        if (REG_VICVECTCNTL0 <= regaddr && regaddr <= REG_VICVECTCNTL15) {
-            return true;
-        }
-
-        throw new IllegalArgumentException(String.format("Illegal address 0x%08x.",
-                regaddr));
     }
 
+    @Override
     public int readWord(long addr) {
         int regaddr;
         int result;
@@ -186,36 +155,16 @@ public class IntController extends SlaveCore64 {
             System.out.printf("VICDEFVECTADDR: read 0x%08x\n", 0);
             result = 0x0;
             break;
-        case REG_VICPERIPHID0:
-            //[ 7: 0]: Partnumber0: must be 0x90
-            result = 0x90;
-            break;
-        case REG_VICPERIPHID1:
-            //[ 7: 4]: Designer0  : must be 0x1
-            //[ 3: 0]: Partnumber1: must be 0x1
-            result = 0x11;
-            break;
-        case REG_VICPERIPHID2:
-            //レジスタの説明（3.3.14）とリセット後の初期値（Table 3-1）が
-            //矛盾しているため、レジスタの説明を正しいものとして実装する
-            //[ 7: 4]: Revision   : must be 0x1
-            //[ 3: 0]: Designer1  : must be 0x0
-            result = 0x10;
-            break;
-        case REG_VICPERIPHID3:
-            //[ 7: 0]: Configuration: must be 0x00
-            result = 0x00;
-            break;
         default:
-            throw new IllegalArgumentException(String.format("Illegal address 0x%08x.",
-                    regaddr));
+            result = super.getReg(regaddr);
+            break;
         }
 
         return result;
     }
 
-    public void writeWord(long addr, long data) {
-        boolean notfound = false;
+    @Override
+    public void writeWord(long addr, int data) {
         int regaddr;
 
         regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
@@ -249,27 +198,39 @@ public class IntController extends SlaveCore64 {
             //TODO: not implemented
             System.out.printf("VICITCR: 0x%08x\n", data);
             break;
+        case REG_VICVECTCNTL0:
+        case REG_VICVECTCNTL1:
+        case REG_VICVECTCNTL2:
+        case REG_VICVECTCNTL3:
+        case REG_VICVECTCNTL4:
+        case REG_VICVECTCNTL5:
+        case REG_VICVECTCNTL6:
+        case REG_VICVECTCNTL7:
+        case REG_VICVECTCNTL8:
+        case REG_VICVECTCNTL9:
+        case REG_VICVECTCNTL10:
+        case REG_VICVECTCNTL11:
+        case REG_VICVECTCNTL12:
+        case REG_VICVECTCNTL13:
+        case REG_VICVECTCNTL14:
+        case REG_VICVECTCNTL15:
+            //TODO: not implemented
+            System.out.printf("VICVECTCNTL[%d]: 0x%08x\n",
+                    (regaddr - REG_VICVECTCNTL0) / 4, data);
+            break;
         case REG_VICPERIPHID0:
         case REG_VICPERIPHID1:
         case REG_VICPERIPHID2:
         case REG_VICPERIPHID3:
-            //read only
+        case REG_VICPCELLID0:
+        case REG_VICPCELLID1:
+        case REG_VICPCELLID2:
+        case REG_VICPCELLID3:
+            //read only, ignored
             break;
         default:
-            notfound = true;
-        }
-
-        if (REG_VICVECTCNTL0 <= regaddr && regaddr <= REG_VICVECTCNTL15) {
-            notfound = false;
-
-            //TODO: not implemented
-            System.out.printf("VICVECTCNTL[%d]: 0x%08x\n",
-                    (regaddr - REG_VICVECTCNTL0) / 4, data);
-        }
-
-        if (notfound) {
-            throw new IllegalArgumentException(String.format("Illegal address 0x%08x.",
-                    regaddr));
+            super.setReg(regaddr, data);
+            break;
         }
     }
 }
