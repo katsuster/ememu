@@ -7,7 +7,7 @@ package net.katsuster.semu;
  *
  * @author katsuhiro
  */
-abstract public class SlaveCore64 {
+public abstract class SlaveCore64 {
     public static long ADDR_MASK_8 = ~0x0L;
     public static long ADDR_MASK_16 = ~0x1L;
     public static long ADDR_MASK_32 = ~0x3L;
@@ -125,7 +125,7 @@ abstract public class SlaveCore64 {
      * @param addr アドレス
      * @return 読み取りが可能な場合は true、不可能な場合は false
      */
-    abstract public boolean tryRead(long addr);
+    public abstract boolean tryRead(long addr);
 
     /**
      * 指定されたアドレスから 8 ビットのデータを読み取ります。
@@ -133,7 +133,7 @@ abstract public class SlaveCore64 {
      * @param addr アドレス
      * @return データ
      */
-    abstract public byte read8(long addr);
+    public abstract byte read8(long addr);
 
     /**
      * 指定されたアドレスから 16 ビットのデータを読み取ります。
@@ -141,7 +141,7 @@ abstract public class SlaveCore64 {
      * @param addr アドレス
      * @return データ
      */
-    abstract public short read16(long addr);
+    public abstract short read16(long addr);
 
     /**
      * 指定されたアドレスから 32 ビットのデータを読み取ります。
@@ -149,7 +149,7 @@ abstract public class SlaveCore64 {
      * @param addr アドレス
      * @return データ
      */
-    abstract public int read32(long addr);
+    public abstract int read32(long addr);
 
     /**
      * 指定されたアドレスから 64 ビットのデータを読み取ります。
@@ -157,7 +157,7 @@ abstract public class SlaveCore64 {
      * @param addr アドレス
      * @return データ
      */
-    abstract public long read64(long addr);
+    public abstract long read64(long addr);
 
     /**
      * 指定されたデータ幅に対応するマスクを返します。
@@ -250,7 +250,7 @@ abstract public class SlaveCore64 {
      * @param addr アドレス
      * @return 書き込みが可能な場合は true、不可能な場合は false
      */
-    abstract public boolean tryWrite(long addr);
+    public abstract boolean tryWrite(long addr);
 
     /**
      * 指定したアドレスへ 8 ビットのデータを書き込みます。
@@ -258,7 +258,7 @@ abstract public class SlaveCore64 {
      * @param addr アドレス
      * @param data データ
      */
-    abstract public void write8(long addr, byte data);
+    public abstract void write8(long addr, byte data);
 
     /**
      * 指定したアドレスへ 16 ビットのデータを書き込みます。
@@ -266,7 +266,7 @@ abstract public class SlaveCore64 {
      * @param addr アドレス
      * @param data データ
      */
-    abstract public void write16(long addr, short data);
+    public abstract void write16(long addr, short data);
 
     /**
      * 指定したアドレスへ 32 ビットのデータを書き込みます。
@@ -274,7 +274,7 @@ abstract public class SlaveCore64 {
      * @param addr アドレス
      * @param data データ
      */
-    abstract public void write32(long addr, int data);
+    public abstract void write32(long addr, int data);
 
     /**
      * 指定したアドレスへ 64 ビットのデータを書き込みます。
@@ -282,5 +282,5 @@ abstract public class SlaveCore64 {
      * @param addr アドレス
      * @param data データ
      */
-    abstract public void write64(long addr, long data);
+    public abstract void write64(long addr, long data);
 }

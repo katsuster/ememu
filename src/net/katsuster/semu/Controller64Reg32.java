@@ -8,7 +8,7 @@ import java.util.*;
  *
  * @author katsuhiro
  */
-abstract public class Controller64Reg32 extends SlaveCore64 {
+public abstract class Controller64Reg32 extends SlaveCore64 {
     //データ幅（バイト単位）
     public static final int LEN_WORD = 4;
     //データ幅（ビット単位）
@@ -92,10 +92,10 @@ abstract public class Controller64Reg32 extends SlaveCore64 {
     }
 
     @Override
-    abstract public boolean tryRead(long addr);
+    public abstract boolean tryRead(long addr);
 
     @Override
-    abstract public boolean tryWrite(long addr);
+    public abstract boolean tryWrite(long addr);
 
     /**
      * 指定されたアドレスから 32 ビットのデータを読み取ります。
@@ -103,7 +103,7 @@ abstract public class Controller64Reg32 extends SlaveCore64 {
      * @param addr アドレス
      * @return データ
      */
-    abstract public int readWord(long addr);
+    public abstract int readWord(long addr);
 
     /**
      * 指定したアドレスへ 32 ビットのデータを書き込みます。
@@ -111,7 +111,7 @@ abstract public class Controller64Reg32 extends SlaveCore64 {
      * @param addr アドレス
      * @param data データ
      */
-    abstract public void writeWord(long addr, int data);
+    public abstract void writeWord(long addr, int data);
 
     @Override
     public byte read8(long addr) {
