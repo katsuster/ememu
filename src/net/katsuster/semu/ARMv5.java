@@ -2574,12 +2574,16 @@ public class ARMv5 extends CPU {
 
         vaddr = getReg(rn);
         paddr = getMMU().translate(vaddr, false, 4);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryRead(paddr) || !tryWrite(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("swp [%08x]", paddr));
             return;
         }
-
         right = read32(paddr);
 
         switch (rot) {
@@ -2650,12 +2654,16 @@ public class ARMv5 extends CPU {
         }
 
         paddr = getMMU().translate(vaddr, false, 1);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrb [%08x]", paddr));
             return;
         }
-
         value = (int)(read8(paddr)) & 0xff;
 
         setReg(rd, value);
@@ -2704,12 +2712,16 @@ public class ARMv5 extends CPU {
         rot = vaddr & 0x3;
 
         paddr = getMMU().translate(vaddr, false, 4);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldr [%08x]", paddr));
             return;
         }
-
         value = read32(paddr);
 
         switch (rot) {
@@ -2781,12 +2793,16 @@ public class ARMv5 extends CPU {
         }
 
         paddr = getMMU().translate(vaddr, false, 2);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrh [%08x]", paddr));
             return;
         }
-
         value = read16(paddr) & 0xffff;
 
         setReg(rd, value);
@@ -2834,12 +2850,16 @@ public class ARMv5 extends CPU {
         }
 
         paddr = getMMU().translate(vaddr, false, 1);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrsb [%08x]", paddr));
             return;
         }
-
         value = read8(paddr);
 
         setReg(rd, value);
@@ -2887,12 +2907,16 @@ public class ARMv5 extends CPU {
         }
 
         paddr = getMMU().translate(vaddr, false, 2);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrsh [%08x]", paddr));
             return;
         }
-
         value = read16(paddr);
 
         setReg(rd, value);
@@ -2940,12 +2964,16 @@ public class ARMv5 extends CPU {
         }
 
         paddr = getMMU().translate(vaddr, false, 4);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryRead(paddr) || !tryRead(paddr + 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrd [%08x]", paddr));
             return;
         }
-
         value1 = read32(paddr);
         value2 = read32(paddr + 4);
 
@@ -3020,12 +3048,16 @@ public class ARMv5 extends CPU {
         }
 
         paddr = getMMU().translate(vaddr, false, 1);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryWrite(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strb [%08x]", paddr));
             return;
         }
-
         write8(paddr, (byte) getReg(rd));
 
         if (!p || w) {
@@ -3071,12 +3103,16 @@ public class ARMv5 extends CPU {
         }
 
         paddr = getMMU().translate(vaddr, false, 4);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryWrite(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("str [%08x]", paddr));
             return;
         }
-
         write32(paddr, getReg(rd));
 
         if (!p || w) {
@@ -3122,12 +3158,16 @@ public class ARMv5 extends CPU {
         }
 
         paddr = getMMU().translate(vaddr, false, 2);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryWrite(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strh [%08x]", paddr));
             return;
         }
-
         write16(paddr, (short) getReg(rd));
 
         if (!p || w) {
@@ -3173,12 +3213,16 @@ public class ARMv5 extends CPU {
         }
 
         paddr = getMMU().translate(vaddr, false, 4);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryWrite(paddr) || !tryWrite(paddr + 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strd [%08x]", paddr));
             return;
         }
-
         write32(paddr, getReg(rd));
         write32(paddr + 4, getReg(rd + 1));
 
@@ -3226,12 +3270,16 @@ public class ARMv5 extends CPU {
             }
 
             paddr = getMMU().translate(vaddr, false, 4);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return;
+            }
+
             if (!tryRead(paddr)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(1) [%08x]", paddr));
                 return;
             }
-
             setReg(i, read32(paddr));
             vaddr += 4;
         }
@@ -3240,12 +3288,16 @@ public class ARMv5 extends CPU {
             int v;
 
             paddr = getMMU().translate(vaddr, false, 4);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return;
+            }
+
             if (!tryRead(paddr)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(1) [%08x]", paddr));
                 return;
             }
-
             v = read32(paddr);
 
             setPC(v & 0xfffffffe);
@@ -3304,12 +3356,16 @@ public class ARMv5 extends CPU {
             }
 
             paddr = getMMU().translate(vaddr, false, 4);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return;
+            }
+
             if (!tryWrite(paddr)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("stm(1) [%08x]", paddr));
                 return;
             }
-
             write32(paddr, getReg(i));
             vaddr += 4;
         }
@@ -4574,6 +4630,11 @@ public class ARMv5 extends CPU {
 
         vaddr = getPC() - 8;
         paddr = getMMU().translate(vaddr, true, 4);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_INST,
                     String.format("exec [%08x]", paddr));

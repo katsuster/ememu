@@ -208,7 +208,8 @@ public class MMUv5 {
         if (isAlignmentCheck() && !validAlign) {
             //アラインメントフォルト
             faultMMU(FS_ALIGN1, 0, va, inst,
-                    String.format("Align va[0x%08x]", va));
+                    String.format("MMU align, size:%d, va[0x%08x]",
+                            size, va));
             return 0;
         }
 
@@ -216,7 +217,8 @@ public class MMUv5 {
         if (!getCPU().tryRead(paL1)) {
             //変換時の外部アボート、第1レベル
             faultMMU(FS_TRANS_L1, 0, va, inst,
-                    String.format("MMU read L1 [%08x]", paL1));
+                    String.format("MMU trans L1, va[0x%08x], paL1[%08x]",
+                            va, paL1));
             return 0;
         }
         entryL1 = getCPU().read32(paL1);
@@ -227,7 +229,8 @@ public class MMUv5 {
             //フォルト
             //変換フォルト、セクション
             faultMMU(FS_TRANS_SEC, 0, va, inst,
-                    String.format("Trans Sec L1[0x%08x]", paL1));
+                    String.format("MMU trans sec, va[0x%08x], paL1[0x%08x], entryL1:[0x%08x]",
+                            va, paL1, entryL1));
             return 0;
         case 1:
             //概略ページテーブル
