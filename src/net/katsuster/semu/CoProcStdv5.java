@@ -9,8 +9,6 @@ package net.katsuster.semu;
  * @author katsuhiro
  */
 public class CoProcStdv5 extends CoProc {
-    private boolean highvector;
-
     //----------------------------------------------------------------------
     //crn00: ID コード、キャッシュタイプ、読み取り専用
     //----------------------------------------------------------------------
@@ -158,8 +156,6 @@ public class CoProcStdv5 extends CoProc {
 
     public CoProcStdv5(int no, ARMv5 p) {
         super(no, p);
-
-        highvector = false;
 
         //------------------------------------------------------------
         //crn00: ID コードレジスタ（読み取り専用）
@@ -322,35 +318,14 @@ public class CoProcStdv5 extends CoProc {
         System.out.printf("  A      : %b.\n", a);
         System.out.printf("  M      : %b.\n", m);
 
-        //v: ハイベクタビット、0: 正規ベクタ、1: ハイベクタ
-        setHighVector(v);
-
+        //v: ハイベクタ、0: 無効、1: 有効
+        getCPU().setHighVector(v);
+        //a: アドレスアラインメントチェック、0: 無効、1: 有効
+        getCPU().getMMU().setAlignmentCheck(a);
         //m: MMU イネーブルビット、0: 無効、1: 有効
         getCPU().getMMU().setEnable(m);
 
         super.setCReg(CR01_MMU_SCTLR, val);
-    }
-
-    /**
-     * 例外ベクタの位置が、ハイベクタ 0xffff0000～0xffff001c にあるか、
-     * 正規ベクタ 0x00000000～0x0000001c にあるかを取得します。
-     *
-     * @return 例外ベクタの位置、ハイベクタの場合は true、
-     * 正規ベクタの場合は false
-     */
-    public boolean isHighVector() {
-        return highvector;
-    }
-
-    /**
-     * 例外ベクタの位置が、ハイベクタ 0xffff0000～0xffff001c にあるか、
-     * 正規ベクタ 0x00000000～0x0000001c にあるかを取得します。
-     *
-     * @param m 新たな例外ベクタの位置、ハイベクタの場合は true、
-     *          正規ベクタの場合は false
-     */
-    public void setHighVector(boolean m) {
-        highvector = m;
     }
 
     /**
@@ -364,13 +339,16 @@ public class CoProcStdv5 extends CoProc {
         System.out.printf("TTBR0    : 0x%x.\n", val);
         System.out.printf("  base   : 0x%x.\n", base);
 
-        super.setCReg(CR02_MMU_TTBR0, val);
-
-        //TODO: MMU とレジスタを更新する順序がわかりづらい、再考余地あり
-
         //MMU の状態を更新する
-        getCPU().getMMU().update();
+        getCPU().getMMU().update(val);
+
+        super.setCReg(CR02_MMU_TTBR0, val);
     }
+
+    public static final int ACC_INVALID = 0x0;
+    public static final int ACC_CLIENT = 0x1;
+    public static final int ACC_RESERVED = 0x2;
+    public static final int ACC_MANAGER = 0x3;
 
     /**
      * crn03: メモリの保護と制御、MMU ドメインアクセス制御

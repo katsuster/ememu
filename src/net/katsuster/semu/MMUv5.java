@@ -11,18 +11,57 @@ package net.katsuster.semu;
  * @author katsuhiro
  */
 public class MMUv5 {
+    private boolean alignCheck;
     private boolean enable;
+    private boolean fault;
 
     private ARMv5 cpu;
     private CoProcStdv5 cpStd;
     private int tableBase;
 
+    public static final int FS_TERM = 0x2;
+    public static final int FS_VECT = 0x0;
+    public static final int FS_ALIGN1 = 0x1;
+    public static final int FS_ALIGN2 = 0x3;
+    public static final int FS_TRANS_L1 = 0xc;
+    public static final int FS_TRANS_L2 = 0xe;
+    public static final int FS_TRANS_SEC = 0x5;
+    public static final int FS_TRANS_PAGE = 0x7;
+    public static final int FS_DOM_SEC = 0x9;
+    public static final int FS_DOM_PAGE = 0xb;
+    public static final int FS_PERM_SEC = 0xd;
+    public static final int FS_PERM_PAGE = 0xf;
+    public static final int FS_LINE_SEC = 0x4;
+    public static final int FS_LINE_PAGE = 0x6;
+    public static final int FS_ABORT_SEC = 0x8;
+    public static final int FS_ABORT_PAGE = 0xa;
+
     public MMUv5(ARMv5 cpu, CoProcStdv5 cp) {
+        this.alignCheck = false;
         this.enable = false;
+        this.fault = false;
 
         this.cpu = cpu;
         this.cpStd = cp;
         this.tableBase = 0;
+    }
+
+    /**
+     * アドレスアラインメントのチェックをするかどうかを取得します。
+     *
+     * @return チェックを行う場合は true、行わない場合は false
+     */
+    public boolean isAlignmentCheck() {
+        return alignCheck;
+    }
+
+    /**
+     * アドレスアラインメントのチェックをするかどうかを設定します。
+     *
+     * @param m チェックを行う場合は true、行わない場合は false
+     */
+    public void setAlignmentCheck(boolean m) {
+        alignCheck = m;
     }
 
     /**
@@ -41,6 +80,70 @@ public class MMUv5 {
      */
     public void setEnable(boolean e) {
         enable = e;
+    }
+
+    /**
+     * 最後に行われたアドレス変換において、
+     * MMU がフォルトを起こしたかどうかを取得します。
+     *
+     * @return MMU がフォルトを起こした場合 true、起こしていない場合 false
+     */
+    public boolean isFault() {
+        return fault;
+    }
+
+    /**
+     * MMU がフォルトを起こしたかどうかを設定します。
+     *
+     * @param m MMU がフォルトを起こした場合 true、起こしていない場合 false
+     */
+    public void setFault(boolean m) {
+        fault = m;
+    }
+
+    /**
+     * MMU がフォルトを起こしたかどうかの状態をクリアします。
+     */
+    public void clearFault() {
+        setFault(false);
+    }
+
+    /**
+     * MMU フォルトを発生させます。
+     *
+     * CPU に対しては、プリフェッチアボート例外、
+     * またはデータアボート例外を発生させます。
+     *
+     * @param fs   フォルトステータス
+     * @param dom  ドメイン、存在しない場合は 0
+     * @param va   仮想アドレス（VA）
+     * @param inst 命令の場合は true、データの場合は false
+     * @param dbgmsg デバッグ用のメッセージ
+     */
+    public void faultMMU(int fs, int dom, int va, boolean inst, String dbgmsg) {
+        int val, num;
+
+        //フォルトを起こしたことを覚えておく
+        setFault(true);
+
+        //フォルトステータス
+        val = getCoProcStd().getCReg(5);
+        BitOp.setField32(val, 4, 3, dom);
+        BitOp.setField32(val, 0, 3, fs);
+        getCoProcStd().setCReg(CoProcStdv5.CR05_MMU_FSR, val);
+
+        //フォルトアドレス
+        getCoProcStd().setCReg(CoProcStdv5.CR06_MMU_FAR, va);
+
+        //例外を発生させる
+        if (inst) {
+            //プリフェッチアボート例外
+            num = ARMv5.EXCEPT_ABT_INST;
+        } else {
+            //データアボート例外
+            num = ARMv5.EXCEPT_ABT_DATA;
+        }
+        getCPU().raiseException(num, dbgmsg);
     }
 
     /**
@@ -67,61 +170,11 @@ public class MMUv5 {
      * 下記を変更した際に呼び出す必要があります。
      *
      * - TTBR0: 変換テーブルベース（Cp15 レジスタ 2）
-     */
-    public void update() {
-        tableBase = getCoProcStd().getCReg(CoProcStdv5.CR02_MMU_TTBR0);
-    }
-
-    public static final int FS_TERM = 0x2;
-    public static final int FS_VECT = 0x0;
-    public static final int FS_ALIGN1 = 0x1;
-    public static final int FS_ALIGN2 = 0x3;
-    public static final int FS_TRANS_L1 = 0xc;
-    public static final int FS_TRANS_L2 = 0xe;
-    public static final int FS_TRANS_SEC = 0x5;
-    public static final int FS_TRANS_PAGE = 0x7;
-    public static final int FS_DOM_SEC = 0x9;
-    public static final int FS_DOM_PAGE = 0xb;
-    public static final int FS_PERM_SEC = 0xd;
-    public static final int FS_PERM_PAGE = 0xf;
-    public static final int FS_LINE_SEC = 0x4;
-    public static final int FS_LINE_PAGE = 0x6;
-    public static final int FS_ABORT_SEC = 0x8;
-    public static final int FS_ABORT_PAGE = 0xa;
-
-    /**
-     * MMU フォルトを発生させます。
      *
-     * CPU に対しては、プリフェッチアボート例外、
-     * またはデータアボート例外を発生させます。
-     *
-     * @param fs   フォルトステータス
-     * @param dom  ドメイン、存在しない場合は 0
-     * @param va   仮想アドレス（VA）
-     * @param inst 命令の場合は true、データの場合は false
-     * @param dbgmsg デバッグ用のメッセージ
+     * @param base 変換テーブルベース
      */
-    public void faultMMU(int fs, int dom, int va, boolean inst, String dbgmsg) {
-        int val, num;
-
-        //フォルトステータス
-        val = cpStd.getCReg(5);
-        BitOp.setField32(val, 4, 3, dom);
-        BitOp.setField32(val, 0, 3, fs);
-        cpStd.setCReg(CoProcStdv5.CR05_MMU_FSR, val);
-
-        //フォルトアドレス
-        cpStd.setCReg(CoProcStdv5.CR06_MMU_FAR, va);
-
-        //例外を発生させる
-        if (inst) {
-            //プリフェッチアボート例外
-            num = ARMv5.EXCEPT_ABT_INST;
-        } else {
-            //データアボート例外
-            num = ARMv5.EXCEPT_ABT_DATA;
-        }
-        getCPU().raiseException(num, dbgmsg);
+    public void update(int base) {
+        tableBase = base;
     }
 
     /**
@@ -135,17 +188,33 @@ public class MMUv5 {
      * @param va   仮想アドレス（VA）
      * @param inst 仮想アドレスが指すデータの種類、
      *             命令の場合は true、データの場合は false
+     * @param size アクセスするサイズ
      * @return 物理アドレス（PA）
      */
-    public int translate(int va, boolean inst) {
+    public int translate(int va, boolean inst, int size) {
         int paL1, entryL1, typeL1, pa;
+        boolean validAlign;
 
         if (!isEnable()) {
             return va;
         }
 
+        if (isFault()) {
+            //フォルト状態がクリアされず残っている
+            throw new IllegalStateException("Fault status not cleared.");
+        }
+
+        validAlign = (va & (size - 1)) == 0;
+        if (isAlignmentCheck() && !validAlign) {
+            //アラインメントフォルト
+            faultMMU(FS_ALIGN1, 0, va, inst,
+                    String.format("Align va[0x%08x]", va));
+            return 0;
+        }
+
         paL1 = getL1Address(va);
         if (!getCPU().tryRead(paL1)) {
+            //変換時の外部アボート、第1レベル
             faultMMU(FS_TRANS_L1, 0, va, inst,
                     String.format("MMU read L1 [%08x]", paL1));
             return 0;
@@ -156,9 +225,10 @@ public class MMUv5 {
         switch (typeL1) {
         case 0:
             //フォルト
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            //変換フォルト、セクション
+            faultMMU(FS_TRANS_SEC, 0, va, inst,
+                    String.format("Trans Sec L1[0x%08x]", paL1));
+            return 0;
         case 1:
             //概略ページテーブル
             pa = translateCoarse(va, entryL1);

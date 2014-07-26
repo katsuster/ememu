@@ -21,13 +21,14 @@ public class ARMv5 extends CPU {
     private int[] regs_und;
     private int[] regs_irq;
     private int[] regs_fiq;
+    private boolean jumped;
     private int cpsr;
     private CoProc[] coProcs;
     private MMUv5 mmu;
 
     private boolean exceptions[];
     private String exceptionReasons[];
-    private boolean jumped;
+    private boolean highVector;
 
     public ARMv5() {
         CoProcStdv5 cpStd;
@@ -2572,7 +2573,7 @@ public class ARMv5 extends CPU {
         rot = getReg(rn) & 0x3;
 
         vaddr = getReg(rn);
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 4);
         if (!tryRead(paddr) || !tryWrite(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("swp [%08x]", paddr));
@@ -2648,7 +2649,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 1);
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrb [%08x]", paddr));
@@ -2702,7 +2703,7 @@ public class ARMv5 extends CPU {
         }
         rot = vaddr & 0x3;
 
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 4);
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldr [%08x]", paddr));
@@ -2779,7 +2780,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 2);
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrh [%08x]", paddr));
@@ -2832,7 +2833,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 1);
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrsb [%08x]", paddr));
@@ -2885,7 +2886,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 2);
         if (!tryRead(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrsh [%08x]", paddr));
@@ -2938,7 +2939,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 4);
         if (!tryRead(paddr) || !tryRead(paddr + 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrd [%08x]", paddr));
@@ -3018,7 +3019,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 1);
         if (!tryWrite(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strb [%08x]", paddr));
@@ -3069,7 +3070,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 4);
         if (!tryWrite(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("str [%08x]", paddr));
@@ -3120,7 +3121,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 2);
         if (!tryWrite(paddr)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strh [%08x]", paddr));
@@ -3171,7 +3172,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false);
+        paddr = getMMU().translate(vaddr, false, 4);
         if (!tryWrite(paddr) || !tryWrite(paddr + 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strd [%08x]", paddr));
@@ -3224,7 +3225,7 @@ public class ARMv5 extends CPU {
                 continue;
             }
 
-            paddr = getMMU().translate(vaddr, false);
+            paddr = getMMU().translate(vaddr, false, 4);
             if (!tryRead(paddr)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(1) [%08x]", paddr));
@@ -3238,7 +3239,7 @@ public class ARMv5 extends CPU {
         if (BitOp.getBit32(rlist, 15)) {
             int v;
 
-            paddr = getMMU().translate(vaddr, false);
+            paddr = getMMU().translate(vaddr, false, 4);
             if (!tryRead(paddr)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(1) [%08x]", paddr));
@@ -3302,7 +3303,7 @@ public class ARMv5 extends CPU {
                 continue;
             }
 
-            paddr = getMMU().translate(vaddr, false);
+            paddr = getMMU().translate(vaddr, false, 4);
             if (!tryWrite(paddr)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("stm(1) [%08x]", paddr));
@@ -4205,64 +4206,6 @@ public class ARMv5 extends CPU {
                 String.format("b25b24:%d.", subsub));
     }
 
-    @Override
-    public void step() {
-        Instruction inst;
-        int v, vaddr, paddr;
-
-        //for debug
-        int target_address1 = 0;//0xc036aee8; //<versatile_init_irq>
-        int target_address2 = 0;//0xc036aee8; //<versatile_init_irq>
-
-        vaddr = getPC() - 8;
-        paddr = getMMU().translate(vaddr, true);
-        if (!tryRead(paddr)) {
-            raiseException(EXCEPT_ABT_INST,
-                    String.format("exec [%08x]", paddr));
-            return;
-        }
-
-        v = read32(paddr);
-        inst = new Instruction(v);
-        try {
-            //表示調整用
-            if (getPC() - 8 == target_address1) {
-                setDisasmMode(true);
-                setPrintingDisasm(true);
-            }
-
-            if (getPC() - 8 == target_address2) {
-                setPrintingRegs(true);
-            }
-
-            if (isDisasmMode()) {
-                //デコードのみ
-                execute(inst, false);
-            }
-
-            //ブレーク用
-            if (isPrintingRegs()) {
-                int a = 0;
-            }
-
-            //実行する
-            execute(inst, true);
-        } catch (IllegalArgumentException e) {
-            //おそらくバグでしょう
-            System.out.printf("pc:%08x, inst:%08x, %s\n",
-                    getPC() - 8, inst.getInst(), e);
-            printRegs();
-            //abort
-            throw e;
-        }
-
-        //例外を発生させる必要があれば発生させます
-        doImportantException();
-
-        //次の命令へ
-        nextPC();
-    }
-
     public static final int EXCEPT_RST = 0;
     public static final int EXCEPT_ABT_DATA = 1;
     public static final int EXCEPT_FIQ = 2;
@@ -4358,7 +4301,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //リセット例外ベクタへ
-        if (getCoProcStd().isHighVector()) {
+        if (isHighVector()) {
             setPC(0xffff0000);
         } else {
             setPC(0x00000000);
@@ -4395,7 +4338,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //未定義例外ベクタへ
-        if (getCoProcStd().isHighVector()) {
+        if (isHighVector()) {
             setPC(0xffff0004);
         } else {
             setPC(0x00000004);
@@ -4431,7 +4374,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //ソフトウェア割り込み例外ベクタへ
-        if (getCoProcStd().isHighVector()) {
+        if (isHighVector()) {
             setPC(0xffff0008);
         } else {
             setPC(0x00000008);
@@ -4471,7 +4414,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //プリフェッチアボート例外ベクタへ
-        if (getCoProcStd().isHighVector()) {
+        if (isHighVector()) {
             setPC(0xffff000c);
         } else {
             setPC(0x0000000c);
@@ -4511,7 +4454,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //データアボート例外ベクタへ
-        if (getCoProcStd().isHighVector()) {
+        if (isHighVector()) {
             setPC(0xffff0010);
         } else {
             setPC(0x00000010);
@@ -4547,7 +4490,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //IRQ 例外ベクタへ
-        if (getCoProcStd().isHighVector()) {
+        if (isHighVector()) {
             setPC(0xffff0018);
         } else {
             setPC(0x00000018);
@@ -4587,7 +4530,7 @@ public class ARMv5 extends CPU {
         setSPSR(spsrOrg);
 
         //FIQ 例外ベクタへ
-        if (getCoProcStd().isHighVector()) {
+        if (isHighVector()) {
             setPC(0xffff001c);
         } else {
             setPC(0x0000001c);
@@ -4596,5 +4539,85 @@ public class ARMv5 extends CPU {
         //tentative...
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 例外ベクタの位置が、ハイベクタ 0xffff0000～0xffff001c にあるか、
+     * 正規ベクタ 0x00000000～0x0000001c にあるかを取得します。
+     *
+     * @return 例外ベクタの位置、ハイベクタの場合は true、
+     * 正規ベクタの場合は false
+     */
+    public boolean isHighVector() {
+        return highVector;
+    }
+
+    /**
+     * 例外ベクタの位置が、ハイベクタ 0xffff0000～0xffff001c にあるか、
+     * 正規ベクタ 0x00000000～0x0000001c にあるかを設定します。
+     *
+     * @param m 新たな例外ベクタの位置、ハイベクタの場合は true、
+     *          正規ベクタの場合は false
+     */
+    public void setHighVector(boolean m) {
+        highVector = m;
+    }
+
+    @Override
+    public void step() {
+        Instruction inst;
+        int v, vaddr, paddr;
+
+        //for debug
+        int target_address1 = 0;//0xc036aee8; //<versatile_init_irq>
+        int target_address2 = 0;//0xc036aee8; //<versatile_init_irq>
+
+        vaddr = getPC() - 8;
+        paddr = getMMU().translate(vaddr, true, 4);
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_INST,
+                    String.format("exec [%08x]", paddr));
+            return;
+        }
+
+        v = read32(paddr);
+        inst = new Instruction(v);
+        try {
+            //表示調整用
+            if (getPC() - 8 == target_address1) {
+                setDisasmMode(true);
+                setPrintingDisasm(true);
+            }
+
+            if (getPC() - 8 == target_address2) {
+                setPrintingRegs(true);
+            }
+
+            if (isDisasmMode()) {
+                //デコードのみ
+                execute(inst, false);
+            }
+
+            //ブレーク用
+            if (isPrintingRegs()) {
+                int a = 0;
+            }
+
+            //実行する
+            execute(inst, true);
+        } catch (IllegalArgumentException e) {
+            //おそらくバグでしょう
+            System.out.printf("pc:%08x, inst:%08x, %s\n",
+                    getPC() - 8, inst.getInst(), e);
+            printRegs();
+            //abort
+            throw e;
+        }
+
+        //例外を発生させる必要があれば発生させます
+        doImportantException();
+
+        //次の命令へ
+        nextPC();
     }
 }
