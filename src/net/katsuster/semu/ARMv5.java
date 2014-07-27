@@ -21,13 +21,15 @@ public class ARMv5 extends CPU {
     private int[] regs_und;
     private int[] regs_irq;
     private int[] regs_fiq;
-    private boolean jumped;
     private int cpsr;
     private CoProc[] coProcs;
     private MMUv5 mmu;
 
     private boolean exceptions[];
     private String exceptionReasons[];
+
+    private boolean exceptExec;
+    private boolean jumped;
     private boolean highVector;
 
     public ARMv5() {
@@ -47,9 +49,13 @@ public class ARMv5 extends CPU {
 
         exceptions = new boolean[7];
         exceptionReasons = new String[7];
+
+        exceptExec = false;
         jumped = false;
+        highVector = false;
     }
 
+    @Override
     public void printDisasm(Instruction inst, String operation, String operand) {
         if (isPrintingDisasm()) {
             System.out.printf("%08x:    %08x    %-7s %s\n",
@@ -60,6 +66,12 @@ public class ARMv5 extends CPU {
         }
     }
 
+    @Override
+    public void printPC() {
+        System.out.printf("pc:%08x\n", getPC() - 8);
+    }
+
+    @Override
     public void printRegs() {
         for (int i = 0; i < 16; i += 4) {
             System.out.printf("  r%-2d: %08x, r%-2d: %08x, r%-2d: %08x, r%-2d: %08x, \n",
@@ -311,24 +323,6 @@ public class ARMv5 extends CPU {
     public void jumpRel(int val) {
         setPC(getPC() + val);
         setJumped(true);
-    }
-
-    /**
-     * ジャンプが行われたかどうかを取得します。
-     *
-     * @return ジャンプが行われたならば true、そうでなければ false
-     */
-    public boolean isJumped() {
-        return jumped;
-    }
-
-    /**
-     * ジャンプが行われたかどうかを設定します。
-     *
-     * @param b ジャンプが行われたならば true、そうでなければ false
-     */
-    public void setJumped(boolean b) {
-        jumped = b;
     }
 
     public static final int PSR_BIT_N = 31;
@@ -3672,12 +3666,59 @@ public class ARMv5 extends CPU {
     }
 
     /**
+     * 命令を取得します。
+     *
+     * @return inst ARM 命令
+     */
+    public Instruction fetch() {
+        Instruction inst;
+        int v, vaddr, paddr;
+
+        //現在の PC の指すアドレスから命令を取得します
+        vaddr = getPC() - 8;
+        paddr = getMMU().translate(vaddr, true, 4);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return null;
+        }
+
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_INST,
+                    String.format("exec [%08x]", paddr));
+            return null;
+        }
+        v = read32(paddr);
+        inst = new Instruction(v);
+
+        return inst;
+    }
+
+    /**
+     * 命令をディスアセンブルします。
+     *
+     * @param inst ARM 命令
+     */
+    public void disasm(Instruction inst) {
+        executeInst(inst, false);
+    }
+
+    /**
      * 命令を実行します。
      *
      * @param inst ARM 命令
-     * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void execute(Instruction inst, boolean exec) {
+    public void execute(Instruction inst) {
+        executeInst(inst, true);
+    }
+
+    /**
+     * 命令をディスアセンブル、実行します。
+     *
+     * @param inst ARM 命令
+     * @param exec ディスアセンブルと実行なら true、
+     *             ディスアセンブルのみなら false
+     */
+    public void executeInst(Instruction inst, boolean exec) {
         int cond = inst.getCondField();
         int subcode = inst.getSubCodeField();
 
@@ -4271,7 +4312,7 @@ public class ARMv5 extends CPU {
     public static final int EXCEPT_SVC = 6;
 
     /**
-     * 例外を発生させます。
+     * 例外を要求します。
      *
      * @param num    例外番号（EXCEPT_xxxx）
      * @param dbgmsg デバッグ用のメッセージ
@@ -4281,12 +4322,20 @@ public class ARMv5 extends CPU {
             throw new IllegalArgumentException("Illegal exception number " + num);
         }
 
+        if (isExcept()) {
+            //例外状態がクリアされず残っている
+            //一度の命令で二度、例外が起きるのはおそらくバグでしょう
+            throw new IllegalStateException("Except status not cleared.");
+        }
+
         exceptions[num] = true;
         exceptionReasons[num] = dbgmsg;
+
+        setExcept(true);
     }
 
     /**
-     * 最も優先度の高い例外を 1つだけ発生させます。
+     * 最も優先度の高い例外を 1つだけ処理します。
      *
      * 優先度の低い例外は後回しにされます。
      */
@@ -4598,6 +4647,50 @@ public class ARMv5 extends CPU {
     }
 
     /**
+     * 最後に行われた命令実行において、
+     * CPU がアボートを起こしたかどうかを取得します。
+     *
+     * @return CPU がアボートを起こした場合 true、起こしていない場合 false
+     */
+    public boolean isExcept() {
+        return exceptExec;
+    }
+
+    /**
+     * CPU がアボートを起こしたかどうかを設定します。
+     *
+     * @param m CPU がアボートを起こした場合 true、起こしていない場合 false
+     */
+    public void setExcept(boolean m) {
+        exceptExec = m;
+    }
+
+    /**
+     * CPU がアボートを起こしたかどうかの状態をクリアします。
+     */
+    public void clearExcept() {
+        setExcept(false);
+    }
+
+    /**
+     * ジャンプが行われたかどうかを取得します。
+     *
+     * @return ジャンプが行われたならば true、そうでなければ false
+     */
+    public boolean isJumped() {
+        return jumped;
+    }
+
+    /**
+     * ジャンプが行われたかどうかを設定します。
+     *
+     * @param b ジャンプが行われたならば true、そうでなければ false
+     */
+    public void setJumped(boolean b) {
+        jumped = b;
+    }
+
+    /**
      * 例外ベクタの位置が、ハイベクタ 0xffff0000～0xffff001c にあるか、
      * 正規ベクタ 0x00000000～0x0000001c にあるかを取得します。
      *
@@ -4622,63 +4715,52 @@ public class ARMv5 extends CPU {
     @Override
     public void step() {
         Instruction inst;
-        int v, vaddr, paddr;
 
         //for debug
         int target_address1 = 0;//0xc036aee8; //<versatile_init_irq>
         int target_address2 = 0;//0xc036aee8; //<versatile_init_irq>
 
-        vaddr = getPC() - 8;
-        paddr = getMMU().translate(vaddr, true, 4);
-        if (getMMU().isFault()) {
-            getMMU().clearFault();
-            return;
-        }
-
-        if (!tryRead(paddr)) {
-            raiseException(EXCEPT_ABT_INST,
-                    String.format("exec [%08x]", paddr));
-            return;
-        }
-
-        v = read32(paddr);
-        inst = new Instruction(v);
-        try {
-            //表示調整用
-            if (getPC() - 8 == target_address1) {
-                setDisasmMode(true);
-                setPrintingDisasm(true);
-            }
-
-            if (getPC() - 8 == target_address2) {
-                setPrintingRegs(true);
-            }
-
-            if (isDisasmMode()) {
-                //デコードのみ
-                execute(inst, false);
-            }
-
-            //ブレーク用
-            if (isPrintingRegs()) {
-                int a = 0;
-            }
-
-            //実行する
-            execute(inst, true);
-        } catch (IllegalArgumentException e) {
-            //おそらくバグでしょう
-            System.out.printf("pc:%08x, inst:%08x, %s\n",
-                    getPC() - 8, inst.getInst(), e);
-            printRegs();
-            //abort
-            throw e;
-        }
-
-        //例外を発生させる必要があれば発生させます
+        //要求された例外のうち、優先度の高い例外を 1つだけ処理します
         doImportantException();
 
-        //次の命令へ
+        //割り込み線がアサートされていれば、IRQ 例外を要求します
+        //acceptIRQ();
+        if (isExcept()) {
+            clearExcept();
+            return;
+        }
+
+        //命令を取得します
+        inst = fetch();
+        if (isExcept()) {
+            clearExcept();
+            return;
+        }
+
+        //for debug, 表示調整用
+        if (getPC() - 8 == target_address1) {
+            setDisasmMode(true);
+            setPrintingDisasm(true);
+        }
+        if (getPC() - 8 == target_address2) {
+            setPrintingRegs(true);
+        }
+
+        if (isDisasmMode()) {
+            disasm(inst);
+        }
+
+        //for debug, ブレーク用
+        if (isPrintingRegs()) {
+            int a = 0;
+        }
+
+        //実行して、次の命令へ
+        execute(inst);
         nextPC();
+        if (isExcept()) {
+            clearExcept();
+            return;
+        }
     }
 }

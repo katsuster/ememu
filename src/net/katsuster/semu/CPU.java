@@ -128,14 +128,41 @@ public abstract class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
+     * 命令をディスアセンブルした結果を表示します。
+     *
+     * @param inst      命令
+     * @param operation 命令を表す文字列
+     * @param operand   オペランドを表す文字列
+     */
+    public abstract void printDisasm(Instruction inst, String operation, String operand);
+
+    /**
+     * 現在のプログラムカウンタ（PC）を表示します。
+     */
+    public abstract void printPC();
+
+    /**
+     * 現在のレジスタを表示します。
+     */
+    public abstract void printRegs();
+
+    /**
      * 現在位置から 1命令だけ実行します。
      */
     public abstract void step();
 
     @Override
     public void run() {
-        while (true) {
-            step();
+        try {
+            while (true) {
+                step();
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e);
+            printPC();
+            printRegs();
+
+            throw e;
         }
     }
 }
