@@ -1,5 +1,7 @@
 package net.katsuster.semu;
 
+import java.util.*;
+
 /**
  * ARMv5TE CPU
  *
@@ -24,6 +26,7 @@ public class ARMv5 extends CPU {
     private int cpsr;
     private CoProc[] coProcs;
     private MMUv5 mmu;
+    private List<INTC> intc;
 
     private boolean exceptions[];
     private String exceptionReasons[];
@@ -46,6 +49,7 @@ public class ARMv5 extends CPU {
         coProcs = new CoProc[16];
         coProcs[15] = cpStd;
         mmu = new MMUv5(this, cpStd);
+        intc = new ArrayList<INTC>();
 
         exceptions = new boolean[7];
         exceptionReasons = new String[7];
@@ -4662,6 +4666,58 @@ public class ARMv5 extends CPU {
     }
 
     /**
+     * 割り込みコントローラを追加します。
+     *
+     * CPU の割り込み線に割り込みコントローラを接続することに相当します。
+     *
+     * @param c 割り込みコントローラ
+     */
+    public void addINTC(INTC c) {
+        intc.add(c);
+    }
+
+    /**
+     * 割り込みコントローラを削除します。
+     *
+     *  CPU の割り込み線から割り込みコントローラを切り離すことに相当します。
+     *
+     * @param c 割り込みコントローラ
+     */
+    public void removeINTC(INTC c) {
+        intc.remove(c);
+    }
+
+    /**
+     * いずれかの割り込みコントローラが割り込み線をアサートしていたら、
+     * IRQ 例外を要求します。
+     */
+    public void acceptIRQ() {
+        INTC cnt;
+        Iterator<INTC> it;
+        String msg;
+
+        if (getCPSR_I()) {
+            //I ビットが 1 の場合は、IRQ 無効を意味する
+            return;
+        }
+
+        it = intc.iterator();
+        while (it.hasNext()) {
+            cnt = it.next();
+            if (!cnt.isAssert()) {
+                continue;
+            }
+
+            //IRQ の詳細説明を得る
+            msg = String.format("accept IRQ from '%s'",
+                    cnt.getIRQMessage());
+
+            raiseException(EXCEPT_IRQ, msg);
+            return;
+        }
+    }
+
+    /**
      * 最後に行われた命令実行において、
      * CPU が例外を要求したかどうかを取得します。
      *
@@ -4739,7 +4795,7 @@ public class ARMv5 extends CPU {
         doImportantException();
 
         //割り込み線がアサートされていれば、IRQ 例外を要求します
-        //acceptIRQ();
+        acceptIRQ();
         if (isRaised()) {
             clearRaised();
             return;
