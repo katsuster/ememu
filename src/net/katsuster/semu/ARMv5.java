@@ -57,13 +57,12 @@ public class ARMv5 extends CPU {
 
     @Override
     public void printDisasm(Instruction inst, String operation, String operand) {
-        if (isPrintingDisasm()) {
-            System.out.printf("%08x:    %08x    %-7s %s\n",
-                    getPC() - 8, inst.getInst(), operation, operand);
+        if (!isPrintDisasm()) {
+            return;
         }
-        if (isPrintingRegs()) {
-            printRegs();
-        }
+
+        System.out.printf("%08x:    %08x    %-7s %s\n",
+                getPC() - 8, inst.getInst(), operation, operand);
     }
 
     @Override
@@ -73,6 +72,10 @@ public class ARMv5 extends CPU {
 
     @Override
     public void printRegs() {
+        if (!isPrintRegs()) {
+            return;
+        }
+
         for (int i = 0; i < 16; i += 4) {
             System.out.printf("  r%-2d: %08x, r%-2d: %08x, r%-2d: %08x, r%-2d: %08x, \n",
                     i, getRegRaw(i), i + 1, getRegRaw(i + 1),
@@ -1621,7 +1624,7 @@ public class ARMv5 extends CPU {
         int dest;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("mrs%s", inst.getCondFieldName()),
                     String.format("%s, %s",
                             getRegName(rd), (r) ? "spsr" : "cpsr"));
@@ -1664,7 +1667,7 @@ public class ARMv5 extends CPU {
         int dest, m = 0;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("msr%s", inst.getCondFieldName()),
                     String.format("%s_%s%s%s%s, %s",
                             (r) ? "SPSR" : "CPSR",
@@ -1777,7 +1780,7 @@ public class ARMv5 extends CPU {
                 throw new IllegalArgumentException("Unknown opcode S-bit ID " +
                         String.format("%d.", id));
             }
-            printDisasm(inst, strInst, strOperand);
+            disasmInst(inst, strInst, strOperand);
 
             return;
         }
@@ -2329,7 +2332,7 @@ public class ARMv5 extends CPU {
         int left, center, right, dest;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("mla%s%s", inst.getCondFieldName(),
                             (s) ? "s" : ""),
                     String.format("%s, %s, %s, %s",
@@ -2371,7 +2374,7 @@ public class ARMv5 extends CPU {
         int left, right, dest;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("mul%s%s", inst.getCondFieldName(),
                             (s) ? "s" : ""),
                     String.format("%s, %s, %s",
@@ -2414,7 +2417,7 @@ public class ARMv5 extends CPU {
         long dest;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("smlal%s%s", inst.getCondFieldName(),
                             (s) ? "s" : ""),
                     String.format("%s, %s, %s, %s",
@@ -2461,7 +2464,7 @@ public class ARMv5 extends CPU {
         long dest;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("umlal%s%s", inst.getCondFieldName(),
                             (s) ? "s" : ""),
                     String.format("%s, %s, %s, %s",
@@ -2508,7 +2511,7 @@ public class ARMv5 extends CPU {
         long dest;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("umull%s%s", inst.getCondFieldName(),
                             (s) ? "s" : ""),
                     String.format("%s, %s, %s, %s",
@@ -2552,7 +2555,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("swp%s", inst.getCondFieldName()),
                     String.format("%s, %s, [%s]",
                             getRegName(rd), getRegName(rm), getRegName(rn)));
@@ -2628,7 +2631,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr, value;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("ldrb%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetAddressName(inst)));
@@ -2685,7 +2688,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr, rot, value;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("ldr%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetAddressName(inst)));
@@ -2767,7 +2770,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr, value;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("ldrh%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
@@ -2824,7 +2827,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr, value;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("ldrsb%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
@@ -2881,7 +2884,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr, value;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("ldrsh%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
@@ -2938,7 +2941,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr, value1, value2;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("ldrd%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
@@ -2986,7 +2989,7 @@ public class ARMv5 extends CPU {
         boolean r = inst.getBit(22);
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("pld%s", (r) ? "" : "w"),
                     String.format("%s", getOffsetAddressName(inst)));
             return;
@@ -3022,7 +3025,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("strb%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetAddressName(inst)));
@@ -3077,7 +3080,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("str%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetAddressName(inst)));
@@ -3132,7 +3135,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("strh%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
@@ -3187,7 +3190,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("strd%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
                             getOffsetHalfName(inst)));
@@ -3241,7 +3244,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr, len;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("ldm%s%s",
                             inst.getCondFieldName(),
                             inst.getPUFieldName()),
@@ -3328,7 +3331,7 @@ public class ARMv5 extends CPU {
         int vaddr, paddr, len;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("stm%s%s",
                             inst.getCondFieldName(),
                             inst.getPUFieldName()),
@@ -3386,7 +3389,7 @@ public class ARMv5 extends CPU {
         int simm24 = (int) signExt64(imm24, 24) << 2;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("b%s%s",
                             (l) ? "l" : "", inst.getCondFieldName()),
                     String.format("%08x", getPC() + simm24));
@@ -3422,7 +3425,7 @@ public class ARMv5 extends CPU {
         int simm24 = (int) signExt64(imm24, 24) << 2;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("blx"),
                     String.format("%08x", getPC() + simm24 + vh));
             return;
@@ -3456,7 +3459,7 @@ public class ARMv5 extends CPU {
         int dest;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("blx"),
                     String.format("%s", getRegName(rm)));
             return;
@@ -3487,7 +3490,7 @@ public class ARMv5 extends CPU {
         int dest;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("bx%s", inst.getCondFieldName()),
                     String.format("%s", getRegName(rm)));
             return;
@@ -3516,7 +3519,7 @@ public class ARMv5 extends CPU {
         int dest;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("clz%s", inst.getCondFieldName()),
                     String.format("%s, %s",
                             getRegName(rd), getRegName(rm)));
@@ -3554,7 +3557,7 @@ public class ARMv5 extends CPU {
         int crid;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("mcr%s", inst.getCondFieldName()),
                     String.format("%s, %d, %s, %s, %s, {%d}",
                             getCoproc(cpnum).toString(), opcode1,
@@ -3602,7 +3605,7 @@ public class ARMv5 extends CPU {
         int crid, crval, rval;
 
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("mrc%s", inst.getCondFieldName()),
                     String.format("p%d, %d, %s, %s, %s, {%d}",
                             cpnum, opcode1,
@@ -3655,7 +3658,7 @@ public class ARMv5 extends CPU {
      */
     public void executeUnd(Instruction inst, boolean exec) {
         if (!exec) {
-            printDisasm(inst,
+            disasmInst(inst,
                     String.format("und%s", inst.getCondFieldName()),
                     "");
             return;
@@ -3694,12 +3697,24 @@ public class ARMv5 extends CPU {
     }
 
     /**
-     * 命令をディスアセンブルします。
+     * 命令を逆アセンブルします。
      *
      * @param inst ARM 命令
      */
     public void disasm(Instruction inst) {
         executeInst(inst, false);
+    }
+
+    /**
+     * 逆アセンブルした命令を表示します。
+     *
+     * @param inst      ARM 命令
+     * @param operation 命令の文字列表記
+     * @param operand   オペランドの文字列表記
+     */
+    public void disasmInst(Instruction inst, String operation, String operand) {
+        printDisasm(inst, operation, operand);
+        printRegs();
     }
 
     /**
@@ -3712,11 +3727,11 @@ public class ARMv5 extends CPU {
     }
 
     /**
-     * 命令をディスアセンブル、実行します。
+     * 命令を逆アセンブル、実行します。
      *
      * @param inst ARM 命令
-     * @param exec ディスアセンブルと実行なら true、
-     *             ディスアセンブルのみなら false
+     * @param exec 逆アセンブルと実行なら true、
+     *             逆アセンブルのみなら false
      */
     public void executeInst(Instruction inst, boolean exec) {
         int cond = inst.getCondField();
@@ -4740,10 +4755,10 @@ public class ARMv5 extends CPU {
         //for debug, 表示調整用
         if (getPC() - 8 == target_address1) {
             setDisasmMode(true);
-            setPrintingDisasm(true);
+            setPrintDisasm(true);
         }
         if (getPC() - 8 == target_address2) {
-            setPrintingRegs(true);
+            setPrintRegs(true);
         }
 
         if (isDisasmMode()) {
@@ -4751,7 +4766,7 @@ public class ARMv5 extends CPU {
         }
 
         //for debug, ブレーク用
-        if (isPrintingRegs()) {
+        if (isPrintRegs()) {
             int a = 0;
         }
 

@@ -72,8 +72,8 @@ public class Main {
 
         //reset
         cpu.setDisasmMode(false);
-        cpu.setPrintingDisasm(false);
-        cpu.setPrintingRegs(false);
+        cpu.setPrintDisasm(false);
+        cpu.setPrintRegs(false);
         cpu.doExceptionReset("Init.");
 
         //tentative boot loader for Linux

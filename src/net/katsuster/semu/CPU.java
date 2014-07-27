@@ -6,38 +6,38 @@ package net.katsuster.semu;
  * @author katsuhiro
  */
 public abstract class CPU extends MasterCore64 implements Runnable {
-    private boolean flagDisasm;
-    private boolean flagPrintDisasm;
-    private boolean flagPrintReg;
+    private boolean fDisasmMode;
+    private boolean fPrintDisasm;
+    private boolean fPrintRegs;
 
     public CPU() {
-        flagDisasm = false;
-        flagPrintDisasm = false;
-        flagPrintReg = false;
+        fDisasmMode = false;
+        fPrintDisasm = false;
+        fPrintRegs = false;
     }
 
     public boolean isDisasmMode() {
-        return flagDisasm;
+        return fDisasmMode;
     }
 
     public void setDisasmMode(boolean b) {
-        flagDisasm = b;
+        fDisasmMode = b;
     }
 
-    public boolean isPrintingDisasm() {
-        return flagPrintDisasm;
+    public boolean isPrintDisasm() {
+        return fPrintDisasm;
     }
 
-    public void setPrintingDisasm(boolean b) {
-        flagPrintDisasm = b;
+    public void setPrintDisasm(boolean b) {
+        fPrintDisasm = b;
     }
 
-    public boolean isPrintingRegs() {
-        return flagPrintReg;
+    public boolean isPrintRegs() {
+        return fPrintRegs;
     }
 
-    public void setPrintingRegs(boolean b) {
-        flagPrintReg = b;
+    public void setPrintRegs(boolean b) {
+        fPrintRegs = b;
     }
 
     /**
@@ -128,7 +128,7 @@ public abstract class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
-     * 命令をディスアセンブルした結果を表示します。
+     * 命令を逆アセンブルした結果を表示します。
      *
      * @param inst      命令
      * @param operation 命令を表す文字列
