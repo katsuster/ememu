@@ -28,7 +28,7 @@ public class ARMv5 extends CPU {
     private boolean exceptions[];
     private String exceptionReasons[];
 
-    private boolean exceptExec;
+    private boolean raised;
     private boolean jumped;
     private boolean highVector;
 
@@ -50,7 +50,7 @@ public class ARMv5 extends CPU {
         exceptions = new boolean[7];
         exceptionReasons = new String[7];
 
-        exceptExec = false;
+        raised = false;
         jumped = false;
         highVector = false;
     }
@@ -4322,7 +4322,7 @@ public class ARMv5 extends CPU {
             throw new IllegalArgumentException("Illegal exception number " + num);
         }
 
-        if (isExcept()) {
+        if (isRaised()) {
             //例外状態がクリアされず残っている
             //一度の命令で二度、例外が起きるのはおそらくバグでしょう
             throw new IllegalStateException("Except status not cleared.");
@@ -4331,11 +4331,11 @@ public class ARMv5 extends CPU {
         exceptions[num] = true;
         exceptionReasons[num] = dbgmsg;
 
-        setExcept(true);
+        setRaised(true);
     }
 
     /**
-     * 最も優先度の高い例外を 1つだけ処理します。
+     * 最も優先度の高い例外を 1つだけ発生させます。
      *
      * 優先度の低い例外は後回しにされます。
      */
@@ -4648,28 +4648,28 @@ public class ARMv5 extends CPU {
 
     /**
      * 最後に行われた命令実行において、
-     * CPU がアボートを起こしたかどうかを取得します。
+     * CPU が例外を要求したかどうかを取得します。
      *
-     * @return CPU がアボートを起こした場合 true、起こしていない場合 false
+     * @return CPU が例外を要求した場合 true、要求していない場合 false
      */
-    public boolean isExcept() {
-        return exceptExec;
+    public boolean isRaised() {
+        return raised;
     }
 
     /**
-     * CPU がアボートを起こしたかどうかを設定します。
+     * CPU が例外を要求したかどうかを設定します。
      *
-     * @param m CPU がアボートを起こした場合 true、起こしていない場合 false
+     * @param m CPU が例外を要求した場合 true、要求していない場合 false
      */
-    public void setExcept(boolean m) {
-        exceptExec = m;
+    public void setRaised(boolean m) {
+        raised = m;
     }
 
     /**
-     * CPU がアボートを起こしたかどうかの状態をクリアします。
+     * CPU が例外を要求したかどうかの状態をクリアします。
      */
-    public void clearExcept() {
-        setExcept(false);
+    public void clearRaised() {
+        setRaised(false);
     }
 
     /**
@@ -4720,20 +4720,20 @@ public class ARMv5 extends CPU {
         int target_address1 = 0;//0xc036aee8; //<versatile_init_irq>
         int target_address2 = 0;//0xc036aee8; //<versatile_init_irq>
 
-        //要求された例外のうち、優先度の高い例外を 1つだけ処理します
+        //要求された例外のうち、優先度の高い例外を 1つだけ発生させます
         doImportantException();
 
         //割り込み線がアサートされていれば、IRQ 例外を要求します
         //acceptIRQ();
-        if (isExcept()) {
-            clearExcept();
+        if (isRaised()) {
+            clearRaised();
             return;
         }
 
         //命令を取得します
         inst = fetch();
-        if (isExcept()) {
-            clearExcept();
+        if (isRaised()) {
+            clearRaised();
             return;
         }
 
@@ -4758,8 +4758,8 @@ public class ARMv5 extends CPU {
         //実行して、次の命令へ
         execute(inst);
         nextPC();
-        if (isExcept()) {
-            clearExcept();
+        if (isRaised()) {
+            clearRaised();
             return;
         }
     }
