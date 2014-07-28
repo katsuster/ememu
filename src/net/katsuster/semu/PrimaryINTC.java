@@ -1,5 +1,7 @@
 package net.katsuster.semu;
 
+import java.util.*;
+
 /**
  * 割り込みコントローラ
  *
@@ -9,6 +11,14 @@ package net.katsuster.semu;
  * @author katsuhiro
  */
 public class PrimaryINTC extends Controller64Reg32 {
+    private List<INTC> intcs;
+    private int rawHardInt;
+    private int rawSoftInt;
+    private int intEnable;
+    private int intSelect;
+
+    public static final int MAX_INTCS = 32;
+
     public static final int REG_VICIRQSTATUS    = 0x000;
     public static final int REG_VICFIQSTATUS    = 0x004;
     public static final int REG_VICRAWINTR      = 0x008;
@@ -67,9 +77,26 @@ public class PrimaryINTC extends Controller64Reg32 {
     public static final int REG_VICPCELLID3     = 0xffc;
 
     public PrimaryINTC() {
+        //割り込み元の初期化をします
+        intcs = new ArrayList<INTC>();
+        for (int i = 0; i < MAX_INTCS; i++) {
+            connectINTC(i, new NullINTC());
+        }
+
+        //割り込みステータスの初期化を行います
+        rawHardInt = 0;
+        rawSoftInt = 0;
+        intEnable = 0;
+        intSelect = 0;
+
+        //レジスタの定義を行う
+        addReg(REG_VICIRQSTATUS, "VICIRQSTATUS", 0x00000000);
+        addReg(REG_VICFIQSTATUS, "VICFIQSTATUS", 0x00000000);
+        addReg(REG_VICRAWINTR, "VICRAWINTR", 0x00000000);
         addReg(REG_VICINTSELECT, "VICINTSELECT", 0x00000000);
         addReg(REG_VICINTENABLE, "VICINTENABLE", 0x00000000);
         addReg(REG_VICINTENCLEAR, "VICINTENCLEAR", 0x00000000);
+        addReg(REG_VICSOFTINT, "VICSOFTINT", 0x00000000);
         addReg(REG_VICSOFTINTCLEAR, "VICSOFTINTCLEAR", 0x00000000);
         addReg(REG_VICVECTADDR, "VICVECTADDR", 0x00000000);
         addReg(REG_VICDEFVECTADDR, "VICDEFVECTADDR", 0x00000000);
@@ -116,6 +143,133 @@ public class PrimaryINTC extends Controller64Reg32 {
         addReg(REG_VICPCELLID3, "VICPCELLID3", 0x000000b1);
     }
 
+    /**
+     * 割り込みコントローラにコアを接続します。
+     *
+     * 接続後、コアからの割り込みを受け付け、
+     * 条件に応じて割り込みコントローラの接続先（大抵は CPU です）に、
+     * 割り込みを要求します。
+     *
+     * @param n 0 から 31 までの割り込み線の番号
+     * @param c コア
+     */
+    public void connectINTC(int n, INTC c) {
+        if (n < 0 || MAX_INTCS <= n) {
+            throw new IllegalArgumentException(String.format(
+                    "Illegal IRQ source number %d.", n));
+        }
+
+        intcs.add(n, c);
+    }
+
+    /**
+     * 割り込みコントローラからコアを切断します。
+     *
+     * 切断後はコアからの割り込みを受け付けません。
+     *
+     * @param n 0 から 31 までの割り込み線の番号
+     */
+    public void disconnectINTC(int n) {
+        if (n < 0 || MAX_INTCS <= n) {
+            throw new IllegalArgumentException(String.format(
+                    "Illegal IRQ source number %d.", n));
+        }
+
+        intcs.add(n, new NullINTC());
+    }
+
+    /**
+     * 指定された割り込み線に接続されているコアを返します。
+     *
+     * @param n 割り込み線の番号
+     * @return コア
+     */
+    public INTC getINTC(int n) {
+        if (n < 0 || MAX_INTCS <= n) {
+            throw new IllegalArgumentException(String.format(
+                    "Illegal IRQ source number %d.", n));
+        }
+
+        return intcs.get(n);
+    }
+
+    /**
+     * 現在の割り込み線の状態を取得します。
+     *
+     * 状態の 0 ビット目は割り込み線 0 に、
+     * 1 ビット目は割り込み線 1 に、
+     * n ビット目は割り込み線 n に、それぞれ対応します。
+     *
+     * 状態の各ビットには、コアが割り込みを要求していれば 1、
+     * そうでなければ 0 が設定されます。
+     *
+     * @return 割り込み線の状態
+     */
+    public int getINTCStatus() {
+        INTC c;
+        int rawInt = 0;
+
+        for (int i = 0; i < MAX_INTCS; i++) {
+            c = getINTC(i);
+
+            if (c.isAssert()) {
+                rawInt |= 1 << i;
+            }
+        }
+
+        return rawInt;
+    }
+
+    /**
+     * IRQ を要求しているコアの状態を取得します。
+     *
+     * @return IRQ を要求しているコアの状態
+     */
+    public int getIRQStatus() {
+        int st;
+
+        st = getRawHardInt();
+        st &= ~intSelect;
+
+        return st;
+    }
+
+    /**
+     * FIQ を要求しているコアの状態を取得します。
+     *
+     * @return FIQ を要求しているコアの状態
+     */
+    public int getFIQStatus() {
+        int st;
+
+        st = getRawHardInt();
+        st &= intSelect;
+
+        return st;
+    }
+
+    /**
+     * コアが割り込みを要求または、ソフトウェアから割り込みを要求していて、
+     * なおかつ有効な割り込みを取得します。
+     *
+     * 状態の各ビットには、コアまたはソフトウェアが割り込みを要求していれば 1、
+     * そうでなければ 0 が設定されます。
+     *
+     * @return 有効な割り込みの状態
+     */
+    public int getRawHardInt() {
+        int st;
+
+        st = rawHardInt;
+        st |= getINTCStatus();
+        st |= rawSoftInt;
+        st &= intEnable;
+
+        rawHardInt = st;
+
+        return st;
+    }
+
     @Override
     public boolean tryRead(long addr) {
         return tryAccess(addr);
@@ -145,6 +299,15 @@ public class PrimaryINTC extends Controller64Reg32 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_VICIRQSTATUS:
+            result = getIRQStatus();
+            break;
+        case REG_VICFIQSTATUS:
+            result = getFIQStatus();
+            break;
+        case REG_VICRAWINTR:
+            result = getRawHardInt();
+            break;
         case REG_VICVECTADDR:
             //TODO: not implemented
             System.out.printf("VICVECTADDR: read 0x%08x\n", 0);
@@ -170,21 +333,25 @@ public class PrimaryINTC extends Controller64Reg32 {
         regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_VICIRQSTATUS:
+        case REG_VICFIQSTATUS:
+        case REG_VICRAWINTR:
+            //read only, ignored
+            break;
         case REG_VICINTSELECT:
-            //TODO: not implemented
-            System.out.printf("VICINTSELECT: 0x%08x\n", data);
+            intSelect = data;
             break;
         case REG_VICINTENABLE:
-            //TODO: not implemented
-            System.out.printf("VICINTENABLE: 0x%08x\n", data);
+            intEnable = data;
             break;
         case REG_VICINTENCLEAR:
-            //TODO: not implemented
-            System.out.printf("VICINTENCLEAR: 0x%08x\n", data);
+            rawHardInt &= ~data;
+            break;
+        case REG_VICSOFTINT:
+            rawSoftInt |= data;
             break;
         case REG_VICSOFTINTCLEAR:
-            //TODO: not implemented
-            System.out.printf("VICSOFTINTCLEAR: 0x%08x\n", data);
+            rawSoftInt &= ~data;
             break;
         case REG_VICVECTADDR:
             //TODO: not implemented
@@ -231,6 +398,50 @@ public class PrimaryINTC extends Controller64Reg32 {
         default:
             super.setReg(regaddr, data);
             break;
+        }
+    }
+
+    public INTC getSubINTCForIRQ() {
+        return new SubINTCForIRQ(this);
+    }
+
+    public INTC getSubINTCForFIQ() {
+        return new SubINTCForFIQ(this);
+    }
+
+    public class SubINTCForIRQ implements INTC {
+        private PrimaryINTC parent;
+
+        public SubINTCForIRQ(PrimaryINTC c) {
+            parent = c;
+        }
+
+        @Override
+        public boolean isAssert() {
+            return parent.getIRQStatus() != 0;
+        }
+
+        @Override
+        public String getIRQMessage() {
+            return "PrimaryINTC IRQ";
+        }
+    }
+
+    public class SubINTCForFIQ implements INTC {
+        private PrimaryINTC parent;
+
+        public SubINTCForFIQ(PrimaryINTC c) {
+            parent = c;
+        }
+
+        @Override
+        public boolean isAssert() {
+            return parent.getFIQStatus() != 0;
+        }
+
+        @Override
+        public String getIRQMessage() {
+            return "PrimaryINTC FIQ";
         }
     }
 }

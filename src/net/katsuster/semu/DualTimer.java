@@ -38,10 +38,12 @@ public class DualTimer extends Controller64Reg32 {
         addReg(REG_Timer1Load, "Timer1Load", 0x00000000);
         addReg(REG_Timer1Value, "Timer1Value", 0x00000000);
         addReg(REG_Timer1Control, "Timer1Control", 0x00000000);
+        addReg(REG_Timer1IntClr, "Timer1IntClr", 0x00000000);
 
         addReg(REG_Timer2Load, "Timer2Load", 0x00000000);
         addReg(REG_Timer2Value, "Timer2Value", 0x00000000);
         addReg(REG_Timer2Control, "Timer2Control", 0x00000000);
+        addReg(REG_Timer2IntClr, "Timer2IntClr", 0x00000000);
     }
 
     @Override
@@ -110,6 +112,10 @@ public class DualTimer extends Controller64Reg32 {
             //TODO: not implemented
             System.out.printf("Timer1Control: 0x%08x\n", data);
             break;
+        case REG_Timer1IntClr:
+            //TODO: not implemented
+            System.out.printf("Timer1IntClr: 0x%08x\n", data);
+            break;
         case REG_Timer2Load:
             //TODO: not implemented
             System.out.printf("Timer2Load: 0x%08x\n", data);
@@ -121,6 +127,10 @@ public class DualTimer extends Controller64Reg32 {
         case REG_Timer2Control:
             //TODO: not implemented
             System.out.printf("Timer2Control: 0x%08x\n", data);
+            break;
+        case REG_Timer2IntClr:
+            //TODO: not implemented
+            System.out.printf("Timer2IntClr: 0x%08x\n", data);
             break;
         default:
             super.setReg(regaddr, data);

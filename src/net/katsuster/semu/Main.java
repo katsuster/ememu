@@ -45,6 +45,8 @@ public class Main {
         int addrAtags = 0x83ffff00;
 
         cpu.setSlaveBus(bus);
+        cpu.setINTCForIRQ(intc1st.getSubINTCForIRQ());
+        cpu.setINTCForFIQ(intc1st.getSubINTCForFIQ());
 
         //RAM Image(tentative)
         //  0x10000000 - 0x13ffffff: CS5

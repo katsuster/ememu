@@ -19,5 +19,5 @@ public interface INTC {
      *
      * @return 割り込みの詳細な説明
      */
-    public String getIRQMessage();
+    public abstract String getIRQMessage();
 }
