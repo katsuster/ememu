@@ -17,7 +17,8 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
     private Map<Integer, Reg32> regs;
 
     public Controller64Reg32() {
-        this.regs = new HashMap<Integer, Reg32>();
+        regs = Collections.synchronizedMap(
+                new HashMap<Integer, Reg32>());
     }
 
     /**
