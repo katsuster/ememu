@@ -3319,8 +3319,73 @@ public class ARMv5 extends CPU {
     }
 
     public void executeLdm3(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rlist = inst.getRegListField();
+        int vaddr, paddr, len, v;
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("ldm%s%s",
+                            inst.getCondFieldName(),
+                            inst.getPUFieldName()),
+                    String.format("%s%s, {%s}^",
+                            getRegName(rn), (w) ? "!" : "",
+                            inst.getRegListFieldName()));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //r15 以外
+        vaddr = getRegistersStartAddress(inst.getPUField(), rn, rlist);
+        len = getRegistersLength(inst.getPUField(), rlist);
+        for (int i = 0; i < 15; i++) {
+            if ((rlist & (1 << i)) == 0) {
+                continue;
+            }
+
+            paddr = getMMU().translate(vaddr, false, 4);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return;
+            }
+
+            if (!tryRead(paddr)) {
+                raiseException(EXCEPT_ABT_DATA,
+                        String.format("ldm(3) [%08x]", paddr));
+                return;
+            }
+            setReg(i, read32(paddr));
+            vaddr += 4;
+        }
+
+        //CPSR に SPSR の値を入れる
+        setCPSR(getSPSR());
+
+        //r15 は必ずロードする
+        paddr = getMMU().translate(vaddr, false, 4);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("ldm(3) [%08x]", paddr));
+            return;
+        }
+        v = read32(paddr);
+
+        setPC(v & 0xfffffffe);
+        setCPSR_T(BitOp.getBit32(v, 0));
+        vaddr += 4;
+
+        if (w) {
+            setReg(rn, getReg(rn) + len);
+        }
     }
 
     /**
@@ -4469,6 +4534,10 @@ public class ARMv5 extends CPU {
         } else {
             setPC(0x00000004);
         }
+
+        //tentative...
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     /**
