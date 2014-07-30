@@ -38,7 +38,7 @@ public abstract class MasterCore64 {
      */
     public boolean tryRead(int addr) {
         long addrl = addr & 0xffffffffL;
-        return slaveBus.tryRead(addrl, 8);
+        return slaveBus.tryRead(addrl, 4);
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class MasterCore64 {
      */
     public boolean tryWrite(int addr) {
         long addrl = addr & 0xffffffffL;
-        return slaveBus.tryWrite(addrl, 8);
+        return slaveBus.tryWrite(addrl, 4);
     }
 
     /**
