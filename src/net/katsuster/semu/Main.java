@@ -31,9 +31,11 @@ public class Main {
 
     public static void main(String[] args) {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
+        String cmdl = "console=ttyS0 lpj=10000 mem=32M debug root=/dev/nfs \0";
 
-        String cmdline = "console=ttyS0  \0";
-        byte[] cmdlineb = cmdline.getBytes();
+        byte[] cmdlb = cmdl.getBytes();
+        byte[] cmdline = new byte[(cmdlb.length + 3) & ~0x3];
+        System.arraycopy(cmdlb, 0, cmdline, 0, cmdlb.length);
 
         ARMv5 cpu = new ARMv5();
         SysBaseboard sysBoard = new SysBaseboard();
@@ -122,13 +124,12 @@ public class Main {
             addrAtags += 0x0c;
 
             //ATAG_CMDLINE
-            int size = 0x00000002 + ((cmdlineb.length + 3) / 4);
-            cpu.write32(addrAtags + 0x00, size);
+            cpu.write32(addrAtags + 0x00, 0x00000002 + cmdline.length / 4);
             cpu.write32(addrAtags + 0x04, 0x54410009);
-            for (int i = 0; i < cmdlineb.length; i++) {
-                cpu.write8(addrAtags + 0x08 + i, cmdlineb[i]);
+            for (int i = 0; i < cmdline.length; i++) {
+                cpu.write8(addrAtags + 0x08 + i, cmdline[i]);
             }
-            addrAtags += 0x08 + cmdlineb.length;
+            addrAtags += 0x08 + cmdline.length;
 
             //ATAG_NONE, size, tag
             cpu.write32(addrAtags + 0x00, 0x00000002);
