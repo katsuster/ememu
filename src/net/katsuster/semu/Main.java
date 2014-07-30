@@ -32,6 +32,9 @@ public class Main {
     public static void main(String[] args) {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
 
+        String cmdline = "console=ttyS0  \0";
+        byte[] cmdlineb = cmdline.getBytes();
+
         ARMv5 cpu = new ARMv5();
         SysBaseboard sysBoard = new SysBaseboard();
         SecondaryINTC intc2nd = new SecondaryINTC();
@@ -40,9 +43,9 @@ public class Main {
         DualTimer timer0_1 = new DualTimer();
         DualTimer timer2_3 = new DualTimer();
         UART uart0 = new UART();
-        RAM ramMain = new RAM(16 * 1024 * 1024); //64MB
+        RAM ramMain = new RAM(8 * 1024 * 1024); //32MB
         Bus64 bus = new Bus64();
-        int addrAtags = 0x83ffff00;
+        int addrAtags = 0x81fff000;
 
         cpu.setSlaveBus(bus);
         cpu.setINTCForIRQ(intc1st.getSubINTCForIRQ());
@@ -62,7 +65,7 @@ public class Main {
         //  0x80000000 - 0x82ffffff: Main
         //    0x80000000 - 0x80007fff: Linux pagetable
         //    0x80008000 - 0x804fffff: Linux Image
-        //    0x80ffff00 - 0x83ffffff: ATAG_XXX
+        //    0x81fff000 - 0x81ffffff: ATAG_XXX
         bus.addSlaveCore(sysBoard, 0x10000000L, 0x10001000L);
         bus.addSlaveCore(intc2nd, 0x10003000L, 0x10004000L);
         bus.addSlaveCore(intc1st, 0x10140000L, 0x10150000L);
@@ -70,7 +73,7 @@ public class Main {
         bus.addSlaveCore(timer0_1, 0x101e2000L, 0x101e3000L);
         bus.addSlaveCore(timer2_3, 0x101e3000L, 0x101e4000L);
         bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
-        bus.addSlaveCore(ramMain, 0x80000000L, 0x84000000L);
+        bus.addSlaveCore(ramMain, 0x80000000L, 0x82000000L);
 
         //reset
         cpu.setDisasmMode(false);
@@ -105,7 +108,7 @@ public class Main {
             //ATAG_MEM, size, tag, size, start
             cpu.write32(addrAtags + 0x00, 0x00000004);
             cpu.write32(addrAtags + 0x04, 0x54410002);
-            cpu.write32(addrAtags + 0x08, 0x04000000);
+            cpu.write32(addrAtags + 0x08, 0x02000000);
             cpu.write32(addrAtags + 0x0c, 0x80000000);
             addrAtags += 0x10;
 
@@ -117,6 +120,15 @@ public class Main {
             //ARM-Versatile AB
             //cpu.write32(addrAtags + 0x08, 0x0000025e);
             addrAtags += 0x0c;
+
+            //ATAG_CMDLINE
+            int size = 0x00000002 + ((cmdlineb.length + 3) / 4);
+            cpu.write32(addrAtags + 0x00, size);
+            cpu.write32(addrAtags + 0x04, 0x54410009);
+            for (int i = 0; i < cmdlineb.length; i++) {
+                cpu.write8(addrAtags + 0x08 + i, cmdlineb[i]);
+            }
+            addrAtags += 0x08 + cmdlineb.length;
 
             //ATAG_NONE, size, tag
             cpu.write32(addrAtags + 0x00, 0x00000002);
