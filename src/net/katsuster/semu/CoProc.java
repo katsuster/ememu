@@ -21,7 +21,8 @@ public class CoProc {
     public CoProc(int no, ARMv5 cpu) {
         this.no = no;
         this.cpu = cpu;
-        this.cregs = new HashMap<Integer, Reg32>();
+        this.cregs = Collections.synchronizedMap(
+                new HashMap<Integer, Reg32>());
     }
 
     /**

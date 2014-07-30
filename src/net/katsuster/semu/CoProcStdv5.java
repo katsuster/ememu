@@ -239,6 +239,13 @@ public class CoProcStdv5 extends CoProc {
     @Override
     public void setCReg(int cn, int val) {
         switch (cn) {
+        case CR00_MIDR:
+        case CR00_CTR:
+        case CR00_TCMTR:
+        case CR00_TLBTR:
+        case CR00_MPIDR:
+            //read only, ignored
+            break;
         case CR01_MMU_SCTLR:
             setSCTLR(val);
             break;

@@ -52,8 +52,14 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
         Reg32 r;
 
         r = regs.get(addr);
+        if (r == null) {
+            //TODO: for debug, will be removed
+            throw new IllegalArgumentException(String.format(
+                    "Illegal address 0x%08x.", addr));
+        }
 
-        return (r != null);
+        //return (r != null);
+        return true;
     }
 
     /**

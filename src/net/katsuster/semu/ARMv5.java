@@ -3643,17 +3643,24 @@ public class ARMv5 extends CPU {
 
         cp = getCoproc(cpnum);
         if (cp == null) {
-            raiseException(EXCEPT_UND, "Unimplemented coprocessor, " +
-                    String.format("p%d selected.", cpnum));
-            return;
+            //TODO: for debug, will be removed
+            throw new IllegalArgumentException(String.format(
+                    "Unimplemented coprocessor, p%d selected.", cpnum));
+            //raiseException(EXCEPT_UND, "Unimplemented coprocessor, " +
+            //        String.format("p%d selected.", cpnum));
+            //return;
         }
 
         crid = CoProc.getCRegID(crn, opcode1, crm, opcode2);
         if (!cp.validCRegNumber(crid)) {
-            raiseException(EXCEPT_UND, "Unimplemented coprocessor register, " +
+            //TODO: for debug, will be removed
+            throw new IllegalArgumentException("Unimplemented coprocessor register, " +
                     String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
                             cpnum, crid, crn, opcode1, crm, opcode2));
-            return;
+            //raiseException(EXCEPT_UND, "Unimplemented coprocessor register, " +
+            //        String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
+            //                cpnum, crid, crn, opcode1, crm, opcode2));
+            //return;
         }
 
         cp.setCReg(crid, getReg(rd));
@@ -3691,17 +3698,24 @@ public class ARMv5 extends CPU {
 
         cp = getCoproc(cpnum);
         if (cp == null) {
-            raiseException(EXCEPT_UND, "Unimplemented coprocessor, " +
-                    String.format("p%d selected.", cpnum));
-            return;
+            //TODO: for debug, will be removed
+            throw new IllegalArgumentException(String.format(
+                    "Unimplemented coprocessor, p%d selected.", cpnum));
+            //raiseException(EXCEPT_UND, "Unimplemented coprocessor, " +
+            //        String.format("p%d selected.", cpnum));
+            //return;
         }
 
         crid = CoProc.getCRegID(crn, opcode1, crm, opcode2);
         if (!cp.validCRegNumber(crid)) {
-            raiseException(EXCEPT_UND, "Unimplemented coprocessor register, " +
+            //TODO: for debug, will be removed
+            throw new IllegalArgumentException("Unimplemented coprocessor register, " +
                     String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
                             cpnum, crid, crn, opcode1, crm, opcode2));
-            return;
+            //raiseException(EXCEPT_UND, "Unimplemented coprocessor register, " +
+            //        String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
+            //                cpnum, crid, crn, opcode1, crm, opcode2));
+            //return;
         }
 
         crval = cp.getCReg(crid);
