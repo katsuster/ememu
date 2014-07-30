@@ -35,10 +35,19 @@ public class UART extends Controller64Reg32 {
     private StringBuilder strBuffer;
 
     public UART() {
+        strBuffer = new StringBuilder();
+
         addReg(REG_UARTDR, "UARTDR", 0x00000000);
         addReg(REG_UARTFR, "UARTFR", 0x00000000);
 
-        strBuffer = new StringBuilder();
+        //addReg(REG_UARTPeriphID0, "UARTPeriphID0", 0x00000000);
+        //addReg(REG_UARTPeriphID1, "UARTPeriphID1", 0x00000000);
+        //addReg(REG_UARTPeriphID2, "UARTPeriphID2", 0x00000000);
+        //addReg(REG_UARTPeriphID3, "UARTPeriphID3", 0x00000000);
+        //addReg(REG_UARTPCellID0, "UARTPCellID0", 0x00000000);
+        //addReg(REG_UARTPCellID1, "UARTPCellID1", 0x00000000);
+        //addReg(REG_UARTPCellID2, "UARTPCellID2", 0x00000000);
+        //addReg(REG_UARTPCellID3, "UARTPCellID3", 0x00000000);
     }
 
     @Override
