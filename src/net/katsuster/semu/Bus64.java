@@ -54,7 +54,10 @@ public class Bus64 {
 
         sca = findSlaveCore(addr, addr + len - 1);
         if (sca == null) {
-            return false;
+            //TODO: for debug, will be removed
+            throw new IllegalArgumentException(String.format(
+                    "Illegal address 0x%08x.", addr));
+            //return false;
         }
 
         offSt = addr - sca.start;
@@ -154,7 +157,10 @@ public class Bus64 {
 
         sca = findSlaveCore(addr, addr + len - 1);
         if (sca == null) {
-            return false;
+            //TODO: for debug, will be removed
+            throw new IllegalArgumentException(String.format(
+                    "Illegal address 0x%08x.", addr));
+            //return false;
         }
 
         offSt = addr - sca.start;
