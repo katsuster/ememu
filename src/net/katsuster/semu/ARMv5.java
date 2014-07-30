@@ -37,8 +37,10 @@ public class ARMv5 extends CPU {
     private boolean highVector;
 
     public ARMv5() {
+        CoProcVFPv2 cpVfps;
         CoProcStdv5 cpStd;
 
+        cpVfps = new CoProcVFPv2(10, this);
         cpStd = new CoProcStdv5(15, this);
 
         regs = new int[17];
@@ -48,6 +50,7 @@ public class ARMv5 extends CPU {
         regs_irq = new int[17];
         regs_fiq = new int[17];
         coProcs = new CoProc[16];
+        coProcs[10] = cpVfps;
         coProcs[15] = cpStd;
         mmu = new MMUv5(this, cpStd);
         intcIRQ = new NullINTC();
@@ -4368,8 +4371,15 @@ public class ARMv5 extends CPU {
         switch (subsub) {
         case 0:
         case 1:
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
+            if (b20) {
+                //ldc
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            } else {
+                //stc
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            }
             //break;
         case 2:
             if (!b4) {
