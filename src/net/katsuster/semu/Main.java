@@ -40,6 +40,7 @@ public class Main {
         ARMv5 cpu = new ARMv5();
         SysBaseboard sysBoard = new SysBaseboard();
         SecondaryINTC intc2nd = new SecondaryINTC();
+        SSMC ssmc = new SSMC();
         DMAC dmac = new DMAC();
         PrimaryINTC intc1st = new PrimaryINTC();
         SysController sysCtrl = new SysController();
@@ -60,6 +61,7 @@ public class Main {
         //  0x10000000 - 0x13ffffff: CS5
         //    0x10000000 - 0x10000fff: System Registers
         //    0x10003000 - 0x10003fff: Secondary Interrupt Controller
+        //    0x10100000 - 0x1010ffff: Synchronous Static Memory Controller (PL093)
         //    0x10130000 - 0x1013ffff: DMA Contoroller (PL080)
         //    0x10140000 - 0x1014ffff: Primary Interrupt Contoroller (PL190)
         //    0x101e0000 - 0x101e1000: System Controller (SP810)
@@ -74,6 +76,7 @@ public class Main {
         //    0x81fff000 - 0x81ffffff: ATAG_XXX
         bus.addSlaveCore(sysBoard, 0x10000000L, 0x10001000L);
         bus.addSlaveCore(intc2nd, 0x10003000L, 0x10004000L);
+        bus.addSlaveCore(ssmc, 0x10100000L, 0x10110000L);
         bus.addSlaveCore(dmac, 0x10130000L, 0x10140000L);
         bus.addSlaveCore(intc1st, 0x10140000L, 0x10150000L);
         bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e1000L);
