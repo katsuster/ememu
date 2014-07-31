@@ -135,6 +135,7 @@ public class DMAC extends Controller64Reg32 {
         //addReg(REG_DMACITOP1, "DMACITOP1", 0x0000);
         //addReg(REG_DMACITOP2, "DMACITOP2", 0x0000);
         //addReg(REG_DMACITOP3, "DMACITOP3", 0x0);
+
         addReg(REG_DMACPeriphID0, "DMACPeriphID0", 0x00000080);
         addReg(REG_DMACPeriphID1, "DMACPeriphID1", 0x00000010);
         addReg(REG_DMACPeriphID2, "DMACPeriphID2", 0x00000004);
