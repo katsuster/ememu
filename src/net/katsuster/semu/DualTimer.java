@@ -36,13 +36,13 @@ public class DualTimer extends Controller64Reg32 {
 
     public DualTimer() {
         addReg(REG_Timer1Load, "Timer1Load", 0x00000000);
-        addReg(REG_Timer1Value, "Timer1Value", 0x00000000);
-        addReg(REG_Timer1Control, "Timer1Control", 0x00000000);
+        addReg(REG_Timer1Value, "Timer1Value", 0xffffffff);
+        addReg(REG_Timer1Control, "Timer1Control", 0x20);
         addReg(REG_Timer1IntClr, "Timer1IntClr", 0x00000000);
 
         addReg(REG_Timer2Load, "Timer2Load", 0x00000000);
-        addReg(REG_Timer2Value, "Timer2Value", 0x00000000);
-        addReg(REG_Timer2Control, "Timer2Control", 0x00000000);
+        addReg(REG_Timer2Value, "Timer2Value", 0xffffffff);
+        addReg(REG_Timer2Control, "Timer2Control", 0x20);
         addReg(REG_Timer2IntClr, "Timer2IntClr", 0x00000000);
 
         addReg(REG_TimerPeriphID0, "TimerPeriphID0", 0x00000004);
