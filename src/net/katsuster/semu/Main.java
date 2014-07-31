@@ -38,10 +38,12 @@ public class Main {
         System.arraycopy(cmdlb, 0, cmdline, 0, cmdlb.length);
 
         ARMv5 cpu = new ARMv5();
+        Bus64 bus = new Bus64();
         SysBaseboard sysBoard = new SysBaseboard();
         SecondaryINTC intc2nd = new SecondaryINTC();
         SSMC ssmc = new SSMC();
         MPMC mpmc = new MPMC();
+        LCDC clcdc = new LCDC();
         DMAC dmac = new DMAC();
         PrimaryINTC intc1st = new PrimaryINTC();
         SysController sysCtrl = new SysController();
@@ -51,7 +53,6 @@ public class Main {
         UART uart1 = new UART();
         UART uart2 = new UART();
         RAM ramMain = new RAM(8 * 1024 * 1024); //32MB
-        Bus64 bus = new Bus64();
         int addrAtags = 0x81fff000;
 
         cpu.setSlaveBus(bus);
@@ -64,6 +65,7 @@ public class Main {
         //    0x10003000 - 0x10003fff: Secondary Interrupt Controller
         //    0x10100000 - 0x1010ffff: Synchronous Static Memory Controller (PL093)
         //    0x10110000 - 0x1011ffff: MultiPort Memory Controller (GX175)
+        //    0x10120000 - 0x1012ffff: Color LCD Controller (PL110)
         //    0x10130000 - 0x1013ffff: DMA Contoroller (PL080)
         //    0x10140000 - 0x1014ffff: Primary Interrupt Contoroller (PL190)
         //    0x101e0000 - 0x101e1000: System Controller (SP810)
@@ -80,6 +82,7 @@ public class Main {
         bus.addSlaveCore(intc2nd, 0x10003000L, 0x10004000L);
         bus.addSlaveCore(ssmc, 0x10100000L, 0x10110000L);
         bus.addSlaveCore(mpmc, 0x10110000L, 0x10120000L);
+        bus.addSlaveCore(clcdc, 0x10120000L, 0x10130000L);
         bus.addSlaveCore(dmac, 0x10130000L, 0x10140000L);
         bus.addSlaveCore(intc1st, 0x10140000L, 0x10150000L);
         bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e1000L);
