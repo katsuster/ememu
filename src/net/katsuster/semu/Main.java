@@ -30,7 +30,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        String filename = "Z:\\hogehoge\\linux-3.12.20\\arch\\arm\\boot\\Image";
+        String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
         String cmdl = "console=ttyS0 lpj=10000 mem=32M debug root=/dev/nfs \0";
 
         byte[] cmdlb = cmdl.getBytes();
