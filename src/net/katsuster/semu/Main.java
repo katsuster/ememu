@@ -132,9 +132,9 @@ public class Main {
 
         //r1: machine type
         //ARM-Versatile PB
-        cpu.setReg(1, 0x00000183);
+        //cpu.setReg(1, 0x00000183);
         //ARM-Versatile AB
-        //cpu.setReg(1, 0x0000025e);
+        cpu.setReg(1, 0x0000025e);
 
         //r2: atags or dtb pointer.
         cpu.setReg(2, addrAtags);
@@ -158,9 +158,9 @@ public class Main {
             cpu.write32(addrAtags + 0x00, 0x00000003);
             cpu.write32(addrAtags + 0x04, 0x54410007);
             //ARM-Versatile PB
-            cpu.write32(addrAtags + 0x08, 0x00000183);
+            //cpu.write32(addrAtags + 0x08, 0x00000183);
             //ARM-Versatile AB
-            //cpu.write32(addrAtags + 0x08, 0x0000025e);
+            cpu.write32(addrAtags + 0x08, 0x0000025e);
             addrAtags += 0x0c;
 
             //ATAG_CMDLINE
