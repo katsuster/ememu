@@ -40,14 +40,14 @@ public class UART extends Controller64Reg32 {
         addReg(REG_UARTDR, "UARTDR", 0x00000000);
         addReg(REG_UARTFR, "UARTFR", 0x00000000);
 
-        //addReg(REG_UARTPeriphID0, "UARTPeriphID0", 0x00000000);
-        //addReg(REG_UARTPeriphID1, "UARTPeriphID1", 0x00000000);
-        //addReg(REG_UARTPeriphID2, "UARTPeriphID2", 0x00000000);
-        //addReg(REG_UARTPeriphID3, "UARTPeriphID3", 0x00000000);
-        //addReg(REG_UARTPCellID0, "UARTPCellID0", 0x00000000);
-        //addReg(REG_UARTPCellID1, "UARTPCellID1", 0x00000000);
-        //addReg(REG_UARTPCellID2, "UARTPCellID2", 0x00000000);
-        //addReg(REG_UARTPCellID3, "UARTPCellID3", 0x00000000);
+        addReg(REG_UARTPeriphID0, "UARTPeriphID0", 0x00000011);
+        addReg(REG_UARTPeriphID1, "UARTPeriphID1", 0x00000010);
+        addReg(REG_UARTPeriphID2, "UARTPeriphID2", 0x00000014);
+        addReg(REG_UARTPeriphID3, "UARTPeriphID3", 0x00000000);
+        addReg(REG_UARTPCellID0, "UARTPCellID0", 0x0000000d);
+        addReg(REG_UARTPCellID1, "UARTPCellID1", 0x000000f0);
+        addReg(REG_UARTPCellID2, "UARTPCellID2", 0x00000005);
+        addReg(REG_UARTPCellID3, "UARTPCellID3", 0x000000b1);
     }
 
     @Override
@@ -107,6 +107,16 @@ public class UART extends Controller64Reg32 {
             strBuffer.append(ascii);
             System.out.printf("%c", ascii);
 
+            break;
+        case REG_UARTPeriphID0:
+        case REG_UARTPeriphID1:
+        case REG_UARTPeriphID2:
+        case REG_UARTPeriphID3:
+        case REG_UARTPCellID0:
+        case REG_UARTPCellID1:
+        case REG_UARTPCellID2:
+        case REG_UARTPCellID3:
+            //read only, ignored
             break;
         default:
             super.setReg(regaddr, data);
