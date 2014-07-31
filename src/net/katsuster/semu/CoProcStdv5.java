@@ -280,7 +280,7 @@ public class CoProcStdv5 extends CoProc {
             System.out.printf("D-cache  : test & clean & invalidated.\n");
             break;
         case CR07_WB_PUR:
-            System.out.printf("W-buffer : all purged.\n");
+            //System.out.printf("W-buffer : all purged.\n");
             break;
         case CR08_UTLB_INVALL:
             System.out.printf("I&D-TLB  : all invalidated.\n");
