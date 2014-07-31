@@ -59,6 +59,7 @@ public class Main {
         UART uart0 = new UART();
         UART uart1 = new UART();
         UART uart2 = new UART();
+        SSP ssp = new SSP();
         RAM ramMain = new RAM(8 * 1024 * 1024); //32MB
         int addrAtags = 0x81fff000;
 
@@ -88,6 +89,7 @@ public class Main {
         //    0x101f1000 - 0x101f1fff: UART0 (PL011)
         //    0x101f2000 - 0x101f2fff: UART1 (PL011)
         //    0x101f3000 - 0x101f3fff: UART2 (PL011)
+        //    0x101f4000 - 0x101f4fff: SSP (PL022)
         //  0x80000000 - 0x82ffffff: Main
         //    0x80000000 - 0x80007fff: Linux pagetable
         //    0x80008000 - 0x804fffff: Linux Image
@@ -112,6 +114,7 @@ public class Main {
         bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
         bus.addSlaveCore(uart1, 0x101f2000L, 0x101f3000L);
         bus.addSlaveCore(uart2, 0x101f3000L, 0x101f4000L);
+        bus.addSlaveCore(ssp, 0x101f4000L, 0x101f5000L);
         bus.addSlaveCore(ramMain, 0x80000000L, 0x82000000L);
 
         //reset
