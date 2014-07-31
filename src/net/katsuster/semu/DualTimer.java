@@ -45,13 +45,13 @@ public class DualTimer extends Controller64Reg32 {
         addReg(REG_Timer2Control, "Timer2Control", 0x00000000);
         addReg(REG_Timer2IntClr, "Timer2IntClr", 0x00000000);
 
-        //[ 7: 0]: VICPCellID0: must be 0x0d
+        addReg(REG_TimerPeriphID0, "TimerPeriphID0", 0x00000004);
+        addReg(REG_TimerPeriphID1, "TimerPeriphID1", 0x00000018);
+        addReg(REG_TimerPeriphID2, "TimerPeriphID2", 0x00000014);
+        addReg(REG_TimerPeriphID3, "TimerPeriphID3", 0x00000000);
         addReg(REG_TimerPCellID0, "TimerPCellID0", 0x0000000d);
-        //[ 7: 0]: VICPCellID1: must be 0x0f0
         addReg(REG_TimerPCellID1, "TimerPCellID1", 0x000000f0);
-        //[ 7: 0]: VICPCellID2: must be 0x05
         addReg(REG_TimerPCellID2, "TimerPCellID2", 0x00000005);
-        //[ 7: 0]: VICPCellID3: must be 0x0d
         addReg(REG_TimerPCellID3, "TimerPCellID3", 0x000000b1);
     }
 
@@ -141,6 +141,10 @@ public class DualTimer extends Controller64Reg32 {
             //TODO: not implemented
             System.out.printf("Timer2IntClr: 0x%08x\n", data);
             break;
+        case REG_TimerPeriphID0:
+        case REG_TimerPeriphID1:
+        case REG_TimerPeriphID2:
+        case REG_TimerPeriphID3:
         case REG_TimerPCellID0:
         case REG_TimerPCellID1:
         case REG_TimerPCellID2:
