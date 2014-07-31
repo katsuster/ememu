@@ -47,6 +47,7 @@ public class Main {
         DMAC dmac = new DMAC();
         PrimaryINTC intc1st = new PrimaryINTC();
         SysController sysCtrl = new SysController();
+        Watchdog watchdog = new Watchdog();
         DualTimer timer0_1 = new DualTimer();
         DualTimer timer2_3 = new DualTimer();
         UART uart0 = new UART();
@@ -69,6 +70,7 @@ public class Main {
         //    0x10130000 - 0x1013ffff: DMA Contoroller (PL080)
         //    0x10140000 - 0x1014ffff: Primary Interrupt Contoroller (PL190)
         //    0x101e0000 - 0x101e1000: System Controller (SP810)
+        //    0x101e1000 - 0x101e2000: Watchdog Module (SP805)
         //    0x101e2000 - 0x101e2fff: Dual-Timer 0 and 1 (SP804)
         //    0x101e3000 - 0x101e3fff: Dual-Timer 2 and 3 (SP804)
         //    0x101f1000 - 0x101f1fff: UART0
@@ -86,6 +88,7 @@ public class Main {
         bus.addSlaveCore(dmac, 0x10130000L, 0x10140000L);
         bus.addSlaveCore(intc1st, 0x10140000L, 0x10150000L);
         bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e1000L);
+        bus.addSlaveCore(watchdog, 0x101e1000L, 0x101e2000L);
         bus.addSlaveCore(timer0_1, 0x101e2000L, 0x101e3000L);
         bus.addSlaveCore(timer2_3, 0x101e3000L, 0x101e4000L);
         bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
