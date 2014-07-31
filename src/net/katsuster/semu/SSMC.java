@@ -1,7 +1,7 @@
 package net.katsuster.semu;
 
 /**
- * DMA コントローラ
+ * メモリコントローラ
  *
  * 参考: ARM PrimeCell Synchronous Static Memory Controller (PL093)
  * ARM DDI0236H
