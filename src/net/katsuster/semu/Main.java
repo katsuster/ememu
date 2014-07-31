@@ -54,6 +54,7 @@ public class Main {
         GPIO gpio1 = new GPIO();
         GPIO gpio2 = new GPIO();
         GPIO gpio3 = new GPIO();
+        RTC rtc = new RTC();
         UART uart0 = new UART();
         UART uart1 = new UART();
         UART uart2 = new UART();
@@ -77,10 +78,11 @@ public class Main {
         //    0x101e1000 - 0x101e2000: Watchdog Module (SP805)
         //    0x101e2000 - 0x101e2fff: Dual-Timer 0 and 1 (SP804)
         //    0x101e3000 - 0x101e3fff: Dual-Timer 2 and 3 (SP804)
-        //    0x101e4000 - 0x101e4fff: GPIO0 (PL061)
-        //    0x101e5000 - 0x101e5fff: GPIO1 (PL061)
-        //    0x101e6000 - 0x101e6fff: GPIO2 (PL061)
-        //    0x101e7000 - 0x101e7fff: GPIO3 (PL061)
+        //    0x101e4000 - 0x101e4fff: General Purpose I/O 0 (PL061)
+        //    0x101e5000 - 0x101e5fff: General Purpose I/O 1 (PL061)
+        //    0x101e6000 - 0x101e6fff: General Purpose I/O 2 (PL061)
+        //    0x101e7000 - 0x101e7fff: General Purpose I/O 3 (PL061)
+        //    0x101e8000 - 0x101e8fff: Real Time Clock (PL031)
         //    0x101f1000 - 0x101f1fff: UART0 (PL011)
         //    0x101f2000 - 0x101f2fff: UART1 (PL011)
         //    0x101f3000 - 0x101f3fff: UART2 (PL011)
@@ -103,6 +105,7 @@ public class Main {
         bus.addSlaveCore(gpio1, 0x101e5000L, 0x101e6000L);
         bus.addSlaveCore(gpio2, 0x101e6000L, 0x101e7000L);
         bus.addSlaveCore(gpio3, 0x101e7000L, 0x101e8000L);
+        bus.addSlaveCore(rtc, 0x101e8000L, 0x101e9000L);
         bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
         bus.addSlaveCore(uart1, 0x101f2000L, 0x101f3000L);
         bus.addSlaveCore(uart2, 0x101f3000L, 0x101f4000L);
