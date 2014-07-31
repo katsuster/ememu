@@ -40,11 +40,14 @@ public class Main {
         ARMv5 cpu = new ARMv5();
         SysBaseboard sysBoard = new SysBaseboard();
         SecondaryINTC intc2nd = new SecondaryINTC();
+        DMAC dmac = new DMAC();
         PrimaryINTC intc1st = new PrimaryINTC();
         SysController sysCtrl = new SysController();
         DualTimer timer0_1 = new DualTimer();
         DualTimer timer2_3 = new DualTimer();
         UART uart0 = new UART();
+        UART uart1 = new UART();
+        UART uart2 = new UART();
         RAM ramMain = new RAM(8 * 1024 * 1024); //32MB
         Bus64 bus = new Bus64();
         int addrAtags = 0x81fff000;
@@ -57,6 +60,7 @@ public class Main {
         //  0x10000000 - 0x13ffffff: CS5
         //    0x10000000 - 0x10000fff: System Registers
         //    0x10003000 - 0x10003fff: Secondary Interrupt Controller
+        //    0x10130000 - 0x1013ffff: DMA Contoroller (PL080)
         //    0x10140000 - 0x1014ffff: Primary Interrupt Contoroller (PL190)
         //    0x101e0000 - 0x101e1000: System Controller (SP810)
         //    0x101e2000 - 0x101e2fff: Dual-Timer 0 and 1 (SP804)
@@ -70,11 +74,14 @@ public class Main {
         //    0x81fff000 - 0x81ffffff: ATAG_XXX
         bus.addSlaveCore(sysBoard, 0x10000000L, 0x10001000L);
         bus.addSlaveCore(intc2nd, 0x10003000L, 0x10004000L);
+        bus.addSlaveCore(dmac, 0x10130000L, 0x10140000L);
         bus.addSlaveCore(intc1st, 0x10140000L, 0x10150000L);
         bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e1000L);
         bus.addSlaveCore(timer0_1, 0x101e2000L, 0x101e3000L);
         bus.addSlaveCore(timer2_3, 0x101e3000L, 0x101e4000L);
         bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
+        bus.addSlaveCore(uart1, 0x101f2000L, 0x101f3000L);
+        bus.addSlaveCore(uart2, 0x101f3000L, 0x101f4000L);
         bus.addSlaveCore(ramMain, 0x80000000L, 0x82000000L);
 
         //reset
