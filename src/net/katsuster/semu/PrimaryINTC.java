@@ -123,10 +123,8 @@ public class PrimaryINTC extends Controller64Reg32 {
         addReg(REG_VICPERIPHID0, "VICPERIPHID0", 0x00000090);
         addReg(REG_VICPERIPHID1, "VICPERIPHID1", 0x00000011);
         //レジスタの説明（3.3.14）とリセット後の初期値（Table 3-1）が
-        //矛盾しているため、レジスタの説明を正しいものとして実装する
-        //[ 7: 4]: Revision   : must be 0x1
-        //[ 3: 0]: Designer1  : must be 0x0
-        addReg(REG_VICPERIPHID2, "VICPERIPHID2", 0x00000010);
+        //矛盾しているため、リセット後の初期値を正しいものとして実装する
+        addReg(REG_VICPERIPHID2, "VICPERIPHID2", 0x00000004);
         addReg(REG_VICPERIPHID3, "VICPERIPHID3", 0x00000000);
         addReg(REG_VICPCELLID0, "VICPCELLID0", 0x0000000d);
         addReg(REG_VICPCELLID1, "VICPCELLID1", 0x000000f0);
