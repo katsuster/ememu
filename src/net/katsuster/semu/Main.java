@@ -42,7 +42,7 @@ public class Main {
 
     public static void main(String[] args) {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
-        String cmdl = "console=ttyAMA0 mem=64M lpj=2000 root=/dev/nfs debug printk.time=1\0";
+        String cmdl = "console=ttyAMA0 mem=64M lpj=0 root=/dev/nfs debug printk.time=1\0";
 
         byte[] cmdlb = cmdl.getBytes();
         byte[] cmdline = new byte[(cmdlb.length + 3) & ~0x3];
