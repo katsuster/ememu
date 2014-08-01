@@ -4690,8 +4690,8 @@ public class ARMv5 extends CPU {
     public void doExceptionIRQ(String dbgmsg) {
         int pcOrg, spsrOrg;
 
-        System.out.printf("Exception: IRQ by '%s'.\n",
-                dbgmsg);
+        //System.out.printf("Exception: IRQ by '%s'.\n",
+        //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;

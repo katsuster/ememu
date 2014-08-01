@@ -262,10 +262,10 @@ public class CoProcStdv5 extends CoProc {
             System.out.printf("I&D-cache: invalidated 0x%08x.\n", val);
             break;
         case CR07_ICH_INVALL:
-            System.out.printf("I-cache  : all invalidated.\n");
+            //System.out.printf("I-cache  : all invalidated.\n");
             break;
         case CR07_ICH_INVV:
-            System.out.printf("I-cache  : invalidated 0x%08x.\n", val);
+            //System.out.printf("I-cache  : invalidated 0x%08x.\n", val);
             break;
         case CR07_DCH_INVALL:
             System.out.printf("D-cache  : all invalidated.\n");
@@ -369,10 +369,10 @@ public class CoProcStdv5 extends CoProc {
             dom[i] = (val >> (i * 2)) & 0x3;
         }
 
-        System.out.printf("DACR     : 0x%x.\n", val);
+        //System.out.printf("DACR     : 0x%x.\n", val);
 
         for (int i = 0; i < 16; i++) {
-            System.out.printf("  dom%2d  : 0x%x.\n", i, dom[i]);
+            //System.out.printf("  dom%2d  : 0x%x.\n", i, dom[i]);
         }
 
         super.setCReg(CR03_MMU_DACR, val);
