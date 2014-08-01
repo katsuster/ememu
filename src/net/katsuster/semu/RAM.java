@@ -13,12 +13,17 @@ public class RAM extends SlaveCore64 {
 
     private long[] words;
 
+    /**
+     * RAM を作成します。
+     *
+     * @param size RAM サイズ（バイト単位）
+     */
     public RAM(int size) {
         if (size < 0) {
             throw new IllegalArgumentException("size is negative.");
         }
 
-        this.words = new long[size];
+        this.words = new long[size / LEN_WORD];
     }
 
     /**
