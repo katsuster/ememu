@@ -3,6 +3,17 @@ package net.katsuster.semu;
 import java.io.*;
 
 public class Main {
+    public static final int ATAG_NONE      = 0x00000000;
+    public static final int ATAG_CORE      = 0x54410001;
+    public static final int ATAG_MEM       = 0x54410002;
+    public static final int ATAG_VIDEOTEXT = 0x54410003;
+    public static final int ATAG_RAMDISK   = 0x54410004;
+    public static final int ATAG_INITRD2   = 0x54420005;
+    public static final int ATAG_SERIAL    = 0x54410006;
+    public static final int ATAG_REVISION  = 0x54410007;
+    public static final int ATAG_VIDEOLFB  = 0x54410008;
+    public static final int ATAG_CMDLINE   = 0x54410009;
+
     public static void loadFile(String filename, CPU cpu, int addr) {
         int lenWords;
 
@@ -31,7 +42,7 @@ public class Main {
 
     public static void main(String[] args) {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
-        String cmdl = "console=ttyAMA0 mem=32M debug root=/dev/nfs\0";
+        String cmdl = "console=ttyAMA0 mem=64M lpj=2000 root=/dev/nfs debug printk.time=1\0";
 
         byte[] cmdlb = cmdl.getBytes();
         byte[] cmdline = new byte[(cmdlb.length + 3) & ~0x3];
@@ -42,9 +53,12 @@ public class Main {
         SysBaseboard sysBoard = new SysBaseboard();
         SecondaryINTC intc2nd = new SecondaryINTC();
         AACI aaci = new AACI();
-        MMCI mci = new MMCI();
+        MMCI mci0 = new MMCI();
         KMI kmiKey = new KMI();
         KMI kmiMouse = new KMI();
+        UART uart3 = new UART();
+        SCard scard1 = new SCard();
+        MMCI mci1 = new MMCI();
         SSMC ssmc = new SSMC();
         MPMC mpmc = new MPMC();
         LCDC clcdc = new LCDC();
@@ -59,13 +73,15 @@ public class Main {
         GPIO gpio2 = new GPIO();
         GPIO gpio3 = new GPIO();
         RTC rtc = new RTC();
-        SCard scard = new SCard();
+        SCard scard0 = new SCard();
         UART uart0 = new UART();
         UART uart1 = new UART();
         UART uart2 = new UART();
         SSP ssp = new SSP();
-        RAM ramMain = new RAM(8 * 1024 * 1024); //32MB
-        int addrAtags = 0x81fff000;
+        int addrRAM = 0x80000000;
+        int sizeRAM = 64 * 1024 * 1024; //64MB
+        RAM ramMain = new RAM(sizeRAM);
+        int addrAtags = addrRAM + sizeRAM - 4096;
 
         cpu.setSlaveBus(bus);
         cpu.setINTCForIRQ(intc1st.getSubINTCForIRQ());
@@ -76,9 +92,12 @@ public class Main {
         //    0x10000000 - 0x10000fff: System Registers
         //    0x10003000 - 0x10003fff: Secondary Interrupt Controller
         //    0x10004000 - 0x10004fff: Advanced Audio CODEC Interface (PL041)
-        //    0x10005000 - 0x10005fff: Multimedia Card Interface (PL180)
+        //    0x10005000 - 0x10005fff: Multimedia Card Interface 0 (PL180)
         //    0x10006000 - 0x10006fff: PS2 Keyboard Interface (PL050)
         //    0x10007000 - 0x10007fff: PS2 Mouse Interface (PL050)
+        //    0x10009000 - 0x10009fff: UART2 (PL011)
+        //    0x1000a000 - 0x1000afff: Smart Card Interface 1 (PL131)
+        //    0x1000b000 - 0x1000bfff: Multimedia Card Interface 1 (PL180)
         //    0x10100000 - 0x1010ffff: Synchronous Static Memory Controller (PL093)
         //    0x10110000 - 0x1011ffff: MultiPort Memory Controller (GX175)
         //    0x10120000 - 0x1012ffff: Color LCD Controller (PL110)
@@ -93,7 +112,7 @@ public class Main {
         //    0x101e6000 - 0x101e6fff: General Purpose I/O 2 (PL061)
         //    0x101e7000 - 0x101e7fff: General Purpose I/O 3 (PL061)
         //    0x101e8000 - 0x101e8fff: Real Time Clock (PL031)
-        //    0x101f0000 - 0x101f0fff: Smart Card Interface (PL131)
+        //    0x101f0000 - 0x101f0fff: Smart Card Interface 0 (PL131)
         //    0x101f1000 - 0x101f1fff: UART0 (PL011)
         //    0x101f2000 - 0x101f2fff: UART1 (PL011)
         //    0x101f3000 - 0x101f3fff: UART2 (PL011)
@@ -105,8 +124,11 @@ public class Main {
         bus.addSlaveCore(sysBoard, 0x10000000L, 0x10001000L);
         bus.addSlaveCore(intc2nd, 0x10003000L, 0x10004000L);
         bus.addSlaveCore(aaci, 0x10004000L, 0x10005000L);
-        bus.addSlaveCore(mci, 0x10005000L, 0x10006000L);
+        bus.addSlaveCore(mci0, 0x10005000L, 0x10006000L);
         bus.addSlaveCore(kmiKey, 0x10006000L, 0x10007000L);
+        bus.addSlaveCore(uart3, 0x10009000L, 0x1000a000L);
+        bus.addSlaveCore(scard1, 0x1000a000L, 0x1000b000L);
+        bus.addSlaveCore(mci1, 0x1000b000L, 0x1000c000L);
         bus.addSlaveCore(kmiMouse, 0x10007000L, 0x10008000L);
         bus.addSlaveCore(ssmc, 0x10100000L, 0x10110000L);
         bus.addSlaveCore(mpmc, 0x10110000L, 0x10120000L);
@@ -122,12 +144,12 @@ public class Main {
         bus.addSlaveCore(gpio2, 0x101e6000L, 0x101e7000L);
         bus.addSlaveCore(gpio3, 0x101e7000L, 0x101e8000L);
         bus.addSlaveCore(rtc, 0x101e8000L, 0x101e9000L);
-        bus.addSlaveCore(scard, 0x101f0000L, 0x101f1000L);
+        bus.addSlaveCore(scard0, 0x101f0000L, 0x101f1000L);
         bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
         bus.addSlaveCore(uart1, 0x101f2000L, 0x101f3000L);
         bus.addSlaveCore(uart2, 0x101f3000L, 0x101f4000L);
         bus.addSlaveCore(ssp, 0x101f4000L, 0x101f5000L);
-        bus.addSlaveCore(ramMain, 0x80000000L, 0x82000000L);
+        bus.addSlaveCore(ramMain, 0x80000000L, 0x80000000L + (sizeRAM & 0xffffffffL));
 
         //INTC
         intc1st.connectINTC(4, timer0_1);
@@ -147,40 +169,41 @@ public class Main {
 
         //r1: machine type
         //ARM-Versatile PB
-        //cpu.setReg(1, 0x00000183);
+        cpu.setReg(1, 0x00000183);
         //ARM-Versatile AB
-        cpu.setReg(1, 0x0000025e);
+        //cpu.setReg(1, 0x0000025e);
 
         //r2: atags or dtb pointer.
         cpu.setReg(2, addrAtags);
         {
-            //ATAG_CORE, size, tag, flags, pagesize, rootdev
-            cpu.write32(addrAtags + 0x00, 0x00000005);
-            cpu.write32(addrAtags + 0x04, 0x54410001);
-            cpu.write32(addrAtags + 0x08, 0x00000000);
-            cpu.write32(addrAtags + 0x0c, 0x00001000);
-            cpu.write32(addrAtags + 0x10, 0x00000000);
-            addrAtags += 0x14;
+            //ATAG_CORE, size, tag, [flags, pagesize, rootdev]
+            cpu.write32(addrAtags + 0x00, 0x00000002);
+            cpu.write32(addrAtags + 0x04, ATAG_CORE);
+            //cpu.write32(addrAtags + 0x08, 0x00000000);
+            //cpu.write32(addrAtags + 0x0c, 0x00001000);
+            //cpu.write32(addrAtags + 0x10, 0x00000000);
+            //addrAtags += 0x14;
+            addrAtags += 0x08;
 
             //ATAG_MEM, size, tag, size, start
             cpu.write32(addrAtags + 0x00, 0x00000004);
-            cpu.write32(addrAtags + 0x04, 0x54410002);
-            cpu.write32(addrAtags + 0x08, 0x02000000);
-            cpu.write32(addrAtags + 0x0c, 0x80000000);
+            cpu.write32(addrAtags + 0x04, ATAG_MEM);
+            cpu.write32(addrAtags + 0x08, sizeRAM);
+            cpu.write32(addrAtags + 0x0c, addrRAM);
             addrAtags += 0x10;
 
             //ATAG_REVISION, size, tag, rev
             cpu.write32(addrAtags + 0x00, 0x00000003);
-            cpu.write32(addrAtags + 0x04, 0x54410007);
+            cpu.write32(addrAtags + 0x04, ATAG_REVISION);
             //ARM-Versatile PB
-            //cpu.write32(addrAtags + 0x08, 0x00000183);
+            cpu.write32(addrAtags + 0x08, 0x00000183);
             //ARM-Versatile AB
-            cpu.write32(addrAtags + 0x08, 0x0000025e);
+            //cpu.write32(addrAtags + 0x08, 0x0000025e);
             addrAtags += 0x0c;
 
             //ATAG_CMDLINE
             cpu.write32(addrAtags + 0x00, 0x00000002 + cmdline.length / 4);
-            cpu.write32(addrAtags + 0x04, 0x54410009);
+            cpu.write32(addrAtags + 0x04, ATAG_CMDLINE);
             for (int i = 0; i < cmdline.length; i++) {
                 cpu.write8(addrAtags + 0x08 + i, cmdline[i]);
             }
@@ -188,7 +211,7 @@ public class Main {
 
             //ATAG_NONE, size, tag
             cpu.write32(addrAtags + 0x00, 0x00000002);
-            cpu.write32(addrAtags + 0x04, 0x00000000);
+            cpu.write32(addrAtags + 0x04, ATAG_NONE);
             addrAtags += 0x08;
         }
 
