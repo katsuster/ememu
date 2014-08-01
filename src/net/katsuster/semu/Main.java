@@ -41,6 +41,10 @@ public class Main {
         Bus64 bus = new Bus64();
         SysBaseboard sysBoard = new SysBaseboard();
         SecondaryINTC intc2nd = new SecondaryINTC();
+        AACI aaci = new AACI();
+        MMCI mci = new MMCI();
+        KMI kmiKey = new KMI();
+        KMI kmiMouse = new KMI();
         SSMC ssmc = new SSMC();
         MPMC mpmc = new MPMC();
         LCDC clcdc = new LCDC();
@@ -71,6 +75,10 @@ public class Main {
         //  0x10000000 - 0x13ffffff: CS5
         //    0x10000000 - 0x10000fff: System Registers
         //    0x10003000 - 0x10003fff: Secondary Interrupt Controller
+        //    0x10004000 - 0x10004fff: Advanced Audio CODEC Interface (PL041)
+        //    0x10005000 - 0x10005fff: Multimedia Card Interface (PL180)
+        //    0x10006000 - 0x10006fff: PS2 Keyboard Interface (PL050)
+        //    0x10007000 - 0x10007fff: PS2 Mouse Interface (PL050)
         //    0x10100000 - 0x1010ffff: Synchronous Static Memory Controller (PL093)
         //    0x10110000 - 0x1011ffff: MultiPort Memory Controller (GX175)
         //    0x10120000 - 0x1012ffff: Color LCD Controller (PL110)
@@ -96,6 +104,10 @@ public class Main {
         //    0x81fff000 - 0x81ffffff: ATAG_XXX
         bus.addSlaveCore(sysBoard, 0x10000000L, 0x10001000L);
         bus.addSlaveCore(intc2nd, 0x10003000L, 0x10004000L);
+        bus.addSlaveCore(aaci, 0x10004000L, 0x10005000L);
+        bus.addSlaveCore(mci, 0x10005000L, 0x10006000L);
+        bus.addSlaveCore(kmiKey, 0x10006000L, 0x10007000L);
+        bus.addSlaveCore(kmiMouse, 0x10007000L, 0x10008000L);
         bus.addSlaveCore(ssmc, 0x10100000L, 0x10110000L);
         bus.addSlaveCore(mpmc, 0x10110000L, 0x10120000L);
         bus.addSlaveCore(clcdc, 0x10120000L, 0x10130000L);
