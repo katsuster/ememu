@@ -14,9 +14,9 @@ public class SysBaseboard extends Controller64Reg32 {
     private long start24MHz;
 
     public SysBaseboard() {
-        addReg(REG_SYS_24MHZ, "SYS_24MHZ", 0x00000000);
-
         start24MHz = System.nanoTime();
+
+        addReg(REG_SYS_24MHZ, "SYS_24MHZ", 0x00000000);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class SysBaseboard extends Controller64Reg32 {
 
         switch (regaddr) {
         case REG_SYS_24MHZ:
-            result = (int)((System.nanoTime() - start24MHz) * 24);
+            result = (int)((System.nanoTime() - start24MHz) / 1000 * 24);
             break;
         default:
             result = super.getReg(regaddr);
