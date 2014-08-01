@@ -31,7 +31,7 @@ public class Main {
 
     public static void main(String[] args) {
         String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
-        String cmdl = "console=ttyS0 lpj=10000 mem=32M debug root=/dev/nfs \0";
+        String cmdl = "console=ttyAMA0 mem=32M debug root=/dev/nfs\0";
 
         byte[] cmdlb = cmdl.getBytes();
         byte[] cmdline = new byte[(cmdlb.length + 3) & ~0x3];
@@ -128,6 +128,9 @@ public class Main {
         bus.addSlaveCore(uart2, 0x101f3000L, 0x101f4000L);
         bus.addSlaveCore(ssp, 0x101f4000L, 0x101f5000L);
         bus.addSlaveCore(ramMain, 0x80000000L, 0x82000000L);
+
+        //INTC
+        intc1st.connectINTC(4, timer0_1);
 
         //reset
         cpu.setDisasmMode(false);
