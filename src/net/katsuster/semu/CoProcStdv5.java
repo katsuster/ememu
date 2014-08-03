@@ -327,6 +327,10 @@ public class CoProcStdv5 extends CoProc {
 
         //v: ハイベクタ、0: 無効、1: 有効
         getCPU().setHighVector(v);
+        //r: ROM 保護ビット
+        getCPU().getMMU().setROMProtect(r);
+        //s: システム保護ビット
+        getCPU().getMMU().setSystemProtect(s);
         //a: アドレスアラインメントチェック、0: 無効、1: 有効
         getCPU().getMMU().setAlignmentCheck(a);
         //m: MMU イネーブルビット、0: 無効、1: 有効
@@ -347,15 +351,10 @@ public class CoProcStdv5 extends CoProc {
         System.out.printf("  base   : 0x%x.\n", base);
 
         //MMU の状態を更新する
-        getCPU().getMMU().update(val);
+        getCPU().getMMU().setTableBase(val);
 
         super.setCReg(CR02_MMU_TTBR0, val);
     }
-
-    public static final int ACC_INVALID = 0x0;
-    public static final int ACC_CLIENT = 0x1;
-    public static final int ACC_RESERVED = 0x2;
-    public static final int ACC_MANAGER = 0x3;
 
     /**
      * crn03: メモリの保護と制御、MMU ドメインアクセス制御
@@ -363,16 +362,8 @@ public class CoProcStdv5 extends CoProc {
      * @param val 新たなレジスタの値
      */
     public void setDACR(int val) {
-        int[] dom = new int[16];
-
         for (int i = 0; i < 16; i++) {
-            dom[i] = (val >> (i * 2)) & 0x3;
-        }
-
-        //System.out.printf("DACR     : 0x%x.\n", val);
-
-        for (int i = 0; i < 16; i++) {
-            //System.out.printf("  dom%2d  : 0x%x.\n", i, dom[i]);
+            getCPU().getMMU().setDomainAccess(i, (val >> (i * 2)) & 0x3);
         }
 
         super.setCReg(CR03_MMU_DACR, val);

@@ -725,6 +725,15 @@ public class ARMv5 extends CPU {
     }
 
     /**
+     * 現在のプロセッサモードが特権モードか否かを取得します。
+     *
+     * @return 特権モードであれば true、特権モードでなければ false
+     */
+    public boolean isPrivMode() {
+        return getCPSR_Mode() != MODE_USR;
+    }
+
+    /**
      * アドレシングモード 1 - データ処理オペランドを取得します。
      *
      * @param inst ARM 命令
@@ -2579,7 +2588,7 @@ public class ARMv5 extends CPU {
         rot = getReg(rn) & 0x3;
 
         vaddr = getReg(rn);
-        paddr = getMMU().translate(vaddr, false, 4);
+        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), false);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -2659,7 +2668,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false, 1);
+        paddr = getMMU().translate(vaddr, 1, false, isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -2717,7 +2726,7 @@ public class ARMv5 extends CPU {
         }
         rot = vaddr & 0x3;
 
-        paddr = getMMU().translate(vaddr, false, 4);
+        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -2798,7 +2807,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false, 2);
+        paddr = getMMU().translate(vaddr, 2, false, isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -2855,7 +2864,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false, 1);
+        paddr = getMMU().translate(vaddr, 1, false, isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -2912,7 +2921,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false, 2);
+        paddr = getMMU().translate(vaddr, 2, false, isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -2969,7 +2978,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false, 4);
+        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3053,7 +3062,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false, 1);
+        paddr = getMMU().translate(vaddr, 1, false, isPrivMode(), false);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3108,7 +3117,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false, 4);
+        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), false);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3163,7 +3172,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false, 2);
+        paddr = getMMU().translate(vaddr, 2, false, isPrivMode(), false);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3218,7 +3227,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, false, 4);
+        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), false);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3275,7 +3284,7 @@ public class ARMv5 extends CPU {
                 continue;
             }
 
-            paddr = getMMU().translate(vaddr, false, 4);
+            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return;
@@ -3293,7 +3302,7 @@ public class ARMv5 extends CPU {
         if (BitOp.getBit32(rlist, 15)) {
             int v;
 
-            paddr = getMMU().translate(vaddr, false, 4);
+            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return;
@@ -3350,7 +3359,7 @@ public class ARMv5 extends CPU {
                 continue;
             }
 
-            paddr = getMMU().translate(vaddr, false, 4);
+            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return;
@@ -3369,7 +3378,7 @@ public class ARMv5 extends CPU {
         setCPSR(getSPSR());
 
         //r15 は必ずロードする
-        paddr = getMMU().translate(vaddr, false, 4);
+        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3426,7 +3435,7 @@ public class ARMv5 extends CPU {
                 continue;
             }
 
-            paddr = getMMU().translate(vaddr, false, 4);
+            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), false);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return;
@@ -3767,7 +3776,7 @@ public class ARMv5 extends CPU {
 
         //現在の PC の指すアドレスから命令を取得します
         vaddr = getPC() - 8;
-        paddr = getMMU().translate(vaddr, true, 4);
+        paddr = getMMU().translate(vaddr, 4, true, isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return null;
