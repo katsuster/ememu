@@ -134,7 +134,7 @@ public class MMUv5 {
      * @param read 読み取りアクセスならば true、書き込みアクセスならば false
      * @param dbgmsg デバッグ用のメッセージ
      */
-    public void faultMMU(int fs, int dom, int va, boolean inst, String dbgmsg) {
+    public void faultMMU(int fs, int dom, int va, boolean inst, boolean priv, boolean read, String dbgmsg) {
         int val, num;
 
         //フォルトを起こしたことを覚えておく
@@ -309,7 +309,7 @@ public class MMUv5 {
 
         if (!inst && 0x00 <= va && va <= 0x1f) {
             //ベクタ例外
-            faultMMU(FS_VECT, 0, va, inst,
+            faultMMU(FS_VECT, 0, va, inst, priv, read,
                     String.format("Vector, va[0x%08x]",
                             va));
             return 0;
@@ -323,7 +323,7 @@ public class MMUv5 {
         validAlign = (va & (size - 1)) == 0;
         if (isAlignmentCheck() && !validAlign) {
             //アラインメントフォルト
-            faultMMU(FS_ALIGN1, 0, va, inst,
+            faultMMU(FS_ALIGN1, 0, va, inst, priv, read,
                     String.format("MMU align, size:%d, va[0x%08x]",
                             size, va));
             return 0;
@@ -332,7 +332,7 @@ public class MMUv5 {
         paL1 = getL1Address(va);
         if (!getCPU().tryRead(paL1)) {
             //変換時の外部アボート、第1レベル
-            faultMMU(FS_TRANS_L1, 0, va, inst,
+            faultMMU(FS_TRANS_L1, 0, va, inst, priv, read,
                     String.format("MMU trans L1, va[0x%08x], paL1[%08x]",
                             va, paL1));
             return 0;
@@ -344,7 +344,7 @@ public class MMUv5 {
         case 0:
             //フォルト
             //変換フォルト、セクション
-            faultMMU(FS_TRANS_SEC, 0, va, inst,
+            faultMMU(FS_TRANS_SEC, 0, va, inst, priv, read,
                     String.format("MMU trans sec, va[0x%08x], paL1[0x%08x], entryL1:[0x%08x]",
                             va, paL1, entryL1));
             return 0;
@@ -572,7 +572,7 @@ public class MMUv5 {
         domAcc = getDomainAccess(dom);
         if (domAcc == DOMACC_INVALID || domAcc == DOMACC_RESERVED) {
             //ドメインフォルト、セクション
-            faultMMU(FS_DOM_SEC, dom, va, inst,
+            faultMMU(FS_DOM_SEC, dom, va, inst, priv, read,
                     String.format("Domain section, va[0x%08x], dom:%d, dom list:0x%08x, dom acc:%d, entryL1[%08x]",
                             va, dom,
                             getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
@@ -582,16 +582,11 @@ public class MMUv5 {
 
         if (domAcc == DOMACC_CLIENT && !isPermitted(priv, read, ap)) {
             //許可フォルト、セクション
-            faultMMU(FS_PERM_SEC, dom, va, inst,
+            faultMMU(FS_PERM_SEC, dom, va, inst, priv, read,
                     String.format("Permission section, va[0x%08x], dom acc:%d, ap:%d, entryL1[%08x]",
                             va, domAcc, ap, entryL1));
             return 0;
         }
-
-        //TODO: アクセスチェック
-        //if (cond) {
-        //TODO: 違反ならデータアボート
-        //}
 
         //物理アドレス
         pa = (base << 20) | tblIndex;
