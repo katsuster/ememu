@@ -2624,14 +2624,122 @@ public class ARMv5 extends CPU {
         setReg(rd, right);
     }
 
+    /**
+     * 変換付きレジスタロード命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeLdrt(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetAddress(inst);
+        int vaddr, paddr, rot, value;
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("ldrt%s", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetAddressName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //P ビットは必ず 0、ポストインデクス
+        vaddr = getReg(rn);
+
+        rot = vaddr & 0x3;
+
+        paddr = getMMU().translate(vaddr, 4, false, false, true);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("ldrt [%08x]", paddr));
+            return;
+        }
+        value = read32(paddr);
+
+        switch (rot) {
+        case 0:
+            //do nothing
+            break;
+        case 1:
+            value = Integer.rotateRight(value, 8);
+            break;
+        case 2:
+            value = Integer.rotateRight(value, 16);
+            break;
+        case 3:
+            value = Integer.rotateRight(value, 24);
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal address " +
+                    String.format("inst:0x%08x, rot:%d.",
+                            inst.getInst(), rot));
+        }
+
+        if (rd == 15) {
+            setPC(value & 0xfffffffe);
+            setCPSR_T(BitOp.getBit32(value, 0));
+        } else {
+            setReg(rd, value);
+        }
+
+        //W ビットは必ず 1、ベースレジスタを更新する
+        setReg(rn, offset);
     }
 
+    /**
+     * 変換付きレジスタバイトロード命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeLdrbt(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetAddress(inst);
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("ldrbt%s", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetAddressName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //P ビットは必ず 0、ポストインデクス
+        vaddr = getReg(rn);
+
+        paddr = getMMU().translate(vaddr, 1, false, false, true);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryRead(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("ldrbt [%08x]", paddr));
+            return;
+        }
+        value = (int)(read8(paddr)) & 0xff;
+
+        setReg(rd, value);
+
+        //W ビットは必ず 1、ベースレジスタを更新する
+        setReg(rn, offset);
     }
 
     /**
