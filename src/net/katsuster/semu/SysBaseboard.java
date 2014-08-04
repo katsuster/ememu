@@ -49,6 +49,7 @@ public class SysBaseboard extends Controller64Reg32 {
 
         switch (regaddr) {
         case REG_SYS_24MHZ:
+            //TODO: 桁あふれ問題が未解決のまま
             result = (int)((System.nanoTime() - start24MHz) / 1000 * 24);
             break;
         default:
