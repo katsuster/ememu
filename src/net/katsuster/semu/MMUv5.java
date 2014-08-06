@@ -157,7 +157,7 @@ public class MMUv5 {
             //データアボート例外
             num = ARMv5.EXCEPT_ABT_DATA;
         }
-        getCPU().raiseException(num, String.format("%s, va:%08x, dom:%d, inst:%s, priv:%s, read:%s.",
+        getCPU().raiseException(num, String.format("%s, va:0x%08x, dom:%d, inst:%s, priv:%s, read:%s.",
                 dbgmsg, va, dom,
                 inst ? "ins" : "dat",
                 priv ? "priv" : "user",
@@ -336,7 +336,7 @@ public class MMUv5 {
         if (!getCPU().tryRead(paL1)) {
             //変換時の外部アボート、第1レベル
             faultMMU(FS_TRANS_L1, 0, va, inst, priv, read,
-                    String.format("MMU trans L1, paL1:%08x", paL1));
+                    String.format("MMU trans L1, paL1:0x%08x", paL1));
             return 0;
         }
         entryL1 = getCPU().read32(paL1);
