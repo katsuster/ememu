@@ -462,16 +462,6 @@ public class MMUv5 {
         int tblIndex = BitOp.getField32(va, 0, 16);
         int acc, apsub, pa;
 
-        acc = getDomainAccess(dom);
-        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
-            //ドメインフォルト、ページ
-            faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
-                    String.format("Domain page (large), dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
-                            getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
-                            acc, entryL1));
-            return 0;
-        }
-
         switch (sub) {
         case 0: case 1: case 2: case 3:
             apsub = BitOp.getField32(entryL2, 4 + sub * 2, 2);
@@ -480,6 +470,16 @@ public class MMUv5 {
             throw new IllegalArgumentException("Unknown sub page (large), " +
                     String.format("sub:%d, va:0x%08x, entryL1:0x%08x, entryL2:%d.",
                             sub, va, entryL1, entryL2));
+        }
+
+        acc = getDomainAccess(dom);
+        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
+            //ドメインフォルト、ページ
+            faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
+                    String.format("Domain page (large), dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
+                            getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
+                            acc, entryL1));
+            return 0;
         }
 
         if (acc == DOMACC_CLIENT && !isPermitted(priv, read, apsub)) {
@@ -518,16 +518,6 @@ public class MMUv5 {
         int tblIndex = BitOp.getField32(va, 0, 12);
         int acc, apsub, pa;
 
-        acc = getDomainAccess(dom);
-        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
-            //ドメインフォルト、ページ
-            faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
-                    String.format("Domain page (small), dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
-                            getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
-                            acc, entryL1));
-            return 0;
-        }
-
         switch (sub) {
         case 0: case 1: case 2: case 3:
             apsub = BitOp.getField32(entryL2, 4 + sub * 2, 2);
@@ -536,6 +526,16 @@ public class MMUv5 {
             throw new IllegalArgumentException("Unknown sub page (small), " +
                     String.format("sub:%d, va:0x%08x, entryL1:0x%08x, entryL2:%d.",
                             sub, va, entryL1, entryL2));
+        }
+
+        acc = getDomainAccess(dom);
+        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
+            //ドメインフォルト、ページ
+            faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
+                    String.format("Domain page (small), dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
+                            getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
+                            acc, entryL1));
+            return 0;
         }
 
         if (acc == DOMACC_CLIENT && !isPermitted(priv, read, apsub)) {
