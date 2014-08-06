@@ -307,13 +307,14 @@ public class MMUv5 {
             throw new IllegalStateException("Fault status not cleared.");
         }
 
-        if (!inst && 0x00 <= va && va <= 0x1f) {
+        //TODO: アドレス以外の条件がある？
+        /*if (!inst && 0x00 <= va && va <= 0x1f) {
             //ベクタ例外
             faultMMU(FS_VECT, 0, va, inst, priv, read,
-                    String.format("Vector, va[0x%08x]",
+                    String.format("MMU vector, va[0x%08x]",
                             va));
             return 0;
-        }
+        }*/
 
         if (!isEnable()) {
             //MMU 無効なので変換しない
@@ -441,14 +442,54 @@ public class MMUv5 {
     /**
      * 大ページ（64KB）のアドレスを取得します。
      *
-     * @param va 仮想アドレス
+     * @param va  仮想アドレス
+     * @param inst 仮想アドレスが指すデータの種類、
+     *             命令の場合は true、データの場合は false
+     * @param priv 特権アクセスならば true、非特権アクセスならば false
+     * @param read 読み取りアクセスならば true、書き込みアクセスならば false
+     * @param entryL1 第 1 レベル記述子
      * @param entryL2 第 2 レベル記述子
      * @return 大ページの物理アドレス
      */
-    protected int getPageAddressLarge(int va, int entryL2) {
+    protected int getPageAddressLarge(int va, boolean inst, boolean priv, boolean read, int entryL1, int entryL2) {
+        int dom = BitOp.getField32(entryL1, 5, 4);
         int base = BitOp.getField32(entryL2, 16, 16);
+        //int ap3 = BitOp.getField32(entryL2, 10, 2);
+        //int ap2 = BitOp.getField32(entryL2, 8, 2);
+        //int ap1 = BitOp.getField32(entryL2, 6, 2);
+        //int ap0 = BitOp.getField32(entryL2, 4, 2);
+        int sub = BitOp.getField32(va, 14, 2);
         int tblIndex = BitOp.getField32(va, 0, 16);
-        int pa;
+        int acc, apsub, pa;
+
+        acc = getDomainAccess(dom);
+        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
+            //ドメインフォルト、ページ
+            faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
+                    String.format("Domain page large, va[0x%08x], dom:%d, dom list:0x%08x, dom acc:%d, entryL1[%08x]",
+                            va, dom,
+                            getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
+                            acc, entryL1));
+            return 0;
+        }
+
+        switch (sub) {
+        case 0: case 1: case 2: case 3:
+            apsub = BitOp.getField32(entryL2, 4 + sub * 2, 2);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown sub page large" +
+                    String.format("sub:%d, va:0x%08x, entryL1:0x%08x, entryL2:%d.",
+                            sub, va, entryL1, entryL2));
+        }
+
+        if (acc == DOMACC_CLIENT && !isPermitted(priv, read, apsub)) {
+            //許可フォルト、ページ
+            faultMMU(FS_PERM_PAGE, dom, va, inst, priv, read,
+                    String.format("Permission page large, va[0x%08x], dom acc:%d, sub:%d, apsub:%d, entryL1[%08x], entryL2[%08x]",
+                            va, acc, sub, apsub, entryL1, entryL2));
+            return 0;
+        }
 
         pa = (base << 16) | tblIndex;
 
@@ -458,15 +499,55 @@ public class MMUv5 {
     /**
      * 小ページ（4KB）のアドレスを取得します。
      *
-     * @param va 仮想アドレス
+     * @param va   仮想アドレス
+     * @param inst 仮想アドレスが指すデータの種類、
+     *             命令の場合は true、データの場合は false
+     * @param priv 特権アクセスならば true、非特権アクセスならば false
+     * @param read 読み取りアクセスならば true、書き込みアクセスならば false
+     * @param entryL1 第 1 レベル記述子
      * @param entryL2 第 2 レベル記述子
      * @return 小ページの物理アドレス
      */
-    protected int getPageAddressSmall(int va, int entryL2) {
+    protected int getPageAddressSmall(int va, boolean inst, boolean priv, boolean read, int entryL1, int entryL2) {
+        int dom = BitOp.getField32(entryL1, 5, 4);
         int base = BitOp.getField32(entryL2, 12, 20);
-        int tblIndex, pa;
+        //int ap3 = BitOp.getField32(entryL2, 10, 2);
+        //int ap2 = BitOp.getField32(entryL2, 8, 2);
+        //int ap1 = BitOp.getField32(entryL2, 6, 2);
+        //int ap0 = BitOp.getField32(entryL2, 4, 2);
+        int sub = BitOp.getField32(va, 10, 2);
+        int tblIndex = BitOp.getField32(va, 0, 12);
+        int acc, apsub, pa;
 
-        tblIndex = BitOp.getField32(va, 0, 12);
+        acc = getDomainAccess(dom);
+        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
+            //ドメインフォルト、ページ
+            faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
+                    String.format("Domain page small, va[0x%08x], dom:%d, dom list:0x%08x, dom acc:%d, entryL1[%08x]",
+                            va, dom,
+                            getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
+                            acc, entryL1));
+            return 0;
+        }
+
+        switch (sub) {
+        case 0: case 1: case 2: case 3:
+            apsub = BitOp.getField32(entryL2, 4 + sub * 2, 2);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown sub page small" +
+                    String.format("sub:%d, va:0x%08x, entryL1:0x%08x, entryL2:%d.",
+                            sub, va, entryL1, entryL2));
+        }
+
+        if (acc == DOMACC_CLIENT && !isPermitted(priv, read, apsub)) {
+            //許可フォルト、ページ
+            faultMMU(FS_PERM_PAGE, dom, va, inst, priv, read,
+                    String.format("Permission page small, va[0x%08x], dom acc:%d, sub:%d, apsub:%d, entryL1[%08x], entryL2[%08x]",
+                            va, acc, sub, apsub, entryL1, entryL2));
+            return 0;
+        }
+
         pa = (base << 12) | tblIndex;
 
         return pa;
@@ -475,14 +556,40 @@ public class MMUv5 {
     /**
      * 極小ページ（1KB）のアドレスを取得します。
      *
-     * @param va 仮想アドレス
+     * @param va  仮想アドレス
+     * @param inst 仮想アドレスが指すデータの種類、
+     *             命令の場合は true、データの場合は false
+     * @param priv 特権アクセスならば true、非特権アクセスならば false
+     * @param read 読み取りアクセスならば true、書き込みアクセスならば false
+     * @param entryL1 第 1 レベル記述子
      * @param entryL2 第 2 レベル記述子
      * @return 極小ページの物理アドレス
      */
-    protected int getPageAddressTiny(int va, int entryL2) {
+    protected int getPageAddressTiny(int va, boolean inst, boolean priv, boolean read, int entryL1, int entryL2) {
+        int dom = BitOp.getField32(entryL1, 5, 4);
         int base = BitOp.getField32(entryL2, 10, 22);
+        int ap = BitOp.getField32(entryL2, 4, 2);
         int tblIndex = BitOp.getField32(va, 0, 10);
-        int pa;
+        int acc, pa;
+
+        acc = getDomainAccess(dom);
+        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
+            //ドメインフォルト、ページ
+            faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
+                    String.format("Domain page tiny, va[0x%08x], dom:%d, dom list:0x%08x, dom acc:%d, entryL1[%08x]",
+                            va, dom,
+                            getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
+                            acc, entryL1));
+            return 0;
+        }
+
+        if (acc == DOMACC_CLIENT && !isPermitted(priv, read, ap)) {
+            //許可フォルト、ページ
+            faultMMU(FS_PERM_PAGE, dom, va, inst, priv, read,
+                    String.format("Permission page tiny, va[0x%08x], dom acc:%d, ap:%d, entryL1[%08x], entryL2[%08x]",
+                            va, acc, ap, entryL1, entryL2));
+            return 0;
+        }
 
         pa = (base << 10) | tblIndex;
 
@@ -563,28 +670,28 @@ public class MMUv5 {
         int base = BitOp.getField32(entryL1, 20, 12);
         int ap = BitOp.getField32(entryL1, 10, 2);
         int dom = BitOp.getField32(entryL1, 5, 4);
-        boolean imp = BitOp.getBit32(entryL1, 4);
-        boolean c = BitOp.getBit32(entryL1, 3);
-        boolean b = BitOp.getBit32(entryL1, 2);
+        //boolean imp = BitOp.getBit32(entryL1, 4);
+        //boolean c = BitOp.getBit32(entryL1, 3);
+        //boolean b = BitOp.getBit32(entryL1, 2);
         int tblIndex = BitOp.getField32(va, 0, 20);
-        int domAcc, pa;
+        int acc, pa;
 
-        domAcc = getDomainAccess(dom);
-        if (domAcc == DOMACC_INVALID || domAcc == DOMACC_RESERVED) {
+        acc = getDomainAccess(dom);
+        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
             //ドメインフォルト、セクション
             faultMMU(FS_DOM_SEC, dom, va, inst, priv, read,
-                    String.format("Domain section, va[0x%08x], dom:%d, dom list:0x%08x, dom acc:%d, entryL1[%08x]",
+                    String.format("Domain sec, va[0x%08x], dom:%d, dom list:0x%08x, dom acc:%d, entryL1[%08x]",
                             va, dom,
                             getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
-                            domAcc, entryL1));
+                            acc, entryL1));
             return 0;
         }
 
-        if (domAcc == DOMACC_CLIENT && !isPermitted(priv, read, ap)) {
+        if (acc == DOMACC_CLIENT && !isPermitted(priv, read, ap)) {
             //許可フォルト、セクション
             faultMMU(FS_PERM_SEC, dom, va, inst, priv, read,
-                    String.format("Permission section, va[0x%08x], dom acc:%d, ap:%d, entryL1[%08x]",
-                            va, domAcc, ap, entryL1));
+                    String.format("Permission sec, va[0x%08x], dom acc:%d, ap:%d, entryL1[%08x]",
+                            va, acc, ap, entryL1));
             return 0;
         }
 
@@ -609,32 +716,37 @@ public class MMUv5 {
      * @return 物理アドレス
      */
     protected int translateCoarse(int va, boolean inst, boolean priv, boolean read, int entryL1) {
+        int dom = BitOp.getField32(entryL1, 5, 4);
+        //int imp = BitOp.getField32(entryL1, 2, 3);
         int paL2, entryL2, typeL2;
         int pa;
 
-        //TODO: アクセスチェック
-        //if (cond) {
-        //TODO: 違反ならデータアボート
-        //}
-
         paL2 = getL2AddressCoarse(va, entryL1);
-
+        if (!getCPU().tryRead(paL2)) {
+            //変換時の外部アボート、第2レベル
+            faultMMU(FS_TRANS_L2, 0, va, inst, priv, read,
+                    String.format("MMU trans L2, va[0x%08x], entryL1[%08x], paL1[%08x]",
+                            va, entryL1, paL2));
+            return 0;
+        }
         entryL2 = getCPU().read32(paL2);
         typeL2 = BitOp.getField32(entryL2, 0, 2);
 
         switch (typeL2) {
         case 0:
             //フォルト
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            //変換フォルト、ページ
+            faultMMU(FS_TRANS_PAGE, 0, va, inst, priv, read,
+                    String.format("MMU trans page, va[0x%08x], paL2[0x%08x], entryL2:[0x%08x]",
+                            va, paL2, entryL2));
+            return 0;
         case 1:
             //大ページ
-            pa = getPageAddressLarge(va, entryL2);
+            pa = getPageAddressLarge(va, inst, priv, read, entryL1, entryL2);
             break;
         case 2:
             //小ページ
-            pa = getPageAddressSmall(va, entryL2);
+            pa = getPageAddressSmall(va, inst, priv, read, entryL1, entryL2);
             break;
         case 3:
             //極小ページ（使用禁止）
@@ -642,7 +754,7 @@ public class MMUv5 {
             throw new IllegalArgumentException("Sorry, not implemented.");
             //break;
         default:
-            throw new IllegalArgumentException("Unknown L2 table " +
+            throw new IllegalArgumentException("Unknown L2 table coarse " +
                     String.format("va:0x%08x, L1:0x%08x, paL2:0x%08x, L2:0x%08x typeL2:%d.",
                             va, entryL1, paL2, entryL2, typeL2));
         }
