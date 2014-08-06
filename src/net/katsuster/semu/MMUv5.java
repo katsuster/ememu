@@ -473,21 +473,33 @@ public class MMUv5 {
         }
 
         acc = getDomainAccess(dom);
-        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
+        switch (acc) {
+        case DOMACC_INVALID:
+        case DOMACC_RESERVED:
             //ドメインフォルト、ページ
             faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
                     String.format("Domain page (large), dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
                             getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
                             acc, entryL1));
             return 0;
-        }
+        case DOMACC_CLIENT:
+            if (isPermitted(priv, read, apsub)) {
+                //アクセス許可がある
+                break;
+            }
 
-        if (acc == DOMACC_CLIENT && !isPermitted(priv, read, apsub)) {
             //許可フォルト、ページ
             faultMMU(FS_PERM_PAGE, dom, va, inst, priv, read,
                     String.format("Permission page (large), dom acc:%d, sub:%d, apsub:%d, entryL1:0x%08x, entryL2:0x%08x",
                             acc, sub, apsub, entryL1, entryL2));
             return 0;
+        case DOMACC_MANAGER:
+            //アクセス許可がある
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown domain access (large), " +
+                    String.format("dom acc:%d, va:0x%08x, entryL1:0x%08x, entryL2:%d.",
+                            acc, va, entryL1, entryL2));
         }
 
         pa = (base << 16) | tblIndex;
@@ -529,21 +541,33 @@ public class MMUv5 {
         }
 
         acc = getDomainAccess(dom);
-        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
+        switch (acc) {
+        case DOMACC_INVALID:
+        case DOMACC_RESERVED:
             //ドメインフォルト、ページ
             faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
                     String.format("Domain page (small), dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
                             getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
                             acc, entryL1));
             return 0;
-        }
+        case DOMACC_CLIENT:
+            if (isPermitted(priv, read, apsub)) {
+                //アクセス許可がある
+                break;
+            }
 
-        if (acc == DOMACC_CLIENT && !isPermitted(priv, read, apsub)) {
             //許可フォルト、ページ
             faultMMU(FS_PERM_PAGE, dom, va, inst, priv, read,
                     String.format("Permission page (small), dom acc:%d, sub:%d, apsub:%d, entryL1:0x%08x, entryL2:0x%08x",
                             acc, sub, apsub, entryL1, entryL2));
             return 0;
+        case DOMACC_MANAGER:
+            //アクセス許可がある
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown domain access (small), " +
+                    String.format("dom acc:%d, va:0x%08x, entryL1:0x%08x, entryL2:%d.",
+                            acc, va, entryL1, entryL2));
         }
 
         pa = (base << 12) | tblIndex;
@@ -571,21 +595,33 @@ public class MMUv5 {
         int acc, pa;
 
         acc = getDomainAccess(dom);
-        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
+        switch (acc) {
+        case DOMACC_INVALID:
+        case DOMACC_RESERVED:
             //ドメインフォルト、ページ
             faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
                     String.format("Domain page (tiny), dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
                             getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
                             acc, entryL1));
             return 0;
-        }
+        case DOMACC_CLIENT:
+            if (isPermitted(priv, read, ap)) {
+                //アクセス許可がある
+                break;
+            }
 
-        if (acc == DOMACC_CLIENT && !isPermitted(priv, read, ap)) {
             //許可フォルト、ページ
             faultMMU(FS_PERM_PAGE, dom, va, inst, priv, read,
                     String.format("Permission page (tiny), dom acc:%d, ap:%d, entryL1:0x%08x, entryL2:0x%08x",
                             acc, ap, entryL1, entryL2));
             return 0;
+        case DOMACC_MANAGER:
+            //アクセス許可がある
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown domain access (tiny), " +
+                    String.format("dom acc:%d, va:0x%08x, entryL1:0x%08x, entryL2:%d.",
+                            acc, va, entryL1, entryL2));
         }
 
         pa = (base << 10) | tblIndex;
@@ -674,24 +710,35 @@ public class MMUv5 {
         int acc, pa;
 
         acc = getDomainAccess(dom);
-        if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
+        switch (acc) {
+        case DOMACC_INVALID:
+        case DOMACC_RESERVED:
             //ドメインフォルト、セクション
             faultMMU(FS_DOM_SEC, dom, va, inst, priv, read,
                     String.format("Domain sec, dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
                             getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
                             acc, entryL1));
             return 0;
-        }
+        case DOMACC_CLIENT:
+            if (isPermitted(priv, read, ap)) {
+                //アクセス許可がある
+                break;
+            }
 
-        if (acc == DOMACC_CLIENT && !isPermitted(priv, read, ap)) {
             //許可フォルト、セクション
             faultMMU(FS_PERM_SEC, dom, va, inst, priv, read,
                     String.format("Permission sec, dom acc:%d, ap:%d, entryL1:0x%08x",
                             acc, ap, entryL1));
             return 0;
+        case DOMACC_MANAGER:
+            //アクセス許可がある
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown domain access (large), " +
+                    String.format("dom acc:%d, va:0x%08x, entryL1:0x%08x.",
+                            acc, va, entryL1));
         }
 
-        //物理アドレス
         pa = (base << 20) | tblIndex;
 
         return pa;
