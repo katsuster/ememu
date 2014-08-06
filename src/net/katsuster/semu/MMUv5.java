@@ -142,8 +142,8 @@ public class MMUv5 {
 
         //フォルトステータス
         val = getCoProcStd().getCReg(5);
-        BitOp.setField32(val, 4, 3, dom);
-        BitOp.setField32(val, 0, 3, fs);
+        val = BitOp.setField32(val, 4, 4, dom);
+        val = BitOp.setField32(val, 0, 4, fs);
         getCoProcStd().setCReg(CoProcStdv5.CR05_MMU_FSR, val);
 
         //フォルトアドレス
