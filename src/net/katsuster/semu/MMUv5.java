@@ -157,7 +157,11 @@ public class MMUv5 {
             //データアボート例外
             num = ARMv5.EXCEPT_ABT_DATA;
         }
-        getCPU().raiseException(num, dbgmsg);
+        getCPU().raiseException(num, String.format("%s, va:%08x, dom:%d, inst:%s, priv:%s, read:%s.",
+                dbgmsg, va, dom,
+                inst ? "ins" : "dat",
+                priv ? "priv" : "user",
+                read ? "rd" : "wr"));
     }
 
     /**
@@ -311,8 +315,7 @@ public class MMUv5 {
         /*if (!inst && 0x00 <= va && va <= 0x1f) {
             //ベクタ例外
             faultMMU(FS_VECT, 0, va, inst, priv, read,
-                    String.format("MMU vector, va[0x%08x]",
-                            va));
+                    "MMU vector");
             return 0;
         }*/
 
@@ -325,8 +328,7 @@ public class MMUv5 {
         if (isAlignmentCheck() && !validAlign) {
             //アラインメントフォルト
             faultMMU(FS_ALIGN1, 0, va, inst, priv, read,
-                    String.format("MMU align, size:%d, va[0x%08x]",
-                            size, va));
+                    String.format("MMU align, size:%d", size));
             return 0;
         }
 
@@ -334,8 +336,7 @@ public class MMUv5 {
         if (!getCPU().tryRead(paL1)) {
             //変換時の外部アボート、第1レベル
             faultMMU(FS_TRANS_L1, 0, va, inst, priv, read,
-                    String.format("MMU trans L1, va[0x%08x], paL1[%08x]",
-                            va, paL1));
+                    String.format("MMU trans L1, paL1:%08x", paL1));
             return 0;
         }
         entryL1 = getCPU().read32(paL1);
@@ -346,8 +347,8 @@ public class MMUv5 {
             //フォルト
             //変換フォルト、セクション
             faultMMU(FS_TRANS_SEC, 0, va, inst, priv, read,
-                    String.format("MMU trans sec, va[0x%08x], paL1[0x%08x], entryL1:[0x%08x]",
-                            va, paL1, entryL1));
+                    String.format("MMU trans sec, paL1:0x%08x, entryL1:0x%08x",
+                            paL1, entryL1));
             return 0;
         case 1:
             //概略ページテーブル
@@ -359,13 +360,12 @@ public class MMUv5 {
             break;
         case 3:
             //詳細ページテーブル
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            pa = translateFine(va, inst, priv, read, entryL1);
+            break;
         default:
             throw new IllegalArgumentException("Unknown L1 table " +
-                    String.format("va:0x%08x, paL1:0x%08x, entryL1:0x%08x, typeL1:%d.",
-                            va, paL1, entryL1, typeL1));
+                    String.format("paL1:0x%08x, entryL1:0x%08x, typeL1:%d.",
+                            paL1, entryL1, typeL1));
         }
 
         return pa;
@@ -466,8 +466,7 @@ public class MMUv5 {
         if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
             //ドメインフォルト、ページ
             faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
-                    String.format("Domain page large, va[0x%08x], dom:%d, dom list:0x%08x, dom acc:%d, entryL1[%08x]",
-                            va, dom,
+                    String.format("Domain page (large), dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
                             getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
                             acc, entryL1));
             return 0;
@@ -478,7 +477,7 @@ public class MMUv5 {
             apsub = BitOp.getField32(entryL2, 4 + sub * 2, 2);
             break;
         default:
-            throw new IllegalArgumentException("Unknown sub page large" +
+            throw new IllegalArgumentException("Unknown sub page (large), " +
                     String.format("sub:%d, va:0x%08x, entryL1:0x%08x, entryL2:%d.",
                             sub, va, entryL1, entryL2));
         }
@@ -486,8 +485,8 @@ public class MMUv5 {
         if (acc == DOMACC_CLIENT && !isPermitted(priv, read, apsub)) {
             //許可フォルト、ページ
             faultMMU(FS_PERM_PAGE, dom, va, inst, priv, read,
-                    String.format("Permission page large, va[0x%08x], dom acc:%d, sub:%d, apsub:%d, entryL1[%08x], entryL2[%08x]",
-                            va, acc, sub, apsub, entryL1, entryL2));
+                    String.format("Permission page (large), dom acc:%d, sub:%d, apsub:%d, entryL1:0x%08x, entryL2:0x%08x",
+                            acc, sub, apsub, entryL1, entryL2));
             return 0;
         }
 
@@ -523,8 +522,7 @@ public class MMUv5 {
         if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
             //ドメインフォルト、ページ
             faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
-                    String.format("Domain page small, va[0x%08x], dom:%d, dom list:0x%08x, dom acc:%d, entryL1[%08x]",
-                            va, dom,
+                    String.format("Domain page (small), dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
                             getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
                             acc, entryL1));
             return 0;
@@ -535,7 +533,7 @@ public class MMUv5 {
             apsub = BitOp.getField32(entryL2, 4 + sub * 2, 2);
             break;
         default:
-            throw new IllegalArgumentException("Unknown sub page small" +
+            throw new IllegalArgumentException("Unknown sub page (small), " +
                     String.format("sub:%d, va:0x%08x, entryL1:0x%08x, entryL2:%d.",
                             sub, va, entryL1, entryL2));
         }
@@ -543,8 +541,8 @@ public class MMUv5 {
         if (acc == DOMACC_CLIENT && !isPermitted(priv, read, apsub)) {
             //許可フォルト、ページ
             faultMMU(FS_PERM_PAGE, dom, va, inst, priv, read,
-                    String.format("Permission page small, va[0x%08x], dom acc:%d, sub:%d, apsub:%d, entryL1[%08x], entryL2[%08x]",
-                            va, acc, sub, apsub, entryL1, entryL2));
+                    String.format("Permission page (small), dom acc:%d, sub:%d, apsub:%d, entryL1:0x%08x, entryL2:0x%08x",
+                            acc, sub, apsub, entryL1, entryL2));
             return 0;
         }
 
@@ -576,8 +574,7 @@ public class MMUv5 {
         if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
             //ドメインフォルト、ページ
             faultMMU(FS_DOM_PAGE, dom, va, inst, priv, read,
-                    String.format("Domain page tiny, va[0x%08x], dom:%d, dom list:0x%08x, dom acc:%d, entryL1[%08x]",
-                            va, dom,
+                    String.format("Domain page (tiny), dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
                             getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
                             acc, entryL1));
             return 0;
@@ -586,8 +583,8 @@ public class MMUv5 {
         if (acc == DOMACC_CLIENT && !isPermitted(priv, read, ap)) {
             //許可フォルト、ページ
             faultMMU(FS_PERM_PAGE, dom, va, inst, priv, read,
-                    String.format("Permission page tiny, va[0x%08x], dom acc:%d, ap:%d, entryL1[%08x], entryL2[%08x]",
-                            va, acc, ap, entryL1, entryL2));
+                    String.format("Permission page (tiny), dom acc:%d, ap:%d, entryL1:0x%08x, entryL2:0x%08x",
+                            acc, ap, entryL1, entryL2));
             return 0;
         }
 
@@ -680,8 +677,7 @@ public class MMUv5 {
         if (acc == DOMACC_INVALID || acc == DOMACC_RESERVED) {
             //ドメインフォルト、セクション
             faultMMU(FS_DOM_SEC, dom, va, inst, priv, read,
-                    String.format("Domain sec, va[0x%08x], dom:%d, dom list:0x%08x, dom acc:%d, entryL1[%08x]",
-                            va, dom,
+                    String.format("Domain sec, dom list:0x%08x, dom acc:%d, entryL1:0x%08x",
                             getCoProcStd().getCReg(CoProcStdv5.CR03_MMU_DACR),
                             acc, entryL1));
             return 0;
@@ -690,8 +686,8 @@ public class MMUv5 {
         if (acc == DOMACC_CLIENT && !isPermitted(priv, read, ap)) {
             //許可フォルト、セクション
             faultMMU(FS_PERM_SEC, dom, va, inst, priv, read,
-                    String.format("Permission sec, va[0x%08x], dom acc:%d, ap:%d, entryL1[%08x]",
-                            va, acc, ap, entryL1));
+                    String.format("Permission sec, dom acc:%d, ap:%d, entryL1:0x%08x",
+                            acc, ap, entryL1));
             return 0;
         }
 
@@ -725,8 +721,8 @@ public class MMUv5 {
         if (!getCPU().tryRead(paL2)) {
             //変換時の外部アボート、第2レベル
             faultMMU(FS_TRANS_L2, 0, va, inst, priv, read,
-                    String.format("MMU trans L2, va[0x%08x], entryL1[%08x], paL1[%08x]",
-                            va, entryL1, paL2));
+                    String.format("MMU trans L2 coarse, entryL1:0x%08x, paL2:0x%08x",
+                            entryL1, paL2));
             return 0;
         }
         entryL2 = getCPU().read32(paL2);
@@ -737,8 +733,8 @@ public class MMUv5 {
             //フォルト
             //変換フォルト、ページ
             faultMMU(FS_TRANS_PAGE, 0, va, inst, priv, read,
-                    String.format("MMU trans page, va[0x%08x], paL2[0x%08x], entryL2:[0x%08x]",
-                            va, paL2, entryL2));
+                    String.format("MMU trans coarse page, paL2:0x%08x, entryL2:0x%08x",
+                            paL2, entryL2));
             return 0;
         case 1:
             //大ページ
@@ -755,7 +751,67 @@ public class MMUv5 {
             //break;
         default:
             throw new IllegalArgumentException("Unknown L2 table coarse " +
-                    String.format("va:0x%08x, L1:0x%08x, paL2:0x%08x, L2:0x%08x typeL2:%d.",
+                    String.format("va:0x%08x, entryL1:0x%08x, paL2:0x%08x, entryL2:0x%08x typeL2:%d.",
+                            va, entryL1, paL2, entryL2, typeL2));
+        }
+
+        return pa;
+    }
+
+    /**
+     * 詳細ページテーブルのアドレスを変換します。
+     *
+     * 第 2 レベル記述子は、大ページ（64KB）、小ページ（4KB）または、
+     * 極小ページ（1KB）が存在します。
+     *
+     * @param va      仮想アドレス
+     * @param inst 仮想アドレスが指すデータの種類、
+     *             命令の場合は true、データの場合は false
+     * @param priv 特権アクセスならば true、非特権アクセスならば false
+     * @param read 読み取りアクセスならば true、書き込みアクセスならば false
+     * @param entryL1 第 1 レベル記述子
+     * @return 物理アドレス
+     */
+    protected int translateFine(int va, boolean inst, boolean priv, boolean read, int entryL1) {
+        int dom = BitOp.getField32(entryL1, 5, 4);
+        //int imp = BitOp.getField32(entryL1, 2, 3);
+        int paL2, entryL2, typeL2;
+        int pa;
+
+        paL2 = getL2AddressFine(va, entryL1);
+        if (!getCPU().tryRead(paL2)) {
+            //変換時の外部アボート、第2レベル
+            faultMMU(FS_TRANS_L2, 0, va, inst, priv, read,
+                    String.format("MMU trans L2 fine, entryL1:0x%08x, paL2:0x%08x",
+                            entryL1, paL2));
+            return 0;
+        }
+        entryL2 = getCPU().read32(paL2);
+        typeL2 = BitOp.getField32(entryL2, 0, 2);
+
+        switch (typeL2) {
+        case 0:
+            //フォルト
+            //変換フォルト、ページ
+            faultMMU(FS_TRANS_PAGE, 0, va, inst, priv, read,
+                    String.format("MMU trans L2 fine fault page, paL2:0x%08x, entryL2:0x%08x",
+                            paL2, entryL2));
+            return 0;
+        case 1:
+            //大ページ
+            pa = getPageAddressLarge(va, inst, priv, read, entryL1, entryL2);
+            break;
+        case 2:
+            //小ページ
+            pa = getPageAddressSmall(va, inst, priv, read, entryL1, entryL2);
+            break;
+        case 3:
+            //極小ページ（使用禁止）
+            pa = getPageAddressTiny(va, inst, priv, read, entryL1, entryL2);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown L2 table fine " +
+                    String.format("va:0x%08x, entryL1:0x%08x, paL2:0x%08x, entryL2:0x%08x typeL2:%d.",
                             va, entryL1, paL2, entryL2, typeL2));
         }
 
