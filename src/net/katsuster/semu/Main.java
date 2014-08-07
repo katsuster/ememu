@@ -50,6 +50,12 @@ public class Main {
 
         ARMv5 cpu = new ARMv5();
         Bus64 bus = new Bus64();
+
+        //TODO: MPMC is not implemented
+        RAM mpmc_c0_0 = new RAM(128 * 1024);
+        RAM mpmc_c0_1 = new RAM(128 * 1024);
+        RAM mpmc_c1 = new RAM(128 * 1024);
+
         SysBaseboard sysBoard = new SysBaseboard();
         SecondaryINTC intc2nd = new SecondaryINTC();
         AACI aaci = new AACI();
@@ -78,6 +84,12 @@ public class Main {
         UART uart1 = new UART();
         UART uart2 = new UART();
         SSP ssp = new SSP();
+
+        //TODO: SSMC is not implemented
+        RAM ssmc_c0 = new RAM(512 * 1024);
+        RAM ssmc_c1 = new RAM(512 * 1024);
+        RAM ssmc_c2 = new RAM(512 * 1024);
+
         int addrRAM = 0x80000000;
         int sizeRAM = 64 * 1024 * 1024; //64MB
         RAM ramMain = new RAM(sizeRAM);
@@ -88,6 +100,9 @@ public class Main {
         cpu.setINTCForFIQ(intc1st.getSubINTCForFIQ());
 
         //RAM Image(tentative)
+        //  0x00000000 - 0x03ffffff: MPMC Chip Select0, bottom of SDRAM
+        //  0x04000000 - 0x07ffffff: MPMC Chip Select0, top of SDRAM
+        //  0x08000000 - 0x0fffffff: MPMC Chip Select1
         //  0x10000000 - 0x13ffffff: CS5
         //    0x10000000 - 0x10000fff: System Registers
         //    0x10003000 - 0x10003fff: Secondary Interrupt Controller
@@ -117,19 +132,26 @@ public class Main {
         //    0x101f2000 - 0x101f2fff: UART1 (PL011)
         //    0x101f3000 - 0x101f3fff: UART2 (PL011)
         //    0x101f4000 - 0x101f4fff: SSP (PL022)
+        //  0x30000000 - 0x33ffffff: SSMC Chip Select0
+        //  0x34000000 - 0x37ffffff: SSMC Chip Select1
+        //  0x38000000 - 0x3bffffff: SSMC Chip Select2
         //  0x80000000 - 0x82ffffff: Main
         //    0x80000000 - 0x80007fff: Linux pagetable
         //    0x80008000 - 0x804fffff: Linux Image
         //    0x81fff000 - 0x81ffffff: ATAG_XXX
+        bus.addSlaveCore(mpmc_c0_0, 0x00000000L, 0x04000000L);
+        bus.addSlaveCore(mpmc_c0_1, 0x04000000L, 0x08000000L);
+        bus.addSlaveCore(mpmc_c1, 0x08000000L, 0x10000000L);
+
         bus.addSlaveCore(sysBoard, 0x10000000L, 0x10001000L);
         bus.addSlaveCore(intc2nd, 0x10003000L, 0x10004000L);
         bus.addSlaveCore(aaci, 0x10004000L, 0x10005000L);
         bus.addSlaveCore(mci0, 0x10005000L, 0x10006000L);
         bus.addSlaveCore(kmiKey, 0x10006000L, 0x10007000L);
+        bus.addSlaveCore(kmiMouse, 0x10007000L, 0x10008000L);
         bus.addSlaveCore(uart3, 0x10009000L, 0x1000a000L);
         bus.addSlaveCore(scard1, 0x1000a000L, 0x1000b000L);
         bus.addSlaveCore(mci1, 0x1000b000L, 0x1000c000L);
-        bus.addSlaveCore(kmiMouse, 0x10007000L, 0x10008000L);
         bus.addSlaveCore(ssmc, 0x10100000L, 0x10110000L);
         bus.addSlaveCore(mpmc, 0x10110000L, 0x10120000L);
         bus.addSlaveCore(clcdc, 0x10120000L, 0x10130000L);
@@ -149,7 +171,15 @@ public class Main {
         bus.addSlaveCore(uart1, 0x101f2000L, 0x101f3000L);
         bus.addSlaveCore(uart2, 0x101f3000L, 0x101f4000L);
         bus.addSlaveCore(ssp, 0x101f4000L, 0x101f5000L);
+
+        bus.addSlaveCore(ssmc_c0, 0x30000000L, 0x34000000L);
+        bus.addSlaveCore(ssmc_c1, 0x34000000L, 0x38000000L);
+        bus.addSlaveCore(ssmc_c2, 0x38000000L, 0x3c000000L);
+
         bus.addSlaveCore(ramMain, 0x80000000L, 0x80000000L + (sizeRAM & 0xffffffffL));
+
+        //TODO: implement ethernet controller...
+        bus.addSlaveCore(ssmc_c0, 0x10010000L, 0x10020000L);
 
         //INTC
         intc1st.connectINTC(4, timer0_1);
