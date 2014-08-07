@@ -56,8 +56,8 @@ public class CoProcStdv5 extends CoProc {
     //crn07: キャッシュとライトバッファ
     //  レジスタ名は規定無しのため、独自
     //----------------------------------------------------------------------
-    //割り込み待ち
-    //public static final int CR07_ = 0x00007004;
+    //割り込み待ち(ARM926EJ-S ダイナミックパワーマネジメント機能)
+    public static final int CR07_INTWAIT = 0x00007004;
     //命令キャッシュ全体の無効化
     public static final int CR07_ICH_INVALL = 0x00007050;
     //命令キャッシュラインの無効化（仮想アドレス）
@@ -199,6 +199,7 @@ public class CoProcStdv5 extends CoProc {
         //------------------------------------------------------------
         //crn07: キャッシュとライトバッファ（書き込み専用なので初期値 0）
         //------------------------------------------------------------
+        addCReg(CR07_INTWAIT, "INTWAIT", 0x00000000);
         addCReg(CR07_ICH_INVALL, "ICH_INVALL", 0x00000000);
         addCReg(CR07_ICH_INVV, "ICH_INVV", 0x00000000);
         addCReg(CR07_ICH_INVS, "ICH_INVS", 0x00000000);
@@ -293,13 +294,13 @@ public class CoProcStdv5 extends CoProc {
             System.out.printf("I-TLB    : all invalidated.\n");
             break;
         case CR08_ITLB_INVV:
-            System.out.printf("I-TLB    : invalidated 0x%08x.\n", val);
+            //System.out.printf("I-TLB    : invalidated 0x%08x.\n", val);
             break;
         case CR08_DTLB_INVALL:
             System.out.printf("D-TLB    : all invalidated.\n");
             break;
         case CR08_DTLB_INVV:
-            System.out.printf("D-TLB    : invalidated 0x%08x.\n", val);
+            //System.out.printf("D-TLB    : invalidated 0x%08x.\n", val);
             break;
         default:
             super.setCReg(cn, val);
@@ -319,12 +320,12 @@ public class CoProcStdv5 extends CoProc {
         boolean a = BitOp.getBit32(val, 1);
         boolean m = BitOp.getBit32(val, 0);
 
-        System.out.printf("SCTLR    : 0x%x.\n", val);
-        System.out.printf("  V      : %b.\n", v);
-        System.out.printf("  R      : %b.\n", r);
-        System.out.printf("  S      : %b.\n", s);
-        System.out.printf("  A      : %b.\n", a);
-        System.out.printf("  M      : %b.\n", m);
+        //System.out.printf("SCTLR    : 0x%x.\n", val);
+        //System.out.printf("  V      : %b.\n", v);
+        //System.out.printf("  R      : %b.\n", r);
+        //System.out.printf("  S      : %b.\n", s);
+        //System.out.printf("  A      : %b.\n", a);
+        //System.out.printf("  M      : %b.\n", m);
 
         //v: ハイベクタ、0: 無効、1: 有効
         getCPU().setHighVector(v);
