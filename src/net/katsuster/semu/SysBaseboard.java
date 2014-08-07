@@ -60,8 +60,8 @@ public class SysBaseboard extends Controller64Reg32 {
         //addReg(REG_SYS_OSC1, "SYS_OSC1", 0x00000000);
         //addReg(REG_SYS_OSC2, "SYS_OSC2", 0x00000000);
         //addReg(REG_SYS_OSC3, "SYS_OSC3", 0x00000000);
-        //addReg(REG_SYS_OSC1, "SYS_OSC1", 0x00000000);
-        //addReg(REG_SYS_LOCK, "SYS_LOCK", 0x00000000);
+        addReg(REG_SYS_OSC4, "SYS_OSC4", 0x00000000);
+        addReg(REG_SYS_LOCK, "SYS_LOCK", 0x00000000);
         //addReg(REG_SYS_100HZ, "SYS_100HZ", 0x00000000);
         //addReg(REG_SYS_CFGDATA1, "SYS_CFGDATA1", 0x00000000);
         //addReg(REG_SYS_CFGDATA2, "SYS_CFGDATA2", 0x00000000);
@@ -123,6 +123,16 @@ public class SysBaseboard extends Controller64Reg32 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_SYS_OSC4:
+            //TODO: not implemented
+            System.out.printf("SYS_OSC4: read 0x%08x\n", 0);
+            result = 0;
+            break;
+        case REG_SYS_LOCK:
+            //TODO: not implemented
+            System.out.printf("SYS_LOCK: read 0x%08x\n", 0);
+            result = 0;
+            break;
         case REG_SYS_CLCD:
             //TODO: not implemented
             System.out.printf("SYS_CLCD: read 0x%08x\n", 0);
@@ -147,6 +157,14 @@ public class SysBaseboard extends Controller64Reg32 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_SYS_OSC4:
+            //TODO: not implemented
+            System.out.printf("SYS_OSC4: 0x%08x\n", data);
+            break;
+        case REG_SYS_LOCK:
+            //TODO: not implemented
+            System.out.printf("SYS_LOCK: 0x%08x\n", data);
+            break;
         case REG_SYS_CLCD:
             //TODO: not implemented
             System.out.printf("SYS_CLCD: 0x%08x\n", data);
