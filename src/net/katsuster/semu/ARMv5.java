@@ -2692,7 +2692,7 @@ public class ARMv5 extends CPU {
             setReg(rd, value);
         }
 
-        //W ビットは必ず 1、ベースレジスタを更新する
+        //P ビットは必ず 0、W ビットは必ず 1、ベースレジスタを更新する
         setReg(rn, offset);
     }
 
@@ -2738,7 +2738,7 @@ public class ARMv5 extends CPU {
 
         setReg(rd, value);
 
-        //W ビットは必ず 1、ベースレジスタを更新する
+        //P ビットは必ず 0、W ビットは必ず 1、ベースレジスタを更新する
         setReg(rn, offset);
     }
 
@@ -3126,14 +3126,92 @@ public class ARMv5 extends CPU {
         //do noting
     }
 
+    /**
+     * 変換付きレジスタストア命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeStrt(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetAddress(inst);
+        int vaddr, paddr;
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("strt%s", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetAddressName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //P ビットは必ず 0、ポストインデクス
+        vaddr = getReg(rn);
+
+        paddr = getMMU().translate(vaddr, 4, false, false, false);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryWrite(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("strt [%08x]", paddr));
+            return;
+        }
+        write32(paddr, getReg(rd));
+
+        //P ビットは必ず 0、W ビットは必ず 1、ベースレジスタを更新する
+        setReg(rn, offset);
     }
 
+    /**
+     * 変換付きレジスタバイトストア命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeStrbt(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getOffsetAddress(inst);
+        int vaddr, paddr;
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("strbt%s", inst.getCondFieldName()),
+                    String.format("%s, %s", getRegName(rd),
+                            getOffsetAddressName(inst)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //P ビットは必ず 0、ポストインデクス
+        vaddr = getReg(rn);
+
+        paddr = getMMU().translate(vaddr, 1, false, false, false);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryWrite(paddr)) {
+            raiseException(EXCEPT_ABT_DATA,
+                    String.format("strbt [%08x]", paddr));
+            return;
+        }
+        write8(paddr, (byte) getReg(rd));
+
+        //P ビットは必ず 0、W ビットは必ず 1、ベースレジスタを更新する
+        setReg(rn, offset);
     }
 
     /**
