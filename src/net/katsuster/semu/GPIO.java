@@ -36,11 +36,11 @@ public class GPIO extends Controller64Reg32 {
     public GPIO() {
         //0x000-0x3fc: REG_GPIODATA
 
-        //addReg(REG_GPIODIR, "GPIODIR", 0x00);
-        //addReg(REG_GPIOIS, "GPIOIS", 0x00);
-        //addReg(REG_GPIOIBE, "GPIOIBE", 0x00);
-        //addReg(REG_GPIOIEV, "GPIOIEV", 0x00);
-        //addReg(REG_GPIOIE, "GPIOIE", 0x00);
+        addReg(REG_GPIODIR, "GPIODIR", 0x00);
+        addReg(REG_GPIOIS, "GPIOIS", 0x00);
+        addReg(REG_GPIOIBE, "GPIOIBE", 0x00);
+        addReg(REG_GPIOIEV, "GPIOIEV", 0x00);
+        addReg(REG_GPIOIE, "GPIOIE", 0x00);
         //addReg(REG_GPIORIS, "GPIORIS", 0x00);
         //addReg(REG_GPIOMIS, "GPIOMIS", 0x00);
         //addReg(REG_GPIOIC, "GPIOIC", 0x00);
@@ -88,6 +88,31 @@ public class GPIO extends Controller64Reg32 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_GPIODIR:
+            //TODO: not implemented
+            System.out.printf("GPIODIR: read 0x%08x\n", 0);
+            result = 0;
+            break;
+        case REG_GPIOIS:
+            //TODO: not implemented
+            System.out.printf("GPIOIS: read 0x%08x\n", 0);
+            result = 0;
+            break;
+        case REG_GPIOIBE:
+            //TODO: not implemented
+            System.out.printf("GPIOIBE: read 0x%08x\n", 0);
+            result = 0;
+            break;
+        case REG_GPIOIEV:
+            //TODO: not implemented
+            System.out.printf("GPIOIEV: read 0x%08x\n", 0);
+            result = 0;
+            break;
+        case REG_GPIOIE:
+            //TODO: not implemented
+            System.out.printf("GPIOIE: read 0x%08x\n", 0);
+            result = 0;
+            break;
         default:
             result = super.getReg(regaddr);
             break;
@@ -103,6 +128,26 @@ public class GPIO extends Controller64Reg32 {
         regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_GPIODIR:
+            //TODO: not implemented
+            System.out.printf("GPIODIR: 0x%08x\n", data);
+            break;
+        case REG_GPIOIS:
+            //TODO: not implemented
+            System.out.printf("GPIOIS: 0x%08x\n", data);
+            break;
+        case REG_GPIOIBE:
+            //TODO: not implemented
+            System.out.printf("GPIOIBE: 0x%08x\n", data);
+            break;
+        case REG_GPIOIEV:
+            //TODO: not implemented
+            System.out.printf("GPIOIEV: 0x%08x\n", data);
+            break;
+        case REG_GPIOIE:
+            //TODO: not implemented
+            System.out.printf("GPIOIE: 0x%08x\n", data);
+            break;
         case REG_GPIOPeriphID0:
         case REG_GPIOPeriphID1:
         case REG_GPIOPeriphID2:
