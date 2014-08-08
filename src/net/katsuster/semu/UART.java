@@ -44,6 +44,7 @@ public class UART extends Controller64Reg32 {
         addReg(REG_UARTFBRD, "UARTFBRD", 0x00000000);
         addReg(REG_UARTLCR_H, "UARTLCR_H", 0x00000000);
         addReg(REG_UARTCR, "UARTCR", 0x00000000);
+        addReg(REG_UARTIFLS, "UARTIFLS", 0x00000000);
 
         addReg(REG_UARTIMSC, "UARTIMSC", 0x00000000);
         addReg(REG_UARTICR, "UARTICR", 0x00000000);
@@ -135,6 +136,10 @@ public class UART extends Controller64Reg32 {
         case REG_UARTCR:
             //TODO: Not implemented
             //System.out.printf("UARTCR: 0x%08x\n", data);
+            break;
+        case REG_UARTIFLS:
+            //TODO: Not implemented
+            System.out.printf("UARTIFLS: 0x%08x\n", data);
             break;
         case REG_UARTIMSC:
             //TODO: Not implemented

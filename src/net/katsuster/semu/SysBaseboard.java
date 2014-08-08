@@ -55,7 +55,7 @@ public class SysBaseboard extends Controller64Reg32 {
 
         //addReg(REG_SYS_ID, "SYS_ID", 0x00000000);
         //addReg(REG_SYS_SW, "SYS_SW", 0x00000000);
-        //addReg(REG_SYS_LED, "SYS_LED", 0x00000000);
+        addReg(REG_SYS_LED, "SYS_LED", 0x00000000);
         //addReg(REG_SYS_OSC0, "SYS_OSC0", 0x00000000);
         //addReg(REG_SYS_OSC1, "SYS_OSC1", 0x00000000);
         //addReg(REG_SYS_OSC2, "SYS_OSC2", 0x00000000);
@@ -123,6 +123,11 @@ public class SysBaseboard extends Controller64Reg32 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_SYS_LED:
+            //TODO: not implemented
+            System.out.printf("SYS_LED: read 0x%08x\n", 0);
+            result = 0;
+            break;
         case REG_SYS_OSC4:
             //TODO: not implemented
             System.out.printf("SYS_OSC4: read 0x%08x\n", 0);
@@ -157,6 +162,10 @@ public class SysBaseboard extends Controller64Reg32 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_SYS_LED:
+            //TODO: not implemented
+            System.out.printf("SYS_LED: 0x%08x\n", data);
+            break;
         case REG_SYS_OSC4:
             //TODO: not implemented
             System.out.printf("SYS_OSC4: 0x%08x\n", data);
