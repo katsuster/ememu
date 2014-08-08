@@ -41,12 +41,28 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        String filename = "C:\\Users\\katsuhiro\\Desktop\\Image";
-        String cmdl = "console=ttyAMA0 mem=64M lpj=0 root=/dev/nfs debug printk.time=1\0";
+        String filename = "Image";
+        String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/nfs debug printk.time=1\0";
 
-        byte[] cmdlb = cmdl.getBytes();
-        byte[] cmdline = new byte[(cmdlb.length + 3) & ~0x3];
-        System.arraycopy(cmdlb, 0, cmdline, 0, cmdlb.length);
+        if (args.length == 0) {
+            System.out.println("usage:\n" +
+                    "  semu Image [Cmdline]\n");
+
+            return;
+        } else if (args.length == 1) {
+            filename = args[0];
+        } else {
+            filename = args[0];
+            cmdline = args[1];
+        }
+
+        boot(filename, cmdline);
+    }
+
+    public static void boot(String filename, String cmdline) {
+        byte[] cmdlb = cmdline.getBytes();
+        byte[] cmdalign = new byte[(cmdlb.length + 3) & ~0x3];
+        System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
 
         ARMv5 cpu = new ARMv5();
         Bus64 bus = new Bus64();
@@ -232,12 +248,12 @@ public class Main {
             addrAtags += 0x0c;
 
             //ATAG_CMDLINE
-            cpu.write32(addrAtags + 0x00, 0x00000002 + cmdline.length / 4);
+            cpu.write32(addrAtags + 0x00, 0x00000002 + cmdalign.length / 4);
             cpu.write32(addrAtags + 0x04, ATAG_CMDLINE);
-            for (int i = 0; i < cmdline.length; i++) {
-                cpu.write8(addrAtags + 0x08 + i, cmdline[i]);
+            for (int i = 0; i < cmdalign.length; i++) {
+                cpu.write8(addrAtags + 0x08 + i, cmdalign[i]);
             }
-            addrAtags += 0x08 + cmdline.length;
+            addrAtags += 0x08 + cmdalign.length;
 
             //ATAG_NONE, size, tag
             cpu.write32(addrAtags + 0x00, 0x00000002);
