@@ -14,8 +14,8 @@ public class Main {
     public static final int ATAG_VIDEOLFB  = 0x54410008;
     public static final int ATAG_CMDLINE   = 0x54410009;
 
-    public static void loadFile(String filename, CPU cpu, int addr) {
-        int lenWords;
+    public static int loadFile(String filename, CPU cpu, int addr) {
+        int lenWords = 0;
 
         try {
             File f = new File(filename);
@@ -28,8 +28,8 @@ public class Main {
             }
 
             lenWords = (int)f.length();
-            for (int i = 0; i < lenWords; i += 8) {
-                cpu.write64(addr + i, Long.reverseBytes(s.readLong()));
+            for (int i = 0; i < lenWords; i++) {
+                cpu.write8(addr + i, s.readByte());
             }
         } catch (FileNotFoundException e) {
             System.out.println(e);
@@ -38,31 +38,40 @@ public class Main {
             System.out.println(e);
             throw new RuntimeException(e);
         }
+
+        return lenWords;
     }
 
     public static void main(String[] args) {
-        String filename = "Image";
-        String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/nfs debug printk.time=1\0";
+        String kimage = "Image";
+        String initram = "initramfs.igz";
+        String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/init debug printk.time=1\0";
 
-        if (args.length == 0) {
+        if (args.length <= 0) {
             System.out.println("usage:\n" +
-                    "  semu Image [Cmdline]\n");
+                    "  semu image initramfs [cmdline]\n");
 
             return;
-        } else if (args.length == 1) {
-            filename = args[0];
-        } else {
-            filename = args[0];
-            cmdline = args[1];
+        }
+        if (args.length >= 1) {
+            kimage = args[0];
+            initram = "";
+        }
+        if (args.length >= 2) {
+            initram = args[1];
+        }
+        if (args.length >= 3) {
+            cmdline = args[2];
         }
 
-        boot(filename, cmdline);
+        boot(kimage, initram, cmdline);
     }
 
-    public static void boot(String filename, String cmdline) {
+    public static void boot(String kimage, String initram, String cmdline) {
         byte[] cmdlb = cmdline.getBytes();
         byte[] cmdalign = new byte[(cmdlb.length + 3) & ~0x3];
         System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
+        boolean initramExist = false;
 
         ARMv5 cpu = new ARMv5();
         Bus64 bus = new Bus64();
@@ -111,6 +120,18 @@ public class Main {
         RAM ramMain = new RAM(sizeRAM);
         int addrAtags = addrRAM + sizeRAM - 4096;
 
+        //Cannot change this address
+        final int addrImage = 0x80008000;
+        int sizeImage = 0;
+        int addrInitram = 0x80800000;
+        int sizeInitram = 0;
+
+        if (initram.equals("")) {
+            initramExist = false;
+        } else {
+            initramExist = true;
+        }
+
         cpu.setSlaveBus(bus);
         cpu.setINTCForIRQ(intc1st.getSubINTCForIRQ());
         cpu.setINTCForFIQ(intc1st.getSubINTCForFIQ());
@@ -153,7 +174,8 @@ public class Main {
         //  0x38000000 - 0x3bffffff: SSMC Chip Select2
         //  0x80000000 - 0x82ffffff: Main
         //    0x80000000 - 0x80007fff: Linux pagetable
-        //    0x80008000 - 0x804fffff: Linux Image
+        //    0x80008000 - 0x807fffff: Linux Image
+        //    0x80800000 - 0x80ffffff: Linux initramfs
         //    0x81fff000 - 0x81ffffff: ATAG_XXX
         bus.addSlaveCore(mpmc_c0_0, 0x00000000L, 0x04000000L);
         bus.addSlaveCore(mpmc_c0_1, 0x04000000L, 0x08000000L);
@@ -208,7 +230,11 @@ public class Main {
 
         //tentative boot loader for Linux
         //load Image file
-        loadFile(filename, cpu, 0x80008000);
+        sizeImage = loadFile(kimage, cpu, addrImage);
+        //load initramfs file
+        if (initramExist) {
+            sizeInitram = loadFile(initram, cpu, addrInitram);
+        }
 
         //r0: 0
         cpu.setReg(0, 0);
@@ -238,14 +264,14 @@ public class Main {
             cpu.write32(addrAtags + 0x0c, addrRAM);
             addrAtags += 0x10;
 
-            //ATAG_REVISION, size, tag, rev
-            cpu.write32(addrAtags + 0x00, 0x00000003);
-            cpu.write32(addrAtags + 0x04, ATAG_REVISION);
-            //ARM-Versatile PB
-            cpu.write32(addrAtags + 0x08, 0x00000183);
-            //ARM-Versatile AB
-            //cpu.write32(addrAtags + 0x08, 0x0000025e);
-            addrAtags += 0x0c;
+            //ATAG_INITRD2, size, tag, size, start
+            if (initramExist) {
+                cpu.write32(addrAtags + 0x00, 0x00000004);
+                cpu.write32(addrAtags + 0x04, ATAG_INITRD2);
+                cpu.write32(addrAtags + 0x08, addrInitram);
+                cpu.write32(addrAtags + 0x0c, sizeInitram);
+                addrAtags += 0x10;
+            }
 
             //ATAG_CMDLINE
             cpu.write32(addrAtags + 0x00, 0x00000002 + cmdalign.length / 4);
@@ -262,7 +288,7 @@ public class Main {
         }
 
         //pc: entry of stext
-        cpu.setPC(0x80008000);
+        cpu.setPC(addrImage);
         cpu.setJumped(false);
 
         cpu.run();
