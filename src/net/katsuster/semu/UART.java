@@ -113,6 +113,10 @@ public class UART extends Controller64Reg32 {
         case REG_UARTDR:
             char ascii = (char)(data & 0xff);
 
+            if (ascii == 0x00) {
+                //FIXME: IntelliJ の Console でコピーできないため無視
+                break;
+            }
             strBuffer.append(ascii);
             System.out.printf("%c", ascii);
 
