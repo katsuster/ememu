@@ -2467,6 +2467,52 @@ public class ARMv5 extends CPU {
     }
 
     /**
+     * 符号付き乗算ロング命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSmull(Instruction inst, boolean exec) {
+        boolean s = inst.getSBit();
+        int rdhi = inst.getField(16, 4);
+        int rdlo = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        int rm = inst.getRmField();
+        int left, right, desthi, destlo;
+        long dest;
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("smull%s%s", inst.getCondFieldName(),
+                            (s) ? "s" : ""),
+                    String.format("%s, %s, %s, %s",
+                            getRegName(rdlo), getRegName(rdhi),
+                            getRegName(rm), getRegName(rs)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        left = getReg(rm);
+        right = getReg(rs);
+        dest = (long)left * (long)right;
+        desthi = (int)(dest >>> 32);
+        destlo = (int)dest;
+
+        if (s) {
+            setCPSR_N(BitOp.getBit32(desthi, 31));
+            setCPSR_Z(dest == 0);
+            //C flag is unaffected
+            //V flag is unaffected
+        }
+
+        setReg(rdhi, desthi);
+        setReg(rdlo, destlo);
+    }
+
+    /**
      * 符号無し積和ロング命令。
      *
      * @param inst ARM 命令
@@ -4158,9 +4204,8 @@ public class ARMv5 extends CPU {
             break;
         case 6:
             //smull
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            executeSmull(inst, exec);
+            break;
         case 5:
             //umlal
             executeUmlal(inst, exec);
