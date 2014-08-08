@@ -270,10 +270,10 @@ public class CoProcStdv5 extends CoProc {
             //System.out.printf("I-cache  : invalidated 0x%08x.\n", val);
             break;
         case CR07_DCH_INVALL:
-            System.out.printf("D-cache  : all invalidated.\n");
+            //System.out.printf("D-cache  : all invalidated.\n");
             break;
         case CR07_DCH_INVV:
-            System.out.printf("D-cache  : invalidated 0x%08x.\n", val);
+            //System.out.printf("D-cache  : invalidated 0x%08x.\n", val);
             break;
         case CR07_DCH_TSTCLN:
             System.out.printf("D-cache  : test & clean.\n");
