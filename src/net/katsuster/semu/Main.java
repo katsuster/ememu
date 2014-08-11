@@ -44,7 +44,7 @@ public class Main {
 
     public static void main(String[] args) {
         String kimage = "Image";
-        String initram = "initramfs.igz";
+        String initram = "initramfs.gz";
         String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/init debug printk.time=1\0";
 
         if (args.length <= 0) {
