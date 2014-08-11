@@ -2062,13 +2062,13 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            int left_center = left + center;
-            boolean lc_c = !borrowFrom32(left, center);
+            int left_center = left - center;
+            boolean lc_c = borrowFrom32(left, center);
             boolean lc_v = overflowFrom32(left, center, false);
 
             setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
-            setCPSR_C(lc_c || !borrowFrom32(left_center, right));
+            setCPSR_C(!(lc_c || borrowFrom32(left_center, right)));
             setCPSR_V(lc_v || overflowFrom32(left_center, right, false));
         }
 
@@ -2096,13 +2096,13 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            int left_center = left + center;
-            boolean lc_c = !borrowFrom32(left, center);
+            int left_center = left - center;
+            boolean lc_c = borrowFrom32(left, center);
             boolean lc_v = overflowFrom32(left, center, false);
 
             setCPSR_N(BitOp.getBit32(dest, 31));
             setCPSR_Z(dest == 0);
-            setCPSR_C(lc_c || !borrowFrom32(left_center, right));
+            setCPSR_C(!(lc_c || borrowFrom32(left_center, right)));
             setCPSR_V(lc_v || overflowFrom32(left_center, right, false));
         }
 
