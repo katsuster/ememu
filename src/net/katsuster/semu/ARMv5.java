@@ -3557,11 +3557,68 @@ public class ARMv5 extends CPU {
         }
     }
 
+    /**
+     * ロードマルチプル命令。
+     *
+     * レジスタリストに r15(pc) を入れることはできません。
+     * 現在のモードにかかわらず、ユーザモードのレジスタにロードします。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeLdm2(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rn = inst.getRnField();
+        int rlist = inst.getRegListField();
+        int vaddr, paddr;
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("ldm%s%s",
+                            inst.getCondFieldName(),
+                            inst.getPUFieldName()),
+                    String.format("%s, {%s}^",
+                            getRegName(rn),
+                            inst.getRegListFieldName()));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //r15 以外、なお r15 は指定不可のため処理なし
+        vaddr = getRegistersStartAddress(inst.getPUField(), rn, rlist);
+        for (int i = 0; i < 15; i++) {
+            if ((rlist & (1 << i)) == 0) {
+                continue;
+            }
+
+            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return;
+            }
+
+            if (!tryRead(paddr)) {
+                raiseException(EXCEPT_ABT_DATA,
+                        String.format("ldm(2) [%08x]", paddr));
+                return;
+            }
+            //必ずユーザモードのレジスタをロードする
+            regs[i] = read32(paddr);
+            vaddr += 4;
+        }
     }
 
+    /**
+     * ロードマルチプル命令。
+     *
+     * レジスタリストに必ず r15(pc) を入れなければなりません。
+     * CPSR にカレントモードの SPSR をコピーします。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeLdm3(Instruction inst, boolean exec) {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -3687,9 +3744,56 @@ public class ARMv5 extends CPU {
         }
     }
 
+    /**
+     * ストアマルチプル命令。
+     *
+     * 現在のモードにかかわらず、ユーザモードのレジスタをストアします。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeStm2(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int pu = inst.getPUField();
+        int rn = inst.getRnField();
+        int rlist = inst.getRegListField();
+        int vaddr, paddr;
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("stm%s%s",
+                            inst.getCondFieldName(),
+                            inst.getPUFieldName()),
+                    String.format("%s, {%s}^",
+                            getRegName(rn),
+                            inst.getRegListFieldName()));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        vaddr = getRegistersStartAddress(pu, rn, rlist);
+        for (int i = 0; i < 16; i++) {
+            if ((rlist & (1 << i)) == 0) {
+                continue;
+            }
+
+            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), false);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return;
+            }
+
+            if (!tryWrite(paddr)) {
+                raiseException(EXCEPT_ABT_DATA,
+                        String.format("stm(2) [%08x]", paddr));
+                return;
+            }
+            //必ずユーザモードのレジスタをストアする
+            write32(paddr, regs[i]);
+            vaddr += 4;
+        }
     }
 
     /**
@@ -4878,10 +4982,6 @@ public class ARMv5 extends CPU {
         } else {
             setPC(0x0000000c);
         }
-
-        //tentative...
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     /**
