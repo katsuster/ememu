@@ -221,6 +221,9 @@ public class Main {
 
         //INTC
         intc1st.connectINTC(4, timer0_1);
+        intc1st.connectINTC(12, uart0);
+        intc1st.connectINTC(13, uart1);
+        intc1st.connectINTC(14, uart2);
 
         //reset
         cpu.setDisasmMode(false);
