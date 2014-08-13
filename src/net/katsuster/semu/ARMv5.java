@@ -3954,7 +3954,47 @@ public class ARMv5 extends CPU {
         setReg(rd, dest);
     }
 
+    /**
+     * コプロセッサデータ処理命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeCdp(Instruction inst, boolean exec) {
+        int opcode1 = inst.getField(20, 4);
+        int crn = inst.getField(16, 4);
+        int crd = inst.getField(12, 4);
+        int cpnum = inst.getField(8, 4);
+        int opcode2 = inst.getField(5, 3);
+        int crm = inst.getField(0, 4);
+        CoProc cp;
+        int crid, crval, rval;
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("cdp%s", inst.getCondFieldName()),
+                    String.format("p%d, %d, %s, %s, %s, {%d}",
+                            cpnum, opcode1,
+                            getCoprocRegName(cpnum, crd),
+                            getCoprocRegName(cpnum, crn),
+                            getCoprocRegName(cpnum, crm), opcode2));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        cp = getCoproc(cpnum);
+        if (cp == null) {
+            //TODO: for debug, will be removed
+            throw new IllegalArgumentException(String.format(
+                    "Unimplemented coprocessor, p%d selected.", cpnum));
+            //raiseException(EXCEPT_UND, "Unimplemented coprocessor, " +
+            //        String.format("p%d selected.", cpnum));
+            //return;
+        }
+
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
@@ -4112,21 +4152,29 @@ public class ARMv5 extends CPU {
 
         //現在の PC の指すアドレスから命令を取得します
         vaddr = getPC() - 8;
-        paddr = getMMU().translate(vaddr, 4, true, isPrivMode(), true);
-        if (getMMU().isFault()) {
-            getMMU().clearFault();
-            return null;
-        }
 
-        if (!tryRead(paddr)) {
-            raiseException(EXCEPT_ABT_INST,
-                    String.format("exec [%08x]", paddr));
-            return null;
-        }
-        v = read32(paddr);
-        inst = new Instruction(v);
+        if (getCPSR_T()) {
+            //Thumb モード
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+        } else {
+            //ARM モード
+            paddr = getMMU().translate(vaddr, 4, true, isPrivMode(), true);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return null;
+            }
 
-        return inst;
+            if (!tryRead(paddr)) {
+                raiseException(EXCEPT_ABT_INST,
+                        String.format("exec [%08x]", paddr));
+                return null;
+            }
+            v = read32(paddr);
+            inst = new Instruction(v);
+
+            return inst;
+        }
     }
 
     /**
@@ -4170,26 +4218,33 @@ public class ARMv5 extends CPU {
         int cond = inst.getCondField();
         int subcode = inst.getSubCodeField();
 
-        switch (subcode) {
-        case Instruction.SUBCODE_USEALU:
-            executeSubALU(inst, exec);
-            return;
-        case Instruction.SUBCODE_LDRSTR:
-            executeSubLdrStr(inst, exec);
-            return;
-        case Instruction.SUBCODE_LDMSTM:
-            executeSubLdmStm(inst, exec);
-            return;
-        case Instruction.SUBCODE_COPSWI:
-            executeSubCopSwi(inst, exec);
-            return;
-        default:
-            //do nothing
-            break;
-        }
+        if (getCPSR_T()) {
+            //Thumb モード
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+        } else {
+            //ARM モード
+            switch (subcode) {
+            case Instruction.SUBCODE_USEALU:
+                executeSubALU(inst, exec);
+                return;
+            case Instruction.SUBCODE_LDRSTR:
+                executeSubLdrStr(inst, exec);
+                return;
+            case Instruction.SUBCODE_LDMSTM:
+                executeSubLdmStm(inst, exec);
+                return;
+            case Instruction.SUBCODE_COPSWI:
+                executeSubCopSwi(inst, exec);
+                return;
+            default:
+                //do nothing
+                break;
+            }
 
-        throw new IllegalArgumentException("Unknown Subcode" +
-                String.format("(%d).", subcode));
+            throw new IllegalArgumentException("Unknown Subcode" +
+                    String.format("(%d).", subcode));
+        }
     }
 
     /**
