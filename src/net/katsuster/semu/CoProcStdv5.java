@@ -258,7 +258,7 @@ public class CoProcStdv5 extends CoProc {
             setDACR(val);
             break;
         case CR07_UCH_INVALL:
-            System.out.printf("I&D-cache: all invalidated.\n");
+            //System.out.printf("I&D-cache: all invalidated.\n");
             break;
         case CR07_UCH_INVV:
             System.out.printf("I&D-cache: invalidated 0x%08x.\n", val);
@@ -285,19 +285,19 @@ public class CoProcStdv5 extends CoProc {
             //System.out.printf("W-buffer : all purged.\n");
             break;
         case CR08_UTLB_INVALL:
-            System.out.printf("I&D-TLB  : all invalidated.\n");
+            //System.out.printf("I&D-TLB  : all invalidated.\n");
             break;
         case CR08_UTLB_INVV:
             System.out.printf("i&D-TLB  : invalidated 0x%08x.\n", val);
             break;
         case CR08_ITLB_INVALL:
-            System.out.printf("I-TLB    : all invalidated.\n");
+            //System.out.printf("I-TLB    : all invalidated.\n");
             break;
         case CR08_ITLB_INVV:
             //System.out.printf("I-TLB    : invalidated 0x%08x.\n", val);
             break;
         case CR08_DTLB_INVALL:
-            System.out.printf("D-TLB    : all invalidated.\n");
+            //System.out.printf("D-TLB    : all invalidated.\n");
             break;
         case CR08_DTLB_INVV:
             //System.out.printf("D-TLB    : invalidated 0x%08x.\n", val);
@@ -347,10 +347,10 @@ public class CoProcStdv5 extends CoProc {
      * @param val 新たなレジスタの値
      */
     public void setTTBR0(int val) {
-        int base = (val >> 14) & 0x3ffff;
+        //int base = (val >> 14) & 0x3ffff;
 
-        System.out.printf("TTBR0    : 0x%x.\n", val);
-        System.out.printf("  base   : 0x%x.\n", base);
+        //System.out.printf("TTBR0    : 0x%x.\n", val);
+        //System.out.printf("  base   : 0x%x.\n", base);
 
         //MMU の状態を更新する
         getCPU().getMMU().setTableBase(val);
