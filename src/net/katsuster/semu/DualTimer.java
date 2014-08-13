@@ -168,6 +168,11 @@ public class DualTimer extends Controller64Reg32
     }
 
     @Override
+    public String getIRQMessage() {
+        return "Dual-Timer";
+    }
+
+    @Override
     public void run() {
         while (true) {
             try {
@@ -177,10 +182,5 @@ public class DualTimer extends Controller64Reg32
                 //ignore
             }
         }
-    }
-
-    @Override
-    public String getIRQMessage() {
-        return "Dual-Timer";
     }
 }
