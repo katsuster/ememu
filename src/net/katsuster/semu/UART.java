@@ -8,7 +8,13 @@ package net.katsuster.semu;
  *
  * @author katsuhiro
  */
-public class UART extends Controller64Reg32 {
+public class UART extends Controller64Reg32
+        implements INTC {
+    private int rawInt;
+    private int maskInt;
+
+    private StringBuilder strBuffer;
+
     public static final int REG_UARTDR        = 0x000;
     public static final int REG_UARTRSR       = 0x004;
     public static final int REG_UARTFR        = 0x018;
@@ -32,9 +38,22 @@ public class UART extends Controller64Reg32 {
     public static final int REG_UARTPCellID2  = 0xff8;
     public static final int REG_UARTPCellID3  = 0xffc;
 
-    private StringBuilder strBuffer;
+    public static final int OEINTR  = 10;
+    public static final int BEINTR  = 9;
+    public static final int PEINTR  = 8;
+    public static final int FEINTR  = 7;
+    public static final int RTINTR  = 6;
+    public static final int TXINTR  = 5;
+    public static final int RXINTR  = 4;
+    public static final int DSRINTR = 3;
+    public static final int DCDINTR = 2;
+    public static final int CTSINTR = 1;
+    public static final int RIIINTR = 0;
 
     public UART() {
+        rawInt = 0;
+        maskInt = 0;
+
         strBuffer = new StringBuilder();
 
         addReg(REG_UARTDR, "UARTDR", 0x00000000);
@@ -47,6 +66,8 @@ public class UART extends Controller64Reg32 {
         addReg(REG_UARTIFLS, "UARTIFLS", 0x00000000);
 
         addReg(REG_UARTIMSC, "UARTIMSC", 0x00000000);
+        addReg(REG_UARTRIS, "UARTRIS", 0x00000000);
+        addReg(REG_UARTMIS, "UARTMIS", 0x00000000);
         addReg(REG_UARTICR, "UARTICR", 0x00000000);
 
         addReg(REG_UARTPeriphID0, "UARTPeriphID0", 0x00000011);
@@ -57,6 +78,32 @@ public class UART extends Controller64Reg32 {
         addReg(REG_UARTPCellID1, "UARTPCellID1", 0x000000f0);
         addReg(REG_UARTPCellID2, "UARTPCellID2", 0x00000005);
         addReg(REG_UARTPCellID3, "UARTPCellID3", 0x000000b1);
+    }
+
+    /**
+     * UART の各割り込み要因のうち、要因が成立している割り込みを取得します。
+     *
+     * 状態の各ビットには、割り込みの要因が成立していれば 1、
+     * そうでなければ 0 が設定されます。
+     *
+     * @return 有効な割り込みの状態
+     */
+    public int getRawInt() {
+        return rawInt;
+    }
+
+    /**
+     * UART の各割り込み要因のうち、要因が成立していて、なおかつ、
+     * マスクされていない割り込みを取得します。
+     * （マスクが 1 ならば有効、0 ならば無効）
+     *
+     * 状態の各ビットには、割り込みの要因が成立していれば 1、
+     * そうでなければ 0 が設定されます。
+     *
+     * @return 有効な割り込みの状態
+     */
+    public int getMaskedInt() {
+        return getRawInt() & maskInt;
     }
 
     @Override
@@ -90,10 +137,17 @@ public class UART extends Controller64Reg32 {
         switch (regaddr) {
         case REG_UARTDR:
             //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            //throw new IllegalArgumentException("Sorry, not implemented.");
+            result = 10;
+            break;
         case REG_UARTFR:
             result = 0;
+            break;
+        case REG_UARTRIS:
+            result = getRawInt();
+            break;
+        case REG_UARTMIS:
+            result = getMaskedInt();
             break;
         default:
             result = super.getReg(regaddr);
@@ -146,12 +200,14 @@ public class UART extends Controller64Reg32 {
             System.out.printf("UARTIFLS: 0x%08x\n", data);
             break;
         case REG_UARTIMSC:
-            //TODO: Not implemented
-            System.out.printf("UARTIMSC: 0x%08x\n", data);
+            maskInt = data;
+            break;
+        case REG_UARTRIS:
+        case REG_UARTMIS:
+            //read only, ignored
             break;
         case REG_UARTICR:
-            //TODO: Not implemented
-            System.out.printf("UARTICR: 0x%08x\n", data);
+            rawInt &= ~data;
             break;
         case REG_UARTPeriphID0:
         case REG_UARTPeriphID1:
@@ -167,5 +223,18 @@ public class UART extends Controller64Reg32 {
             super.setReg(regaddr, data);
             break;
         }
+    }
+
+    @Override
+    public boolean isAssert() {
+        //送信 FIFO は常に空いていることにする
+        rawInt |= 1 << TXINTR;
+
+        return getMaskedInt() != 0;
+    }
+
+    @Override
+    public String getIRQMessage() {
+        return "UART";
     }
 }
