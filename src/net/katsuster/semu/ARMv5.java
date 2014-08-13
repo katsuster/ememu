@@ -4986,8 +4986,8 @@ public class ARMv5 extends CPU {
     public void doExceptionSoftware(String dbgmsg) {
         int pcOrg, spsrOrg;
 
-        System.out.printf("Exception: Software interrupt by '%s'.\n",
-                dbgmsg);
+        //System.out.printf("Exception: Software interrupt by '%s'.\n",
+        //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
@@ -5022,8 +5022,8 @@ public class ARMv5 extends CPU {
     public void doExceptionPrefetch(String dbgmsg) {
         int pcOrg, spsrOrg;
 
-        System.out.printf("Exception: Prefetch abort by '%s'.\n",
-                dbgmsg);
+        //System.out.printf("Exception: Prefetch abort by '%s'.\n",
+        //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
@@ -5058,11 +5058,11 @@ public class ARMv5 extends CPU {
     public void doExceptionData(String dbgmsg) {
         int pcOrg, spsrOrg;
 
-        System.out.printf("Exception: Data abort by '%s'.\n",
-                dbgmsg);
+        //System.out.printf("Exception: Data abort by '%s'.\n",
+        //        dbgmsg);
 
         //pc, cpsr の値を取っておく
-        pcOrg = getPC() - 4;
+        pcOrg = getPC();
         spsrOrg = getCPSR();
 
         //アボートモード、ARM 状態、割り込み禁止、
@@ -5323,8 +5323,8 @@ public class ARMv5 extends CPU {
         Instruction inst;
 
         //for debug
-        int target_address1 = 0;//0xc036aee8; //<versatile_init_irq>
-        int target_address2 = 0;//0xc036aee8; //<versatile_init_irq>
+        int target_address1 = 0x0;//0xc036aee8; //<versatile_init_irq>
+        int target_address2 = 0x0;//0xc036aee8; //<versatile_init_irq>
 
         //要求された例外のうち、優先度の高い例外を 1つだけ発生させます
         doImportantException();
@@ -5363,10 +5363,10 @@ public class ARMv5 extends CPU {
 
         //実行して、次の命令へ
         execute(inst);
-        nextPC();
         if (isRaised()) {
             clearRaised();
             return;
         }
+        nextPC();
     }
 }
