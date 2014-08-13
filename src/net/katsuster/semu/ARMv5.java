@@ -4119,8 +4119,21 @@ public class ARMv5 extends CPU {
     }
 
     public void executeSwi(Instruction inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int imm24 = inst.getField(0, 24);
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("swi%s", inst.getCondFieldName()),
+                    String.format("0x%08x", imm24));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        raiseException(EXCEPT_SVC, "swi instruction " +
+                String.format("imm24:0x%08x.", imm24));
     }
 
     /**
@@ -4997,10 +5010,6 @@ public class ARMv5 extends CPU {
         } else {
             setPC(0x00000008);
         }
-
-        //tentative...
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     /**
