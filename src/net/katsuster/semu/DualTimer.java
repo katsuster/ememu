@@ -9,7 +9,7 @@ package net.katsuster.semu;
  * @author katsuhiro
  */
 public class DualTimer extends Controller64Reg32
-        implements INTC {
+        implements INTC, Runnable {
     public static final int REG_Timer1Load     = 0x000;
     public static final int REG_Timer1Value    = 0x004;
     public static final int REG_Timer1Control  = 0x008;
@@ -125,6 +125,7 @@ public class DualTimer extends Controller64Reg32
         case REG_Timer1IntClr:
             //TODO: not implemented
             //System.out.printf("Timer1IntClr: 0x%08x\n", data);
+            trigger = false;
             break;
         case REG_Timer2Load:
             //TODO: not implemented
@@ -159,15 +160,22 @@ public class DualTimer extends Controller64Reg32
     }
 
     private int cnt;
+    private boolean trigger;
 
     @Override
     public boolean isAssert() {
-        if (cnt == 0) {
-            cnt = 0xffff;
-            return true;
-        } else {
-            cnt--;
-            return false;
+        return trigger;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(100);
+                trigger = true;
+            } catch (InterruptedException e) {
+                //ignore
+            }
         }
     }
 

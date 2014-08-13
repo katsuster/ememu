@@ -291,6 +291,11 @@ public class Main {
         cpu.setPC(addrImage);
         cpu.setJumped(false);
 
+        //run other cores
+        Thread thTimer0_1 = new Thread(timer0_1);
+        thTimer0_1.start();
+
+        //run CPU
         cpu.run();
     }
 }
