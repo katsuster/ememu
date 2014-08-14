@@ -140,8 +140,8 @@ public class SysBaseboard extends Controller64Reg32 {
             break;
         case REG_SYS_CLCD:
             //TODO: not implemented
-            System.out.printf("SYS_CLCD: read 0x%08x\n", 0);
-            result = 0;
+            System.out.printf("SYS_CLCD: read 0x%08x\n", 0x1f00);
+            result = 0x1f00;
             break;
         case REG_SYS_24MHz:
             //TODO: 桁あふれ問題が未解決のまま
