@@ -249,8 +249,7 @@ public class PrimaryINTC extends Controller64Reg32 {
     public int getRawHardInt() {
         int st;
 
-        st = rawHardInt;
-        st |= getINTCStatus();
+        st = getINTCStatus();
         st |= rawSoftInt;
         st &= intEnable;
 
