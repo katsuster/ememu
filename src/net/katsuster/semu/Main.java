@@ -297,6 +297,8 @@ public class Main {
         //run other cores
         Thread thTimer0_1 = new Thread(timer0_1);
         thTimer0_1.start();
+        Thread thUart0 = new Thread(uart0);
+        thUart0.start();
 
         //run CPU
         cpu.run();
