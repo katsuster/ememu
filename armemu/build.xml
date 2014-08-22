@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE project>
+
+<project name="armemu" default="dist">
+    <property name="src.dir"      location="src"/>
+    <property name="lib.dir"      location="../lib"/>
+    <property name="ant.dir"      location="ant"/>
+    <property name="build.dir"    location="${ant.dir}/build"/>
+    <property name="dist.dir"     location="${ant.dir}/dist"/>
+
+    <property name="manifest.mainclass.armemu" value="net.katsuster.semu.arm.Main"/>
+    <property name="manifest.mainclass.junit" value="net.katsuster.semu.arm.test.AllTest"/>
+    <property name="manifest.classpath" value="./"/>
+    <property name="manifest.title"     value="armemu"/>
+    <property name="manifest.version"   value="0.1"/>
+    <property name="manifest.vendor"    value="Katsuhiro Suzuki"/>
+    <tstamp>
+        <format property="ts" pattern="yyyyMMdd-HH:mm:ss z" />
+    </tstamp>
+
+    <property name="lib.hamcrest.path" value="${lib.dir}/hamcrest-core-1.3.jar"/>
+    <property name="lib.junit.path" value="${lib.dir}/junit-4.11.jar"/>
+
+
+    <!-- libraries for target 'build' -->
+    <path id="build.classpath">
+        <pathelement path="${lib.dir}"/>
+        <pathelement location="${lib.hamcrest.path}"/>
+        <pathelement location="${lib.junit.path}"/>
+    </path>
+
+    <!-- libraries for target 'dist' -->
+    <zipfileset id="dist.hamcrest" src="${lib.hamcrest.path}"
+                excludes="**/META-INF/**"/>
+    <zipfileset id="dist.junit" src="${lib.junit.path}"
+                excludes="**/META-INF/**"/>
+
+
+    <!-- define targets -->
+    <target name="init">
+        <echo message="----- init in ${ant.project.name} -----"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <target name="compile" depends="init">
+        <echo message="----- compile in ${ant.project.name} -----"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" target="1.6"
+               encoding="UTF-8" includeantruntime="false">
+            <classpath refid="build.classpath"/>
+        </javac>
+    </target>
+
+    <target name="test" depends="compile">
+        <echo message="----- test in ${ant.project.name} -----"/>
+    </target>
+
+    <target name="dist" depends="compile">
+        <echo message="----- dist in ${ant.project.name} -----"/>
+        <jar jarfile="${dist.dir}/armemu.jar">
+            <fileset dir="${build.dir}" casesensitive="yes">
+                <exclude name="**/test/"/>
+            </fileset>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="${manifest.mainclass.armemu}"/>
+                <attribute name="Class-Path"
+                           value="${manifest.classpath}"/>
+                <attribute name="Implementation-Title"
+                           value="${manifest.title}"/>
+                <attribute name="Implementation-Version"
+                           value="${manifest.version}"/>
+                <attribute name="Implementation-Vendor"
+                           value="${manifest.vendor}"/>
+                <attribute name="Build-Id"
+                           value="${ts} (${user.name}@${os.name} ${os.version} ${os.arch})"/>
+            </manifest>
+        </jar>
+
+        <jar jarfile="${dist.dir}/junit_armemu.jar">
+            <fileset dir="${build.dir}" casesensitive="yes"/>
+            <zipfileset refid="dist.hamcrest"/>
+            <zipfileset refid="dist.junit"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="${manifest.mainclass.junit}"/>
+                <attribute name="Class-Path"
+                           value="${manifest.classpath}"/>
+                <attribute name="Implementation-Title"
+                           value="${manifest.title}"/>
+                <attribute name="Implementation-Version"
+                           value="${manifest.version}"/>
+                <attribute name="Implementation-Vendor"
+                           value="${manifest.vendor}"/>
+                <attribute name="Build-Id"
+                           value="${ts} (${user.name}@${os.name} ${os.version} ${os.arch})"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <echo message="----- clean in ${ant.project.name} -----"/>
+        <delete dir="${ant.dir}"/>
+    </target>
+</project>
