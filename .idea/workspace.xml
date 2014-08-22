@@ -24,188 +24,20 @@
   <component name="FileEditorManager">
     <leaf>
       <file leaf-file-name="Main.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Main.java">
+        <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="977" max-vertical-offset="2023">
-              <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="578" max-vertical-offset="5304">
+              <caret line="47" column="102" selection-start-line="47" selection-start-column="102" selection-end-line="47" selection-end-column="102" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MMU.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/MMU.java">
+      <file leaf-file-name="ARMv5.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/ARMv5.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="935">
-              <caret line="4" column="2" selection-start-line="4" selection-start-column="2" selection-end-line="4" selection-end-column="2" />
-              <folding>
-                <element signature="e#348#349#0" expanded="true" />
-                <element signature="e#377#378#0" expanded="true" />
-                <element signature="e#509#510#0" expanded="true" />
-                <element signature="e#535#536#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CPU.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.10083037" vertical-offset="0" max-vertical-offset="52122">
-              <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
-              <folding>
-                <element signature="e#1012#1013#0" expanded="true" />
-                <element signature="e#1045#1046#0" expanded="true" />
-                <element signature="e#1089#1090#0" expanded="true" />
-                <element signature="e#1119#1120#0" expanded="true" />
-                <element signature="e#1160#1161#0" expanded="true" />
-                <element signature="e#1198#1199#0" expanded="true" />
-                <element signature="e#1246#1247#0" expanded="true" />
-                <element signature="e#1281#1282#0" expanded="true" />
-                <element signature="e#1320#1321#0" expanded="true" />
-                <element signature="e#1355#1356#0" expanded="true" />
-                <element signature="e#1401#1402#0" expanded="true" />
-                <element signature="e#1433#1434#0" expanded="true" />
-                <element signature="e#6318#6319#0" expanded="true" />
-                <element signature="e#6364#6365#0" expanded="true" />
-                <element signature="e#6505#6506#0" expanded="true" />
-                <element signature="e#6542#6543#0" expanded="true" />
-                <element signature="e#6890#6891#0" expanded="true" />
-                <element signature="e#6916#6917#0" expanded="true" />
-                <element signature="e#7062#7063#0" expanded="true" />
-                <element signature="e#7095#7096#0" expanded="true" />
-                <element signature="e#7261#7262#0" expanded="true" />
-                <element signature="e#7292#7293#0" expanded="true" />
-                <element signature="e#7925#7926#0" expanded="true" />
-                <element signature="e#7954#7955#0" expanded="true" />
-                <element signature="e#8093#8094#0" expanded="true" />
-                <element signature="e#8119#8120#0" expanded="true" />
-                <element signature="e#8539#8540#0" expanded="true" />
-                <element signature="e#8566#8567#0" expanded="true" />
-                <element signature="e#8695#8696#0" expanded="true" />
-                <element signature="e#8721#8722#0" expanded="true" />
-                <element signature="e#8836#8837#0" expanded="true" />
-                <element signature="e#8869#8870#0" expanded="true" />
-                <element signature="e#8999#9000#0" expanded="true" />
-                <element signature="e#9030#9031#0" expanded="true" />
-                <element signature="e#9148#9149#0" expanded="true" />
-                <element signature="e#9193#9194#0" expanded="true" />
-                <element signature="e#9979#9980#0" expanded="true" />
-                <element signature="e#10012#10013#0" expanded="true" />
-                <element signature="e#11866#11867#0" expanded="true" />
-                <element signature="e#11923#11924#0" expanded="true" />
-                <element signature="e#12539#12540#0" expanded="true" />
-                <element signature="e#12596#12597#0" expanded="true" />
-                <element signature="e#13459#13460#0" expanded="true" />
-                <element signature="e#13516#13517#0" expanded="true" />
-                <element signature="e#14444#14445#0" expanded="true" />
-                <element signature="e#14501#14502#0" expanded="true" />
-                <element signature="e#15126#15127#0" expanded="true" />
-                <element signature="e#15183#15184#0" expanded="true" />
-                <element signature="e#15733#15734#0" expanded="true" />
-                <element signature="e#15790#15791#0" expanded="true" />
-                <element signature="e#16425#16426#0" expanded="true" />
-                <element signature="e#16482#16483#0" expanded="true" />
-                <element signature="e#17034#17035#0" expanded="true" />
-                <element signature="e#17079#17080#0" expanded="true" />
-                <element signature="e#17251#17252#0" expanded="true" />
-                <element signature="e#17303#17304#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Instruction.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Instruction.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3460" max-vertical-offset="11662">
-              <caret line="215" column="19" selection-start-line="215" selection-start-column="19" selection-end-line="215" selection-end-column="19" />
-              <folding>
-                <element signature="e#154#155#0" expanded="true" />
-                <element signature="e#189#190#0" expanded="true" />
-                <element signature="e#299#300#0" expanded="true" />
-                <element signature="e#329#330#0" expanded="true" />
-                <element signature="e#507#508#0" expanded="true" />
-                <element signature="e#556#557#0" expanded="true" />
-                <element signature="e#1429#1430#0" expanded="true" />
-                <element signature="e#1473#1474#0" expanded="true" />
-                <element signature="e#1645#1646#0" expanded="true" />
-                <element signature="e#1686#1687#0" expanded="true" />
-                <element signature="e#5039#5040#0" expanded="true" />
-                <element signature="e#5086#5087#0" expanded="true" />
-                <element signature="e#5332#5333#0" expanded="true" />
-                <element signature="e#5373#5374#0" expanded="true" />
-                <element signature="e#5573#5574#0" expanded="true" />
-                <element signature="e#5612#5613#0" expanded="true" />
-                <element signature="e#5853#5854#0" expanded="true" />
-                <element signature="e#5898#5899#0" expanded="true" />
-                <element signature="e#6779#6780#0" expanded="true" />
-                <element signature="e#6825#6826#0" expanded="true" />
-                <element signature="e#7036#7037#0" expanded="true" />
-                <element signature="e#7077#7078#0" expanded="true" />
-                <element signature="e#10753#10754#0" expanded="true" />
-                <element signature="e#10805#10806#0" expanded="true" />
-                <element signature="e#11370#11371#0" expanded="true" />
-                <element signature="e#11420#11421#0" expanded="true" />
-                <element signature="e#12169#12170#0" expanded="true" />
-                <element signature="e#12211#12212#0" expanded="true" />
-                <element signature="e#12481#12482#0" expanded="true" />
-                <element signature="e#12522#12523#0" expanded="true" />
-                <element signature="e#12797#12798#0" expanded="true" />
-                <element signature="e#12848#12849#0" expanded="true" />
-                <element signature="e#13696#13697#0" expanded="true" />
-                <element signature="e#13735#13736#0" expanded="true" />
-                <element signature="e#14013#14014#0" expanded="true" />
-                <element signature="e#14058#14059#0" expanded="true" />
-                <element signature="e#14280#14281#0" expanded="true" />
-                <element signature="e#14319#14320#0" expanded="true" />
-                <element signature="e#14582#14583#0" expanded="true" />
-                <element signature="e#14627#14628#0" expanded="true" />
-                <element signature="e#14749#14750#0" expanded="true" />
-                <element signature="e#14791#14792#0" expanded="true" />
-                <element signature="e#14954#14955#0" expanded="true" />
-                <element signature="e#14995#14996#0" expanded="true" />
-                <element signature="e#15117#15118#0" expanded="true" />
-                <element signature="e#15159#15160#0" expanded="true" />
-                <element signature="e#15322#15323#0" expanded="true" />
-                <element signature="e#15363#15364#0" expanded="true" />
-                <element signature="e#15600#15601#0" expanded="true" />
-                <element signature="e#15642#15643#0" expanded="true" />
-                <element signature="e#15920#15921#0" expanded="true" />
-                <element signature="e#15953#15954#0" expanded="true" />
-                <element signature="e#16158#16159#0" expanded="true" />
-                <element signature="e#16205#16206#0" expanded="true" />
-                <element signature="e#16451#16452#0" expanded="true" />
-                <element signature="e#16487#16488#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CoProc.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CoProc.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2703">
-              <caret line="5" column="7" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="7" />
-              <folding>
-                <element signature="e#553#554#0" expanded="true" />
-                <element signature="e#578#579#0" expanded="true" />
-                <element signature="e#696#697#0" expanded="true" />
-                <element signature="e#722#723#0" expanded="true" />
-                <element signature="e#1909#1910#0" expanded="true" />
-                <element signature="e#1953#1954#0" expanded="true" />
-                <element signature="e#3109#3110#0" expanded="true" />
-                <element signature="e#3165#3166#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="StdCoProc.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/StdCoProc.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5236">
-              <caret line="3" column="7" selection-start-line="3" selection-start-column="7" selection-end-line="3" selection-end-column="7" />
+            <state vertical-scroll-proportion="0.15502556" vertical-offset="57216" max-vertical-offset="90202">
+              <caret line="3417" column="0" selection-start-line="3417" selection-start-column="0" selection-end-line="3417" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -221,37 +53,141 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/BusRequest.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Word128b.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Word64b.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Word32.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Bus32.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/SlaveCore32.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/MasterCore64Old.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/MasterCoreOld.java" />
         <option value="$PROJECT_DIR$/src/net/katsuster/semu/SlaveCore.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/CPUTest.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/test/AllTest.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/FileRAM.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/RAM.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/AbstractMasterCore.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/SlaveCoreOld.java" />
         <option value="$PROJECT_DIR$/src/net/katsuster/semu/MasterCore.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Word64.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Word128.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/ByteSeq.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Bus.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/MasterCore64.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/BitOp.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/test/CPUTest.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Instruction.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/CPU.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/RAM64.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/RAM.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/test/SlaveCore64Test.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/test/AllTest.java" />
         <option value="$PROJECT_DIR$/src/net/katsuster/semu/CoProc.java" />
         <option value="$PROJECT_DIR$/src/net/katsuster/semu/StdCoProc.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Instruction.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/test/CPUTest.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/ARM9.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/VersatileSystem.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/BitOp.java" />
         <option value="$PROJECT_DIR$/src/net/katsuster/semu/MMU.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Controller64.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/ControllerReg32.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/SysController.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/IntController.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/IntController2nd.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/SecondaryINTC.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/SlaveCore64.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Controller64Reg32.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/MasterCore64.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/CPU.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/test/NullINTC.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/INTC.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/NullINTC.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/CoProcVFPv1.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/CoProcVFPv2.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Bus64.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/GPIO.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/MMUv5.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/ARMv5.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/CoProcStdv5.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/SysBaseboard.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/PrimaryINTC.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/DualTimer.java" />
         <option value="$PROJECT_DIR$/src/net/katsuster/semu/Main.java" />
+        <option value="$PROJECT_DIR$/src/net/katsuster/semu/UART.java" />
+        <option value="$PROJECT_DIR$/armemu/src/semu/Instruction.java" />
+        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/AACI.java" />
+        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/test/SlaveCore64Test.java" />
+        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/test/CPUTest.java" />
+        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/test/BitOpTest.java" />
+        <option value="$PROJECT_DIR$/armemu/build.xml" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1296" />
-    <option name="height" value="1010" />
+    <option name="width" value="1380" />
+    <option name="height" value="754" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Android Lint</id>
+          </State>
+          <State>
+            <id>Bitwise operation issues</id>
+          </State>
+          <State>
+            <id>Code style issues</id>
+          </State>
+          <State>
+            <id>Control FlowGroovy</id>
+          </State>
+          <State>
+            <id>Control flow issues</id>
+          </State>
+          <State>
+            <id>Declaration redundancy</id>
+          </State>
+          <State>
+            <id>Groovy</id>
+          </State>
+          <State>
+            <id>Imports</id>
+          </State>
+          <State>
+            <id>Internationalization issues</id>
+          </State>
+          <State>
+            <id>Java language level issues</id>
+          </State>
+          <State>
+            <id>Java language level migration aids</id>
+          </State>
+          <State>
+            <id>Javadoc issues</id>
+          </State>
+          <State>
+            <id>Naming conventions</id>
+          </State>
+          <State>
+            <id>Numeric issues</id>
+          </State>
+          <State>
+            <id>Performance issues</id>
+          </State>
+          <State>
+            <id>Potentially confusing code constructsGroovy</id>
+          </State>
+          <State>
+            <id>Probable bugs</id>
+          </State>
+          <State>
+            <id>Resource management issues</id>
+          </State>
+          <State>
+            <id>Scala: General</id>
+          </State>
+          <State>
+            <id>UI Form Problems</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Abstraction issues</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -268,8 +204,8 @@
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
-      <flattenPackages />
-      <showMembers />
+      <flattenPackages ProjectPane="false" />
+      <showMembers ProjectPane="false" />
       <showModules />
       <showLibraryContents />
       <hideEmptyPackages />
@@ -309,11 +245,7 @@
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="semu" />
+              <option name="myItemId" value="armemu" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -327,15 +259,11 @@
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="armemu" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="semu" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -351,7 +279,7 @@
     <property name="MemberChooser.showClasses" value="true" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="recentsLimit" value="5" />
-    <property name="options.lastSelected" value="reference.settingsdialog.IDE.editor.colors.Font" />
+    <property name="options.lastSelected" value="preferences.pluginManager" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
@@ -364,34 +292,37 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/hamcrest-core-1.3.jar!/" />
+    <property name="OverrideImplement.combined" value="true" />
+    <property name="OverrideImplement.overriding.sorted" value="false" />
   </component>
   <component name="RecentsManager">
-    <key name="CreateTestDialog.Recents.Supers">
-      <recent name="" />
-    </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="net.katsuster.semu" />
     </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="net.katsuster.semu" />
+      <recent name="net.katsuster.semu.test" />
     </key>
     <key name="MoveMembersDialog.RECENTS_KEY">
       <recent name="net.katsuster.semu.BitOp" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.semu Main">
-    <configuration default="false" name="semu Main" type="Application" factoryName="Application" temporary="true">
+  <component name="RunManager" selected="Application.armemu Main">
+    <configuration default="false" name="armemu Main" type="Application" factoryName="Application" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <option name="MAIN_CLASS_NAME" value="net.katsuster.semu.Main" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="MAIN_CLASS_NAME" value="net.katsuster.semu.arm.Main" />
+      <option name="VM_PARAMETERS" value="-Xmx384m" />
+      <option name="PROGRAM_PARAMETERS" value="Z:\arm_cross\linux-3.14.16\arch\arm\boot\Image Z:\arm_cross\work\initramfs.gz" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="semu" />
+      <module name="armemu" />
       <envs />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="" />
@@ -512,6 +443,19 @@
       <patterns />
       <method />
     </configuration>
+    <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <method />
+    </configuration>
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="" />
       <option name="ACTIVITY_CLASS" value="" />
@@ -532,25 +476,12 @@
       <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
-    <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
-      <module name="" />
-      <setting name="path" value="" />
-      <setting name="package" value="" />
-      <setting name="vmparams" value="" />
-      <setting name="params" value="" />
-      <setting name="workingDirectory" value="$PROJECT_DIR$" />
-      <setting name="searchForTest" value="Across module dependencies" />
-      <setting name="testName" value="" />
-      <setting name="testKind" value="Class" />
-      <setting name="showProgressMessages" value="true" />
-      <method />
-    </configuration>
-    <configuration default="false" name="JUnit Test" type="JUnit" factoryName="JUnit">
-      <module name="semu" />
+    <configuration default="false" name="armemu JUnit" type="JUnit" factoryName="JUnit">
+      <module name="armemu" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="PACKAGE_NAME" value="net.katsuster.semu.test" />
-      <option name="MAIN_CLASS_NAME" value="net.katsuster.semu.test.AllTest" />
+      <option name="PACKAGE_NAME" value="net.katsuster.semu.arm.test" />
+      <option name="MAIN_CLASS_NAME" value="net.katsuster.semu.arm.test.AllTest" />
       <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" value="" />
@@ -574,12 +505,12 @@
       <method />
     </configuration>
     <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="JUnit.JUnit Test" />
-      <item index="1" class="java.lang.String" itemvalue="Application.semu Main" />
+      <item index="0" class="java.lang.String" itemvalue="Application.armemu Main" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.armemu JUnit" />
     </list>
     <recent_temporary>
       <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Application.semu Main" />
+        <item index="0" class="java.lang.String" itemvalue="Application.armemu Main" />
       </list>
     </recent_temporary>
   </component>
@@ -616,34 +547,35 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="1010" extended-state="6" />
+    <frame x="-8" y="-8" width="1380" height="754" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.48058254" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Kotlin" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5080906" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47734627" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26704547" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Kotlin Bytecode" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2363222" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2006079" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Kotlin" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -666,22 +598,16 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java</url>
-          <line>1294</line>
+          <url>file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/UART.java</url>
+          <line>242</line>
           <properties />
-          <option name="timeStamp" value="127" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java</url>
-          <line>1299</line>
-          <properties />
-          <option name="timeStamp" value="128" />
+          <option name="timeStamp" value="380" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="148" />
+      <option name="time" value="381" />
     </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
@@ -689,349 +615,7 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2091">
-          <caret line="76" column="32" selection-start-line="76" selection-start-column="32" selection-end-line="76" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="43639" max-vertical-offset="45475">
-          <caret line="2567" column="0" selection-start-line="2567" selection-start-column="0" selection-end-line="2567" selection-end-column="0" />
-          <folding>
-            <element signature="e#1012#1013#0" expanded="true" />
-            <element signature="e#1045#1046#0" expanded="true" />
-            <element signature="e#1089#1090#0" expanded="true" />
-            <element signature="e#1119#1120#0" expanded="true" />
-            <element signature="e#1160#1161#0" expanded="true" />
-            <element signature="e#1198#1199#0" expanded="true" />
-            <element signature="e#1246#1247#0" expanded="true" />
-            <element signature="e#1281#1282#0" expanded="true" />
-            <element signature="e#1320#1321#0" expanded="true" />
-            <element signature="e#1355#1356#0" expanded="true" />
-            <element signature="e#1401#1402#0" expanded="true" />
-            <element signature="e#1433#1434#0" expanded="true" />
-            <element signature="e#6318#6319#0" expanded="true" />
-            <element signature="e#6364#6365#0" expanded="true" />
-            <element signature="e#6505#6506#0" expanded="true" />
-            <element signature="e#6542#6543#0" expanded="true" />
-            <element signature="e#6890#6891#0" expanded="true" />
-            <element signature="e#6916#6917#0" expanded="true" />
-            <element signature="e#7062#7063#0" expanded="true" />
-            <element signature="e#7095#7096#0" expanded="true" />
-            <element signature="e#7261#7262#0" expanded="true" />
-            <element signature="e#7292#7293#0" expanded="true" />
-            <element signature="e#7925#7926#0" expanded="true" />
-            <element signature="e#7954#7955#0" expanded="true" />
-            <element signature="e#8093#8094#0" expanded="true" />
-            <element signature="e#8119#8120#0" expanded="true" />
-            <element signature="e#8539#8540#0" expanded="true" />
-            <element signature="e#8566#8567#0" expanded="true" />
-            <element signature="e#8695#8696#0" expanded="true" />
-            <element signature="e#8721#8722#0" expanded="true" />
-            <element signature="e#8836#8837#0" expanded="true" />
-            <element signature="e#8869#8870#0" expanded="true" />
-            <element signature="e#8999#9000#0" expanded="true" />
-            <element signature="e#9030#9031#0" expanded="true" />
-            <element signature="e#9148#9149#0" expanded="true" />
-            <element signature="e#9193#9194#0" expanded="true" />
-            <element signature="e#9979#9980#0" expanded="true" />
-            <element signature="e#10012#10013#0" expanded="true" />
-            <element signature="e#11866#11867#0" expanded="true" />
-            <element signature="e#11923#11924#0" expanded="true" />
-            <element signature="e#12539#12540#0" expanded="true" />
-            <element signature="e#12596#12597#0" expanded="true" />
-            <element signature="e#13459#13460#0" expanded="true" />
-            <element signature="e#13516#13517#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-            <element signature="e#14501#14502#0" expanded="true" />
-            <element signature="e#15126#15127#0" expanded="true" />
-            <element signature="e#15183#15184#0" expanded="true" />
-            <element signature="e#15733#15734#0" expanded="true" />
-            <element signature="e#15790#15791#0" expanded="true" />
-            <element signature="e#16425#16426#0" expanded="true" />
-            <element signature="e#16482#16483#0" expanded="true" />
-            <element signature="e#17034#17035#0" expanded="true" />
-            <element signature="e#17079#17080#0" expanded="true" />
-            <element signature="e#17251#17252#0" expanded="true" />
-            <element signature="e#17303#17304#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/RAM.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="816" max-vertical-offset="1275">
-          <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Instruction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="11662">
-          <caret line="597" column="29" selection-start-line="597" selection-start-column="29" selection-end-line="597" selection-end-column="29" />
-          <folding>
-            <element signature="e#154#155#0" expanded="true" />
-            <element signature="e#189#190#0" expanded="true" />
-            <element signature="e#299#300#0" expanded="true" />
-            <element signature="e#329#330#0" expanded="true" />
-            <element signature="e#507#508#0" expanded="true" />
-            <element signature="e#556#557#0" expanded="true" />
-            <element signature="e#1429#1430#0" expanded="true" />
-            <element signature="e#1473#1474#0" expanded="true" />
-            <element signature="e#1645#1646#0" expanded="true" />
-            <element signature="e#1686#1687#0" expanded="true" />
-            <element signature="e#5039#5040#0" expanded="true" />
-            <element signature="e#5086#5087#0" expanded="true" />
-            <element signature="e#5332#5333#0" expanded="true" />
-            <element signature="e#5373#5374#0" expanded="true" />
-            <element signature="e#5573#5574#0" expanded="true" />
-            <element signature="e#5612#5613#0" expanded="true" />
-            <element signature="e#5853#5854#0" expanded="true" />
-            <element signature="e#5898#5899#0" expanded="true" />
-            <element signature="e#6779#6780#0" expanded="true" />
-            <element signature="e#6825#6826#0" expanded="true" />
-            <element signature="e#7036#7037#0" expanded="true" />
-            <element signature="e#7077#7078#0" expanded="true" />
-            <element signature="e#10753#10754#0" expanded="true" />
-            <element signature="e#10805#10806#0" expanded="true" />
-            <element signature="e#11370#11371#0" expanded="true" />
-            <element signature="e#11420#11421#0" expanded="true" />
-            <element signature="e#12169#12170#0" expanded="true" />
-            <element signature="e#12211#12212#0" expanded="true" />
-            <element signature="e#12481#12482#0" expanded="true" />
-            <element signature="e#12522#12523#0" expanded="true" />
-            <element signature="e#12797#12798#0" expanded="true" />
-            <element signature="e#12848#12849#0" expanded="true" />
-            <element signature="e#13696#13697#0" expanded="true" />
-            <element signature="e#13735#13736#0" expanded="true" />
-            <element signature="e#14013#14014#0" expanded="true" />
-            <element signature="e#14058#14059#0" expanded="true" />
-            <element signature="e#14280#14281#0" expanded="true" />
-            <element signature="e#14319#14320#0" expanded="true" />
-            <element signature="e#14582#14583#0" expanded="true" />
-            <element signature="e#14627#14628#0" expanded="true" />
-            <element signature="e#14749#14750#0" expanded="true" />
-            <element signature="e#14791#14792#0" expanded="true" />
-            <element signature="e#14954#14955#0" expanded="true" />
-            <element signature="e#14995#14996#0" expanded="true" />
-            <element signature="e#15117#15118#0" expanded="true" />
-            <element signature="e#15159#15160#0" expanded="true" />
-            <element signature="e#15322#15323#0" expanded="true" />
-            <element signature="e#15363#15364#0" expanded="true" />
-            <element signature="e#15600#15601#0" expanded="true" />
-            <element signature="e#15642#15643#0" expanded="true" />
-            <element signature="e#15920#15921#0" expanded="true" />
-            <element signature="e#15953#15954#0" expanded="true" />
-            <element signature="e#16158#16159#0" expanded="true" />
-            <element signature="e#16205#16206#0" expanded="true" />
-            <element signature="e#16451#16452#0" expanded="true" />
-            <element signature="e#16487#16488#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CoProc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1199" max-vertical-offset="2346">
-          <caret line="96" column="32" selection-start-line="96" selection-start-column="32" selection-end-line="96" selection-end-column="32" />
-          <folding>
-            <element signature="e#553#554#0" expanded="true" />
-            <element signature="e#578#579#0" expanded="true" />
-            <element signature="e#696#697#0" expanded="true" />
-            <element signature="e#722#723#0" expanded="true" />
-            <element signature="e#1909#1910#0" expanded="true" />
-            <element signature="e#1953#1954#0" expanded="true" />
-            <element signature="e#3109#3110#0" expanded="true" />
-            <element signature="e#3165#3166#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/StdCoProc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3638" max-vertical-offset="4352">
-          <caret line="214" column="28" selection-start-line="214" selection-start-column="28" selection-end-line="214" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1502" max-vertical-offset="2091">
-          <caret line="76" column="32" selection-start-line="76" selection-start-column="32" selection-end-line="76" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="43639" max-vertical-offset="45475">
-          <caret line="2567" column="0" selection-start-line="2567" selection-start-column="0" selection-end-line="2567" selection-end-column="0" />
-          <folding>
-            <element signature="e#1012#1013#0" expanded="true" />
-            <element signature="e#1045#1046#0" expanded="true" />
-            <element signature="e#1089#1090#0" expanded="true" />
-            <element signature="e#1119#1120#0" expanded="true" />
-            <element signature="e#1160#1161#0" expanded="true" />
-            <element signature="e#1198#1199#0" expanded="true" />
-            <element signature="e#1246#1247#0" expanded="true" />
-            <element signature="e#1281#1282#0" expanded="true" />
-            <element signature="e#1320#1321#0" expanded="true" />
-            <element signature="e#1355#1356#0" expanded="true" />
-            <element signature="e#1401#1402#0" expanded="true" />
-            <element signature="e#1433#1434#0" expanded="true" />
-            <element signature="e#6318#6319#0" expanded="true" />
-            <element signature="e#6364#6365#0" expanded="true" />
-            <element signature="e#6505#6506#0" expanded="true" />
-            <element signature="e#6542#6543#0" expanded="true" />
-            <element signature="e#6890#6891#0" expanded="true" />
-            <element signature="e#6916#6917#0" expanded="true" />
-            <element signature="e#7062#7063#0" expanded="true" />
-            <element signature="e#7095#7096#0" expanded="true" />
-            <element signature="e#7261#7262#0" expanded="true" />
-            <element signature="e#7292#7293#0" expanded="true" />
-            <element signature="e#7925#7926#0" expanded="true" />
-            <element signature="e#7954#7955#0" expanded="true" />
-            <element signature="e#8093#8094#0" expanded="true" />
-            <element signature="e#8119#8120#0" expanded="true" />
-            <element signature="e#8539#8540#0" expanded="true" />
-            <element signature="e#8566#8567#0" expanded="true" />
-            <element signature="e#8695#8696#0" expanded="true" />
-            <element signature="e#8721#8722#0" expanded="true" />
-            <element signature="e#8836#8837#0" expanded="true" />
-            <element signature="e#8869#8870#0" expanded="true" />
-            <element signature="e#8999#9000#0" expanded="true" />
-            <element signature="e#9030#9031#0" expanded="true" />
-            <element signature="e#9148#9149#0" expanded="true" />
-            <element signature="e#9193#9194#0" expanded="true" />
-            <element signature="e#9979#9980#0" expanded="true" />
-            <element signature="e#10012#10013#0" expanded="true" />
-            <element signature="e#11866#11867#0" expanded="true" />
-            <element signature="e#11923#11924#0" expanded="true" />
-            <element signature="e#12539#12540#0" expanded="true" />
-            <element signature="e#12596#12597#0" expanded="true" />
-            <element signature="e#13459#13460#0" expanded="true" />
-            <element signature="e#13516#13517#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-            <element signature="e#14501#14502#0" expanded="true" />
-            <element signature="e#15126#15127#0" expanded="true" />
-            <element signature="e#15183#15184#0" expanded="true" />
-            <element signature="e#15733#15734#0" expanded="true" />
-            <element signature="e#15790#15791#0" expanded="true" />
-            <element signature="e#16425#16426#0" expanded="true" />
-            <element signature="e#16482#16483#0" expanded="true" />
-            <element signature="e#17034#17035#0" expanded="true" />
-            <element signature="e#17079#17080#0" expanded="true" />
-            <element signature="e#17251#17252#0" expanded="true" />
-            <element signature="e#17303#17304#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/RAM.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="816" max-vertical-offset="1275">
-          <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Instruction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="11662">
-          <caret line="597" column="29" selection-start-line="597" selection-start-column="29" selection-end-line="597" selection-end-column="29" />
-          <folding>
-            <element signature="e#154#155#0" expanded="true" />
-            <element signature="e#189#190#0" expanded="true" />
-            <element signature="e#299#300#0" expanded="true" />
-            <element signature="e#329#330#0" expanded="true" />
-            <element signature="e#507#508#0" expanded="true" />
-            <element signature="e#556#557#0" expanded="true" />
-            <element signature="e#1429#1430#0" expanded="true" />
-            <element signature="e#1473#1474#0" expanded="true" />
-            <element signature="e#1645#1646#0" expanded="true" />
-            <element signature="e#1686#1687#0" expanded="true" />
-            <element signature="e#5039#5040#0" expanded="true" />
-            <element signature="e#5086#5087#0" expanded="true" />
-            <element signature="e#5332#5333#0" expanded="true" />
-            <element signature="e#5373#5374#0" expanded="true" />
-            <element signature="e#5573#5574#0" expanded="true" />
-            <element signature="e#5612#5613#0" expanded="true" />
-            <element signature="e#5853#5854#0" expanded="true" />
-            <element signature="e#5898#5899#0" expanded="true" />
-            <element signature="e#6779#6780#0" expanded="true" />
-            <element signature="e#6825#6826#0" expanded="true" />
-            <element signature="e#7036#7037#0" expanded="true" />
-            <element signature="e#7077#7078#0" expanded="true" />
-            <element signature="e#10753#10754#0" expanded="true" />
-            <element signature="e#10805#10806#0" expanded="true" />
-            <element signature="e#11370#11371#0" expanded="true" />
-            <element signature="e#11420#11421#0" expanded="true" />
-            <element signature="e#12169#12170#0" expanded="true" />
-            <element signature="e#12211#12212#0" expanded="true" />
-            <element signature="e#12481#12482#0" expanded="true" />
-            <element signature="e#12522#12523#0" expanded="true" />
-            <element signature="e#12797#12798#0" expanded="true" />
-            <element signature="e#12848#12849#0" expanded="true" />
-            <element signature="e#13696#13697#0" expanded="true" />
-            <element signature="e#13735#13736#0" expanded="true" />
-            <element signature="e#14013#14014#0" expanded="true" />
-            <element signature="e#14058#14059#0" expanded="true" />
-            <element signature="e#14280#14281#0" expanded="true" />
-            <element signature="e#14319#14320#0" expanded="true" />
-            <element signature="e#14582#14583#0" expanded="true" />
-            <element signature="e#14627#14628#0" expanded="true" />
-            <element signature="e#14749#14750#0" expanded="true" />
-            <element signature="e#14791#14792#0" expanded="true" />
-            <element signature="e#14954#14955#0" expanded="true" />
-            <element signature="e#14995#14996#0" expanded="true" />
-            <element signature="e#15117#15118#0" expanded="true" />
-            <element signature="e#15159#15160#0" expanded="true" />
-            <element signature="e#15322#15323#0" expanded="true" />
-            <element signature="e#15363#15364#0" expanded="true" />
-            <element signature="e#15600#15601#0" expanded="true" />
-            <element signature="e#15642#15643#0" expanded="true" />
-            <element signature="e#15920#15921#0" expanded="true" />
-            <element signature="e#15953#15954#0" expanded="true" />
-            <element signature="e#16158#16159#0" expanded="true" />
-            <element signature="e#16205#16206#0" expanded="true" />
-            <element signature="e#16451#16452#0" expanded="true" />
-            <element signature="e#16487#16488#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CoProc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1233" max-vertical-offset="2414">
-          <caret line="96" column="32" selection-start-line="96" selection-start-column="32" selection-end-line="96" selection-end-column="32" />
-          <folding>
-            <element signature="e#553#554#0" expanded="true" />
-            <element signature="e#578#579#0" expanded="true" />
-            <element signature="e#696#697#0" expanded="true" />
-            <element signature="e#722#723#0" expanded="true" />
-            <element signature="e#1909#1910#0" expanded="true" />
-            <element signature="e#1953#1954#0" expanded="true" />
-            <element signature="e#3109#3110#0" expanded="true" />
-            <element signature="e#3165#3166#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/StdCoProc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3638" max-vertical-offset="4352">
-          <caret line="214" column="28" selection-start-line="214" selection-start-column="28" selection-end-line="214" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Main.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="918">
           <caret line="43" column="28" selection-start-line="43" selection-start-column="28" selection-end-line="43" selection-end-column="28" />
@@ -1039,152 +623,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/BitOp.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/BitOp.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="212" max-vertical-offset="986">
           <caret line="44" column="27" selection-start-line="44" selection-start-column="27" selection-end-line="44" selection-end-column="27" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/CPU.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="221" max-vertical-offset="30940">
           <caret line="13" column="27" selection-start-line="13" selection-start-column="27" selection-end-line="13" selection-end-column="27" />
-          <folding>
-            <element signature="e#1012#1013#0" expanded="true" />
-            <element signature="e#1045#1046#0" expanded="true" />
-            <element signature="e#1089#1090#0" expanded="true" />
-            <element signature="e#1119#1120#0" expanded="true" />
-            <element signature="e#1160#1161#0" expanded="true" />
-            <element signature="e#1198#1199#0" expanded="true" />
-            <element signature="e#1246#1247#0" expanded="true" />
-            <element signature="e#1281#1282#0" expanded="true" />
-            <element signature="e#1320#1321#0" expanded="true" />
-            <element signature="e#1355#1356#0" expanded="true" />
-            <element signature="e#1401#1402#0" expanded="true" />
-            <element signature="e#1433#1434#0" expanded="true" />
-            <element signature="e#6318#6319#0" expanded="true" />
-            <element signature="e#6364#6365#0" expanded="true" />
-            <element signature="e#6505#6506#0" expanded="true" />
-            <element signature="e#6542#6543#0" expanded="true" />
-            <element signature="e#6890#6891#0" expanded="true" />
-            <element signature="e#6916#6917#0" expanded="true" />
-            <element signature="e#7062#7063#0" expanded="true" />
-            <element signature="e#7095#7096#0" expanded="true" />
-            <element signature="e#7261#7262#0" expanded="true" />
-            <element signature="e#7292#7293#0" expanded="true" />
-            <element signature="e#7925#7926#0" expanded="true" />
-            <element signature="e#7954#7955#0" expanded="true" />
-            <element signature="e#8093#8094#0" expanded="true" />
-            <element signature="e#8119#8120#0" expanded="true" />
-            <element signature="e#8539#8540#0" expanded="true" />
-            <element signature="e#8566#8567#0" expanded="true" />
-            <element signature="e#8695#8696#0" expanded="true" />
-            <element signature="e#8721#8722#0" expanded="true" />
-            <element signature="e#8836#8837#0" expanded="true" />
-            <element signature="e#8869#8870#0" expanded="true" />
-            <element signature="e#8999#9000#0" expanded="true" />
-            <element signature="e#9030#9031#0" expanded="true" />
-            <element signature="e#9148#9149#0" expanded="true" />
-            <element signature="e#9193#9194#0" expanded="true" />
-            <element signature="e#9979#9980#0" expanded="true" />
-            <element signature="e#10012#10013#0" expanded="true" />
-            <element signature="e#11866#11867#0" expanded="true" />
-            <element signature="e#11923#11924#0" expanded="true" />
-            <element signature="e#12539#12540#0" expanded="true" />
-            <element signature="e#12596#12597#0" expanded="true" />
-            <element signature="e#13459#13460#0" expanded="true" />
-            <element signature="e#13516#13517#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-            <element signature="e#14501#14502#0" expanded="true" />
-            <element signature="e#15126#15127#0" expanded="true" />
-            <element signature="e#15183#15184#0" expanded="true" />
-            <element signature="e#15733#15734#0" expanded="true" />
-            <element signature="e#15790#15791#0" expanded="true" />
-            <element signature="e#16425#16426#0" expanded="true" />
-            <element signature="e#16482#16483#0" expanded="true" />
-            <element signature="e#17034#17035#0" expanded="true" />
-            <element signature="e#17079#17080#0" expanded="true" />
-            <element signature="e#17251#17252#0" expanded="true" />
-            <element signature="e#17303#17304#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Instruction.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Instruction.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="10761">
           <caret line="161" column="26" selection-start-line="161" selection-start-column="26" selection-end-line="161" selection-end-column="26" />
-          <folding>
-            <element signature="e#154#155#0" expanded="true" />
-            <element signature="e#189#190#0" expanded="true" />
-            <element signature="e#299#300#0" expanded="true" />
-            <element signature="e#329#330#0" expanded="true" />
-            <element signature="e#507#508#0" expanded="true" />
-            <element signature="e#556#557#0" expanded="true" />
-            <element signature="e#1429#1430#0" expanded="true" />
-            <element signature="e#1473#1474#0" expanded="true" />
-            <element signature="e#1645#1646#0" expanded="true" />
-            <element signature="e#1686#1687#0" expanded="true" />
-            <element signature="e#5039#5040#0" expanded="true" />
-            <element signature="e#5086#5087#0" expanded="true" />
-            <element signature="e#5332#5333#0" expanded="true" />
-            <element signature="e#5373#5374#0" expanded="true" />
-            <element signature="e#5573#5574#0" expanded="true" />
-            <element signature="e#5612#5613#0" expanded="true" />
-            <element signature="e#5853#5854#0" expanded="true" />
-            <element signature="e#5898#5899#0" expanded="true" />
-            <element signature="e#6779#6780#0" expanded="true" />
-            <element signature="e#6825#6826#0" expanded="true" />
-            <element signature="e#7036#7037#0" expanded="true" />
-            <element signature="e#7077#7078#0" expanded="true" />
-            <element signature="e#10753#10754#0" expanded="true" />
-            <element signature="e#10805#10806#0" expanded="true" />
-            <element signature="e#11370#11371#0" expanded="true" />
-            <element signature="e#11420#11421#0" expanded="true" />
-            <element signature="e#12169#12170#0" expanded="true" />
-            <element signature="e#12211#12212#0" expanded="true" />
-            <element signature="e#12481#12482#0" expanded="true" />
-            <element signature="e#12522#12523#0" expanded="true" />
-            <element signature="e#12797#12798#0" expanded="true" />
-            <element signature="e#12848#12849#0" expanded="true" />
-            <element signature="e#13696#13697#0" expanded="true" />
-            <element signature="e#13735#13736#0" expanded="true" />
-            <element signature="e#14013#14014#0" expanded="true" />
-            <element signature="e#14058#14059#0" expanded="true" />
-            <element signature="e#14280#14281#0" expanded="true" />
-            <element signature="e#14319#14320#0" expanded="true" />
-            <element signature="e#14582#14583#0" expanded="true" />
-            <element signature="e#14627#14628#0" expanded="true" />
-            <element signature="e#14749#14750#0" expanded="true" />
-            <element signature="e#14791#14792#0" expanded="true" />
-            <element signature="e#14954#14955#0" expanded="true" />
-            <element signature="e#14995#14996#0" expanded="true" />
-            <element signature="e#15117#15118#0" expanded="true" />
-            <element signature="e#15159#15160#0" expanded="true" />
-            <element signature="e#15322#15323#0" expanded="true" />
-            <element signature="e#15363#15364#0" expanded="true" />
-            <element signature="e#15600#15601#0" expanded="true" />
-            <element signature="e#15642#15643#0" expanded="true" />
-            <element signature="e#15920#15921#0" expanded="true" />
-            <element signature="e#15953#15954#0" expanded="true" />
-            <element signature="e#16158#16159#0" expanded="true" />
-            <element signature="e#16205#16206#0" expanded="true" />
-            <element signature="e#16451#16452#0" expanded="true" />
-            <element signature="e#16487#16488#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/StdCoProc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="561">
-          <caret line="7" column="39" selection-start-line="7" selection-start-column="39" selection-end-line="7" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Main.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="867">
           <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
@@ -1192,72 +652,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/CPU.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="9220" max-vertical-offset="10965">
           <caret line="605" column="0" selection-start-line="605" selection-start-column="0" selection-end-line="605" selection-end-column="0" />
-          <folding>
-            <element signature="e#1012#1013#0" expanded="true" />
-            <element signature="e#1045#1046#0" expanded="true" />
-            <element signature="e#1089#1090#0" expanded="true" />
-            <element signature="e#1119#1120#0" expanded="true" />
-            <element signature="e#1160#1161#0" expanded="true" />
-            <element signature="e#1198#1199#0" expanded="true" />
-            <element signature="e#1246#1247#0" expanded="true" />
-            <element signature="e#1281#1282#0" expanded="true" />
-            <element signature="e#1320#1321#0" expanded="true" />
-            <element signature="e#1355#1356#0" expanded="true" />
-            <element signature="e#1401#1402#0" expanded="true" />
-            <element signature="e#1433#1434#0" expanded="true" />
-            <element signature="e#6318#6319#0" expanded="true" />
-            <element signature="e#6364#6365#0" expanded="true" />
-            <element signature="e#6505#6506#0" expanded="true" />
-            <element signature="e#6542#6543#0" expanded="true" />
-            <element signature="e#6890#6891#0" expanded="true" />
-            <element signature="e#6916#6917#0" expanded="true" />
-            <element signature="e#7062#7063#0" expanded="true" />
-            <element signature="e#7095#7096#0" expanded="true" />
-            <element signature="e#7261#7262#0" expanded="true" />
-            <element signature="e#7292#7293#0" expanded="true" />
-            <element signature="e#7925#7926#0" expanded="true" />
-            <element signature="e#7954#7955#0" expanded="true" />
-            <element signature="e#8093#8094#0" expanded="true" />
-            <element signature="e#8119#8120#0" expanded="true" />
-            <element signature="e#8539#8540#0" expanded="true" />
-            <element signature="e#8566#8567#0" expanded="true" />
-            <element signature="e#8695#8696#0" expanded="true" />
-            <element signature="e#8721#8722#0" expanded="true" />
-            <element signature="e#8836#8837#0" expanded="true" />
-            <element signature="e#8869#8870#0" expanded="true" />
-            <element signature="e#8999#9000#0" expanded="true" />
-            <element signature="e#9030#9031#0" expanded="true" />
-            <element signature="e#9148#9149#0" expanded="true" />
-            <element signature="e#9193#9194#0" expanded="true" />
-            <element signature="e#9979#9980#0" expanded="true" />
-            <element signature="e#10012#10013#0" expanded="true" />
-            <element signature="e#11866#11867#0" expanded="true" />
-            <element signature="e#11923#11924#0" expanded="true" />
-            <element signature="e#12539#12540#0" expanded="true" />
-            <element signature="e#12596#12597#0" expanded="true" />
-            <element signature="e#13459#13460#0" expanded="true" />
-            <element signature="e#13516#13517#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-            <element signature="e#14501#14502#0" expanded="true" />
-            <element signature="e#15126#15127#0" expanded="true" />
-            <element signature="e#15183#15184#0" expanded="true" />
-            <element signature="e#15733#15734#0" expanded="true" />
-            <element signature="e#15790#15791#0" expanded="true" />
-            <element signature="e#16425#16426#0" expanded="true" />
-            <element signature="e#16482#16483#0" expanded="true" />
-            <element signature="e#17034#17035#0" expanded="true" />
-            <element signature="e#17079#17080#0" expanded="true" />
-            <element signature="e#17251#17252#0" expanded="true" />
-            <element signature="e#17303#17304#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Main.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="246" max-vertical-offset="867">
           <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
@@ -1265,72 +667,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/CPU.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="10104" max-vertical-offset="11849">
           <caret line="605" column="0" selection-start-line="605" selection-start-column="0" selection-end-line="605" selection-end-column="0" />
-          <folding>
-            <element signature="e#1012#1013#0" expanded="true" />
-            <element signature="e#1045#1046#0" expanded="true" />
-            <element signature="e#1089#1090#0" expanded="true" />
-            <element signature="e#1119#1120#0" expanded="true" />
-            <element signature="e#1160#1161#0" expanded="true" />
-            <element signature="e#1198#1199#0" expanded="true" />
-            <element signature="e#1246#1247#0" expanded="true" />
-            <element signature="e#1281#1282#0" expanded="true" />
-            <element signature="e#1320#1321#0" expanded="true" />
-            <element signature="e#1355#1356#0" expanded="true" />
-            <element signature="e#1401#1402#0" expanded="true" />
-            <element signature="e#1433#1434#0" expanded="true" />
-            <element signature="e#6318#6319#0" expanded="true" />
-            <element signature="e#6364#6365#0" expanded="true" />
-            <element signature="e#6505#6506#0" expanded="true" />
-            <element signature="e#6542#6543#0" expanded="true" />
-            <element signature="e#6890#6891#0" expanded="true" />
-            <element signature="e#6916#6917#0" expanded="true" />
-            <element signature="e#7062#7063#0" expanded="true" />
-            <element signature="e#7095#7096#0" expanded="true" />
-            <element signature="e#7261#7262#0" expanded="true" />
-            <element signature="e#7292#7293#0" expanded="true" />
-            <element signature="e#7925#7926#0" expanded="true" />
-            <element signature="e#7954#7955#0" expanded="true" />
-            <element signature="e#8093#8094#0" expanded="true" />
-            <element signature="e#8119#8120#0" expanded="true" />
-            <element signature="e#8539#8540#0" expanded="true" />
-            <element signature="e#8566#8567#0" expanded="true" />
-            <element signature="e#8695#8696#0" expanded="true" />
-            <element signature="e#8721#8722#0" expanded="true" />
-            <element signature="e#8836#8837#0" expanded="true" />
-            <element signature="e#8869#8870#0" expanded="true" />
-            <element signature="e#8999#9000#0" expanded="true" />
-            <element signature="e#9030#9031#0" expanded="true" />
-            <element signature="e#9148#9149#0" expanded="true" />
-            <element signature="e#9193#9194#0" expanded="true" />
-            <element signature="e#9979#9980#0" expanded="true" />
-            <element signature="e#10012#10013#0" expanded="true" />
-            <element signature="e#11866#11867#0" expanded="true" />
-            <element signature="e#11923#11924#0" expanded="true" />
-            <element signature="e#12539#12540#0" expanded="true" />
-            <element signature="e#12596#12597#0" expanded="true" />
-            <element signature="e#13459#13460#0" expanded="true" />
-            <element signature="e#13516#13517#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-            <element signature="e#14501#14502#0" expanded="true" />
-            <element signature="e#15126#15127#0" expanded="true" />
-            <element signature="e#15183#15184#0" expanded="true" />
-            <element signature="e#15733#15734#0" expanded="true" />
-            <element signature="e#15790#15791#0" expanded="true" />
-            <element signature="e#16425#16426#0" expanded="true" />
-            <element signature="e#16482#16483#0" expanded="true" />
-            <element signature="e#17034#17035#0" expanded="true" />
-            <element signature="e#17079#17080#0" expanded="true" />
-            <element signature="e#17251#17252#0" expanded="true" />
-            <element signature="e#17303#17304#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Main.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="246" max-vertical-offset="867">
           <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
@@ -1338,72 +682,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/CPU.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="68" max-vertical-offset="9911">
           <caret line="26" column="29" selection-start-line="26" selection-start-column="16" selection-end-line="26" selection-end-column="29" />
-          <folding>
-            <element signature="e#1012#1013#0" expanded="true" />
-            <element signature="e#1045#1046#0" expanded="true" />
-            <element signature="e#1089#1090#0" expanded="true" />
-            <element signature="e#1119#1120#0" expanded="true" />
-            <element signature="e#1160#1161#0" expanded="true" />
-            <element signature="e#1198#1199#0" expanded="true" />
-            <element signature="e#1246#1247#0" expanded="true" />
-            <element signature="e#1281#1282#0" expanded="true" />
-            <element signature="e#1320#1321#0" expanded="true" />
-            <element signature="e#1355#1356#0" expanded="true" />
-            <element signature="e#1401#1402#0" expanded="true" />
-            <element signature="e#1433#1434#0" expanded="true" />
-            <element signature="e#6318#6319#0" expanded="true" />
-            <element signature="e#6364#6365#0" expanded="true" />
-            <element signature="e#6505#6506#0" expanded="true" />
-            <element signature="e#6542#6543#0" expanded="true" />
-            <element signature="e#6890#6891#0" expanded="true" />
-            <element signature="e#6916#6917#0" expanded="true" />
-            <element signature="e#7062#7063#0" expanded="true" />
-            <element signature="e#7095#7096#0" expanded="true" />
-            <element signature="e#7261#7262#0" expanded="true" />
-            <element signature="e#7292#7293#0" expanded="true" />
-            <element signature="e#7925#7926#0" expanded="true" />
-            <element signature="e#7954#7955#0" expanded="true" />
-            <element signature="e#8093#8094#0" expanded="true" />
-            <element signature="e#8119#8120#0" expanded="true" />
-            <element signature="e#8539#8540#0" expanded="true" />
-            <element signature="e#8566#8567#0" expanded="true" />
-            <element signature="e#8695#8696#0" expanded="true" />
-            <element signature="e#8721#8722#0" expanded="true" />
-            <element signature="e#8836#8837#0" expanded="true" />
-            <element signature="e#8869#8870#0" expanded="true" />
-            <element signature="e#8999#9000#0" expanded="true" />
-            <element signature="e#9030#9031#0" expanded="true" />
-            <element signature="e#9148#9149#0" expanded="true" />
-            <element signature="e#9193#9194#0" expanded="true" />
-            <element signature="e#9979#9980#0" expanded="true" />
-            <element signature="e#10012#10013#0" expanded="true" />
-            <element signature="e#11866#11867#0" expanded="true" />
-            <element signature="e#11923#11924#0" expanded="true" />
-            <element signature="e#12539#12540#0" expanded="true" />
-            <element signature="e#12596#12597#0" expanded="true" />
-            <element signature="e#13459#13460#0" expanded="true" />
-            <element signature="e#13516#13517#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-            <element signature="e#14501#14502#0" expanded="true" />
-            <element signature="e#15126#15127#0" expanded="true" />
-            <element signature="e#15183#15184#0" expanded="true" />
-            <element signature="e#15733#15734#0" expanded="true" />
-            <element signature="e#15790#15791#0" expanded="true" />
-            <element signature="e#16425#16426#0" expanded="true" />
-            <element signature="e#16482#16483#0" expanded="true" />
-            <element signature="e#17034#17035#0" expanded="true" />
-            <element signature="e#17079#17080#0" expanded="true" />
-            <element signature="e#17251#17252#0" expanded="true" />
-            <element signature="e#17303#17304#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Main.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="425">
           <caret line="4" column="47" selection-start-line="4" selection-start-column="47" selection-end-line="4" selection-end-column="47" />
@@ -1411,337 +697,307 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/CPU.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="2023">
           <caret line="34" column="14" selection-start-line="34" selection-start-column="14" selection-end-line="34" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/RAM.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="3.3168654" vertical-offset="8" max-vertical-offset="2431">
+          <caret line="123" column="37" selection-start-line="123" selection-start-column="37" selection-end-line="123" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Reg32.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="629">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/app/java/jdk1.7.0_51_x64/src.zip!/java/lang/Override.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.76831347" vertical-offset="8" max-vertical-offset="595">
+          <caret line="50" column="18" selection-start-line="50" selection-start-column="18" selection-end-line="50" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/SysController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.28960818" vertical-offset="0" max-vertical-offset="1717">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/SecondaryINTC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="425" max-vertical-offset="1649">
+          <caret line="44" column="24" selection-start-line="44" selection-start-column="24" selection-end-line="44" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/INTC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.23168655" vertical-offset="0" max-vertical-offset="587">
+          <caret line="8" column="7" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/NullINTC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.318569" vertical-offset="0" max-vertical-offset="587">
+          <caret line="11" column="23" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/CoProcVFPv2.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="382" max-vertical-offset="1020">
+          <caret line="39" column="18" selection-start-line="39" selection-start-column="18" selection-end-line="39" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/CoProc.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.8068964" vertical-offset="2294" max-vertical-offset="2584">
+          <caret line="74" column="14" selection-start-line="74" selection-start-column="14" selection-end-line="74" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/SlaveCore64.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.034483" vertical-offset="3841" max-vertical-offset="4896">
+          <caret line="127" column="28" selection-start-line="127" selection-start-column="28" selection-end-line="127" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Bus64.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3313433" vertical-offset="705" max-vertical-offset="5576">
+          <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/GPIO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.69552237" vertical-offset="2028" max-vertical-offset="2856">
+          <caret line="137" column="18" selection-start-line="137" selection-start-column="18" selection-end-line="137" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/app/java/jdk1.7.0_51_x64/src.zip!/java/io/FileOutputStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334" vertical-offset="4720" max-vertical-offset="7837">
+          <caret line="310" column="24" selection-start-line="310" selection-start-column="0" selection-end-line="311" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/KMI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.52014655" vertical-offset="538" max-vertical-offset="2159">
+          <caret line="40" column="29" selection-start-line="40" selection-start-column="29" selection-end-line="40" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/CPU.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.75091577" vertical-offset="2260" max-vertical-offset="2737">
+          <caret line="157" column="0" selection-start-line="157" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/app/java/jdk1.7.0_51_x64/src.zip!/java/util/LinkedList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334" vertical-offset="13849" max-vertical-offset="18411">
+          <caret line="865" column="0" selection-start-line="865" selection-start-column="0" selection-end-line="866" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Controller64Reg32.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2136" max-vertical-offset="3026">
+          <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/CoProcStdv5.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="5876" max-vertical-offset="6443">
+          <caret line="355" column="35" selection-start-line="355" selection-start-column="35" selection-end-line="355" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/SysBaseboard.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1890971" vertical-offset="2201" max-vertical-offset="3247">
+          <caret line="140" column="13" selection-start-line="140" selection-start-column="13" selection-end-line="140" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/MMUv5.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="612" max-vertical-offset="14331">
+          <caret line="46" column="45" selection-start-line="46" selection-start-column="45" selection-end-line="46" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/app/java/jdk1.7.0_51_x64/src.zip!/java/util/List.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="6947" max-vertical-offset="9911">
+          <caret line="434" column="6" selection-start-line="434" selection-start-column="6" selection-end-line="434" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/app/java/jdk1.7.0_51_x64/src.zip!/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.27272728" vertical-offset="6052" max-vertical-offset="19057">
+          <caret line="396" column="0" selection-start-line="396" selection-start-column="0" selection-end-line="396" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/LCDC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2669" max-vertical-offset="3349">
+          <caret line="162" column="0" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/DualTimer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2541" max-vertical-offset="3128">
+          <caret line="178" column="31" selection-start-line="178" selection-start-column="31" selection-end-line="178" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="578" max-vertical-offset="5304">
+          <caret line="47" column="102" selection-start-line="47" selection-start-column="102" selection-end-line="47" selection-end-column="102" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/BitOp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="212" max-vertical-offset="2074">
+          <caret line="45" column="22" selection-start-line="45" selection-start-column="22" selection-end-line="45" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/PrimaryINTC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="6675" max-vertical-offset="7191">
+          <caret line="408" column="0" selection-start-line="408" selection-start-column="0" selection-end-line="408" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Instruction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1649" max-vertical-offset="11169">
+          <caret line="105" column="39" selection-start-line="105" selection-start-column="39" selection-end-line="105" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/test/SlaveCore64Test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1955">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="4" selection-end-column="32" />
           <folding>
-            <element signature="e#1012#1013#0" expanded="true" />
-            <element signature="e#1045#1046#0" expanded="true" />
-            <element signature="e#1089#1090#0" expanded="true" />
-            <element signature="e#1119#1120#0" expanded="true" />
-            <element signature="e#1160#1161#0" expanded="true" />
-            <element signature="e#1198#1199#0" expanded="true" />
-            <element signature="e#1246#1247#0" expanded="true" />
-            <element signature="e#1281#1282#0" expanded="true" />
-            <element signature="e#1320#1321#0" expanded="true" />
-            <element signature="e#1355#1356#0" expanded="true" />
-            <element signature="e#1401#1402#0" expanded="true" />
-            <element signature="e#1433#1434#0" expanded="true" />
-            <element signature="e#6318#6319#0" expanded="true" />
-            <element signature="e#6364#6365#0" expanded="true" />
-            <element signature="e#6505#6506#0" expanded="true" />
-            <element signature="e#6542#6543#0" expanded="true" />
-            <element signature="e#6890#6891#0" expanded="true" />
-            <element signature="e#6916#6917#0" expanded="true" />
-            <element signature="e#7062#7063#0" expanded="true" />
-            <element signature="e#7095#7096#0" expanded="true" />
-            <element signature="e#7261#7262#0" expanded="true" />
-            <element signature="e#7292#7293#0" expanded="true" />
-            <element signature="e#7925#7926#0" expanded="true" />
-            <element signature="e#7954#7955#0" expanded="true" />
-            <element signature="e#8093#8094#0" expanded="true" />
-            <element signature="e#8119#8120#0" expanded="true" />
-            <element signature="e#8539#8540#0" expanded="true" />
-            <element signature="e#8566#8567#0" expanded="true" />
-            <element signature="e#8695#8696#0" expanded="true" />
-            <element signature="e#8721#8722#0" expanded="true" />
-            <element signature="e#8836#8837#0" expanded="true" />
-            <element signature="e#8869#8870#0" expanded="true" />
-            <element signature="e#8999#9000#0" expanded="true" />
-            <element signature="e#9030#9031#0" expanded="true" />
-            <element signature="e#9148#9149#0" expanded="true" />
-            <element signature="e#9193#9194#0" expanded="true" />
-            <element signature="e#9979#9980#0" expanded="true" />
-            <element signature="e#10012#10013#0" expanded="true" />
-            <element signature="e#11866#11867#0" expanded="true" />
-            <element signature="e#11923#11924#0" expanded="true" />
-            <element signature="e#12539#12540#0" expanded="true" />
-            <element signature="e#12596#12597#0" expanded="true" />
-            <element signature="e#13459#13460#0" expanded="true" />
-            <element signature="e#13516#13517#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-            <element signature="e#14501#14502#0" expanded="true" />
-            <element signature="e#15126#15127#0" expanded="true" />
-            <element signature="e#15183#15184#0" expanded="true" />
-            <element signature="e#15733#15734#0" expanded="true" />
-            <element signature="e#15790#15791#0" expanded="true" />
-            <element signature="e#16425#16426#0" expanded="true" />
-            <element signature="e#16482#16483#0" expanded="true" />
-            <element signature="e#17034#17035#0" expanded="true" />
-            <element signature="e#17079#17080#0" expanded="true" />
-            <element signature="e#17251#17252#0" expanded="true" />
-            <element signature="e#17303#17304#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/RAM.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/test/CPUTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="567" max-vertical-offset="1241">
-          <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1581">
+          <caret line="4" column="32" selection-start-line="4" selection-start-column="32" selection-end-line="4" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Bus.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/test/AllTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2023">
-          <caret line="45" column="25" selection-start-line="45" selection-start-column="25" selection-end-line="47" selection-end-column="54" />
+        <state vertical-scroll-proportion="0.057921637" vertical-offset="0" max-vertical-offset="587">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/test/AllTest.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/test/BitOpTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.35416666" vertical-offset="17" max-vertical-offset="442">
-          <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
+        <state vertical-scroll-proportion="0.11584327" vertical-offset="0" max-vertical-offset="1530">
+          <caret line="4" column="32" selection-start-line="4" selection-start-column="32" selection-end-line="4" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/SlaveCore.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/AACI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.28960818" vertical-offset="0" max-vertical-offset="587">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2975">
+          <caret line="0" column="9" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Word128.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/MasterCore64.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3939394" vertical-offset="102" max-vertical-offset="1020">
-          <caret line="23" column="22" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
+        <state vertical-scroll-proportion="0.33333334" vertical-offset="1864" max-vertical-offset="2482">
+          <caret line="117" column="0" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Word64.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/UART.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="76" max-vertical-offset="765">
-          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3887" max-vertical-offset="4930">
+          <caret line="242" column="0" selection-start-line="242" selection-start-column="0" selection-end-line="242" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/ByteSeq.java">
+    <entry file="file://$PROJECT_DIR$/semu.iml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.21212122" vertical-offset="0" max-vertical-offset="561">
-          <caret line="7" column="26" selection-start-line="7" selection-start-column="26" selection-end-line="7" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/MasterCore.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="340">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Bus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="414" max-vertical-offset="1989">
-          <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/test/CPUTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.23235294" vertical-offset="2743" max-vertical-offset="3315">
-          <caret line="166" column="82" selection-start-line="166" selection-start-column="82" selection-end-line="166" selection-end-column="82" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/BitOp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.56558776" vertical-offset="263" max-vertical-offset="986">
-          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/MasterCore64.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.286201" vertical-offset="4564" max-vertical-offset="5151">
-          <caret line="159" column="15" selection-start-line="159" selection-start-column="15" selection-end-line="159" selection-end-column="15" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Instruction.java">
+    <entry file="file://$PROJECT_DIR$/armemu/build.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3460" max-vertical-offset="11662">
-          <caret line="215" column="19" selection-start-line="215" selection-start-column="19" selection-end-line="215" selection-end-column="19" />
-          <folding>
-            <element signature="e#154#155#0" expanded="true" />
-            <element signature="e#189#190#0" expanded="true" />
-            <element signature="e#299#300#0" expanded="true" />
-            <element signature="e#329#330#0" expanded="true" />
-            <element signature="e#507#508#0" expanded="true" />
-            <element signature="e#556#557#0" expanded="true" />
-            <element signature="e#1429#1430#0" expanded="true" />
-            <element signature="e#1473#1474#0" expanded="true" />
-            <element signature="e#1645#1646#0" expanded="true" />
-            <element signature="e#1686#1687#0" expanded="true" />
-            <element signature="e#5039#5040#0" expanded="true" />
-            <element signature="e#5086#5087#0" expanded="true" />
-            <element signature="e#5332#5333#0" expanded="true" />
-            <element signature="e#5373#5374#0" expanded="true" />
-            <element signature="e#5573#5574#0" expanded="true" />
-            <element signature="e#5612#5613#0" expanded="true" />
-            <element signature="e#5853#5854#0" expanded="true" />
-            <element signature="e#5898#5899#0" expanded="true" />
-            <element signature="e#6779#6780#0" expanded="true" />
-            <element signature="e#6825#6826#0" expanded="true" />
-            <element signature="e#7036#7037#0" expanded="true" />
-            <element signature="e#7077#7078#0" expanded="true" />
-            <element signature="e#10753#10754#0" expanded="true" />
-            <element signature="e#10805#10806#0" expanded="true" />
-            <element signature="e#11370#11371#0" expanded="true" />
-            <element signature="e#11420#11421#0" expanded="true" />
-            <element signature="e#12169#12170#0" expanded="true" />
-            <element signature="e#12211#12212#0" expanded="true" />
-            <element signature="e#12481#12482#0" expanded="true" />
-            <element signature="e#12522#12523#0" expanded="true" />
-            <element signature="e#12797#12798#0" expanded="true" />
-            <element signature="e#12848#12849#0" expanded="true" />
-            <element signature="e#13696#13697#0" expanded="true" />
-            <element signature="e#13735#13736#0" expanded="true" />
-            <element signature="e#14013#14014#0" expanded="true" />
-            <element signature="e#14058#14059#0" expanded="true" />
-            <element signature="e#14280#14281#0" expanded="true" />
-            <element signature="e#14319#14320#0" expanded="true" />
-            <element signature="e#14582#14583#0" expanded="true" />
-            <element signature="e#14627#14628#0" expanded="true" />
-            <element signature="e#14749#14750#0" expanded="true" />
-            <element signature="e#14791#14792#0" expanded="true" />
-            <element signature="e#14954#14955#0" expanded="true" />
-            <element signature="e#14995#14996#0" expanded="true" />
-            <element signature="e#15117#15118#0" expanded="true" />
-            <element signature="e#15159#15160#0" expanded="true" />
-            <element signature="e#15322#15323#0" expanded="true" />
-            <element signature="e#15363#15364#0" expanded="true" />
-            <element signature="e#15600#15601#0" expanded="true" />
-            <element signature="e#15642#15643#0" expanded="true" />
-            <element signature="e#15920#15921#0" expanded="true" />
-            <element signature="e#15953#15954#0" expanded="true" />
-            <element signature="e#16158#16159#0" expanded="true" />
-            <element signature="e#16205#16206#0" expanded="true" />
-            <element signature="e#16451#16452#0" expanded="true" />
-            <element signature="e#16487#16488#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/RAM.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.2061329" vertical-offset="40" max-vertical-offset="1207">
-          <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.25212947" vertical-offset="1059" max-vertical-offset="1887">
+          <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CoProc.java">
+    <entry file="file://$PROJECT_DIR$/build.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2703">
-          <caret line="5" column="7" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="7" />
-          <folding>
-            <element signature="e#553#554#0" expanded="true" />
-            <element signature="e#578#579#0" expanded="true" />
-            <element signature="e#696#697#0" expanded="true" />
-            <element signature="e#722#723#0" expanded="true" />
-            <element signature="e#1909#1910#0" expanded="true" />
-            <element signature="e#1953#1954#0" expanded="true" />
-            <element signature="e#3109#3110#0" expanded="true" />
-            <element signature="e#3165#3166#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/StdCoProc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5236">
-          <caret line="3" column="7" selection-start-line="3" selection-start-column="7" selection-end-line="3" selection-end-column="7" />
+        <state vertical-scroll-proportion="-0.01362862" vertical-offset="195" max-vertical-offset="782">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/MMU.java">
+    <entry file="file://$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/ARMv5.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="935">
-          <caret line="4" column="2" selection-start-line="4" selection-start-column="2" selection-end-line="4" selection-end-column="2" />
-          <folding>
-            <element signature="e#348#349#0" expanded="true" />
-            <element signature="e#377#378#0" expanded="true" />
-            <element signature="e#509#510#0" expanded="true" />
-            <element signature="e#535#536#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="977" max-vertical-offset="2023">
-          <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.15502556" vertical-offset="57216" max-vertical-offset="90202">
+          <caret line="3417" column="0" selection-start-line="3417" selection-start-column="0" selection-end-line="3417" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/katsuster/semu/CPU.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.10083037" vertical-offset="0" max-vertical-offset="52122">
-          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
-          <folding>
-            <element signature="e#1012#1013#0" expanded="true" />
-            <element signature="e#1045#1046#0" expanded="true" />
-            <element signature="e#1089#1090#0" expanded="true" />
-            <element signature="e#1119#1120#0" expanded="true" />
-            <element signature="e#1160#1161#0" expanded="true" />
-            <element signature="e#1198#1199#0" expanded="true" />
-            <element signature="e#1246#1247#0" expanded="true" />
-            <element signature="e#1281#1282#0" expanded="true" />
-            <element signature="e#1320#1321#0" expanded="true" />
-            <element signature="e#1355#1356#0" expanded="true" />
-            <element signature="e#1401#1402#0" expanded="true" />
-            <element signature="e#1433#1434#0" expanded="true" />
-            <element signature="e#6318#6319#0" expanded="true" />
-            <element signature="e#6364#6365#0" expanded="true" />
-            <element signature="e#6505#6506#0" expanded="true" />
-            <element signature="e#6542#6543#0" expanded="true" />
-            <element signature="e#6890#6891#0" expanded="true" />
-            <element signature="e#6916#6917#0" expanded="true" />
-            <element signature="e#7062#7063#0" expanded="true" />
-            <element signature="e#7095#7096#0" expanded="true" />
-            <element signature="e#7261#7262#0" expanded="true" />
-            <element signature="e#7292#7293#0" expanded="true" />
-            <element signature="e#7925#7926#0" expanded="true" />
-            <element signature="e#7954#7955#0" expanded="true" />
-            <element signature="e#8093#8094#0" expanded="true" />
-            <element signature="e#8119#8120#0" expanded="true" />
-            <element signature="e#8539#8540#0" expanded="true" />
-            <element signature="e#8566#8567#0" expanded="true" />
-            <element signature="e#8695#8696#0" expanded="true" />
-            <element signature="e#8721#8722#0" expanded="true" />
-            <element signature="e#8836#8837#0" expanded="true" />
-            <element signature="e#8869#8870#0" expanded="true" />
-            <element signature="e#8999#9000#0" expanded="true" />
-            <element signature="e#9030#9031#0" expanded="true" />
-            <element signature="e#9148#9149#0" expanded="true" />
-            <element signature="e#9193#9194#0" expanded="true" />
-            <element signature="e#9979#9980#0" expanded="true" />
-            <element signature="e#10012#10013#0" expanded="true" />
-            <element signature="e#11866#11867#0" expanded="true" />
-            <element signature="e#11923#11924#0" expanded="true" />
-            <element signature="e#12539#12540#0" expanded="true" />
-            <element signature="e#12596#12597#0" expanded="true" />
-            <element signature="e#13459#13460#0" expanded="true" />
-            <element signature="e#13516#13517#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-            <element signature="e#14501#14502#0" expanded="true" />
-            <element signature="e#15126#15127#0" expanded="true" />
-            <element signature="e#15183#15184#0" expanded="true" />
-            <element signature="e#15733#15734#0" expanded="true" />
-            <element signature="e#15790#15791#0" expanded="true" />
-            <element signature="e#16425#16426#0" expanded="true" />
-            <element signature="e#16482#16483#0" expanded="true" />
-            <element signature="e#17034#17035#0" expanded="true" />
-            <element signature="e#17079#17080#0" expanded="true" />
-            <element signature="e#17251#17252#0" expanded="true" />
-            <element signature="e#17303#17304#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1797,11 +1053,12 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>semu</last-edited>
+          <last-edited>armemu</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
