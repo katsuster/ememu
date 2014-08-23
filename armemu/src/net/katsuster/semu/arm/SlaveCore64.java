@@ -12,6 +12,10 @@ public abstract class SlaveCore64 {
     public static long ADDR_MASK_16 = ~0x1L;
     public static long ADDR_MASK_32 = ~0x3L;
     public static long ADDR_MASK_64 = ~0x7L;
+    public static long DATA_MASK_8 = 0xffL;
+    public static long DATA_MASK_16 = 0xffffL;
+    public static long DATA_MASK_32 = 0xffffffffL;
+    public static long DATA_MASK_64 = 0xffffffffffffffffL;
 
     private Bus64 masterBus;
 
@@ -49,14 +53,41 @@ public abstract class SlaveCore64 {
      */
     public static long getAddressMask(int dataLen) {
         switch (dataLen) {
-        case 64:
-            return ADDR_MASK_64;
-        case 32:
-            return ADDR_MASK_32;
-        case 16:
-            return ADDR_MASK_16;
         case 8:
             return ADDR_MASK_8;
+        case 16:
+            return ADDR_MASK_16;
+        case 32:
+            return ADDR_MASK_32;
+        case 64:
+            return ADDR_MASK_64;
+        default:
+            throw new IllegalArgumentException("Data length" +
+                    String.format("(0x%08x) is not supported.", dataLen));
+        }
+    }
+
+    /**
+     * 指定されたデータ幅に対応するマスクを返します。
+     *
+     * マスクの値の例:
+     * 8bits = 0xffL
+     * 16bits = 0xffffL
+     * 32bits = 0xffffffffL
+     *
+     * @param dataLen データ幅
+     * @return データマスク
+     */
+    public static long getDataMask(int dataLen) {
+        switch (dataLen) {
+        case 8:
+            return DATA_MASK_8;
+        case 16:
+            return DATA_MASK_16;
+        case 32:
+            return DATA_MASK_32;
+        case 64:
+            return DATA_MASK_64;
         default:
             throw new IllegalArgumentException("Data length" +
                     String.format("(0x%08x) is not supported.", dataLen));
@@ -120,73 +151,6 @@ public abstract class SlaveCore64 {
     }
 
     /**
-     * 指定されたアドレスからの読み取りが可能かどうかを判定します。
-     *
-     * @param addr アドレス
-     * @return 読み取りが可能な場合は true、不可能な場合は false
-     */
-    public abstract boolean tryRead(long addr);
-
-    /**
-     * 指定されたアドレスから 8 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
-    public abstract byte read8(long addr);
-
-    /**
-     * 指定されたアドレスから 16 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
-    public abstract short read16(long addr);
-
-    /**
-     * 指定されたアドレスから 32 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
-    public abstract int read32(long addr);
-
-    /**
-     * 指定されたアドレスから 64 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
-    public abstract long read64(long addr);
-
-    /**
-     * 指定されたデータ幅に対応するマスクを返します。
-     *
-     * マスクの値の例:
-     * 8bits = 0xffL
-     * 16bits = 0xffffL
-     * 32bits = 0xffffffffL
-     *
-     * @param dataLen データ幅
-     * @return データマスク
-     */
-    public static long getDataMask(int dataLen) {
-        switch (dataLen) {
-        case 64:
-            return 0xffffffffffffffffL;
-        case 32:
-            return 0xffffffffL;
-        case 16:
-            return 0xffffL;
-        case 8:
-            return 0xffL;
-        default:
-            throw new IllegalArgumentException("Data length" +
-                    String.format("(0x%08x) is not supported.", dataLen));
-        }
-    }
-
-    /**
      * リトルエンディアンにて、
      * 指定されたアドレスにあるワードを変更します。
      *
@@ -243,6 +207,46 @@ public abstract class SlaveCore64 {
 
         return (data & ~(eraseMask << sh)) | ((newData & eraseMask) << sh);
     }
+
+    /**
+     * 指定されたアドレスからの読み取りが可能かどうかを判定します。
+     *
+     * @param addr アドレス
+     * @return 読み取りが可能な場合は true、不可能な場合は false
+     */
+    public abstract boolean tryRead(long addr);
+
+    /**
+     * 指定されたアドレスから 8 ビットのデータを読み取ります。
+     *
+     * @param addr アドレス
+     * @return データ
+     */
+    public abstract byte read8(long addr);
+
+    /**
+     * 指定されたアドレスから 16 ビットのデータを読み取ります。
+     *
+     * @param addr アドレス
+     * @return データ
+     */
+    public abstract short read16(long addr);
+
+    /**
+     * 指定されたアドレスから 32 ビットのデータを読み取ります。
+     *
+     * @param addr アドレス
+     * @return データ
+     */
+    public abstract int read32(long addr);
+
+    /**
+     * 指定されたアドレスから 64 ビットのデータを読み取ります。
+     *
+     * @param addr アドレス
+     * @return データ
+     */
+    public abstract long read64(long addr);
 
     /**
      * 指定されたアドレスへの書き込みが可能かどうかを判定します。
