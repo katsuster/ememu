@@ -15,7 +15,10 @@ public class Main {
     public static final int ATAG_CMDLINE   = 0x54410009;
 
     public static int loadFile(String filename, CPU cpu, int addr) {
-        int lenWords = 0;
+        int len = 0;
+        int i;
+
+        System.out.println("loadFile: " + filename);
 
         try {
             File f = new File(filename);
@@ -27,8 +30,12 @@ public class Main {
                         f.length() + ".");
             }
 
-            lenWords = (int)f.length();
-            for (int i = 0; i < lenWords; i++) {
+            i = 0;
+            len = (int)f.length();
+            for (; i < len - 8; i += 8) {
+                cpu.write64(addr + i, Long.reverseBytes(s.readLong()));
+            }
+            for (; i < len; i++) {
                 cpu.write8(addr + i, s.readByte());
             }
         } catch (FileNotFoundException e) {
@@ -39,7 +46,10 @@ public class Main {
             throw new RuntimeException(e);
         }
 
-        return lenWords;
+        System.out.printf("loadFile: '%s' done, %dbytes.\n",
+                filename, len);
+
+        return len;
     }
 
     public static void main(String[] args) {
