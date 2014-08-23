@@ -41,29 +41,6 @@ public abstract class CPU extends MasterCore64 implements Runnable {
     }
 
     /**
-     * 符号拡張を行います。
-     *
-     * @param v 任意の値
-     * @param n 値のビット数
-     */
-    public static long signExt64(long v, int n) {
-        long sb, mb;
-
-        if (n == 0) {
-            return 0;
-        }
-
-        sb = 1L << (n - 1);
-        mb = (-1L << (n - 1)) << 1;
-        v &= ~mb;
-        if ((v & sb) != 0) {
-            v = mb + v;
-        }
-
-        return v;
-    }
-
-    /**
      * キャリーが発生する（符号無し演算の加算がオーバーフローする）か、
      * 否か、を取得します。
      *

@@ -3805,7 +3805,7 @@ public class ARMv5 extends CPU {
     public void executeBl(Instruction inst, boolean exec) {
         boolean l = inst.getBit(24);
         int imm24 = inst.getField(0, 24);
-        int simm24 = (int) signExt64(imm24, 24) << 2;
+        int simm24 = (int) BitOp.signExt64(imm24, 24) << 2;
 
         if (!exec) {
             disasmInst(inst,
@@ -3841,7 +3841,7 @@ public class ARMv5 extends CPU {
         boolean h = inst.getBit(24);
         int vh = BitOp.toInt(h) << 1;
         int imm24 = inst.getField(0, 24);
-        int simm24 = (int) signExt64(imm24, 24) << 2;
+        int simm24 = (int) BitOp.signExt64(imm24, 24) << 2;
 
         if (!exec) {
             disasmInst(inst,
