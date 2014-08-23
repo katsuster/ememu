@@ -14,6 +14,7 @@ import java.util.List;
 public class Bus64 {
     private MasterCore64 master;
     private List<SlaveCoreAddress> slaveMap;
+    private SlaveCoreAddress cachedSlave;
 
     public Bus64() {
         this.slaveMap = new LinkedList<SlaveCoreAddress>();
@@ -287,10 +288,15 @@ public class Bus64 {
         Iterator<SlaveCoreAddress> it;
         SlaveCoreAddress s;
 
+        if (cachedSlave != null && cachedSlave.contains(start, end)) {
+            return cachedSlave;
+        }
+
         for (it = slaveMap.iterator(); it.hasNext(); ) {
             s = it.next();
 
             if (s.contains(start, end)) {
+                cachedSlave = s;
                 return s;
             }
         }
