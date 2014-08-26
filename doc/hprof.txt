@@ -1,0 +1,15 @@
+hprof について
+----------------------------------------
+
+実行例
+--------------------
+java -Xrunhprof:cpu=times \
+-jar armemu/ant/dist/armemu.jar \
+linux-3.12.26/arch/arm/boot/Image \
+initramfs.gz
+
+出力先ファイル名を省略すると、
+java.hprof.txt というファイルに結果が出力されます。
+
+
+以上です。

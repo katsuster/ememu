@@ -1,0 +1,47 @@
+initramfs について
+----------------------------------------
+
+ディレクトリ構成（参考）
+--------------------
+最低限必要なものは、
+  init, busybox スタティックリンク版, 各種デバイスファイル
+です。
+
+initramfs
+|-- bin
+|   |-- [ -> busybox
+|   |-- ] -> busybox
+...
+|-- dev
+|   |-- console
+|   |-- null
+|   |-- tty
+...
+|-- etc
+|-- init
+|-- lib
+|-- proc
+|-- run
+|-- sbin
+`-- sys
+
+
+init の例
+--------------------
+busybox の init を実行しても良いし、シェルスクリプトを書いても便利です。
+カーネル引数に init=/bin/sh を渡せば init すら不要です。
+
+#!/bin/sh
+mount -t proc none /proc
+mount -t sysfs none /sys
+/bin/sh
+
+
+initramfs 作成方法
+--------------------
+cd initramfs
+find . | cpio --format=newc -o > ../initramfs.cpio
+cat ../initramfs.cpio | gzip  > ../initramfs.gz
+
+
+以上です。

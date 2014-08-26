@@ -1,0 +1,28 @@
+Linux について
+----------------------------------------
+
+動作確認
+--------------------
+Linux 3.12.26: OK: BusyBox まで動作
+Linux 3.14.16: NG: 起動中にハング
+
+
+追加すべきコンフィグ
+--------------------
+- CONFIG_AEABI
+  Busybox の実行に必要です。
+  最近のクロスコンパイラでビルドした場合、システムコールの呼び出し規則に
+  EABI が使われるためです。
+
+
+ビルド方法
+--------------------
+export ARCH=arm
+export CROSS_COMPILE=/home/katsuhiro/share/arm_cross/gcc-linaro-arm-linux-gnueabihf-4.9-2014.07_linux/bin/arm-linux-gnueabihf-
+
+cd linux-3.14.16
+make KBUILD_DEFCONFIG=versatile_defconfig defconfig
+make -j4
+
+
+以上です。

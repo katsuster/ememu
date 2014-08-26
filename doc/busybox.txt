@@ -1,0 +1,31 @@
+BusyBox について
+----------------------------------------
+
+動作確認
+--------------------
+busybox-1.22.1: OK: ls など動作
+
+
+追加すべきコンフィグ
+--------------------
+- CONFIG_STATIC
+  glibc なしで動作させるために必要。
+
+
+ビルド方法
+--------------------
+FIXME: Linaro のクロスコンパイラは使用できません。
+Linaro の glibc には Thumb 命令が含まれますが、
+自作エミュレータが Thumb 命令に対応していないためです。
+代わりに CodeSourcery のクロスコンパイラを使って下さい。
+
+export ARCH=arm
+#export CROSS_COMPILE=/home/katsuhiro/share/arm_cross/gcc-linaro-arm-linux-gnueabihf-4.9-2014.07_linux/bin/arm-linux-gnueabihf-
+export CROSS_COMPILE=/home/katsuhiro/share/arm_cross/arm-2013.11/bin/arm-none-linux-gnueabi-
+
+cd busybox-1.22.1
+make defconfig
+make -j4
+
+
+以上です。
