@@ -16,7 +16,7 @@ Linux 3.12.26
   EABI が使われるためです。
 
 Linux 3.14.16
-- CONFIG_
+- CONFIG_FB_ARMCLCD
   削除、またはモジュール指定でも OK です。
   原因は未調査ですが、起動時にハングします。
 
