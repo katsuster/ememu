@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/armemu/armemu.iml" filepath="$PROJECT_DIR$/armemu/armemu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/arm/arm.iml" filepath="$PROJECT_DIR$/arm/arm.iml" />
       <module fileurl="file://$PROJECT_DIR$/semu.iml" filepath="$PROJECT_DIR$/semu.iml" />
     </modules>
   </component>
