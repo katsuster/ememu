@@ -1,8 +1,7 @@
 package net.katsuster.semu.arm.test;
 
+import net.katsuster.semu.arm.BitOp;
 import org.junit.*;
-
-import net.katsuster.semu.arm.*;
 
 public class BitOpTest {
     @org.junit.Test

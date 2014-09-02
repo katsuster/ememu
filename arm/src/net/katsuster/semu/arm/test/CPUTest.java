@@ -1,8 +1,7 @@
 package net.katsuster.semu.arm.test;
 
+import net.katsuster.semu.arm.CPU;
 import org.junit.*;
-
-import net.katsuster.semu.arm.*;
 
 public class CPUTest {
     @org.junit.Test

@@ -1,4 +1,4 @@
 syntax: regexp
-^armemu/ant/build/.*$
-^armemu/ant/dist/.*$
+^arm/ant/build/.*$
+^arm/ant/dist/.*$
 ^out/.*$

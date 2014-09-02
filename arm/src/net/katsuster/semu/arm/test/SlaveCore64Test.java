@@ -1,8 +1,7 @@
 package net.katsuster.semu.arm.test;
 
+import net.katsuster.semu.arm.SlaveCore64;
 import org.junit.*;
-
-import net.katsuster.semu.arm.*;
 
 public class SlaveCore64Test {
     @org.junit.Test

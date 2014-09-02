@@ -2,15 +2,15 @@
 <!DOCTYPE project>
 
 <project name="armemu" default="dist">
-    <property name="src.dir"      location="src"/>
+    <property name="src.dir"      location="../arm/src"/>
     <property name="lib.dir"      location="../lib"/>
     <property name="ant.dir"      location="ant"/>
     <property name="build.dir"    location="${ant.dir}/build"/>
     <property name="dist.dir"     location="${ant.dir}/dist"/>
 
-    <property name="manifest.mainclass.armemu" value="net.katsuster.semu.arm.Main"/>
+    <property name="manifest.mainclass.arm" value="net.katsuster.semu.arm.Main"/>
     <property name="manifest.mainclass.junit" value="net.katsuster.semu.arm.test.AllTest"/>
-    <property name="manifest.classpath" value="./"/>
+    <property name="manifest.classpath" value="../arm/"/>
     <property name="manifest.title"     value="armemu"/>
     <property name="manifest.version"   value="0.1"/>
     <property name="manifest.vendor"    value="Katsuhiro Suzuki"/>
@@ -63,7 +63,7 @@
             </fileset>
             <manifest>
                 <attribute name="Main-Class"
-                           value="${manifest.mainclass.armemu}"/>
+                           value="${manifest.mainclass.arm}"/>
                 <attribute name="Class-Path"
                            value="${manifest.classpath}"/>
                 <attribute name="Implementation-Title"
