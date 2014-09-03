@@ -18,12 +18,13 @@ import java.util.*;
  */
 public class ARMv5 extends CPU {
     private int[] regs;
+    private int[] regs_usr;
     private int[] regs_svc;
     private int[] regs_abt;
     private int[] regs_und;
     private int[] regs_irq;
     private int[] regs_fiq;
-    private int cpsr;
+    private PSR cpsr;
     private CoProc[] coProcs;
     private MMUv5 mmu;
     private INTC intcIRQ;
@@ -32,6 +33,7 @@ public class ARMv5 extends CPU {
     private boolean exceptions[];
     private String exceptionReasons[];
 
+    private int prevMode;
     private boolean raised;
     private boolean jumped;
     private boolean highVector;
@@ -44,11 +46,13 @@ public class ARMv5 extends CPU {
         cpStd = new CoProcStdv5(15, this);
 
         regs = new int[17];
+        regs_usr = new int[17];
         regs_svc = new int[17];
         regs_abt = new int[17];
         regs_und = new int[17];
         regs_irq = new int[17];
         regs_fiq = new int[17];
+        cpsr = new PSR();
         coProcs = new CoProc[16];
         coProcs[10] = cpVfps;
         coProcs[15] = cpStd;
@@ -59,6 +63,7 @@ public class ARMv5 extends CPU {
         exceptions = new boolean[7];
         exceptionReasons = new String[7];
 
+        prevMode = PSR.MODE_USR;
         raised = false;
         jumped = false;
         highVector = false;
@@ -91,8 +96,61 @@ public class ARMv5 extends CPU {
                     i + 2, getRegRaw(i + 2), i + 3, getRegRaw(i + 3));
         }
         System.out.printf("  cpsr:%08x(%s), spsr:%08x(%s)\n",
-                getCPSR(), getPSRName(getCPSR()),
-                getSPSR(), getPSRName(getSPSR()));
+                getCPSR().getValue(), getCPSR().getName(),
+                getSPSR().getValue(), getSPSR().getName());
+    }
+
+    /**
+     * 指定された動作モードにおけるレジスタ Rn そのものの値を取得します。
+     *
+     * r15 を返す際に +8 のオフセットを加算しません。
+     *
+     * @param n    レジスタ番号（0 ～ 15）、16 は SPSR を示す
+     * @param mode 動作モード
+     * @return レジスタの値
+     */
+    public int getRegRaw(int n, int mode) {
+        switch (mode) {
+        case PSR.MODE_USR:
+        case PSR.MODE_SYS:
+            return regs_usr[n];
+        case PSR.MODE_SVC:
+            if ((13 <= n && n <= 14) || n == 16) {
+                return regs_svc[n];
+            } else {
+                return regs_usr[n];
+            }
+        case PSR.MODE_ABT:
+            if ((13 <= n && n <= 14) || n == 16) {
+                return regs_abt[n];
+            } else {
+                return regs_usr[n];
+            }
+        case PSR.MODE_UND:
+            if ((13 <= n && n <= 14) || n == 16) {
+                return regs_und[n];
+            } else {
+                return regs_usr[n];
+            }
+        case PSR.MODE_IRQ:
+            if ((13 <= n && n <= 14) || n == 16) {
+                return regs_irq[n];
+            } else {
+                return regs_usr[n];
+            }
+        case PSR.MODE_FIQ:
+            if ((8 <= n && n <= 14) || n == 16) {
+                return regs_fiq[n];
+            } else {
+                return regs_usr[n];
+            }
+        default:
+            //do nothing
+            break;
+        }
+
+        throw new IllegalArgumentException("Illegal mode " +
+                String.format("mode:0x%x.", mode));
     }
 
     /**
@@ -104,39 +162,63 @@ public class ARMv5 extends CPU {
      * @return レジスタの値
      */
     public int getRegRaw(int n) {
-        switch (getCPSR_Mode()) {
-        case MODE_USR:
-        case MODE_SYS:
-            return regs[n];
-        case MODE_SVC:
+        return getRegRaw(n, getCPSR().getMode());
+    }
+
+    /**
+     * 指定された動作モードでのレジスタ Rn そのもの値を設定します。
+     *
+     * r15 を設定する際にジャンプ済みフラグをセットしません。
+     *
+     * @param n   レジスタ番号（0 ～ 15）、16 は SPSR を示す
+     * @param val 新しいレジスタの値
+     * @param mode 動作モード
+     */
+    public void setRegRaw(int n, int val, int mode) {
+        switch (mode) {
+        case PSR.MODE_USR:
+        case PSR.MODE_SYS:
+            regs_usr[n] = val;
+            return;
+        case PSR.MODE_SVC:
             if ((13 <= n && n <= 14) || n == 16) {
-                return regs_svc[n];
+                regs_svc[n] = val;
+                return;
             } else {
-                return regs[n];
+                regs_usr[n] = val;
+                return;
             }
-        case MODE_ABT:
+        case PSR.MODE_ABT:
             if ((13 <= n && n <= 14) || n == 16) {
-                return regs_abt[n];
+                regs_abt[n] = val;
+                return;
             } else {
-                return regs[n];
+                regs_usr[n] = val;
+                return;
             }
-        case MODE_UND:
+        case PSR.MODE_UND:
             if ((13 <= n && n <= 14) || n == 16) {
-                return regs_und[n];
+                regs_und[n] = val;
+                return;
             } else {
-                return regs[n];
+                regs_usr[n] = val;
+                return;
             }
-        case MODE_IRQ:
+        case PSR.MODE_IRQ:
             if ((13 <= n && n <= 14) || n == 16) {
-                return regs_irq[n];
+                regs_irq[n] = val;
+                return;
             } else {
-                return regs[n];
+                regs_usr[n] = val;
+                return;
             }
-        case MODE_FIQ:
+        case PSR.MODE_FIQ:
             if ((8 <= n && n <= 14) || n == 16) {
-                return regs_fiq[n];
+                regs_fiq[n] = val;
+                return;
             } else {
-                return regs[n];
+                regs_usr[n] = val;
+                return;
             }
         default:
             //do nothing
@@ -144,70 +226,19 @@ public class ARMv5 extends CPU {
         }
 
         throw new IllegalArgumentException("Illegal mode " +
-                String.format("mode:0x%x.", getCPSR_Mode()));
+                String.format("mode:0x%x.", mode));
     }
 
     /**
      * レジスタ Rn そのもの値を設定します。
      *
-     * r15 を設定する際にジャンプ済みフラグセットしません。
+     * r15 を設定する際にジャンプ済みフラグをセットしません。
      *
      * @param n   レジスタ番号（0 ～ 15）、16 は SPSR を示す
      * @param val 新しいレジスタの値
      */
     public void setRegRaw(int n, int val) {
-        switch (getCPSR_Mode()) {
-        case MODE_USR:
-        case MODE_SYS:
-            regs[n] = val;
-            return;
-        case MODE_SVC:
-            if ((13 <= n && n <= 14) || n == 16) {
-                regs_svc[n] = val;
-                return;
-            } else {
-                regs[n] = val;
-                return;
-            }
-        case MODE_ABT:
-            if ((13 <= n && n <= 14) || n == 16) {
-                regs_abt[n] = val;
-                return;
-            } else {
-                regs[n] = val;
-                return;
-            }
-        case MODE_UND:
-            if ((13 <= n && n <= 14) || n == 16) {
-                regs_und[n] = val;
-                return;
-            } else {
-                regs[n] = val;
-                return;
-            }
-        case MODE_IRQ:
-            if ((13 <= n && n <= 14) || n == 16) {
-                regs_irq[n] = val;
-                return;
-            } else {
-                regs[n] = val;
-                return;
-            }
-        case MODE_FIQ:
-            if ((8 <= n && n <= 14) || n == 16) {
-                regs_fiq[n] = val;
-                return;
-            } else {
-                regs[n] = val;
-                return;
-            }
-        default:
-            //do nothing
-            break;
-        }
-
-        throw new IllegalArgumentException("Illegal mode " +
-                String.format("mode:0x%x.", getCPSR_Mode()));
+        setRegRaw(n, val, getCPSR().getMode());
     }
 
     /**
@@ -317,7 +348,7 @@ public class ARMv5 extends CPU {
         if (isJumped()) {
             setJumped(false);
         } else {
-            regs[15] += 4;
+            regs_usr[15] += 4;
         }
     }
 
@@ -337,21 +368,22 @@ public class ARMv5 extends CPU {
         setJumped(true);
     }
 
-    public static final int PSR_BIT_N = 31;
-    public static final int PSR_BIT_Z = 30;
-    public static final int PSR_BIT_C = 29;
-    public static final int PSR_BIT_V = 28;
-    public static final int PSR_BIT_I = 7;
-    public static final int PSR_BIT_F = 6;
-    public static final int PSR_BIT_T = 5;
-
     /**
      * CPSR（カレントプログラムステートレジスタ）の値を取得します。
      *
-     * @return CPSR の値
+     * @return CPSR
      */
-    public int getCPSR() {
+    public PSR getCPSR() {
         return cpsr;
+    }
+
+    /**
+     * CPSR（カレントプログラムステートレジスタ）の値を設定します。
+     *
+     * @param psr コピー元となる PSR の値
+     */
+    public void setCPSR(PSR psr) {
+        setCPSR(psr.getValue());
     }
 
     /**
@@ -360,7 +392,46 @@ public class ARMv5 extends CPU {
      * @param val 新しい CPSR の値
      */
     public void setCPSR(int val) {
-        cpsr = val;
+        cpsr.setValue(val);
+    }
+
+    /**
+     * APSR（アプリケーションプログラムステートレジスタ）の値を取得します。
+     *
+     * N, Z, C, V, Q, GE のみ取得され、他の値は 0 でマスクされます。
+     *
+     * @return APSR の値
+     */
+    public PSR getAPSR() {
+        return new PSR(getCPSR().getValue() & 0xf80f0000);
+    }
+
+    /**
+     * APSR（アプリケーションプログラムステートレジスタ）の値を設定します。
+     *
+     * N, Z, C, V, Q, GE のみ変更可能です。
+     *
+     * @param psr コピー元となる PSR の値
+     */
+    public void setAPSR(PSR psr) {
+        setAPSR(psr.getValue());
+    }
+
+    /**
+     * APSR（アプリケーションプログラムステートレジスタ）の値を設定します。
+     *
+     * N, Z, C, V, Q, GE のみ変更可能です。
+     *
+     * @param val 新しい APSR の値
+     */
+    public void setAPSR(int val) {
+        int r;
+
+        //N, Z, C, V, Q, GE のみ変更可能
+        r = getCPSR().getValue();
+        r &= ~0xf80f0000;
+        r |= val & 0xf80f0000;
+        getCPSR().setValue(r);
     }
 
     /**
@@ -368,8 +439,17 @@ public class ARMv5 extends CPU {
      *
      * @return SPSR の値
      */
-    public int getSPSR() {
-        return getReg(16);
+    public PSR getSPSR() {
+        return new PSR(getReg(16));
+    }
+
+    /**
+     * SPSR（保存されたプログラムステートレジスタ）の値を設定します。
+     *
+     * @param psr コピー元となる PSR の値
+     */
+    public void setSPSR(PSR psr) {
+        setSPSR(psr.getValue());
     }
 
     /**
@@ -379,358 +459,6 @@ public class ARMv5 extends CPU {
      */
     public void setSPSR(int val) {
         setReg(16, val);
-    }
-
-    /**
-     * APSR（アプリケーションプログラムステートレジスタ）の値を取得します。
-     *
-     * @return APSR の値
-     */
-    public int getAPSR() {
-        return getCPSR() & 0xf80f0000;
-    }
-
-    /**
-     * APSR（アプリケーションプログラムステートレジスタ）の値を設定します。
-     *
-     * @param val 新しい APSR の値
-     */
-    public void setAPSR(int val) {
-        int r;
-
-        //N, Z, C, V, Q, GE のみ変更可能
-        r = getCPSR();
-        r &= ~0xf80f0000;
-        r |= val & 0xf80f0000;
-        setCPSR(r);
-    }
-
-    public static final int MODE_USR = 0x10;
-    public static final int MODE_FIQ = 0x11;
-    public static final int MODE_IRQ = 0x12;
-    public static final int MODE_SVC = 0x13;
-    public static final int MODE_ABT = 0x17;
-    public static final int MODE_UND = 0x1b;
-    public static final int MODE_SYS = 0x1f;
-
-    /**
-     * PSR（プログラムステートレジスタ）の M フィールド
-     * （ビット [4:0]）を取得します。
-     *
-     * @param val PSR の値
-     * @return M フィールドの値
-     */
-    public static int getPSR_Mode(int val) {
-        return val & 0x1f;
-    }
-
-    /**
-     * PSR（プログラムステートレジスタ）の M フィールド
-     * （ビット [4:0]）を設定します。
-     *
-     * @param val PSR の値
-     * @param mod 新たなモード
-     * @return 新たな PSR の値
-     */
-    public static int setPSR_Mode(int val, int mod) {
-        int mask = 0x1f;
-
-        val &= ~mask;
-        val |= mod & mask;
-
-        return val;
-    }
-
-    /**
-     * プロセッサの動作モードの名前を取得します。
-     *
-     * @param mode プロセッサの動作モード
-     * @return 動作モードの名前
-     */
-    public static String getPSR_ModeName(int mode) {
-        switch (mode) {
-        case 0x10:
-            return "usr";
-        case 0x11:
-            return "fiq";
-        case 0x12:
-            return "irq";
-        case 0x13:
-            return "svc";
-        case 0x17:
-            return "abt";
-        case 0x1b:
-            return "und";
-        case 0x1f:
-            return "sys";
-        default:
-            return "???";
-        }
-    }
-
-    /**
-     * PSR（プログラムステートレジスタ）の状態を表す文字列を取得します。
-     *
-     * @param val PSR の値
-     * @return PSR の状態を表す文字列
-     */
-    public static String getPSRName(int val) {
-        return String.format("%s%s%s%s_%s%s%s%5s",
-                BitOp.getBit32(val, PSR_BIT_N) ? "N" : "n",
-                BitOp.getBit32(val, PSR_BIT_Z) ? "Z" : "z",
-                BitOp.getBit32(val, PSR_BIT_C) ? "C" : "c",
-                BitOp.getBit32(val, PSR_BIT_V) ? "V" : "v",
-                BitOp.getBit32(val, PSR_BIT_I) ? "I" : "i",
-                BitOp.getBit32(val, PSR_BIT_F) ? "F" : "f",
-                BitOp.getBit32(val, PSR_BIT_T) ? "T" : "t",
-                getPSR_ModeName(getPSR_Mode(val)));
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * N ビット（ビット 31）を取得します。
-     *
-     * N ビットは演算結果のビット 31 が 1 の場合に設定されます。
-     * すなわち演算結果を 2の補数の符号付き整数としてみたとき、
-     * 演算結果が正の数であれば N=0、負の数であれば N=1 となります。
-     *
-     * @return N ビットがセットされていれば true, そうでなければ false
-     */
-    public boolean getCPSR_N() {
-        return BitOp.getBit32(getCPSR(), PSR_BIT_N);
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * N ビット（ビット 31）を設定します。
-     *
-     * N ビットは演算結果のビット 31 が 1 の場合に設定されます。
-     * すなわち演算結果を 2の補数の符号付き整数としてみたとき、
-     * 演算結果が正の数であれば N=0、負の数であれば N=1 となります。
-     *
-     * @param nv N ビットをセットするなら true, クリアするなら false
-     */
-    public void setCPSR_N(boolean nv) {
-        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_N, nv));
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * Z ビット（ビット 30）を取得します。
-     *
-     * Z ビットは演算結果が 0 の場合に設定されます。
-     * 演算結果が 0 以外ならば Z=0、0 ならば Z=1 となります。
-     *
-     * @return Z ビットがセットされていれば true, そうでなければ false
-     */
-    public boolean getCPSR_Z() {
-        return BitOp.getBit32(getCPSR(), PSR_BIT_Z);
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * Z ビット（ビット 30）を設定します。
-     *
-     * Z ビットは演算結果が 0 の場合に設定されます。
-     * 演算結果が 0 以外ならば Z=0、0 ならば Z=1 となります。
-     *
-     * @param nv Z ビットをセットするなら true, クリアするなら false
-     */
-    public void setCPSR_Z(boolean nv) {
-        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_Z, nv));
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * C ビット（ビット 29）を取得します。
-     *
-     * C ビットは演算結果にキャリー（加算の場合）が生じた場合に設定され、
-     * ボロー（減算の場合）が生じた場合にクリアされます。
-     * または、シフト演算によりあふれた値が設定されます。
-     *
-     * - 演算が加算で、
-     * 演算によりキャリーが生じなければ C=0、
-     * 符号無しオーバーフローしキャリーが生じたならば C=1 となります。
-     * - 演算が減算で、
-     * 演算により符号無しアンダーフローしボローが生じれば C=0、
-     * ボローが生じなければ C=1 となります。
-     * - 演算がシフトで、演算によりシフトアウトされた値が 0 ならば C=0、
-     * シフトアウトされた値が 1 ならば C=1 となります。
-     *
-     * @return C ビットがセットされていれば true, そうでなければ false
-     */
-    public boolean getCPSR_C() {
-        return BitOp.getBit32(getCPSR(), PSR_BIT_C);
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * C ビット（ビット 29）を設定します。
-     *
-     * C ビットは演算結果にキャリー（加算の場合）が生じた場合に設定され、
-     * ボロー（減算の場合）が生じた場合にクリアされます。
-     * または、シフト演算によりあふれた値が設定されます。
-     *
-     * - 演算が加算で、
-     * 演算によりキャリーが生じなければ C=0、
-     * 符号無しオーバーフローしキャリーが生じたならば C=1 となります。
-     * - 演算が減算で、
-     * 演算により符号無しアンダーフローしボローが生じれば C=0、
-     * ボローが生じなければ C=1 となります。
-     * - 演算がシフトで、演算によりシフトアウトされた値が 0 ならば C=0、
-     * シフトアウトされた値が 1 ならば C=1 となります。
-     *
-     * @param nv C ビットをセットするなら true, クリアするなら false
-     */
-    public void setCPSR_C(boolean nv) {
-        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_C, nv));
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * V ビット（ビット 28）を取得します。
-     *
-     * V ビットは演算結果に符号付きオーバーフローした場合に設定されます。
-     *
-     * - 演算が加算または減算で、
-     * 演算により符号付きオーバーフローしなければ V=0、
-     * 符号付きオーバーフローしたならば V=1 となります。
-     *
-     * @return V ビットがセットされていれば true, そうでなければ false
-     */
-    public boolean getCPSR_V() {
-        return BitOp.getBit32(getCPSR(), PSR_BIT_V);
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * V ビット（ビット 28）を設定します。
-     *
-     * V ビットは演算結果に符号付きオーバーフローした場合に設定されます。
-     *
-     * - 演算が加算または減算で、
-     * 演算により符号付きオーバーフローしなければ V=0、
-     * 符号付きオーバーフローしたならば V=1 となります。
-     *
-     * @param nv V ビットをセットするなら true, クリアするなら false
-     */
-    public void setCPSR_V(boolean nv) {
-        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_V, nv));
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * I ビット（ビット 7）を取得します。
-     *
-     * I=0 ならば IRQ 割り込みが有効となります。
-     * I=1 ならば IRQ 割り込みが無効となります。
-     *
-     * @return I ビットがセットされていれば true, そうでなければ false
-     */
-    public boolean getCPSR_I() {
-        return BitOp.getBit32(getCPSR(), PSR_BIT_I);
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * I ビット（ビット 7）を設定します。
-     *
-     * I=0 ならば IRQ 割り込みが有効となります。
-     * I=1 ならば IRQ 割り込みが無効となります。
-     *
-     * @param nv I ビットをセットするなら true, クリアするなら false
-     */
-    public void setCPSR_I(boolean nv) {
-        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_I, nv));
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * F ビット（ビット 6）を取得します。
-     *
-     * F=0 ならば FIQ 割り込みが有効となります。
-     * F=1 ならば FIQ 割り込みが無効となります。
-     *
-     * @return F ビットがセットされていれば true, そうでなければ false
-     */
-    public boolean getCPSR_F() {
-        return BitOp.getBit32(getCPSR(), PSR_BIT_F);
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * F ビット（ビット 6）を設定します。
-     *
-     * F=0 ならば FIQ 割り込みが有効となります。
-     * F=1 ならば FIQ 割り込みが無効となります。
-     *
-     * @param nv F ビットをセットするなら true, クリアするなら false
-     */
-    public void setCPSR_F(boolean nv) {
-        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_F, nv));
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * T ビット（ビット 5）を取得します。
-     *
-     * T=0 ならば ARM 命令を実行します。
-     * T=1 ならば Thumb 命令を実行します。
-     *
-     * ARMv5 以上の非 T バリアント（Thumb 命令非対応）の場合、
-     * T=1 ならば次に実行される命令で未定義命令例外を発生させます。
-     *
-     * @return T ビットがセットされていれば true, そうでなければ false
-     */
-    public boolean getCPSR_T() {
-        return BitOp.getBit32(getCPSR(), PSR_BIT_T);
-    }
-
-    /**
-     * CPSR（カレントプログラムステートレジスタ）の
-     * T ビット（ビット 5）を設定します。
-     *
-     * T=0 ならば ARM 命令を実行します。
-     * T=1 ならば Thumb 命令を実行します。
-     *
-     * ARMv5 以上の非 T バリアント（Thumb 命令非対応）の場合、
-     * T=1 ならば次に実行される命令で未定義命令例外を発生させます。
-     *
-     * @param nv T ビットをセットするなら true, クリアするなら false
-     */
-    public void setCPSR_T(boolean nv) {
-        setCPSR(BitOp.setBit32(getCPSR(), PSR_BIT_T, nv));
-    }
-
-    /**
-     * 現在のプロセッサの動作モードを取得します。
-     *
-     * CPSR の M フィールド（ビット[4:0]）を返します。
-     *
-     * @return プロセッサの動作モード
-     */
-    public int getCPSR_Mode() {
-        return getPSR_Mode(getCPSR());
-    }
-
-    /**
-     * 現在のプロセッサの動作モードを設定します。
-     *
-     * CPSR の M フィールド（ビット[4:0]）を変更します。
-     *
-     * @param mod 新たなプロセッサの動作モード
-     */
-    public void setCPSR_Mode(int mod) {
-        setCPSR(setPSR_Mode(getCPSR(), mod));
-    }
-
-    /**
-     * 現在のプロセッサモードが特権モードか否かを取得します。
-     *
-     * @return 特権モードであれば true、特権モードでなければ false
-     */
-    public boolean isPrivMode() {
-        return getCPSR_Mode() != MODE_USR;
     }
 
     /**
@@ -838,7 +566,7 @@ public class ARMv5 extends CPU {
         case 3:
             if (shift_imm == 0) {
                 //拡張付き右ローテート
-                if (getCPSR_C()) {
+                if (getCPSR().getCBit()) {
                     return (1 << 31) | (getReg(rm) >>> 1);
                 } else {
                     return getReg(rm) >>> 1;
@@ -957,7 +685,7 @@ public class ARMv5 extends CPU {
         int rotR = inst.getField(8, 4);
 
         if (rotR == 0) {
-            return getCPSR_C();
+            return getCPSR().getCBit();
         } else {
             return BitOp.getBit32(getShifterOperandImm(inst), 31);
         }
@@ -992,7 +720,7 @@ public class ARMv5 extends CPU {
         case 0:
             if (shift_imm == 0) {
                 //レジスタ
-                return getCPSR_C();
+                return getCPSR().getCBit();
             } else {
                 //イミディエート論理左シフト
                 return BitOp.getBit32(getReg(rm), 32 - shift_imm);
@@ -1044,7 +772,7 @@ public class ARMv5 extends CPU {
         case 0:
             //レジスタ論理左シフト
             if (valRs == 0) {
-                return getCPSR_C();
+                return getCPSR().getCBit();
             } else if (valRs <= 32) {
                 return BitOp.getBit32(getReg(rm), 32 - valRs);
             } else {
@@ -1053,7 +781,7 @@ public class ARMv5 extends CPU {
         case 1:
             //レジスタ論理右シフト
             if (valRs == 0) {
-                return getCPSR_C();
+                return getCPSR().getCBit();
             } else if (valRs <= 32) {
                 return BitOp.getBit32(getReg(rm), valRs - 1);
             } else {
@@ -1062,7 +790,7 @@ public class ARMv5 extends CPU {
         case 2:
             //レジスタ算術右シフト
             if (valRs == 0) {
-                return getCPSR_C();
+                return getCPSR().getCBit();
             } else if (valRs <= 32) {
                 return BitOp.getBit32(getReg(rm), valRs - 1);
             } else {
@@ -1071,7 +799,7 @@ public class ARMv5 extends CPU {
         case 3:
             //レジスタ右ローテート
             if (valRs == 0) {
-                return getCPSR_C();
+                return getCPSR().getCBit();
             } else if (valRsLow == 0) {
                 return BitOp.getBit32(getReg(rm), 31);
             } else {
@@ -1659,9 +1387,9 @@ public class ARMv5 extends CPU {
         }
 
         if (r) {
-            dest = getSPSR();
+            dest = getSPSR().getValue();
         } else {
-            dest = getCPSR();
+            dest = getCPSR().getValue();
         }
 
         setReg(rd, dest);
@@ -1707,9 +1435,9 @@ public class ARMv5 extends CPU {
         }
 
         if (!r) {
-            dest = getCPSR();
+            dest = getCPSR().getValue();
         } else {
-            dest = getSPSR();
+            dest = getSPSR().getValue();
         }
 
         if (mask_c) {
@@ -1882,9 +1610,9 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(getShifterCarry(inst));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(getShifterCarry(inst));
             //V flag is unaffected
         }
 
@@ -1911,9 +1639,9 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(getShifterCarry(inst));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(getShifterCarry(inst));
             //V flag is unaffected
         }
 
@@ -1940,10 +1668,10 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(!borrowFrom32(left, right));
-            setCPSR_V(overflowFrom32(left, right, false));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(!borrowFrom32(left, right));
+            getCPSR().setVBit(overflowFrom32(left, right, false));
         }
 
         setReg(rd, dest);
@@ -1969,10 +1697,10 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(!borrowFrom32(left, right));
-            setCPSR_V(overflowFrom32(left, right, false));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(!borrowFrom32(left, right));
+            getCPSR().setVBit(overflowFrom32(left, right, false));
         }
 
         setReg(rd, dest);
@@ -1998,10 +1726,10 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(carryFrom32(left, right));
-            setCPSR_V(overflowFrom32(left, right, true));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(carryFrom32(left, right));
+            getCPSR().setVBit(overflowFrom32(left, right, true));
         }
 
         setReg(rd, dest);
@@ -2022,7 +1750,7 @@ public class ARMv5 extends CPU {
 
         left = getReg(rn);
         center = opr;
-        right = BitOp.toInt(getCPSR_C());
+        right = BitOp.toInt(getCPSR().getCBit());
         dest = left + center + right;
 
         if (s && rd == 15) {
@@ -2032,10 +1760,10 @@ public class ARMv5 extends CPU {
             boolean lc_c = carryFrom32(left, center);
             boolean lc_v = overflowFrom32(left, center, true);
 
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(lc_c || carryFrom32(left_center, right));
-            setCPSR_V(lc_v || overflowFrom32(left_center, right, true));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(lc_c || carryFrom32(left_center, right));
+            getCPSR().setVBit(lc_v || overflowFrom32(left_center, right, true));
         }
 
         setReg(rd, dest);
@@ -2056,7 +1784,7 @@ public class ARMv5 extends CPU {
 
         left = getReg(rn);
         center = opr;
-        right = BitOp.toInt(!getCPSR_C());
+        right = BitOp.toInt(!getCPSR().getCBit());
         dest = left - center - right;
 
         if (s && rd == 15) {
@@ -2066,10 +1794,10 @@ public class ARMv5 extends CPU {
             boolean lc_c = borrowFrom32(left, center);
             boolean lc_v = overflowFrom32(left, center, false);
 
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(!(lc_c || borrowFrom32(left_center, right)));
-            setCPSR_V(lc_v || overflowFrom32(left_center, right, false));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(!(lc_c || borrowFrom32(left_center, right)));
+            getCPSR().setVBit(lc_v || overflowFrom32(left_center, right, false));
         }
 
         setReg(rd, dest);
@@ -2090,7 +1818,7 @@ public class ARMv5 extends CPU {
 
         left = opr;
         center = getReg(rn);
-        right = BitOp.toInt(!getCPSR_C());
+        right = BitOp.toInt(!getCPSR().getCBit());
         dest = left - center - right;
 
         if (s && rd == 15) {
@@ -2100,10 +1828,10 @@ public class ARMv5 extends CPU {
             boolean lc_c = borrowFrom32(left, center);
             boolean lc_v = overflowFrom32(left, center, false);
 
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(!(lc_c || borrowFrom32(left_center, right)));
-            setCPSR_V(lc_v || overflowFrom32(left_center, right, false));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(!(lc_c || borrowFrom32(left_center, right)));
+            getCPSR().setVBit(lc_v || overflowFrom32(left_center, right, false));
         }
 
         setReg(rd, dest);
@@ -2130,9 +1858,9 @@ public class ARMv5 extends CPU {
         right = opr;
         dest = left & right;
 
-        setCPSR_N(BitOp.getBit32(dest, 31));
-        setCPSR_Z(dest == 0);
-        setCPSR_C(getShifterCarry(inst));
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(getShifterCarry(inst));
         //V flag is unaffected
     }
 
@@ -2157,9 +1885,9 @@ public class ARMv5 extends CPU {
         right = opr;
         dest = left ^ right;
 
-        setCPSR_N(BitOp.getBit32(dest, 31));
-        setCPSR_Z(dest == 0);
-        setCPSR_C(getShifterCarry(inst));
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(getShifterCarry(inst));
         //V flag is unaffected
     }
 
@@ -2184,10 +1912,10 @@ public class ARMv5 extends CPU {
         right = opr;
         dest = left - right;
 
-        setCPSR_N(BitOp.getBit32(dest, 31));
-        setCPSR_Z(dest == 0);
-        setCPSR_C(!borrowFrom32(left, right));
-        setCPSR_V(overflowFrom32(left, right, false));
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(!borrowFrom32(left, right));
+        getCPSR().setVBit(overflowFrom32(left, right, false));
     }
 
     /**
@@ -2211,10 +1939,10 @@ public class ARMv5 extends CPU {
         right = opr;
         dest = left + right;
 
-        setCPSR_N(BitOp.getBit32(dest, 31));
-        setCPSR_Z(dest == 0);
-        setCPSR_C(carryFrom32(left, right));
-        setCPSR_V(overflowFrom32(left, right, true));
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(carryFrom32(left, right));
+        getCPSR().setVBit(overflowFrom32(left, right, true));
     }
 
     /**
@@ -2237,9 +1965,9 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(getShifterCarry(inst));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(getShifterCarry(inst));
             //V flag is unaffected
         }
 
@@ -2270,9 +1998,9 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(getShifterCarry(inst));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(getShifterCarry(inst));
             //V flag is unaffected
         }
 
@@ -2299,9 +2027,9 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(getShifterCarry(inst));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(getShifterCarry(inst));
             //V flag is unaffected
         }
 
@@ -2326,9 +2054,9 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
-            setCPSR_C(getShifterCarry(inst));
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
+            getCPSR().setCBit(getShifterCarry(inst));
             //V flag is unaffected
         }
 
@@ -2369,8 +2097,8 @@ public class ARMv5 extends CPU {
         dest = left * center + right;
 
         if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
             //C flag is unaffected
             //V flag is unaffected
         }
@@ -2410,8 +2138,8 @@ public class ARMv5 extends CPU {
         dest = left * right;
 
         if (s) {
-            setCPSR_N(BitOp.getBit32(dest, 31));
-            setCPSR_Z(dest == 0);
+            getCPSR().setNBit(BitOp.getBit32(dest, 31));
+            getCPSR().setZBit(dest == 0);
             //C flag is unaffected
             //V flag is unaffected
         }
@@ -2456,8 +2184,8 @@ public class ARMv5 extends CPU {
         destlo = (int)dest;
 
         if (s) {
-            setCPSR_N(BitOp.getBit32(desthi, 31));
-            setCPSR_Z(dest == 0);
+            getCPSR().setNBit(BitOp.getBit32(desthi, 31));
+            getCPSR().setZBit(dest == 0);
             //C flag is unaffected
             //V flag is unaffected
         }
@@ -2502,8 +2230,8 @@ public class ARMv5 extends CPU {
         destlo = (int)dest;
 
         if (s) {
-            setCPSR_N(BitOp.getBit32(desthi, 31));
-            setCPSR_Z(dest == 0);
+            getCPSR().setNBit(BitOp.getBit32(desthi, 31));
+            getCPSR().setZBit(dest == 0);
             //C flag is unaffected
             //V flag is unaffected
         }
@@ -2549,8 +2277,8 @@ public class ARMv5 extends CPU {
         destlo = (int)dest;
 
         if (s) {
-            setCPSR_N(BitOp.getBit32(desthi, 31));
-            setCPSR_Z(dest == 0);
+            getCPSR().setNBit(BitOp.getBit32(desthi, 31));
+            getCPSR().setZBit(dest == 0);
             //C flag is unaffected
             //V flag is unaffected
         }
@@ -2595,8 +2323,8 @@ public class ARMv5 extends CPU {
         destlo = (int)dest;
 
         if (s) {
-            setCPSR_N(BitOp.getBit32(desthi, 31));
-            setCPSR_Z(dest == 0);
+            getCPSR().setNBit(BitOp.getBit32(desthi, 31));
+            getCPSR().setZBit(dest == 0);
             //C flag is unaffected
             //V flag is unaffected
         }
@@ -2634,7 +2362,7 @@ public class ARMv5 extends CPU {
         rot = getReg(rn) & 0x3;
 
         vaddr = getReg(rn);
-        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), false);
+        paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), false);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -2733,7 +2461,7 @@ public class ARMv5 extends CPU {
 
         if (rd == 15) {
             setPC(value & 0xfffffffe);
-            setCPSR_T(BitOp.getBit32(value, 0));
+            getCPSR().setTBit(BitOp.getBit32(value, 0));
         } else {
             setReg(rd, value);
         }
@@ -2822,7 +2550,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, 1, false, isPrivMode(), true);
+        paddr = getMMU().translate(vaddr, 1, false, getCPSR().isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -2880,7 +2608,7 @@ public class ARMv5 extends CPU {
         }
         rot = vaddr & 0x3;
 
-        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
+        paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -2914,7 +2642,7 @@ public class ARMv5 extends CPU {
 
         if (rd == 15) {
             setPC(value & 0xfffffffe);
-            setCPSR_T(BitOp.getBit32(value, 0));
+            getCPSR().setTBit(BitOp.getBit32(value, 0));
         } else {
             setReg(rd, value);
         }
@@ -2961,7 +2689,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, 2, false, isPrivMode(), true);
+        paddr = getMMU().translate(vaddr, 2, false, getCPSR().isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3018,7 +2746,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, 1, false, isPrivMode(), true);
+        paddr = getMMU().translate(vaddr, 1, false, getCPSR().isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3075,7 +2803,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, 2, false, isPrivMode(), true);
+        paddr = getMMU().translate(vaddr, 2, false, getCPSR().isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3132,7 +2860,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
+        paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3294,7 +3022,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, 1, false, isPrivMode(), false);
+        paddr = getMMU().translate(vaddr, 1, false, getCPSR().isPrivMode(), false);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3349,7 +3077,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), false);
+        paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), false);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3404,7 +3132,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, 2, false, isPrivMode(), false);
+        paddr = getMMU().translate(vaddr, 2, false, getCPSR().isPrivMode(), false);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3459,7 +3187,7 @@ public class ARMv5 extends CPU {
             vaddr = getReg(rn);
         }
 
-        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), false);
+        paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), false);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3516,7 +3244,7 @@ public class ARMv5 extends CPU {
                 continue;
             }
 
-            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
+            paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return;
@@ -3534,7 +3262,7 @@ public class ARMv5 extends CPU {
         if (BitOp.getBit32(rlist, 15)) {
             int v;
 
-            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
+            paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return;
@@ -3548,7 +3276,7 @@ public class ARMv5 extends CPU {
             v = read32(paddr);
 
             setPC(v & 0xfffffffe);
-            setCPSR_T(BitOp.getBit32(v, 0));
+            getCPSR().setTBit(BitOp.getBit32(v, 0));
             vaddr += 4;
         }
 
@@ -3593,7 +3321,7 @@ public class ARMv5 extends CPU {
                 continue;
             }
 
-            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
+            paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return;
@@ -3605,7 +3333,7 @@ public class ARMv5 extends CPU {
                 return;
             }
             //必ずユーザモードのレジスタをロードする
-            regs[i] = read32(paddr);
+            regs_usr[i] = read32(paddr);
             vaddr += 4;
         }
     }
@@ -3648,7 +3376,7 @@ public class ARMv5 extends CPU {
                 continue;
             }
 
-            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
+            paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return;
@@ -3667,7 +3395,7 @@ public class ARMv5 extends CPU {
         setCPSR(getSPSR());
 
         //r15 は必ずロードする
-        paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), true);
+        paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), true);
         if (getMMU().isFault()) {
             getMMU().clearFault();
             return;
@@ -3681,7 +3409,7 @@ public class ARMv5 extends CPU {
         v = read32(paddr);
 
         setPC(v & 0xfffffffe);
-        setCPSR_T(BitOp.getBit32(v, 0));
+        getCPSR().setTBit(BitOp.getBit32(v, 0));
         vaddr += 4;
 
         if (w) {
@@ -3724,7 +3452,7 @@ public class ARMv5 extends CPU {
                 continue;
             }
 
-            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), false);
+            paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), false);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return;
@@ -3779,7 +3507,7 @@ public class ARMv5 extends CPU {
                 continue;
             }
 
-            paddr = getMMU().translate(vaddr, 4, false, isPrivMode(), false);
+            paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), false);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return;
@@ -3791,7 +3519,7 @@ public class ARMv5 extends CPU {
                 return;
             }
             //必ずユーザモードのレジスタをストアする
-            write32(paddr, regs[i]);
+            write32(paddr, regs_usr[i]);
             vaddr += 4;
         }
     }
@@ -3854,7 +3582,7 @@ public class ARMv5 extends CPU {
 
         setReg(14, getPC() - 4);
         //T ビットをセット
-        setCPSR_T(true);
+        getCPSR().setTBit(true);
         jumpRel(simm24 + vh);
 
         //TODO: Not implemented
@@ -3892,7 +3620,7 @@ public class ARMv5 extends CPU {
 
         setReg(14, getPC() - 4);
         //T ビットをセット
-        setCPSR_T(BitOp.getBit32(dest, 0));
+        getCPSR().setTBit(BitOp.getBit32(dest, 0));
         setPC(dest & 0xfffffffe);
     }
 
@@ -3922,7 +3650,7 @@ public class ARMv5 extends CPU {
         dest = getReg(rm);
 
         //T ビットを設定する
-        setCPSR_T((dest & 0x1) == 1);
+        getCPSR().setTBit((dest & 0x1) == 1);
         setPC(dest & 0xfffffffe);
     }
 
@@ -4109,7 +3837,7 @@ public class ARMv5 extends CPU {
         crval = cp.getCReg(crid);
         if (rd == 15) {
             //r15 の場合 r15 を変更せず、APSR の N, Z, C, V ビットを変更する
-            rval = getSPSR();
+            rval = getSPSR().getValue();
             rval &= ~0xf0000000;
             rval |= crval & 0xf0000000;
             setAPSR(rval);
@@ -4166,13 +3894,13 @@ public class ARMv5 extends CPU {
         //現在の PC の指すアドレスから命令を取得します
         vaddr = getPC() - 8;
 
-        if (getCPSR_T()) {
+        if (getCPSR().getTBit()) {
             //Thumb モード
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
         } else {
             //ARM モード
-            paddr = getMMU().translate(vaddr, 4, true, isPrivMode(), true);
+            paddr = getMMU().translate(vaddr, 4, true, getCPSR().isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
                 return null;
@@ -4231,7 +3959,7 @@ public class ARMv5 extends CPU {
         int cond = inst.getCondField();
         int subcode = inst.getSubCodeField();
 
-        if (getCPSR_T()) {
+        if (getCPSR().getTBit()) {
             //Thumb モード
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
@@ -4909,23 +4637,23 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionReset(String dbgmsg) {
-        int spsrOrg;
+        int cpsrORg;
 
         System.out.printf("Exception: Reset by '%s'.\n",
                 dbgmsg);
 
         //cpsr の値を取っておく
-        spsrOrg = getCPSR();
+        cpsrORg = getCPSR().getValue();
 
         //スーパーバイザモード、ARM 状態、高速割り込み禁止、割り込み禁止、
         //へ移行
-        setCPSR_Mode(MODE_SVC);
-        setCPSR_T(false);
-        setCPSR_F(true);
-        setCPSR_I(true);
+        getCPSR().setMode(PSR.MODE_SVC);
+        getCPSR().setTBit(false);
+        getCPSR().setFBit(true);
+        getCPSR().setIBit(true);
 
         //spsr にリセット前の cpsr を保存する
-        setSPSR(spsrOrg);
+        setSPSR(cpsrORg);
 
         //リセット例外ベクタへ
         if (isHighVector()) {
@@ -4944,25 +4672,25 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionUndefined(String dbgmsg) {
-        int pcOrg, spsrOrg;
+        int pcOrg, cpsrORg;
 
         System.out.printf("Exception: Undefined instruction by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
-        spsrOrg = getCPSR();
+        cpsrORg = getCPSR().getValue();
 
         //未定義モード、ARM 状態、割り込み禁止、
         //へ移行
-        setCPSR_Mode(MODE_UND);
-        setCPSR_T(false);
+        getCPSR().setMode(PSR.MODE_UND);
+        getCPSR().setTBit(false);
         //F flag is not affected
-        setCPSR_I(true);
+        getCPSR().setIBit(true);
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(spsrOrg);
+        setSPSR(cpsrORg);
 
         //未定義例外ベクタへ
         if (isHighVector()) {
@@ -4984,25 +4712,25 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionSoftware(String dbgmsg) {
-        int pcOrg, spsrOrg;
+        int pcOrg, cpsrORg;
 
         //System.out.printf("Exception: Software interrupt by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
-        spsrOrg = getCPSR();
+        cpsrORg = getCPSR().getValue();
 
         //スーパバイザモード、ARM 状態、割り込み禁止、
         //へ移行
-        setCPSR_Mode(MODE_SVC);
-        setCPSR_T(false);
+        getCPSR().setMode(PSR.MODE_SVC);
+        getCPSR().setTBit(false);
         //F flag is not affected
-        setCPSR_I(true);
+        getCPSR().setIBit(true);
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(spsrOrg);
+        setSPSR(cpsrORg);
 
         //ソフトウェア割り込み例外ベクタへ
         if (isHighVector()) {
@@ -5020,25 +4748,25 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionPrefetch(String dbgmsg) {
-        int pcOrg, spsrOrg;
+        int pcOrg, cpsrORg;
 
         //System.out.printf("Exception: Prefetch abort by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
-        spsrOrg = getCPSR();
+        cpsrORg = getCPSR().getValue();
 
         //アボートモード、ARM 状態、割り込み禁止、
         //へ移行
-        setCPSR_Mode(MODE_ABT);
-        setCPSR_T(false);
+        getCPSR().setMode(PSR.MODE_ABT);
+        getCPSR().setTBit(false);
         //F flag is not affected
-        setCPSR_I(true);
+        getCPSR().setIBit(true);
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(spsrOrg);
+        setSPSR(cpsrORg);
 
         //プリフェッチアボート例外ベクタへ
         if (isHighVector()) {
@@ -5056,25 +4784,25 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionData(String dbgmsg) {
-        int pcOrg, spsrOrg;
+        int pcOrg, cpsrORg;
 
         //System.out.printf("Exception: Data abort by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC();
-        spsrOrg = getCPSR();
+        cpsrORg = getCPSR().getValue();
 
         //アボートモード、ARM 状態、割り込み禁止、
         //へ移行
-        setCPSR_Mode(MODE_ABT);
-        setCPSR_T(false);
+        getCPSR().setMode(PSR.MODE_ABT);
+        getCPSR().setTBit(false);
         //F flag is not affected
-        setCPSR_I(true);
+        getCPSR().setIBit(true);
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(spsrOrg);
+        setSPSR(cpsrORg);
 
         //データアボート例外ベクタへ
         if (isHighVector()) {
@@ -5092,25 +4820,25 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionIRQ(String dbgmsg) {
-        int pcOrg, spsrOrg;
+        int pcOrg, cpsrORg;
 
         //System.out.printf("Exception: IRQ by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
-        spsrOrg = getCPSR();
+        cpsrORg = getCPSR().getValue();
 
         //IRQ モード、ARM 状態、割り込み禁止、
         //へ移行
-        setCPSR_Mode(MODE_IRQ);
-        setCPSR_T(false);
+        getCPSR().setMode(PSR.MODE_IRQ);
+        getCPSR().setTBit(false);
         //F flag is not affected
-        setCPSR_I(true);
+        getCPSR().setIBit(true);
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(spsrOrg);
+        setSPSR(cpsrORg);
 
         //IRQ 例外ベクタへ
         if (isHighVector()) {
@@ -5128,25 +4856,25 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionFIQ(String dbgmsg) {
-        int pcOrg, spsrOrg;
+        int pcOrg, cpsrORg;
 
         System.out.printf("Exception: FIQ by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
-        spsrOrg = getCPSR();
+        cpsrORg = getCPSR().getValue();
 
         //FIQ モード、ARM 状態、高速割り込み禁止、割り込み禁止、
         //へ移行
-        setCPSR_Mode(MODE_FIQ);
-        setCPSR_T(false);
-        setCPSR_F(true);
-        setCPSR_I(true);
+        getCPSR().setMode(PSR.MODE_FIQ);
+        getCPSR().setTBit(false);
+        getCPSR().setFBit(true);
+        getCPSR().setIBit(true);
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(spsrOrg);
+        setSPSR(cpsrORg);
 
         //FIQ 例外ベクタへ
         if (isHighVector()) {
@@ -5211,7 +4939,7 @@ public class ARMv5 extends CPU {
         Iterator<INTC> it;
         String msg;
 
-        if (getCPSR_I()) {
+        if (getCPSR().getIBit()) {
             //I ビットが 1 の場合は、IRQ 無効を意味する
             return;
         }
@@ -5235,7 +4963,7 @@ public class ARMv5 extends CPU {
     public void acceptFIQ() {
         String msg;
 
-        if (getCPSR_F()) {
+        if (getCPSR().getFBit()) {
             //F ビットが 1 の場合は、FIQ 無効を意味する
             return;
         }

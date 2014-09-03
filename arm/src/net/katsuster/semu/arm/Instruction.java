@@ -124,10 +124,10 @@ public class Instruction {
      * cond フィールドが NV の場合は常に true を返し、条件の判定は行いません。
      * 各命令ごとに適切な判定を行って下さい。
      *
-     * @param psr プログラムステータスレジスタの値
+     * @param psr プログラムステータスレジスタ
      * @return 条件を満たしていれば true、満たしていなければ false
      */
-    public boolean satisfiesCond(int psr) {
+    public boolean satisfiesCond(PSR psr) {
         return satisfiesCond(getCondField(), psr);
     }
 
@@ -139,14 +139,14 @@ public class Instruction {
      * 各命令ごとに適切な判定を行って下さい。
      *
      * @param cond  ARM 命令の cond フィールド
-     * @param psr プログラムステータスレジスタの値
+     * @param psr プログラムステータスレジスタ
      * @return 条件を満たしていれば true、満たしていなければ false
      */
-    public static boolean satisfiesCond(int cond, int psr) {
-        boolean n = BitOp.getBit32(psr, ARMv5.PSR_BIT_N);
-        boolean z = BitOp.getBit32(psr, ARMv5.PSR_BIT_Z);
-        boolean c = BitOp.getBit32(psr, ARMv5.PSR_BIT_C);
-        boolean v = BitOp.getBit32(psr, ARMv5.PSR_BIT_V);
+    public static boolean satisfiesCond(int cond, PSR psr) {
+        boolean n = psr.getNBit();
+        boolean z = psr.getZBit();
+        boolean c = psr.getCBit();
+        boolean v = psr.getVBit();
 
         switch (cond) {
         case Instruction.COND_EQ:
