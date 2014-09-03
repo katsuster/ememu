@@ -81,7 +81,7 @@ public class ARMv5 extends CPU {
 
     @Override
     public void printPC() {
-        System.out.printf("pc:%08x\n", getPC() - 8);
+        System.out.printf("pc: %08x\n", getPC() - 8);
     }
 
     @Override
@@ -95,54 +95,51 @@ public class ARMv5 extends CPU {
                     i, getRegRaw(i), i + 1, getRegRaw(i + 1),
                     i + 2, getRegRaw(i + 2), i + 3, getRegRaw(i + 3));
         }
-        System.out.printf("  cpsr:%08x(%s), spsr:%08x(%s)\n",
-                getCPSR().getValue(), getCPSR().getName(),
-                getSPSR().getValue(), getSPSR().getName());
+        System.out.printf("  cpsr: %s, spsr: %s\n",
+                getCPSR().toString(), getSPSR().toString());
     }
 
     /**
-     * 指定された動作モードにおけるレジスタ Rn そのものの値を取得します。
-     *
-     * r15 を返す際に +8 のオフセットを加算しません。
+     * 指定された動作モードにおけるレジスタセットを取得します。
      *
      * @param n    レジスタ番号（0 ～ 15）、16 は SPSR を示す
      * @param mode 動作モード
-     * @return レジスタの値
+     * @return レジスタセット
      */
-    public int getRegRaw(int n, int mode) {
+    public int[] getRegSet(int n, int mode) {
         switch (mode) {
         case PSR.MODE_USR:
         case PSR.MODE_SYS:
-            return regs_usr[n];
+            return regs_usr;
         case PSR.MODE_SVC:
             if ((13 <= n && n <= 14) || n == 16) {
-                return regs_svc[n];
+                return regs_svc;
             } else {
-                return regs_usr[n];
+                return regs_usr;
             }
         case PSR.MODE_ABT:
             if ((13 <= n && n <= 14) || n == 16) {
-                return regs_abt[n];
+                return regs_abt;
             } else {
-                return regs_usr[n];
+                return regs_usr;
             }
         case PSR.MODE_UND:
             if ((13 <= n && n <= 14) || n == 16) {
-                return regs_und[n];
+                return regs_und;
             } else {
-                return regs_usr[n];
+                return regs_usr;
             }
         case PSR.MODE_IRQ:
             if ((13 <= n && n <= 14) || n == 16) {
-                return regs_irq[n];
+                return regs_irq;
             } else {
-                return regs_usr[n];
+                return regs_usr;
             }
         case PSR.MODE_FIQ:
             if ((8 <= n && n <= 14) || n == 16) {
-                return regs_fiq[n];
+                return regs_fiq;
             } else {
-                return regs_usr[n];
+                return regs_usr;
             }
         default:
             //do nothing
@@ -162,71 +159,15 @@ public class ARMv5 extends CPU {
      * @return レジスタの値
      */
     public int getRegRaw(int n) {
-        return getRegRaw(n, getCPSR().getMode());
-    }
-
-    /**
-     * 指定された動作モードでのレジスタ Rn そのもの値を設定します。
-     *
-     * r15 を設定する際にジャンプ済みフラグをセットしません。
-     *
-     * @param n   レジスタ番号（0 ～ 15）、16 は SPSR を示す
-     * @param val 新しいレジスタの値
-     * @param mode 動作モード
-     */
-    public void setRegRaw(int n, int val, int mode) {
-        switch (mode) {
-        case PSR.MODE_USR:
-        case PSR.MODE_SYS:
-            regs_usr[n] = val;
-            return;
-        case PSR.MODE_SVC:
-            if ((13 <= n && n <= 14) || n == 16) {
-                regs_svc[n] = val;
-                return;
-            } else {
-                regs_usr[n] = val;
-                return;
+        if (prevMode != getCPSR().getMode()) {
+            for (int i = 0; i < regs.length; i++) {
+                getRegSet(i, prevMode)[i] = regs[i];
+                regs[i] = getRegSet(i, getCPSR().getMode())[i];
             }
-        case PSR.MODE_ABT:
-            if ((13 <= n && n <= 14) || n == 16) {
-                regs_abt[n] = val;
-                return;
-            } else {
-                regs_usr[n] = val;
-                return;
-            }
-        case PSR.MODE_UND:
-            if ((13 <= n && n <= 14) || n == 16) {
-                regs_und[n] = val;
-                return;
-            } else {
-                regs_usr[n] = val;
-                return;
-            }
-        case PSR.MODE_IRQ:
-            if ((13 <= n && n <= 14) || n == 16) {
-                regs_irq[n] = val;
-                return;
-            } else {
-                regs_usr[n] = val;
-                return;
-            }
-        case PSR.MODE_FIQ:
-            if ((8 <= n && n <= 14) || n == 16) {
-                regs_fiq[n] = val;
-                return;
-            } else {
-                regs_usr[n] = val;
-                return;
-            }
-        default:
-            //do nothing
-            break;
+            prevMode = getCPSR().getMode();
         }
 
-        throw new IllegalArgumentException("Illegal mode " +
-                String.format("mode:0x%x.", mode));
+        return regs[n];
     }
 
     /**
@@ -238,7 +179,15 @@ public class ARMv5 extends CPU {
      * @param val 新しいレジスタの値
      */
     public void setRegRaw(int n, int val) {
-        setRegRaw(n, val, getCPSR().getMode());
+        if (prevMode != getCPSR().getMode()) {
+            for (int i = 0; i < regs.length; i++) {
+                getRegSet(i, prevMode)[i] = regs[i];
+                regs[i] = getRegSet(i, getCPSR().getMode())[i];
+            }
+            prevMode = getCPSR().getMode();
+        }
+
+        regs[n] = val;
     }
 
     /**
@@ -279,6 +228,57 @@ public class ARMv5 extends CPU {
     }
 
     /**
+     * PC（プログラムカウンタ）の値を取得します。
+     *
+     * 下記の呼び出しと同一です。
+     * getReg(15)
+     *
+     * @return PC の値
+     */
+    public int getPC() {
+        return getReg(15);
+    }
+
+    /**
+     * PC（プログラムカウンタ）の値を設定します。
+     *
+     * 下記の呼び出しと同一です。
+     * setReg(15, val)
+     *
+     * @param val 新しい PC の値
+     */
+    public void setPC(int val) {
+        setReg(15, val);
+    }
+
+    /**
+     * PC を次の命令に移します。
+     */
+    public void nextPC() {
+        if (isJumped()) {
+            setJumped(false);
+        } else {
+            setRegRaw(15, getRegRaw(15) + 4);
+        }
+    }
+
+    /**
+     * 指定したアドレス分だけ相対ジャンプします。
+     *
+     * PC（実行中の命令のアドレス +8）+ 相対アドレス を、
+     * 新たな PC として設定します。
+     *
+     * また命令実行後は自動的に PC に 4 が加算されますが、
+     * ジャンプ後は加算が実行されません。
+     *
+     * @param val 次に実行する命令の相対アドレス
+     */
+    public void jumpRel(int val) {
+        setPC(getPC() + val);
+        setJumped(true);
+    }
+
+    /**
      * コプロセッサ Pn を取得します。
      *
      * @param cpnum コプロセッサ番号
@@ -315,57 +315,6 @@ public class ARMv5 extends CPU {
      */
     public MMUv5 getMMU() {
         return mmu;
-    }
-
-    /**
-     * PC（プログラムカウンタ）の値を取得します。
-     *
-     * 下記の呼び出しと同一です。
-     * getReg(15)
-     *
-     * @return PC の値
-     */
-    public int getPC() {
-        return getReg(15);
-    }
-
-    /**
-     * PC（プログラムカウンタ）の値を設定します。
-     *
-     * 下記の呼び出しと同一です。
-     * setReg(15, val)
-     *
-     * @param val 新しい PC の値
-     */
-    public void setPC(int val) {
-        setReg(15, val);
-    }
-
-    /**
-     * PC を次の命令に移します。
-     */
-    public void nextPC() {
-        if (isJumped()) {
-            setJumped(false);
-        } else {
-            regs_usr[15] += 4;
-        }
-    }
-
-    /**
-     * 指定したアドレス分だけ相対ジャンプします。
-     *
-     * PC（実行中の命令のアドレス +8）+ 相対アドレス を、
-     * 新たな PC として設定します。
-     *
-     * また命令実行後は自動的に PC に 4 が加算されますが、
-     * ジャンプ後は加算が実行されません。
-     *
-     * @param val 次に実行する命令の相対アドレス
-     */
-    public void jumpRel(int val) {
-        setPC(getPC() + val);
-        setJumped(true);
     }
 
     /**
@@ -3297,7 +3246,7 @@ public class ARMv5 extends CPU {
     public void executeLdm2(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
-        int vaddr, paddr;
+        int vaddr, paddr, v, mod;
 
         if (!exec) {
             disasmInst(inst,
@@ -3333,8 +3282,13 @@ public class ARMv5 extends CPU {
                 return;
             }
             //必ずユーザモードのレジスタをロードする
-            regs_usr[i] = read32(paddr);
+            v = read32(paddr);
             vaddr += 4;
+
+            mod = getCPSR().getMode();
+            getCPSR().setMode(PSR.MODE_USR);
+            setReg(i, v);
+            getCPSR().setMode(mod);
         }
     }
 
@@ -3484,7 +3438,7 @@ public class ARMv5 extends CPU {
         int pu = inst.getPUField();
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
-        int vaddr, paddr;
+        int vaddr, paddr, v, mod;
 
         if (!exec) {
             disasmInst(inst,
@@ -3519,7 +3473,12 @@ public class ARMv5 extends CPU {
                 return;
             }
             //必ずユーザモードのレジスタをストアする
-            write32(paddr, regs_usr[i]);
+            mod = getCPSR().getMode();
+            getCPSR().setMode(PSR.MODE_USR);
+            v = getReg(i);
+            getCPSR().setMode(mod);
+
+            write32(paddr, v);
             vaddr += 4;
         }
     }

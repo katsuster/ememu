@@ -393,4 +393,9 @@ public class PSR {
     public boolean isPrivMode() {
         return getMode() != MODE_USR;
     }
+
+    @Override
+    public String toString() {
+        return String.format("0x%08x(%s)", getValue(), getName());
+    }
 }
