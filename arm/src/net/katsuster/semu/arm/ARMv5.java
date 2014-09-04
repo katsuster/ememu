@@ -413,25 +413,27 @@ public class ARMv5 extends CPU {
     /**
      * アドレシングモード 1 - データ処理オペランドを取得します。
      *
+     * アセンブラでは shifter_operand と表されます。
+     *
      * @param inst ARM 命令
      * @return シフタオペランド
      */
-    public int getShifterOperand(Instruction inst) {
+    public int getAddrMode1(Instruction inst) {
         boolean i = inst.getIBit();
         boolean b7 = inst.getBit(7);
         boolean b4 = inst.getBit(4);
 
         if (i) {
             //32bits イミディエート
-            return getShifterOperandImm(inst);
+            return getAddrMode1Imm(inst);
         } else if (!b4) {
             //イミディエートシフト
-            return getShifterOperandImmShift(inst);
+            return getAddrMode1ImmShift(inst);
         } else if (b4 && !b7) {
             //レジスタシフト
-            return getShifterOperandRegShift(inst);
+            return getAddrMode1RegShift(inst);
         } else {
-            throw new IllegalArgumentException("Unknown shifter_operand " +
+            throw new IllegalArgumentException("Unknown addr mode1 " +
                     String.format("0x%08x, I:%b, b7:%b, b4:%b.",
                             inst.getInst(), i, b7, b4));
         }
@@ -453,7 +455,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return イミディエート
      */
-    public int getShifterOperandImm(Instruction inst) {
+    public int getAddrMode1Imm(Instruction inst) {
         int rotR = inst.getField(8, 4);
         int imm8 = inst.getField(0, 8);
 
@@ -480,7 +482,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return イミディエートシフトオペランド
      */
-    public int getShifterOperandImmShift(Instruction inst) {
+    public int getAddrMode1ImmShift(Instruction inst) {
         int shift_imm = inst.getField(7, 5);
         int shift = inst.getField(5, 2);
         int rm = inst.getRmField();
@@ -534,7 +536,25 @@ public class ARMv5 extends CPU {
                         inst.getInst(), shift));
     }
 
-    public int getShifterOperandRegShift(Instruction inst) {
+    /**
+     * アドレシングモード 1 - データ処理オペランド、
+     * レジスタシフトを取得します。
+     *
+     * 条件:
+     * I ビット（ビット[25]）: 0
+     * ビット[4]: 1
+     *
+     * 該当するオペランド:
+     * 数値はビット[6:4] の値を示す。
+     * 0b001: データ処理オペランド - レジスタ論理左シフト
+     * 0b011: データ処理オペランド - レジスタ論理右シフト
+     * 0b101: データ処理オペランド - レジスタ算術右シフト
+     * 0b111: データ処理オペランド - レジスタ右ローテート
+     *
+     * @param inst ARM 命令
+     * @return レジスタシフトオペランド
+     */
+    public int getAddrMode1RegShift(Instruction inst) {
         int shift = inst.getField(5, 2);
         int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
@@ -602,20 +622,20 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return キャリーアウトがあれば true、なければ false
      */
-    public boolean getShifterCarry(Instruction inst) {
+    public boolean getAddrMode1Carry(Instruction inst) {
         boolean i = inst.getIBit();
         boolean b7 = inst.getBit(7);
         boolean b4 = inst.getBit(4);
 
         if (i) {
             //32bits イミディエート
-            return getShifterCarryImm(inst);
+            return getAddrMode1CarryImm(inst);
         } else if (!b4) {
             //イミディエートシフト
-            return getShifterCarryImmShift(inst);
+            return getAddrMode1CarryImmShift(inst);
         } else if (b4 && !b7) {
             //レジスタシフト
-            return getShifterCarryRegShift(inst);
+            return getAddrMode1CarryRegShift(inst);
         } else {
             throw new IllegalArgumentException("Unknown shifter_operand " +
                     String.format("0x%08x, I:%b, b7:%b, b4:%b.",
@@ -630,13 +650,13 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return キャリーアウトする場合は true、そうでなければ false
      */
-    public boolean getShifterCarryImm(Instruction inst) {
+    public boolean getAddrMode1CarryImm(Instruction inst) {
         int rotR = inst.getField(8, 4);
 
         if (rotR == 0) {
             return getCPSR().getCBit();
         } else {
-            return BitOp.getBit32(getShifterOperandImm(inst), 31);
+            return BitOp.getBit32(getAddrMode1Imm(inst), 31);
         }
     }
 
@@ -660,7 +680,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return キャリーアウトする場合は true、そうでなければ false
      */
-    public boolean getShifterCarryImmShift(Instruction inst) {
+    public boolean getAddrMode1CarryImmShift(Instruction inst) {
         int shift_imm = inst.getField(7, 5);
         int shift = inst.getField(5, 2);
         int rm = inst.getRmField();
@@ -706,7 +726,7 @@ public class ARMv5 extends CPU {
                         inst.getInst(), shift));
     }
 
-    public boolean getShifterCarryRegShift(Instruction inst) {
+    public boolean getAddrMode1CarryRegShift(Instruction inst) {
         int shift = inst.getField(5, 2);
         int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
@@ -770,22 +790,22 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return シフタオペランドの名前
      */
-    public String getShifterOperandName(Instruction inst) {
+    public String getAddrMode1Name(Instruction inst) {
         boolean i = inst.getIBit();
         boolean b7 = inst.getBit(7);
         boolean b4 = inst.getBit(4);
 
         if (i) {
             //32bits イミディエート
-            return getShifterOperandImm32Name(inst);
+            return getAddrMode1ImmName(inst);
         } else if (!b4) {
             //イミディエートシフト
-            return getShifterOperandImmShiftName(inst);
+            return getAddrMode1ImmShiftName(inst);
         } else if (b4 && !b7) {
             //レジスタシフト
-            return getShifterOperandRegShiftName(inst);
+            return getAddrMode1RegShiftName(inst);
         } else {
-            throw new IllegalArgumentException("Unknown shifter_operand " +
+            throw new IllegalArgumentException("Unknown addr mode1 " +
                     String.format("0x%08x, I:%b, b7:%b, b4:%b.",
                             inst.getInst(), i, b7, b4));
         }
@@ -798,8 +818,8 @@ public class ARMv5 extends CPU {
      * @param inst 命令コード
      * @return イミディエートの文字列表現
      */
-    public String getShifterOperandImm32Name(Instruction inst) {
-        int imm32 = getShifterOperandImm(inst);
+    public String getAddrMode1ImmName(Instruction inst) {
+        int imm32 = getAddrMode1Imm(inst);
 
         return String.format("#%d    ; 0x%x", imm32, imm32);
     }
@@ -824,7 +844,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return イミディエートシフトオペランドの名前
      */
-    public String getShifterOperandImmShiftName(Instruction inst) {
+    public String getAddrMode1ImmShiftName(Instruction inst) {
         int shift_imm = inst.getField(7, 5);
         int shift = inst.getField(5, 2);
         int rm = inst.getRmField();
@@ -867,7 +887,25 @@ public class ARMv5 extends CPU {
                         inst.getInst(), shift));
     }
 
-    public String getShifterOperandRegShiftName(Instruction inst) {
+    /**
+     * アドレシングモード 1 - データ処理オペランド、
+     * レジスタシフトの名前を取得します。
+     *
+     * 条件:
+     * I ビット（ビット[25]）: 0
+     * ビット[4]: 1
+     *
+     * 該当するオペランド:
+     * 数値はビット[6:4] の値を示す。
+     * 0b001: データ処理オペランド - レジスタ論理左シフト
+     * 0b011: データ処理オペランド - レジスタ論理右シフト
+     * 0b101: データ処理オペランド - レジスタ算術右シフト
+     * 0b111: データ処理オペランド - レジスタ右ローテート
+     *
+     * @param inst ARM 命令
+     * @return レジスタシフトオペランドの名前
+     */
+    public String getAddrMode1RegShiftName(Instruction inst) {
         int shift = inst.getField(5, 2);
         int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
@@ -916,7 +954,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレス
      */
-    public int getOffsetAddress(Instruction inst) {
+    public int getAddrMode2(Instruction inst) {
         boolean i = inst.getIBit();
         boolean u = inst.getBit(23);
         int rn = inst.getRnField();
@@ -927,13 +965,13 @@ public class ARMv5 extends CPU {
         if (!i) {
             //12bits イミディエートオフセット
             //I ビットの意味がデータ処理命令と逆なので注意！
-            offset = getOffsetAddressImm(inst);
+            offset = getAddrMode2Imm(inst);
         } else if (shift_imm == 0 && shift == 0) {
             //レジスタオフセット/インデクス
-            offset = getOffsetAddressReg(inst);
+            offset = getAddrMode2Reg(inst);
         } else {
             //スケーリング済みレジスタオフセット/インデクス
-            offset = getOffsetAddressScaled(inst);
+            offset = getAddrMode2Scaled(inst);
         }
 
         if (!u) {
@@ -950,7 +988,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return イミディエートオフセットアドレス
      */
-    public int getOffsetAddressImm(Instruction inst) {
+    public int getAddrMode2Imm(Instruction inst) {
         int offset12 = inst.getField(0, 12);
 
         return offset12;
@@ -966,8 +1004,8 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return レジスタオフセットアドレス
      */
-    public int getOffsetAddressReg(Instruction inst) {
-        return getShifterOperandImmShift(inst);
+    public int getAddrMode2Reg(Instruction inst) {
+        return getAddrMode1ImmShift(inst);
     }
 
     /**
@@ -980,8 +1018,8 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return スケーリング済みレジスタオフセットアドレス
      */
-    public int getOffsetAddressScaled(Instruction inst) {
-        return getShifterOperandImmShift(inst);
+    public int getAddrMode2Scaled(Instruction inst) {
+        return getAddrMode1ImmShift(inst);
     }
 
     /**
@@ -995,7 +1033,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレスの文字列表記
      */
-    public String getOffsetAddressName(Instruction inst) {
+    public String getAddrMode2Name(Instruction inst) {
         boolean i = inst.getIBit();
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
@@ -1010,13 +1048,13 @@ public class ARMv5 extends CPU {
         if (!i) {
             //12bits イミディエートオフセット
             //I ビットの意味がデータ処理命令と逆なので注意！
-            return getOffsetAddressImmName(inst);
+            return getAddrMode2ImmName(inst);
         } else if (shift_imm == 0 && shift == 0) {
             //レジスタオフセット/インデクス
-            strOffset = getOffsetAddressRegName(inst);
+            strOffset = getAddrMode2RegName(inst);
         } else {
             //スケーリング済みレジスタオフセット/インデクス
-            strOffset = getOffsetAddressScaledName(inst);
+            strOffset = getAddrMode2ScaledName(inst);
         }
 
         if (p && !w) {
@@ -1052,7 +1090,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return イミディエートオフセットアドレスの文字列表記
      */
-    public String getOffsetAddressImmName(Instruction inst) {
+    public String getAddrMode2ImmName(Instruction inst) {
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
         boolean b = inst.getBit(22);
@@ -1091,8 +1129,8 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return レジスタオフセットアドレス
      */
-    public String getOffsetAddressRegName(Instruction inst) {
-        return getShifterOperandImmShiftName(inst);
+    public String getAddrMode2RegName(Instruction inst) {
+        return getAddrMode1ImmShiftName(inst);
     }
 
     /**
@@ -1105,8 +1143,8 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレスの文字列表記
      */
-    public String getOffsetAddressScaledName(Instruction inst) {
-        return getShifterOperandImmShiftName(inst);
+    public String getAddrMode2ScaledName(Instruction inst) {
+        return getAddrMode1ImmShiftName(inst);
     }
 
     /**
@@ -1116,7 +1154,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレス
      */
-    public int getOffsetHalf(Instruction inst) {
+    public int getAddrMode3(Instruction inst) {
         boolean u = inst.getBit(23);
         boolean b = inst.getBit(22);
         int rn = inst.getRnField();
@@ -1124,10 +1162,10 @@ public class ARMv5 extends CPU {
 
         if (b) {
             //イミディエートオフセット/インデクス
-            offset = getOffsetHalfImm(inst);
+            offset = getAddrMode3Imm(inst);
         } else {
             //レジスタオフセット/インデクス
-            offset = getOffsetHalfReg(inst);
+            offset = getAddrMode3Reg(inst);
         }
 
         if (!u) {
@@ -1144,7 +1182,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレス
      */
-    public int getOffsetHalfImm(Instruction inst) {
+    public int getAddrMode3Imm(Instruction inst) {
         int immh = inst.getField(8, 4);
         int imml = inst.getField(0, 4);
 
@@ -1158,7 +1196,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレス
      */
-    public int getOffsetHalfReg(Instruction inst) {
+    public int getAddrMode3Reg(Instruction inst) {
         int rm = inst.getRmField();
 
         return getReg(rm);
@@ -1169,17 +1207,17 @@ public class ARMv5 extends CPU {
      * 文字列表記を取得します。
      *
      * @param inst ARM 命令
-     * @return アドレス
+     * @return アドレスの文字列表記
      */
-    public String getOffsetHalfName(Instruction inst) {
+    public String getAddrMode3Name(Instruction inst) {
         boolean b = inst.getBit(22);
 
         if (b) {
             //イミディエートオフセット/インデクス
-            return getOffsetHalfImmName(inst);
+            return getAddrMode3ImmName(inst);
         } else {
             //レジスタオフセット/インデクス
-            return getOffsetHalfRegName(inst);
+            return getAddrMode3RegName(inst);
         }
     }
 
@@ -1188,14 +1226,14 @@ public class ARMv5 extends CPU {
      * イミディエートオフセット/インデクスの文字列表記を取得します。
      *
      * @param inst ARM 命令
-     * @return アドレス
+     * @return アドレスの文字列表記
      */
-    public String getOffsetHalfImmName(Instruction inst) {
+    public String getAddrMode3ImmName(Instruction inst) {
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
-        int imm8 = getOffsetHalfImm(inst);
+        int imm8 = getAddrMode3Imm(inst);
 
         if (p && !w) {
             //オフセット
@@ -1223,9 +1261,9 @@ public class ARMv5 extends CPU {
      * レジスタオフセット/インデクスの文字列表記を取得します。
      *
      * @param inst ARM 命令
-     * @return アドレス
+     * @return アドレスの文字列表記
      */
-    public String getOffsetHalfRegName(Instruction inst) {
+    public String getAddrMode3RegName(Instruction inst) {
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
         boolean w = inst.getBit(21);
@@ -1262,7 +1300,7 @@ public class ARMv5 extends CPU {
      * @param rlist レジスタリスト
      * @return 転送開始アドレス
      */
-    public int getRegistersStartAddress(int pu, int rn, int rlist) {
+    public int getAddrMode4StartAddress(int pu, int rn, int rlist) {
         switch (pu) {
         case Instruction.PU_ADDR4_IA:
             return getReg(rn);
@@ -1289,7 +1327,7 @@ public class ARMv5 extends CPU {
      * @param rlist レジスタリスト
      * @return 転送するデータの長さ
      */
-    public int getRegistersLength(int pu, int rlist) {
+    public int getAddrMode4Length(int pu, int rlist) {
         switch (pu) {
         case Instruction.PU_ADDR4_IA:
         case Instruction.PU_ADDR4_IB:
@@ -1358,7 +1396,7 @@ public class ARMv5 extends CPU {
         boolean mask_x = inst.getBit(17);
         boolean mask_c = inst.getBit(16);
         int sbo = inst.getField(12, 4);
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int dest, m = 0;
 
         if (!exec) {
@@ -1370,7 +1408,7 @@ public class ARMv5 extends CPU {
                             (mask_s) ? "s" : "",
                             (mask_x) ? "x" : "",
                             (mask_c) ? "c" : "",
-                            getShifterOperandName(inst)));
+                            getAddrMode1Name(inst)));
             return;
         }
 
@@ -1448,7 +1486,7 @@ public class ARMv5 extends CPU {
                         (s) ? "s" : "");
                 //rd, rn, shifter_operand
                 strOperand = String.format("%s, %s, %s", getRegName(rd),
-                        getRegName(rn), getShifterOperandName(inst));
+                        getRegName(rn), getAddrMode1Name(inst));
                 break;
             case Instruction.OPCODE_S_MOV:
             case Instruction.OPCODE_S_MVN:
@@ -1458,7 +1496,7 @@ public class ARMv5 extends CPU {
                         (s) ? "s" : "");
                 //rd, shifter_operand
                 strOperand = String.format("%s, %s", getRegName(rd),
-                        getShifterOperandName(inst));
+                        getAddrMode1Name(inst));
                 break;
             case Instruction.OPCODE_S_CMN:
             case Instruction.OPCODE_S_CMP:
@@ -1469,7 +1507,7 @@ public class ARMv5 extends CPU {
                         inst.getCondFieldName());
                 //rn, shifter_operand
                 strOperand = String.format("%s, %s", getRegName(rn),
-                        getShifterOperandName(inst));
+                        getAddrMode1Name(inst));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown opcode S-bit ID " +
@@ -1549,7 +1587,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         left = getReg(rn);
@@ -1561,7 +1599,7 @@ public class ARMv5 extends CPU {
         } else if (s) {
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(getShifterCarry(inst));
+            getCPSR().setCBit(getAddrMode1Carry(inst));
             //V flag is unaffected
         }
 
@@ -1578,7 +1616,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         left = getReg(rn);
@@ -1590,7 +1628,7 @@ public class ARMv5 extends CPU {
         } else if (s) {
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(getShifterCarry(inst));
+            getCPSR().setCBit(getAddrMode1Carry(inst));
             //V flag is unaffected
         }
 
@@ -1607,7 +1645,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         left = getReg(rn);
@@ -1636,7 +1674,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         left = opr;
@@ -1665,7 +1703,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         left = getReg(rn);
@@ -1694,7 +1732,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, center, right, dest;
 
         left = getReg(rn);
@@ -1728,7 +1766,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, center, right, dest;
 
         left = getReg(rn);
@@ -1762,7 +1800,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, center, right, dest;
 
         left = opr;
@@ -1795,7 +1833,7 @@ public class ARMv5 extends CPU {
     public void executeALUTst(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (sbz != 0x0) {
@@ -1809,7 +1847,7 @@ public class ARMv5 extends CPU {
 
         getCPSR().setNBit(BitOp.getBit32(dest, 31));
         getCPSR().setZBit(dest == 0);
-        getCPSR().setCBit(getShifterCarry(inst));
+        getCPSR().setCBit(getAddrMode1Carry(inst));
         //V flag is unaffected
     }
 
@@ -1822,7 +1860,7 @@ public class ARMv5 extends CPU {
     public void executeALUTeq(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (sbz != 0x0) {
@@ -1836,7 +1874,7 @@ public class ARMv5 extends CPU {
 
         getCPSR().setNBit(BitOp.getBit32(dest, 31));
         getCPSR().setZBit(dest == 0);
-        getCPSR().setCBit(getShifterCarry(inst));
+        getCPSR().setCBit(getAddrMode1Carry(inst));
         //V flag is unaffected
     }
 
@@ -1849,7 +1887,7 @@ public class ARMv5 extends CPU {
     public void executeALUCmp(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (sbz != 0x0) {
@@ -1876,7 +1914,7 @@ public class ARMv5 extends CPU {
     public void executeALUCmn(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (sbz != 0x0) {
@@ -1904,7 +1942,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         left = getReg(rn);
@@ -1916,7 +1954,7 @@ public class ARMv5 extends CPU {
         } else if (s) {
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(getShifterCarry(inst));
+            getCPSR().setCBit(getAddrMode1Carry(inst));
             //V flag is unaffected
         }
 
@@ -1933,7 +1971,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int sbz = inst.getField(16, 4);
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int right, dest;
 
         if (sbz != 0x0) {
@@ -1949,7 +1987,7 @@ public class ARMv5 extends CPU {
         } else if (s) {
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(getShifterCarry(inst));
+            getCPSR().setCBit(getAddrMode1Carry(inst));
             //V flag is unaffected
         }
 
@@ -1966,7 +2004,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         left = getReg(rn);
@@ -1978,7 +2016,7 @@ public class ARMv5 extends CPU {
         } else if (s) {
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(getShifterCarry(inst));
+            getCPSR().setCBit(getAddrMode1Carry(inst));
             //V flag is unaffected
         }
 
@@ -1994,7 +2032,7 @@ public class ARMv5 extends CPU {
     public void executeALUMvn(Instruction inst, boolean exec) {
         boolean s = inst.getSBit();
         int rd = inst.getRdField();
-        int opr = getShifterOperand(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         right = opr;
@@ -2005,7 +2043,7 @@ public class ARMv5 extends CPU {
         } else if (s) {
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(getShifterCarry(inst));
+            getCPSR().setCBit(getAddrMode1Carry(inst));
             //V flag is unaffected
         }
 
@@ -2356,14 +2394,14 @@ public class ARMv5 extends CPU {
     public void executeLdrt(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetAddress(inst);
+        int offset = getAddrMode2(inst);
         int vaddr, paddr, rot, value;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("ldrt%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetAddressName(inst)));
+                            getAddrMode2Name(inst)));
             return;
         }
 
@@ -2428,14 +2466,14 @@ public class ARMv5 extends CPU {
     public void executeLdrbt(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetAddress(inst);
+        int offset = getAddrMode2(inst);
         int vaddr, paddr, value;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("ldrbt%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetAddressName(inst)));
+                            getAddrMode2Name(inst)));
             return;
         }
 
@@ -2476,14 +2514,14 @@ public class ARMv5 extends CPU {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetAddress(inst);
+        int offset = getAddrMode2(inst);
         int vaddr, paddr, value;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("ldrb%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetAddressName(inst)));
+                            getAddrMode2Name(inst)));
             return;
         }
 
@@ -2533,14 +2571,14 @@ public class ARMv5 extends CPU {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetAddress(inst);
+        int offset = getAddrMode2(inst);
         int vaddr, paddr, rot, value;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("ldr%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetAddressName(inst)));
+                            getAddrMode2Name(inst)));
             return;
         }
 
@@ -2615,14 +2653,14 @@ public class ARMv5 extends CPU {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetHalf(inst);
+        int offset = getAddrMode3(inst);
         int vaddr, paddr, value;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("ldrh%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetHalfName(inst)));
+                            getAddrMode3Name(inst)));
             return;
         }
 
@@ -2672,14 +2710,14 @@ public class ARMv5 extends CPU {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetHalf(inst);
+        int offset = getAddrMode3(inst);
         int vaddr, paddr, value;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("ldrsb%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetHalfName(inst)));
+                            getAddrMode3Name(inst)));
             return;
         }
 
@@ -2729,14 +2767,14 @@ public class ARMv5 extends CPU {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetHalf(inst);
+        int offset = getAddrMode3(inst);
         int vaddr, paddr, value;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("ldrsh%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetHalfName(inst)));
+                            getAddrMode3Name(inst)));
             return;
         }
 
@@ -2786,14 +2824,14 @@ public class ARMv5 extends CPU {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetHalf(inst);
+        int offset = getAddrMode3(inst);
         int vaddr, paddr, value1, value2;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("ldrd%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetHalfName(inst)));
+                            getAddrMode3Name(inst)));
             return;
         }
 
@@ -2840,7 +2878,7 @@ public class ARMv5 extends CPU {
         if (!exec) {
             disasmInst(inst,
                     String.format("pld%s", (r) ? "" : "w"),
-                    String.format("%s", getOffsetAddressName(inst)));
+                    String.format("%s", getAddrMode2Name(inst)));
             return;
         }
 
@@ -2858,14 +2896,14 @@ public class ARMv5 extends CPU {
     public void executeStrt(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetAddress(inst);
+        int offset = getAddrMode2(inst);
         int vaddr, paddr;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("strt%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetAddressName(inst)));
+                            getAddrMode2Name(inst)));
             return;
         }
 
@@ -2902,14 +2940,14 @@ public class ARMv5 extends CPU {
     public void executeStrbt(Instruction inst, boolean exec) {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetAddress(inst);
+        int offset = getAddrMode2(inst);
         int vaddr, paddr;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("strbt%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetAddressName(inst)));
+                            getAddrMode2Name(inst)));
             return;
         }
 
@@ -2948,14 +2986,14 @@ public class ARMv5 extends CPU {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetAddress(inst);
+        int offset = getAddrMode2(inst);
         int vaddr, paddr;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("strb%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetAddressName(inst)));
+                            getAddrMode2Name(inst)));
             return;
         }
 
@@ -3003,14 +3041,14 @@ public class ARMv5 extends CPU {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetAddress(inst);
+        int offset = getAddrMode2(inst);
         int vaddr, paddr;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("str%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetAddressName(inst)));
+                            getAddrMode2Name(inst)));
             return;
         }
 
@@ -3058,14 +3096,14 @@ public class ARMv5 extends CPU {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetHalf(inst);
+        int offset = getAddrMode3(inst);
         int vaddr, paddr;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("strh%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetHalfName(inst)));
+                            getAddrMode3Name(inst)));
             return;
         }
 
@@ -3113,14 +3151,14 @@ public class ARMv5 extends CPU {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset = getOffsetHalf(inst);
+        int offset = getAddrMode3(inst);
         int vaddr, paddr;
 
         if (!exec) {
             disasmInst(inst,
                     String.format("strd%s", inst.getCondFieldName()),
                     String.format("%s, %s", getRegName(rd),
-                            getOffsetHalfName(inst)));
+                            getAddrMode3Name(inst)));
             return;
         }
 
@@ -3186,8 +3224,8 @@ public class ARMv5 extends CPU {
         }
 
         //r15 以外
-        vaddr = getRegistersStartAddress(inst.getPUField(), rn, rlist);
-        len = getRegistersLength(inst.getPUField(), rlist);
+        vaddr = getAddrMode4StartAddress(inst.getPUField(), rn, rlist);
+        len = getAddrMode4Length(inst.getPUField(), rlist);
         for (int i = 0; i < 15; i++) {
             if ((rlist & (1 << i)) == 0) {
                 continue;
@@ -3264,7 +3302,7 @@ public class ARMv5 extends CPU {
         }
 
         //r15 以外、なお r15 は指定不可のため処理なし
-        vaddr = getRegistersStartAddress(inst.getPUField(), rn, rlist);
+        vaddr = getAddrMode4StartAddress(inst.getPUField(), rn, rlist);
         for (int i = 0; i < 15; i++) {
             if ((rlist & (1 << i)) == 0) {
                 continue;
@@ -3323,8 +3361,8 @@ public class ARMv5 extends CPU {
         }
 
         //r15 以外
-        vaddr = getRegistersStartAddress(inst.getPUField(), rn, rlist);
-        len = getRegistersLength(inst.getPUField(), rlist);
+        vaddr = getAddrMode4StartAddress(inst.getPUField(), rn, rlist);
+        len = getAddrMode4Length(inst.getPUField(), rlist);
         for (int i = 0; i < 15; i++) {
             if ((rlist & (1 << i)) == 0) {
                 continue;
@@ -3399,8 +3437,8 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        vaddr = getRegistersStartAddress(pu, rn, rlist);
-        len = getRegistersLength(pu, rlist);
+        vaddr = getAddrMode4StartAddress(pu, rn, rlist);
+        len = getAddrMode4Length(pu, rlist);
         for (int i = 0; i < 16; i++) {
             if ((rlist & (1 << i)) == 0) {
                 continue;
@@ -3455,7 +3493,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        vaddr = getRegistersStartAddress(pu, rn, rlist);
+        vaddr = getAddrMode4StartAddress(pu, rn, rlist);
         for (int i = 0; i < 16; i++) {
             if ((rlist & (1 << i)) == 0) {
                 continue;
@@ -4534,7 +4572,7 @@ public class ARMv5 extends CPU {
         if (isRaised()) {
             //例外状態がクリアされず残っている
             //一度の命令で二度、例外が起きるのはおそらくバグでしょう
-            throw new IllegalStateException("Except status not cleared.");
+            throw new IllegalStateException("Exception status is not cleared.");
         }
 
         exceptions[num] = true;
