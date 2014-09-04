@@ -4932,8 +4932,6 @@ public class ARMv5 extends CPU {
      * IRQ 例外を要求します。
      */
     public void acceptIRQ() {
-        INTC cnt;
-        Iterator<INTC> it;
         String msg;
 
         if (getCPSR().getIBit()) {
@@ -5053,6 +5051,13 @@ public class ARMv5 extends CPU {
 
         //要求された例外のうち、優先度の高い例外を 1つだけ発生させます
         doImportantException();
+
+        //高速割り込み線がアサートされていれば、FIQ 例外を要求します
+        acceptFIQ();
+        if (isRaised()) {
+            clearRaised();
+            return;
+        }
 
         //割り込み線がアサートされていれば、IRQ 例外を要求します
         acceptIRQ();
