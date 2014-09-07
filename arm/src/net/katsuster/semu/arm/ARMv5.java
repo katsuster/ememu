@@ -17,6 +17,7 @@ import java.util.*;
  * @author katsuhiro
  */
 public class ARMv5 extends CPU {
+    private int prevMode;
     private int[] regs;
     private int[] regs_usr;
     private int[] regs_svc;
@@ -33,7 +34,6 @@ public class ARMv5 extends CPU {
     private boolean exceptions[];
     private String exceptionReasons[];
 
-    private int prevMode;
     private boolean raised;
     private boolean jumped;
     private boolean highVector;
@@ -45,6 +45,7 @@ public class ARMv5 extends CPU {
         cpVfps = new CoProcVFPv2(10, this);
         cpStd = new CoProcStdv5(15, this);
 
+        prevMode = PSR.MODE_USR;
         regs = new int[17];
         regs_usr = new int[17];
         regs_svc = new int[17];
@@ -63,7 +64,6 @@ public class ARMv5 extends CPU {
         exceptions = new boolean[7];
         exceptionReasons = new String[7];
 
-        prevMode = PSR.MODE_USR;
         raised = false;
         jumped = false;
         highVector = false;
@@ -4991,7 +4991,9 @@ public class ARMv5 extends CPU {
      * @param m CPU が例外を要求した場合 true、要求していない場合 false
      */
     public void setRaised(boolean m) {
-        raised = m;
+        synchronized(this) {
+            raised = m;
+        }
     }
 
     /**
@@ -5016,7 +5018,9 @@ public class ARMv5 extends CPU {
      * @param b ジャンプが行われたならば true、そうでなければ false
      */
     public void setJumped(boolean b) {
-        jumped = b;
+        synchronized(this) {
+            jumped = b;
+        }
     }
 
     /**
@@ -5038,7 +5042,9 @@ public class ARMv5 extends CPU {
      *          正規ベクタの場合は false
      */
     public void setHighVector(boolean m) {
-        highVector = m;
+        synchronized(this) {
+            highVector = m;
+        }
     }
 
     @Override
