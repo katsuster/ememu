@@ -182,7 +182,7 @@ public class Instruction {
             return true;
         default:
             throw new IllegalArgumentException(String.format(
-                    "Unknown cond %d, psr 0x%08x.", cond, psr));
+                    "Unknown cond %d, psr %s.", cond, psr.toString()));
         }
     }
 
