@@ -4352,7 +4352,7 @@ public class ARMv5 extends CPU {
                 //ldrbt
                 executeLdrbt(inst, exec);
             } else if (b) {
-                if (cond == inst.COND_NV && p && !w && rd == 15) {
+                if (cond == Instruction.COND_NV && p && !w && rd == 15) {
                     //pld
                     executePld(inst, exec);
                 } else {
