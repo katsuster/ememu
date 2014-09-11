@@ -39,10 +39,10 @@ public class Main {
                 cpu.write8(addr + i, s.readByte());
             }
         } catch (FileNotFoundException e) {
-            System.out.println(e);
+            e.printStackTrace();
             throw new RuntimeException(e);
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
 

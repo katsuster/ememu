@@ -135,7 +135,7 @@ public abstract class CPU extends MasterCore64 implements Runnable {
                 step();
             }
         } catch (IllegalArgumentException e) {
-            System.out.println(e);
+            e.printStackTrace();
             printPC();
             printRegs();
 
