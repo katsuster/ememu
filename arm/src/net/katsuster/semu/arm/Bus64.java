@@ -62,6 +62,7 @@ public class Bus64 {
         }
 
         offSt = addr - sca.start;
+        //offEd = offSt + len - 1;
         return sca.slave.tryRead(offSt);
     }
 
@@ -154,7 +155,7 @@ public class Bus64 {
      */
     public boolean tryWrite(long addr, int len) {
         SlaveCoreAddress sca;
-        long offSt, offEd;
+        long offSt;
 
         sca = findSlaveCore(addr, addr + len - 1);
         if (sca == null) {
@@ -165,7 +166,7 @@ public class Bus64 {
         }
 
         offSt = addr - sca.start;
-        offEd = offSt + len - 1;
+        //offEd = offSt + len - 1;
         return sca.slave.tryWrite(offSt);
     }
 

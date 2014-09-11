@@ -759,7 +759,7 @@ public class MMUv5 {
      * @return 物理アドレス
      */
     protected int translateCoarse(int va, boolean inst, boolean priv, boolean read, int entryL1) {
-        int dom = BitOp.getField32(entryL1, 5, 4);
+        //int dom = BitOp.getField32(entryL1, 5, 4);
         //int imp = BitOp.getField32(entryL1, 2, 3);
         int paL2, entryL2, typeL2;
         int pa;
@@ -820,7 +820,7 @@ public class MMUv5 {
      * @return 物理アドレス
      */
     protected int translateFine(int va, boolean inst, boolean priv, boolean read, int entryL1) {
-        int dom = BitOp.getField32(entryL1, 5, 4);
+        //int dom = BitOp.getField32(entryL1, 5, 4);
         //int imp = BitOp.getField32(entryL1, 2, 3);
         int paL2, entryL2, typeL2;
         int pa;
