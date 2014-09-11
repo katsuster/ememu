@@ -46,7 +46,15 @@ public class CoProc {
     /**
      * コプロセッサレジスタの定義を追加します。
      *
-     * @param cn   コプロセッサレジスタ番号
+     * コプロセッサレジスタ識別番号は、
+     * 4ビットずつのフィールドに分かれています。
+     * ビット [15:12]: CRn
+     * ビット [11:8]: opcode_1
+     * ビット [7:4]: CRm
+     * ビット [3:0]: opcode_2
+     * を意味します。
+     *
+     * @param cn   コプロセッサレジスタ識別番号
      * @param name レジスタ名
      */
     public void addCReg(int cn, String name) {
@@ -56,7 +64,15 @@ public class CoProc {
     /**
      * コプロセッサレジスタの定義を追加します。
      *
-     * @param cn   コプロセッサレジスタ番号
+     * コプロセッサレジスタ識別番号は、
+     * 4ビットずつのフィールドに分かれています。
+     * ビット [15:12]: CRn
+     * ビット [11:8]: opcode_1
+     * ビット [7:4]: CRm
+     * ビット [3:0]: opcode_2
+     * を意味します。
+     *
+     * @param cn   コプロセッサレジスタ識別番号
      * @param name レジスタ名
      * @param val  レジスタの初期値
      */
@@ -65,20 +81,21 @@ public class CoProc {
     }
 
     /**
-     * コプロセッサレジスタ番号を取得します。
+     * コプロセッサレジスタ識別番号を取得します。
      *
-     * レジスタ番号は、4ビットずつのフィールドに分かれています。
+     * コプロセッサレジスタ識別番号は、
+     * 4ビットずつのフィールドに分かれています。
      * ビット [15:12]: CRn
      * ビット [11:8]: opcode_1
      * ビット [7:4]: CRm
      * ビット [3:0]: opcode_2
-     * を指定します。
+     * を意味します。
      *
-     * @param crn
-     * @param opcode1
-     * @param crm
-     * @param opcode2
-     * @return
+     * @param crn      命令の第一オペランドを含むコプロセッサレジスタ
+     * @param opcode1 コプロセッサ命令（その1）
+     * @param crm      命令の第二オペランド
+     * @param opcode2 コプロセッサ命令（その2）
+     * @return コプロセッサレジスタ識別番号
      */
     public static int getCRegID(int crn, int opcode1, int crm, int opcode2) {
         return ((crn & 0x0f) << 12) |
@@ -88,10 +105,10 @@ public class CoProc {
     }
 
     /**
-     * コプロセッサレジスタ番号が有効かどうかを取得します。
+     * コプロセッサレジスタ識別番号が有効かどうかを取得します。
      *
-     * @param cn コプロセッサレジスタ番号
-     * @return 指定したレジスタが存在するなら true、存在しなければ false
+     * @param cn コプロセッサレジスタ識別番号
+     * @return 指定した識別番号のレジスタが存在すれば true、なければ false
      */
     public boolean validCRegNumber(int cn) {
         return cregs.containsKey(cn);
@@ -100,14 +117,15 @@ public class CoProc {
     /**
      * コプロセッサレジスタの値を取得します。
      *
-     * レジスタ番号は、4ビットずつのフィールドに分かれています。
+     * コプロセッサレジスタ識別番号は、
+     * 4ビットずつのフィールドに分かれています。
      * ビット [15:12]: CRn
      * ビット [11:8]: opcode_1
      * ビット [7:4]: CRm
      * ビット [3:0]: opcode_2
-     * を指定します。
+     * を意味します。
      *
-     * @param cn コプロセッサレジスタ番号
+     * @param cn コプロセッサレジスタ識別番号
      * @return レジスタの値
      */
     public int getCReg(int cn) {
@@ -125,14 +143,15 @@ public class CoProc {
     /**
      * コプロセッサレジスタの値を設定します。
      *
-     * レジスタ番号は、4ビットずつのフィールドに分かれています。
+     * コプロセッサレジスタ識別番号は、
+     * 4ビットずつのフィールドに分かれています。
      * ビット [15:12]: CRn
      * ビット [11:8]: opcode_1
      * ビット [7:4]: CRm
      * ビット [3:0]: opcode_2
-     * を指定します。
+     * を意味します。
      *
-     * @param cn   コプロセッサレジスタ番号
+     * @param cn  コプロセッサレジスタ識別番号
      * @param val 新しいレジスタの値
      */
     public void setCReg(int cn, int val) {
