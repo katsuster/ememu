@@ -1,7 +1,5 @@
 package net.katsuster.semu.arm;
 
-import java.util.*;
-
 /**
  * ARMv5TE CPU
  *
