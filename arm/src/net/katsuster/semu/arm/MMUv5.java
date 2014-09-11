@@ -645,35 +645,19 @@ public class MMUv5 {
             if (!isSystemProtect() && !isROMProtect()) {
                 result = false;
             } else if (isSystemProtect() && !isROMProtect()) {
-                if (priv && read) {
-                    result = true;
-                } else {
-                    result = false;
-                }
+                result = priv && read;
             } else if (!isSystemProtect() && isROMProtect()) {
-                if (read) {
-                    result = true;
-                } else {
-                    result = false;
-                }
+                result = read;
             } else {
                 //unpredictable
                 result = false;
             }
             break;
         case 1:
-            if (priv) {
-                result = true;
-            } else {
-                result = false;
-            }
+            result = priv;
             break;
         case 2:
-            if (priv || read) {
-                result = true;
-            } else {
-                result = false;
-            }
+            result = priv || read;
             break;
         case 3:
             result = true;
