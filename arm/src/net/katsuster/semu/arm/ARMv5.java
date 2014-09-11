@@ -298,15 +298,6 @@ public class ARMv5 extends CPU {
     }
 
     /**
-     * 標準コプロセッサ（Cp15）を取得します。
-     *
-     * @return 標準コプロセッサ
-     */
-    public CoProcStdv5 getCoProcStd() {
-        return (CoProcStdv5)coProcs[15];
-    }
-
-    /**
      * MMU を取得します。
      *
      * @return MMU
