@@ -1035,12 +1035,12 @@ public class ARMv5 extends CPU {
         boolean i = inst.getIBit();
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
-        boolean b = inst.getBit(22);
+        //boolean b = inst.getBit(22);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int shift_imm = inst.getField(7, 5);
         int shift = inst.getField(5, 2);
-        int rm = inst.getRmField();
+        //int rm = inst.getRmField();
         String strOffset;
 
         if (!i) {
@@ -1091,7 +1091,7 @@ public class ARMv5 extends CPU {
     public String getAddrMode2ImmName(Instruction inst) {
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
-        boolean b = inst.getBit(22);
+        //boolean b = inst.getBit(22);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int offset12 = inst.getField(0, 12);
@@ -1387,7 +1387,7 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeMsr(Instruction inst, boolean exec) {
-        boolean i = inst.getIBit();
+        //boolean i = inst.getIBit();
         boolean r = inst.getBit(22);
         boolean mask_f = inst.getBit(19);
         boolean mask_s = inst.getBit(18);
@@ -2031,7 +2031,7 @@ public class ARMv5 extends CPU {
         boolean s = inst.getSBit();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
-        int left, right, dest;
+        int right, dest;
 
         right = opr;
         dest = ~right;
@@ -3691,7 +3691,7 @@ public class ARMv5 extends CPU {
         int opcode2 = inst.getField(5, 3);
         int crm = inst.getField(0, 4);
         CoProc cp;
-        int crid, crval, rval;
+        //int crid, crval, rval;
 
         if (!exec) {
             disasmInst(inst,
@@ -3763,7 +3763,7 @@ public class ARMv5 extends CPU {
         }
 
         crid = CoProc.getCRegID(crn, opcode1, crm, opcode2);
-        if (!cp.validCRegNumber(crid)) {
+        if (!cp.isValidCRegNumber(crid)) {
             //TODO: for debug, will be removed
             throw new IllegalArgumentException("Unimplemented coprocessor register, " +
                     String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
@@ -3818,7 +3818,7 @@ public class ARMv5 extends CPU {
         }
 
         crid = CoProc.getCRegID(crn, opcode1, crm, opcode2);
-        if (!cp.validCRegNumber(crid)) {
+        if (!cp.isValidCRegNumber(crid)) {
             //TODO: for debug, will be removed
             throw new IllegalArgumentException("Unimplemented coprocessor register, " +
                     String.format("p%d id(%08x, crn:%d, opc1:%d, crm:%d, opc2:%d) selected.",
@@ -3951,7 +3951,7 @@ public class ARMv5 extends CPU {
      *             逆アセンブルのみなら false
      */
     public void executeInst(Instruction inst, boolean exec) {
-        int cond = inst.getCondField();
+        //int cond = inst.getCondField();
         int subcode = inst.getSubCodeField();
 
         if (getCPSR().getTBit()) {

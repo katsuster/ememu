@@ -110,7 +110,7 @@ public class CoProc {
      * @param cn コプロセッサレジスタ識別番号
      * @return 指定した識別番号のレジスタが存在すれば true、なければ false
      */
-    public boolean validCRegNumber(int cn) {
+    public boolean isValidCRegNumber(int cn) {
         return cregs.containsKey(cn);
     }
 
