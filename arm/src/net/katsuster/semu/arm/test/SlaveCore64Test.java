@@ -45,14 +45,14 @@ public class SlaveCore64Test {
         Assert.assertEquals(msg1, (short) 0xfedc, (short) SlaveCore64.readMasked(0x46, 0xfedcba9876543210L, 64, 16));
         Assert.assertEquals(msg1, (short) 0xfedc, (short) SlaveCore64.readMasked(0x47, 0xfedcba9876543210L, 64, 16));
 
-        Assert.assertEquals(msg1, (int) 0x76543210, (int) SlaveCore64.readMasked(0x50, 0xfedcba9876543210L, 64, 32));
-        Assert.assertEquals(msg1, (int) 0x76543210, (int) SlaveCore64.readMasked(0x51, 0xfedcba9876543210L, 64, 32));
-        Assert.assertEquals(msg1, (int) 0x76543210, (int) SlaveCore64.readMasked(0x52, 0xfedcba9876543210L, 64, 32));
-        Assert.assertEquals(msg1, (int) 0x76543210, (int) SlaveCore64.readMasked(0x53, 0xfedcba9876543210L, 64, 32));
-        Assert.assertEquals(msg1, (int) 0xfedcba98, (int) SlaveCore64.readMasked(0x54, 0xfedcba9876543210L, 64, 32));
-        Assert.assertEquals(msg1, (int) 0xfedcba98, (int) SlaveCore64.readMasked(0x55, 0xfedcba9876543210L, 64, 32));
-        Assert.assertEquals(msg1, (int) 0xfedcba98, (int) SlaveCore64.readMasked(0x56, 0xfedcba9876543210L, 64, 32));
-        Assert.assertEquals(msg1, (int) 0xfedcba98, (int) SlaveCore64.readMasked(0x57, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0x76543210, (int) SlaveCore64.readMasked(0x50, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0x76543210, (int) SlaveCore64.readMasked(0x51, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0x76543210, (int) SlaveCore64.readMasked(0x52, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0x76543210, (int) SlaveCore64.readMasked(0x53, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0xfedcba98, (int) SlaveCore64.readMasked(0x54, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0xfedcba98, (int) SlaveCore64.readMasked(0x55, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0xfedcba98, (int) SlaveCore64.readMasked(0x56, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0xfedcba98, (int) SlaveCore64.readMasked(0x57, 0xfedcba9876543210L, 64, 32));
     }
 
     @org.junit.Test
@@ -67,15 +67,15 @@ public class SlaveCore64Test {
         Assert.assertEquals(msg1, (short) 0x0f54, (short) SlaveCore64.writeMasked(0xfffffffffffffff1L, 0xfe54, 0xf0f, 16, 8));
 
         //bus:32bits, data:8, 16bits
-        Assert.assertEquals(msg1, (int) 0xcdef23f9, (int) SlaveCore64.writeMasked(0x70, 0xcdef2345, 0x1f9, 32, 8));
-        Assert.assertEquals(msg1, (int) 0xcdeff845, (int) SlaveCore64.writeMasked(0x71, 0xcdef2345, 0x2f8, 32, 8));
-        Assert.assertEquals(msg1, (int) 0xcdf72345, (int) SlaveCore64.writeMasked(0x72, 0xcdef2345, 0x3f7, 32, 8));
-        Assert.assertEquals(msg1, (int) 0xf6ef2345, (int) SlaveCore64.writeMasked(0x73, 0xcdef2345, 0x4f6, 32, 8));
+        Assert.assertEquals(msg1, 0xcdef23f9, (int) SlaveCore64.writeMasked(0x70, 0xcdef2345, 0x1f9, 32, 8));
+        Assert.assertEquals(msg1, 0xcdeff845, (int) SlaveCore64.writeMasked(0x71, 0xcdef2345, 0x2f8, 32, 8));
+        Assert.assertEquals(msg1, 0xcdf72345, (int) SlaveCore64.writeMasked(0x72, 0xcdef2345, 0x3f7, 32, 8));
+        Assert.assertEquals(msg1, 0xf6ef2345, (int) SlaveCore64.writeMasked(0x73, 0xcdef2345, 0x4f6, 32, 8));
 
-        Assert.assertEquals(msg1, (int) 0xcdefe123, (int) SlaveCore64.writeMasked(0x80, 0xcdef2345, 0x5e123, 32, 16));
-        Assert.assertEquals(msg1, (int) 0xcdefe124, (int) SlaveCore64.writeMasked(0x81, 0xcdef2345, 0x6e124, 32, 16));
-        Assert.assertEquals(msg1, (int) 0xe1252345, (int) SlaveCore64.writeMasked(0x82, 0xcdef2345, 0x7e125, 32, 16));
-        Assert.assertEquals(msg1, (int) 0xe1262345, (int) SlaveCore64.writeMasked(0x83, 0xcdef2345, 0x8e126, 32, 16));
+        Assert.assertEquals(msg1, 0xcdefe123, (int) SlaveCore64.writeMasked(0x80, 0xcdef2345, 0x5e123, 32, 16));
+        Assert.assertEquals(msg1, 0xcdefe124, (int) SlaveCore64.writeMasked(0x81, 0xcdef2345, 0x6e124, 32, 16));
+        Assert.assertEquals(msg1, 0xe1252345, (int) SlaveCore64.writeMasked(0x82, 0xcdef2345, 0x7e125, 32, 16));
+        Assert.assertEquals(msg1, 0xe1262345, (int) SlaveCore64.writeMasked(0x83, 0xcdef2345, 0x8e126, 32, 16));
 
         //bus:64bits, data:8, 16, 32bits
         Assert.assertEquals(msg1, 0x89abcdef234567f9L, SlaveCore64.writeMasked(0x90, 0x89abcdef23456789L, 0x11f9, 64, 8));
