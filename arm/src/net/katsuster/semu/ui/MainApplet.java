@@ -2,28 +2,40 @@ package net.katsuster.semu.ui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.applet.*;
 import javax.swing.*;
 
 import net.katsuster.semu.arm.*;
 
-public class MainApplet extends Applet {
-    private JPanel panel;
-    private JButton btn;
-    private SystemPane spane;
+public class MainApplet extends JApplet {
+    private static final SystemPane spane = new SystemPane();
 
-    class ButtonListener implements ActionListener {
-        private int clicked = 0;
+    private Emulator emu;
 
-        public ButtonListener() {
+    class Emulator extends Thread {
+        private ARMv5 cpu;
+        private Bus64 bus;
+        private RAM ramMain;
 
+        public Emulator() {
+            //do nothing
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
-            SystemPane.out.println("clicked " + clicked);
+        public void run() {
+            String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.14.16";
+            String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz";
+            String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/sh debug printk.time=1\0";
 
-            clicked += 1;
+            cpu = new ARMv5();
+            bus = new Bus64();
+            ramMain = new RAM(64 * 1024 * 1024); //64MB
+
+            Main.addVersatileCores(cpu, bus, ramMain);
+            Main.bootFromURL(cpu, ramMain, kimage, initram, cmdline);
+        }
+
+        public void halt() {
+            cpu.halt();
         }
     }
 
@@ -33,19 +45,40 @@ public class MainApplet extends Applet {
 
         super.init();
 
-        panel = new JPanel();
-        btn = new JButton("button!!");
-        spane = new SystemPane();
+        ButtonListener listenButton = new ButtonListener();
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menuSystem = new JMenu("System");
+        JMenuItem itemReset = new JMenuItem("Reset");
+        JMenuItem itemClear = new JMenuItem("Clear");
+        setJMenuBar(menuBar);
+        menuBar.add(menuSystem);
+        menuSystem.add(itemReset);
+        menuSystem.addSeparator();
+        menuSystem.add(itemClear);
+        itemReset.setActionCommand("reset");
+        itemReset.addActionListener(listenButton);
+        itemReset.setMnemonic(KeyEvent.VK_R);
+        itemClear.setActionCommand("clear");
+        itemClear.addActionListener(listenButton);
+        itemClear.setMnemonic(KeyEvent.VK_C);
+
+        JPanel panel = new JPanel(new BorderLayout(), true);
+        JPanel panelEast = new JPanel(new FlowLayout(), true);
+        JButton btnReset = new JButton("Reset");
+        JButton btnClear = new JButton("Clear");
+
+        btnReset.addActionListener(listenButton);
+        btnReset.setActionCommand("reset");
+        btnClear.addActionListener(listenButton);
+        btnClear.setActionCommand("clear");
 
         setLayout(new BorderLayout());
         add(panel);
-        panel.add(btn);
-        panel.add(spane);
-
-        btn.addActionListener(new ButtonListener());
-
-        Thread t = new Thread(new Booter());
-        t.start();
+        panel.add("Center", spane);
+        panel.add("East", panelEast);
+        panelEast.add(btnReset);
+        panelEast.add(btnClear);
     }
 
     @Override
@@ -53,25 +86,9 @@ public class MainApplet extends Applet {
         SystemPane.out.println("start");
 
         super.start();
-    }
 
-    class Booter implements Runnable {
-        public Booter() {
-
-        }
-
-        public void run() {
-            String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.14.16";
-            String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz";
-            String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/sh debug printk.time=1\0";
-
-            ARMv5 cpu = new ARMv5();
-            Bus64 bus = new Bus64();
-            RAM ramMain = new RAM(64 * 1024 * 1024); //64MB
-
-            Main.addVersatileCores(cpu, bus, ramMain);
-            Main.bootFromURL(cpu, ramMain, kimage, initram, cmdline);
-        }
+        emu = new Emulator();
+        emu.start();
     }
 
     @Override
@@ -79,12 +96,36 @@ public class MainApplet extends Applet {
         SystemPane.out.println("stop");
 
         super.stop();
+
+        try {
+            emu.halt();
+            emu.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace(System.err);
+        }
     }
 
     @Override
     public void destroy() {
-        System.out.println("destroy");
+        SystemPane.out.println("destroy");
 
         super.destroy();
+    }
+
+    class ButtonListener implements ActionListener {
+        public ButtonListener() {
+            //do nothing
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals("reset")) {
+                stop();
+                start();
+            }
+            if (e.getActionCommand().equals("clear")) {
+                spane.clear();
+            }
+        }
     }
 }

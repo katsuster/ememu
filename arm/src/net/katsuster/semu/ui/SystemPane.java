@@ -15,20 +15,21 @@ import javax.swing.*;
 public class SystemPane extends JPanel {
     //out -> outInner -> outPout -> outPin -> outRead -> outText
     //    `-> System.out
-    private static PipedOutputStream outPout = new PipedOutputStream();
-    private static PipedInputStream outPin = new PipedInputStream(16384);
-    private static InputStreamReader outRead = new InputStreamReader(outPin);
-    private static PrintStream outInner = new PrintStream(outPout);
+    private static final PipedOutputStream outPout = new PipedOutputStream();
+    private static final PrintStream outInner = new PrintStream(outPout);
 
-    private static JTextArea outText = new JTextArea();
-    private static JScrollPane outScr = new JScrollPane(outText);
-    private static Thread outThread = new Thread(new OutRunner());
+    private static final PipedInputStream outPin = new PipedInputStream(16384);
+    private static final InputStreamReader outRead = new InputStreamReader(outPin);
+    private static final JTextArea outText = new JTextArea();
+    private static final Thread outDrainer = new Thread(new TextDrainer());
+
+    private static final JScrollPane outScr = new JScrollPane(outText);
 
     //標準出力の代わりに用いる出力用ストリームです
-    public static PrintStream out = new ForkedPrintStream(outInner, System.out);
+    public static final PrintStream out = new ForkedPrintStream(outInner, System.out);
 
     public SystemPane() {
-        super(true);
+        super(new BorderLayout(), true);
 
         try {
             outPout.connect(outPin);
@@ -36,46 +37,52 @@ public class SystemPane extends JPanel {
             //ignore
         }
 
-        setLayout(new BorderLayout());
         add(outScr);
-        outScr.setPreferredSize(new Dimension(500, 500));
-        outThread.start();
+        outScr.setPreferredSize(new Dimension(320, 240));
+        outDrainer.start();
     }
 
-    static class OutRunner implements Runnable {
-        public OutRunner() {
+    public void clear() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                outText.setText("");
+            }
+        });
+    }
+
+    static private class TextDrainer implements Runnable {
+        public TextDrainer() {
             //do nothing
         }
 
         @Override
         public void run() {
-            StringBuffer b = new StringBuffer();
+            try {
+                StringBuffer b = new StringBuffer();
 
-            while (true) {
-                try {
+                output:
+                while (true) {
                     b.setLength(0);
                     do {
                         int ch = SystemPane.outRead.read();
                         if (ch == -1) {
                             //EOF
-                            break;
+                            break output;
                         }
 
-                        b.append((char)ch);
+                        b.append((char) ch);
                     } while (SystemPane.outRead.ready());
-                } catch (IOException e) {
-                    //ignore
-                }
 
-                try {
-                    String s = b.toString();
-
-                    SwingUtilities.invokeAndWait(new StringAppender(s));
-                } catch (InterruptedException e) {
-                    //ignore
-                } catch (InvocationTargetException e) {
-                    //ignore
+                    try {
+                        SwingUtilities.invokeAndWait(new StringAppender(b.toString()));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace(System.err);
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace(System.err);
+                    }
                 }
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
             }
         }
 
