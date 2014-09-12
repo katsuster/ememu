@@ -13,17 +13,19 @@ import javax.swing.*;
  * @author katsuhiro
  */
 public class SystemPane extends JPanel {
-    //out -> outPout -> outPin -> outRead -> outText
+    //out -> outInner -> outPout -> outPin -> outRead -> outText
+    //    `-> System.out
     private static PipedOutputStream outPout = new PipedOutputStream();
     private static PipedInputStream outPin = new PipedInputStream(16384);
     private static InputStreamReader outRead = new InputStreamReader(outPin);
+    private static PrintStream outInner = new PrintStream(outPout);
 
     private static JTextArea outText = new JTextArea();
     private static JScrollPane outScr = new JScrollPane(outText);
     private static Thread outThread = new Thread(new OutRunner());
 
     //標準出力の代わりに用いる出力用ストリームです
-    public static PrintStream out = new PrintStream(outPout);
+    public static PrintStream out = new ForkedPrintStream(outInner, System.out);
 
     public SystemPane() {
         super(true);
@@ -68,7 +70,6 @@ public class SystemPane extends JPanel {
                 try {
                     String s = b.toString();
 
-                    System.out.print(s);
                     SwingUtilities.invokeAndWait(new StringAppender(s));
                 } catch (InterruptedException e) {
                     //ignore
