@@ -31,17 +31,19 @@ public class MainApplet extends Applet {
 
         super.init();
 
-        setLayout(new BorderLayout());
-
         panel = new JPanel();
         btn = new JButton("button!!");
         spane = new SystemPane();
 
+        setLayout(new BorderLayout());
         add(panel);
         panel.add(btn);
         panel.add(spane);
 
         btn.addActionListener(new ButtonListener());
+
+        Thread t = new Thread(new Booter());
+        t.start();
     }
 
     @Override
@@ -49,9 +51,6 @@ public class MainApplet extends Applet {
         SystemPane.out.println("start");
 
         super.start();
-
-        Thread t = new Thread(new Booter());
-        t.start();
     }
 
     class Booter implements Runnable {
@@ -60,9 +59,16 @@ public class MainApplet extends Applet {
         }
 
         public void run() {
-            Main.boot("Y:\\arm_cross\\linux-3.14.17\\arch\\arm\\boot\\Image",
-                    "Y:\\arm_cross\\initramfs.gz",
-                    "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/sh debug printk.time=1\0");
+            String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.14.16";
+            String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz";
+            String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/sh debug printk.time=1\0";
+
+            ARMv5 cpu = new ARMv5();
+            Bus64 bus = new Bus64();
+            RAM ramMain = new RAM(64 * 1024 * 1024); //64MB
+
+            Main.addVersatileCores(cpu, bus, ramMain);
+            Main.bootFromURL(cpu, ramMain, kimage, initram, cmdline);
         }
     }
 

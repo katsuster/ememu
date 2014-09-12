@@ -1,6 +1,7 @@
 package net.katsuster.semu.arm;
 
 import java.io.*;
+import java.net.*;
 
 public class Main {
     public static final int ATAG_NONE      = 0x00000000;
@@ -52,6 +53,38 @@ public class Main {
         return len;
     }
 
+    public static int loadURLResource(URL url, CPU cpu, int addr) {
+        int i;
+
+        System.out.println("loadURL: " + url.toExternalForm());
+
+        try {
+            DataInputStream s = new DataInputStream(
+                    new BufferedInputStream(url.openStream()));
+
+            i = 0;
+            try {
+                while (true) {
+                    cpu.write8(addr + i, s.readByte());
+                    i++;
+                }
+            } catch (EOFException e) {
+                //end
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        System.out.printf("loadURL: '%s' done, %dbytes.\n",
+                url.toExternalForm(), i);
+
+        return i;
+    }
+
     public static void main(String[] args) {
         String kimage = "Image";
         String initram = "initramfs.gz";
@@ -75,18 +108,15 @@ public class Main {
             cmdline = args[2];
         }
 
-        boot(kimage, initram, cmdline);
-    }
-
-    public static void boot(String kimage, String initram, String cmdline) {
-        byte[] cmdlb = cmdline.getBytes();
-        byte[] cmdalign = new byte[(cmdlb.length + 3) & ~0x3];
-        System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
-        boolean initramExist = false;
-
         ARMv5 cpu = new ARMv5();
         Bus64 bus = new Bus64();
+        RAM ramMain = new RAM(64 * 1024 * 1024); //64MB
 
+        addVersatileCores(cpu, bus, ramMain);
+        bootFromFile(cpu, ramMain, kimage, initram, cmdline);
+    }
+
+    public static void addVersatileCores(ARMv5 cpu, Bus64 bus, RAM ramMain) {
         //TODO: MPMC is not implemented
         RAM mpmc_c0_0 = new RAM(128 * 1024);
         RAM mpmc_c0_1 = new RAM(128 * 1024);
@@ -125,27 +155,6 @@ public class Main {
         RAM ssmc_c0 = new RAM(512 * 1024);
         RAM ssmc_c1 = new RAM(512 * 1024);
         RAM ssmc_c2 = new RAM(512 * 1024);
-
-        int addrRAM = 0x80000000;
-        int sizeRAM = 64 * 1024 * 1024; //64MB
-        RAM ramMain = new RAM(sizeRAM);
-        int addrAtags = addrRAM + sizeRAM - 4096;
-
-        //Cannot change this address
-        final int addrImage = 0x80008000;
-        int sizeImage = 0;
-        int addrInitram = 0x80800000;
-        int sizeInitram = 0;
-
-        if (initram.equals("")) {
-            initramExist = false;
-        } else {
-            initramExist = true;
-        }
-
-        cpu.setSlaveBus(bus);
-        cpu.setINTCForIRQ(intc1st.getSubINTCForIRQ());
-        cpu.setINTCForFIQ(intc1st.getSubINTCForFIQ());
 
         //RAM Image(tentative)
         //  0x00000000 - 0x03ffffff: MPMC Chip Select0, bottom of SDRAM
@@ -188,6 +197,8 @@ public class Main {
         //    0x80008000 - 0x807fffff: Linux Image
         //    0x80800000 - 0x80ffffff: Linux initramfs
         //    0x81fff000 - 0x81ffffff: ATAG_XXX
+        cpu.setSlaveBus(bus);
+
         bus.addSlaveCore(mpmc_c0_0, 0x00000000L, 0x04000000L);
         bus.addSlaveCore(mpmc_c0_1, 0x04000000L, 0x08000000L);
         bus.addSlaveCore(mpmc_c1, 0x08000000L, 0x10000000L);
@@ -225,22 +236,47 @@ public class Main {
         bus.addSlaveCore(ssmc_c1, 0x34000000L, 0x38000000L);
         bus.addSlaveCore(ssmc_c2, 0x38000000L, 0x3c000000L);
 
-        bus.addSlaveCore(ramMain, 0x80000000L, 0x80000000L + (sizeRAM & 0xffffffffL));
+        bus.addSlaveCore(ramMain, 0x80000000L, 0x80000000L + (ramMain.getSize() & 0xffffffffL));
 
         //TODO: implement ethernet controller...
         bus.addSlaveCore(ssmc_c0, 0x10010000L, 0x10020000L);
 
         //INTC
+        cpu.setINTCForIRQ(intc1st.getSubINTCForIRQ());
+        cpu.setINTCForFIQ(intc1st.getSubINTCForFIQ());
+
         intc1st.connectINTC(4, timer0_1);
         intc1st.connectINTC(12, uart0);
         intc1st.connectINTC(13, uart1);
         intc1st.connectINTC(14, uart2);
 
-        //reset
+        //run other cores
+        Thread thTimer0_1 = new Thread(timer0_1);
+        thTimer0_1.start();
+        Thread thUart0 = new Thread(uart0);
+        thUart0.start();
+
+        //reset CPU
         cpu.setDisasmMode(false);
         cpu.setPrintDisasm(false);
         cpu.setPrintRegs(false);
         cpu.doExceptionReset("Init.");
+    }
+
+    public static void bootFromFile(ARMv5 cpu, RAM ramMain, String kimage, String initram, String cmdline) {
+        byte[] cmdlb = cmdline.getBytes();
+        byte[] cmdalign = new byte[(cmdlb.length + 3) & ~0x3];
+        System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
+
+        int addrRAM = 0x80000000;
+        int addrAtags = addrRAM + ramMain.getSize() - 4096;
+
+        //Cannot change this address
+        final int addrImage = 0x80008000;
+        int sizeImage = 0;
+        int addrInitram = 0x80800000;
+        int sizeInitram = 0;
+        boolean initramExist = !initram.equals("");
 
         //tentative boot loader for Linux
         //load Image file
@@ -274,7 +310,7 @@ public class Main {
             //ATAG_MEM, size, tag, size, start
             cpu.write32(addrAtags + 0x00, 0x00000004);
             cpu.write32(addrAtags + 0x04, ATAG_MEM);
-            cpu.write32(addrAtags + 0x08, sizeRAM);
+            cpu.write32(addrAtags + 0x08, ramMain.getSize());
             cpu.write32(addrAtags + 0x0c, addrRAM);
             addrAtags += 0x10;
 
@@ -305,11 +341,92 @@ public class Main {
         cpu.setPC(addrImage);
         cpu.setJumped(false);
 
-        //run other cores
-        Thread thTimer0_1 = new Thread(timer0_1);
-        thTimer0_1.start();
-        Thread thUart0 = new Thread(uart0);
-        thUart0.start();
+        //run CPU
+        cpu.run();
+    }
+
+    public static void bootFromURL(ARMv5 cpu, RAM ramMain, String kimage, String initram, String cmdline) {
+        byte[] cmdlb = cmdline.getBytes();
+        byte[] cmdalign = new byte[(cmdlb.length + 3) & ~0x3];
+        System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
+
+        int addrRAM = 0x80000000;
+        int addrAtags = addrRAM + ramMain.getSize() - 4096;
+
+        //Cannot change this address
+        final int addrImage = 0x80008000;
+        int sizeImage = 0;
+        int addrInitram = 0x80800000;
+        int sizeInitram = 0;
+        boolean initramExist = !initram.equals("");
+
+        //tentative boot loader for Linux
+        try {
+            //load Image file
+            sizeImage = loadURLResource(new URL(kimage), cpu, addrImage);
+            //load initramfs file
+            if (initramExist) {
+                sizeInitram = loadURLResource(new URL(initram), cpu, addrInitram);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        //r0: 0
+        cpu.setReg(0, 0);
+
+        //r1: machine type
+        //ARM-Versatile PB
+        cpu.setReg(1, 0x00000183);
+        //ARM-Versatile AB
+        //cpu.setReg(1, 0x0000025e);
+
+        //r2: atags or dtb pointer.
+        cpu.setReg(2, addrAtags);
+        {
+            //ATAG_CORE, size, tag, [flags, pagesize, rootdev]
+            cpu.write32(addrAtags + 0x00, 0x00000002);
+            cpu.write32(addrAtags + 0x04, ATAG_CORE);
+            //cpu.write32(addrAtags + 0x08, 0x00000000);
+            //cpu.write32(addrAtags + 0x0c, 0x00001000);
+            //cpu.write32(addrAtags + 0x10, 0x00000000);
+            //addrAtags += 0x14;
+            addrAtags += 0x08;
+
+            //ATAG_MEM, size, tag, size, start
+            cpu.write32(addrAtags + 0x00, 0x00000004);
+            cpu.write32(addrAtags + 0x04, ATAG_MEM);
+            cpu.write32(addrAtags + 0x08, ramMain.getSize());
+            cpu.write32(addrAtags + 0x0c, addrRAM);
+            addrAtags += 0x10;
+
+            //ATAG_INITRD2, size, tag, size, start
+            if (initramExist) {
+                cpu.write32(addrAtags + 0x00, 0x00000004);
+                cpu.write32(addrAtags + 0x04, ATAG_INITRD2);
+                cpu.write32(addrAtags + 0x08, addrInitram);
+                cpu.write32(addrAtags + 0x0c, sizeInitram);
+                addrAtags += 0x10;
+            }
+
+            //ATAG_CMDLINE
+            cpu.write32(addrAtags + 0x00, 0x00000002 + cmdalign.length / 4);
+            cpu.write32(addrAtags + 0x04, ATAG_CMDLINE);
+            for (int i = 0; i < cmdalign.length; i++) {
+                cpu.write8(addrAtags + 0x08 + i, cmdalign[i]);
+            }
+            addrAtags += 0x08 + cmdalign.length;
+
+            //ATAG_NONE, size, tag
+            cpu.write32(addrAtags + 0x00, 0x00000002);
+            cpu.write32(addrAtags + 0x04, ATAG_NONE);
+            addrAtags += 0x08;
+        }
+
+        //pc: entry of stext
+        cpu.setPC(addrImage);
+        cpu.setJumped(false);
 
         //run CPU
         cpu.run();
