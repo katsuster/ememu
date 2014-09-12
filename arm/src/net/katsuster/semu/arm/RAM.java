@@ -12,6 +12,7 @@ public class RAM extends SlaveCore64 {
     public static final int LEN_WORD_BITS = LEN_WORD * 8;
 
     private long[] words;
+    private int size;
 
     /**
      * RAM を作成します。
@@ -24,6 +25,16 @@ public class RAM extends SlaveCore64 {
         }
 
         this.words = new long[size / LEN_WORD];
+        this.size = size;
+    }
+
+    /**
+     * RAM のサイズを取得します。
+     *
+     * @return RAM サイズ（バイト単位）
+     */
+    public int getSize() {
+        return size;
     }
 
     /**
