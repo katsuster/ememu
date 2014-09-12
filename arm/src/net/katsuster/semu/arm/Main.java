@@ -56,6 +56,7 @@ public class Main {
         String kimage = "Image";
         String initram = "initramfs.gz";
         String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/sh debug printk.time=1\0";
+        SystemPane spane = new SystemPane();
 
         if (args.length <= 0) {
             System.out.println("usage:\n" +

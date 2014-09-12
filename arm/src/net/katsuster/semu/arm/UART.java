@@ -209,7 +209,7 @@ public class UART extends Controller64Reg32
                 //FIXME: IntelliJ の Console でコピーできないため無視
                 break;
             }
-            System.out.printf("%c", ascii);
+            SystemPane.out.printf("%c", ascii);
 
             break;
         case REG_UARTFR:
