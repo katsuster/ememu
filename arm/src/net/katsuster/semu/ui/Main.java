@@ -21,7 +21,7 @@ public class Main {
         int len = 0;
         int i;
 
-        System.out.println("loadFile: " + filename);
+        SystemPane.out.println("loadFile: " + filename);
 
         try {
             File f = new File(filename);
@@ -49,7 +49,7 @@ public class Main {
             throw new RuntimeException(e);
         }
 
-        System.out.printf("loadFile: '%s' done, %dbytes.\n",
+        SystemPane.out.printf("loadFile: '%s' done, %dbytes.\n",
                 filename, len);
 
         return len;
@@ -58,7 +58,7 @@ public class Main {
     public static int loadURLResource(URL url, CPU cpu, int addr) {
         int i;
 
-        System.out.println("loadURL: " + url.toExternalForm());
+        SystemPane.out.println("loadURL: " + url.toExternalForm());
 
         try {
             DataInputStream s = new DataInputStream(
@@ -81,7 +81,7 @@ public class Main {
             throw new RuntimeException(e);
         }
 
-        System.out.printf("loadURL: '%s' done, %dbytes.\n",
+        SystemPane.out.printf("loadURL: '%s' done, %dbytes.\n",
                 url.toExternalForm(), i);
 
         return i;
@@ -93,7 +93,7 @@ public class Main {
         String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/sh debug printk.time=1\0";
 
         if (args.length <= 0) {
-            System.out.println("usage:\n" +
+            SystemPane.out.println("usage:\n" +
                     "  semu image initramfs [cmdline]\n");
 
             return;

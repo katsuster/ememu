@@ -50,12 +50,13 @@ public class MainApplet extends JApplet {
         JMenuBar menuBar = new JMenuBar();
         JMenu menuSystem = new JMenu("System");
         JMenuItem itemReset = new JMenuItem("Reset");
-        JMenuItem itemClear = new JMenuItem("Clear");
+        JMenuItem itemClear = new JMenuItem("Clear Log");
         setJMenuBar(menuBar);
         menuBar.add(menuSystem);
         menuSystem.add(itemReset);
         menuSystem.addSeparator();
         menuSystem.add(itemClear);
+        menuSystem.setMnemonic(KeyEvent.VK_S);
         itemReset.setActionCommand("reset");
         itemReset.addActionListener(listenButton);
         itemReset.setMnemonic(KeyEvent.VK_R);
@@ -86,6 +87,8 @@ public class MainApplet extends JApplet {
         SystemPane.out.println("start");
 
         super.start();
+
+        spane.clear();
 
         emu = new Emulator();
         emu.start();
