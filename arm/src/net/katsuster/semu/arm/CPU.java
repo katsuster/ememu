@@ -6,11 +6,15 @@ package net.katsuster.semu.arm;
  * @author katsuhiro
  */
 public abstract class CPU extends MasterCore64 implements Runnable {
+    private boolean halted;
+
     private boolean fDisasmMode;
     private boolean fPrintDisasm;
     private boolean fPrintRegs;
 
     public CPU() {
+        halted = false;
+
         fDisasmMode = false;
         fPrintDisasm = false;
         fPrintRegs = false;
@@ -128,10 +132,17 @@ public abstract class CPU extends MasterCore64 implements Runnable {
      */
     public abstract void step();
 
+    /**
+     * 現在の命令実行を終えたのちに、CPU を停止します。
+     */
+    public void halt() {
+        halted = true;
+    }
+
     @Override
     public void run() {
         try {
-            while (true) {
+            while (!halted) {
                 step();
             }
         } catch (IllegalArgumentException e) {
