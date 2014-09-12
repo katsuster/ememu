@@ -1,4 +1,4 @@
-package net.katsuster.semu.arm;
+package net.katsuster.semu.ui;
 
 import java.lang.reflect.*;
 import java.awt.*;
@@ -14,16 +14,16 @@ import javax.swing.*;
  */
 public class SystemPane extends JPanel {
     //out -> outPout -> outPin -> outRead -> outText
-    static private PipedInputStream outPin = new PipedInputStream(16384);
-    static private PipedOutputStream outPout = new PipedOutputStream();
-    static private InputStreamReader outRead = new InputStreamReader(outPin);
+    private static PipedOutputStream outPout = new PipedOutputStream();
+    private static PipedInputStream outPin = new PipedInputStream(16384);
+    private static InputStreamReader outRead = new InputStreamReader(outPin);
 
-    static private Thread outThread = new Thread(new OutRunner());
-    static private JTextArea outText = new JTextArea();
-    static private JScrollPane outScr = new JScrollPane(outText);
+    private static JTextArea outText = new JTextArea();
+    private static JScrollPane outScr = new JScrollPane(outText);
+    private static Thread outThread = new Thread(new OutRunner());
 
     //標準出力の代わりに用いる出力用ストリームです
-    static PrintStream out = new PrintStream(outPout);
+    public static PrintStream out = new PrintStream(outPout);
 
     public SystemPane() {
         super(true);

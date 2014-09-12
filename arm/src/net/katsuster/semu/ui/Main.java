@@ -1,7 +1,9 @@
-package net.katsuster.semu.arm;
+package net.katsuster.semu.ui;
 
 import java.io.*;
 import java.net.*;
+
+import net.katsuster.semu.arm.*;
 
 public class Main {
     public static final int ATAG_NONE      = 0x00000000;

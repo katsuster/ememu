@@ -1,9 +1,11 @@
-package net.katsuster.semu.arm;
+package net.katsuster.semu.ui;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.applet.*;
 import javax.swing.*;
+
+import net.katsuster.semu.arm.*;
 
 public class MainApplet extends Applet {
     private JPanel panel;
