@@ -19,10 +19,10 @@ public class ForkedPrintStream extends PrintStream {
     private PrintStream sub;
 
     /**
+     * 2つの宛先に対して出力するストリームを作成します。
      *
-     *
-     * @param main
-     * @param sub
+     * @param main この出力ストリームの第一の宛先として使用するストリーム
+     * @param sub この出力ストリームの第二の宛先として使用するストリーム
      */
     public ForkedPrintStream(PrintStream main, PrintStream sub) {
         super(new ByteArrayOutputStream());
@@ -33,8 +33,8 @@ public class ForkedPrintStream extends PrintStream {
     /**
      * この出力ストリームに指定された文字を追加します。
      *
-     * @param c
-     * @return
+     * @param c 出力する文字
+     * @return この出力ストリーム
      */
     @Override
     public PrintStream append(char c) {
@@ -50,8 +50,8 @@ public class ForkedPrintStream extends PrintStream {
     /**
      * この出力ストリームに指定された文字シーケンスを追加します。
      *
-     * @param csq
-     * @return
+     * @param csq 出力する文字シーケンス。null の場合「null」という 4 文字が追加される
+     * @return この出力ストリーム
      */
     @Override
     public PrintStream append(CharSequence csq) {
@@ -67,10 +67,15 @@ public class ForkedPrintStream extends PrintStream {
     /**
      * 指定された文字シーケンスのサブシーケンスをこの出力ストリームに追加します。
      *
-     * @param csq
-     * @param start
-     * @param end
-     * @return
+     * 次の呼び出しと同じ結果が得られます。
+     * <code>
+     * out.print(csq.subSequence(start, end).toString())
+     * </code>
+     *
+     * @param csq 出力する文字シーケンス。null の場合「null」という 4 文字が追加される
+     * @param start 最初の文字のインデックス
+     * @param end 最後の文字の、さらに次の文字のインデックス
+     * @return この出力ストリーム
      */
     @Override
     public PrintStream append(CharSequence csq, int start, int end) {
@@ -86,7 +91,8 @@ public class ForkedPrintStream extends PrintStream {
     /**
      * ストリームをフラッシュし、そのエラー状況を確認します。
      *
-     * @return
+     * @return InterruptedIOException ではなく IOException を検出した場合、
+     * または setError メソッドが呼び出された場合は true、そうでなければ false
      */
     @Override
     public boolean checkError() {
@@ -131,10 +137,10 @@ public class ForkedPrintStream extends PrintStream {
      * 指定された書式文字列および引数を使用して、
      * 書式付き文字列をこの出力ストリームの宛先に書き込みます。
      *
-     * @param l
-     * @param format
-     * @param args
-     * @return
+     * @param l 書式設定時に適用する locale、null の場合は locale は適用されません
+     * @param format 書式文字列（詳細は Formatter クラスを参照）
+     * @param args 0 個以上の引数、null を指定した場合は変換により動作が異なります
+     * @return この出力ストリーム
      */
     @Override
     public PrintStream format(Locale l, String format, Object... args) {
@@ -151,9 +157,9 @@ public class ForkedPrintStream extends PrintStream {
      * 指定された書式文字列および引数を使用して、
      * 書式付き文字列をこの出力ストリームの宛先に書き込みます。
      *
-     * @param format
-     * @param args
-     * @return
+     * @param format 書式文字列（詳細は Formatter クラスを参照）
+     * @param args 0 個以上の引数、null を指定した場合は変換により動作が異なります
+     * @return この出力ストリーム
      */
     @Override
     public PrintStream format(String format, Object... args) {
@@ -314,10 +320,12 @@ public class ForkedPrintStream extends PrintStream {
      * 書式付き文字列を、指定された書式文字列と引数を使用し、
      * この出力ストリームに書き込む便利な方法です。
      *
-     * @param l
-     * @param format
-     * @param args
-     * @return
+     * @param l 書式設定時に適用する locale、null の場合は locale は適用されません
+     * @param format 書式文字列（詳細は Formatter クラスを参照）
+     * @param args 0 個以上の引数、null を指定した場合は変換により動作が異なります
+     * @return この出力ストリーム
+     *
+     * @see java.util.Formatter
      */
     @Override
     public PrintStream printf(Locale l, String format, Object... args) {
@@ -334,9 +342,11 @@ public class ForkedPrintStream extends PrintStream {
      * 書式付き文字列を、指定された書式文字列と引数を使用し、
      * この出力ストリームに書き込む便利な方法です。
      *
-     * @param format
-     * @param args
-     * @return
+     * @param format 書式文字列（詳細は Formatter クラスを参照）
+     * @param args 0 個以上の引数、null を指定した場合は変換により動作が異なります
+     * @return この出力ストリーム
+     *
+     * @see java.util.Formatter
      */
     @Override
     public PrintStream printf(String format, Object... args) {
@@ -511,9 +521,9 @@ public class ForkedPrintStream extends PrintStream {
      * オフセット位置 off から始まる指定されたバイト配列から、
      * このストリームに len バイトを書き込みます。
      *
-     * @param buf
-     * @param off
-     * @param len
+     * @param buf バイト配列
+     * @param off buf のどこから出力するか指定するオフセット
+     * @param len 出力するバイト数
      */
     @Override
     public void write(byte[] buf, int off, int len) {
@@ -529,7 +539,7 @@ public class ForkedPrintStream extends PrintStream {
     /**
      * 指定されたバイトを、このストリームに書き込みます。
      *
-     * @param b
+     * @param b 出力するバイト値
      */
     @Override
     public void write(int b) {
