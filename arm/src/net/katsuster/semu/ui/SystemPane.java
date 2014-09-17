@@ -44,12 +44,16 @@ public class SystemPane extends JPanel {
 
     public void clear() {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 outText.setText("");
             }
         });
     }
 
+    /**
+     * out に出力された文字を画面に印字するクラスです。
+     */
     static private class TextDrainer implements Runnable {
         public TextDrainer() {
             //do nothing
@@ -86,13 +90,14 @@ public class SystemPane extends JPanel {
             }
         }
 
-        private class StringAppender implements Runnable {
+        static private class StringAppender implements Runnable {
             private String s;
 
             public StringAppender(String str) {
                 s = str;
             }
 
+            @Override
             public void run() {
                 SystemPane.outText.append(s);
             }
