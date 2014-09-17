@@ -1,5 +1,6 @@
 package net.katsuster.semu.arm;
 
+import java.io.*;
 import java.util.*;
 
 import net.katsuster.semu.ui.*;
@@ -17,8 +18,10 @@ public class UART extends Controller64Reg32
     private int rawInt;
     private int maskInt;
 
-    private StringBuffer strInput;
-    private StringBuffer strOutput;
+    private InputStream strInput;
+    private OutputStream strOutput;
+    private StringBuffer bufInput;
+    private StringBuffer bufOutput;
 
     public static final int REG_UARTDR        = 0x000;
     public static final int REG_UARTRSR       = 0x004;
@@ -67,12 +70,20 @@ public class UART extends Controller64Reg32
     public static final int INTR_CTS = 1;
     public static final int INTR_RII = 0;
 
-    public UART() {
+    /**
+     * UART を作成します。
+     *
+     * @param istr UART の入力を得るためのストリーム
+     * @param ostr UART に出力された文字を印字するためのストリーム
+     */
+    public UART(InputStream istr, OutputStream ostr) {
         rawInt = 0;
         maskInt = 0;
 
-        strInput = new StringBuffer();
-        strOutput = new StringBuffer();
+        strInput = istr;
+        strOutput = ostr;
+        bufInput = new StringBuffer();
+        bufOutput = new StringBuffer();
 
         addReg(REG_UARTDR, "UARTDR", 0x00000000);
         addReg(REG_UARTFR, "UARTFR", 0x00000000);
@@ -154,9 +165,9 @@ public class UART extends Controller64Reg32
 
         switch (regaddr) {
         case REG_UARTDR:
-            if (strInput.length() > 0) {
-                result = strInput.charAt(0);
-                strInput.deleteCharAt(0);
+            if (bufInput.length() > 0) {
+                result = bufInput.charAt(0);
+                bufInput.deleteCharAt(0);
             } else {
                 result = 10;
             }
@@ -167,16 +178,16 @@ public class UART extends Controller64Reg32
             //送信 FIFO は常に空いていることにする
             result = BitOp.setBit32(result, FR_TXFE, true);
 
-            result = BitOp.setBit32(result, FR_RXFE, strInput.length() == 0);
+            result = BitOp.setBit32(result, FR_RXFE, bufInput.length() == 0);
 
             break;
         case REG_UARTLCR_H:
             result = super.getReg(regaddr);
-            //System.out.printf("UARTLCR_H: read 0x%08x\n", result);
+            //SystemPane.out.printf("UARTLCR_H: read 0x%08x\n", result);
             break;
         case REG_UARTCR:
             result = super.getReg(regaddr);
-            //System.out.printf("UARTCR: read 0x%08x\n", result);
+            //SystemPane.out.printf("UARTCR: read 0x%08x\n", result);
             break;
         case REG_UARTIMSC:
             result = maskInt;
@@ -205,40 +216,45 @@ public class UART extends Controller64Reg32
         case REG_UARTDR:
             char ascii = (char)(data & 0xff);
 
-            strOutput.append(ascii);
+            bufOutput.append(ascii);
 
             if (ascii == 0x00) {
                 //FIXME: IntelliJ の Console でコピーできないため無視
                 break;
             }
-            SystemPane.out.printf("%c", ascii);
+            try {
+                strOutput.write(ascii);
+                strOutput.flush();
+            } catch (IOException ex) {
+                //ignore
+            }
 
             break;
         case REG_UARTFR:
             //TODO: Not implemented
-            System.out.printf("UARTFR: 0x%08x\n", data);
+            SystemPane.out.printf("UARTFR: 0x%08x\n", data);
             break;
         case REG_UARTIBRD:
             //TODO: Not implemented
-            System.out.printf("UARTIBRD: 0x%08x\n", data);
+            SystemPane.out.printf("UARTIBRD: 0x%08x\n", data);
             break;
         case REG_UARTFBRD:
             //TODO: Not implemented
-            System.out.printf("UARTFBRD: 0x%08x\n", data);
+            SystemPane.out.printf("UARTFBRD: 0x%08x\n", data);
             break;
         case REG_UARTLCR_H:
             //TODO: Not implemented
-            System.out.printf("UARTLCR_H: 0x%08x\n", data);
+            SystemPane.out.printf("UARTLCR_H: 0x%08x\n", data);
             super.setReg(regaddr, data);
             break;
         case REG_UARTCR:
             //TODO: Not implemented
-            //System.out.printf("UARTCR: 0x%08x\n", data);
+            //SystemPane.out.printf("UARTCR: 0x%08x\n", data);
             super.setReg(regaddr, data);
             break;
         case REG_UARTIFLS:
             //TODO: Not implemented
-            System.out.printf("UARTIFLS: 0x%08x\n", data);
+            SystemPane.out.printf("UARTIFLS: 0x%08x\n", data);
             break;
         case REG_UARTIMSC:
             maskInt = data;
@@ -271,7 +287,7 @@ public class UART extends Controller64Reg32
         //送信 FIFO は常に空いていることにする
         rawInt = BitOp.setBit32(rawInt, INTR_TX, true);
         //受信 FIFO
-        rawInt = BitOp.setBit32(rawInt, INTR_RX, strInput.length() > 0);
+        rawInt = BitOp.setBit32(rawInt, INTR_RX, bufInput.length() > 0);
 
         return getMaskedInt() != 0;
     }
@@ -283,13 +299,13 @@ public class UART extends Controller64Reg32
 
     @Override
     public void run() {
-        Scanner scanner = new Scanner(System.in).useDelimiter("\n");
+        Scanner scanner = new Scanner(strInput).useDelimiter("\n");
         String next;
 
         while (scanner.hasNext()) {
             next = scanner.next();
-            strInput.append(next);
-            strInput.append("\n");
+            bufInput.append(next);
+            bufInput.append("\n");
         }
         scanner.close();
     }

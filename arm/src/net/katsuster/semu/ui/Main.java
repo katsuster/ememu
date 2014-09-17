@@ -129,7 +129,7 @@ public class Main {
         MMCI mci0 = new MMCI();
         KMI kmiKey = new KMI();
         KMI kmiMouse = new KMI();
-        UART uart3 = new UART();
+        UART uart3 = new UART(System.in, SystemPane.out);
         SCard scard1 = new SCard();
         MMCI mci1 = new MMCI();
         SSMC ssmc = new SSMC();
@@ -147,9 +147,9 @@ public class Main {
         GPIO gpio3 = new GPIO();
         RTC rtc = new RTC();
         SCard scard0 = new SCard();
-        UART uart0 = new UART();
-        UART uart1 = new UART();
-        UART uart2 = new UART();
+        UART uart0 = new UART(System.in, SystemPane.out);
+        UART uart1 = new UART(System.in, SystemPane.out);
+        UART uart2 = new UART(System.in, SystemPane.out);
         SSP ssp = new SSP();
 
         //TODO: SSMC is not implemented
