@@ -169,7 +169,7 @@ public class UART extends Controller64Reg32
                 result = bufInput.charAt(0);
                 bufInput.deleteCharAt(0);
             } else {
-                result = 10;
+                result = 0;
             }
             break;
         case REG_UARTFR:
