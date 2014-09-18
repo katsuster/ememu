@@ -45,6 +45,13 @@ public class MainApplet extends JApplet {
 
         super.init();
 
+        if (getParameter("proxyHost") != null &&
+                getParameter("proxyPort") != null) {
+            System.setProperty("proxySet", "true");
+            System.setProperty("proxyHost", getParameter("proxyHost"));
+            System.setProperty("proxyPort", getParameter("proxyPort"));
+        }
+
         ButtonListener listenButton = new ButtonListener();
 
         JMenuBar menuBar = new JMenuBar();
