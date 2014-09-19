@@ -1,0 +1,4 @@
+ememu
+=====
+
+Embedded system emulator.
