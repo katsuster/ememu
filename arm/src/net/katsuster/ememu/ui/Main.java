@@ -94,7 +94,7 @@ public class Main {
 
         if (args.length <= 0) {
             SystemPane.out.println("usage:\n" +
-                    "  semu image initramfs [cmdline]\n");
+                    "  ememu image initramfs [cmdline]\n");
 
             return;
         }
