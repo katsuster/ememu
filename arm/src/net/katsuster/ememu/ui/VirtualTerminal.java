@@ -1,4 +1,4 @@
-package net.katsuster.semu.ui;
+package net.katsuster.ememu.ui;
 
 import java.lang.reflect.*;
 import java.io.*;
