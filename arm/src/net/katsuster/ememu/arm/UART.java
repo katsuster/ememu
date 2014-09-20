@@ -21,7 +21,6 @@ public class UART extends Controller64Reg32
     private InputStream strInput;
     private OutputStream strOutput;
     private StringBuffer bufInput;
-    private StringBuffer bufOutput;
 
     public static final int REG_UARTDR        = 0x000;
     public static final int REG_UARTRSR       = 0x004;
@@ -83,7 +82,6 @@ public class UART extends Controller64Reg32
         strInput = istr;
         strOutput = ostr;
         bufInput = new StringBuffer();
-        bufOutput = new StringBuffer();
 
         addReg(REG_UARTDR, "UARTDR", 0x00000000);
         addReg(REG_UARTFR, "UARTFR", 0x00000000);
@@ -177,7 +175,7 @@ public class UART extends Controller64Reg32
 
             //送信 FIFO は常に空いていることにする
             result = BitOp.setBit32(result, FR_TXFE, true);
-
+            //受信 FIFO はバッファ残量に応じて設定する
             result = BitOp.setBit32(result, FR_RXFE, bufInput.length() == 0);
 
             break;
@@ -216,17 +214,17 @@ public class UART extends Controller64Reg32
         case REG_UARTDR:
             char ascii = (char)(data & 0xff);
 
-            bufOutput.append(ascii);
-
             if (ascii == 0x00) {
                 //FIXME: IntelliJ の Console でコピーできないため無視
                 break;
             }
-            try {
-                strOutput.write(ascii);
-                strOutput.flush();
-            } catch (IOException ex) {
-                //ignore
+            if (strOutput != null) {
+                try {
+                    strOutput.write(ascii);
+                    strOutput.flush();
+                } catch (IOException ex) {
+                    //ignore
+                }
             }
 
             break;
@@ -301,9 +299,17 @@ public class UART extends Controller64Reg32
         mainLoop:
         while (!shouldHalt()) {
             try {
+                while (strInput == null) {
+                    Thread.sleep(50);
+                    if (shouldHalt()) {
+                        break mainLoop;
+                    }
+                }
+
                 //NOTE: InputStream をポーリングします。
-                //CPU 資源は無駄ですが、strInput が System.in のとき、
-                //read() のブロックをキャンセルする方法がないためです。
+                //strInput が System.in かつ read() がブロックしたとき、
+                //他のスレッドからブロッキングをキャンセルする方法がないため、
+                //read() のブロックを避ける必要があるためです。
                 //FIXME: この実装はマルチスレッドセーフではありません。
                 //他スレッドが同時に strInput にアクセスする場合、
                 //read() でブロックする可能性があります。
