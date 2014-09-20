@@ -1,9 +1,9 @@
 package net.katsuster.ememu.arm;
 
-        import java.io.*;
-        import java.util.*;
+import java.io.*;
+import java.util.*;
 
-        import net.katsuster.ememu.ui.*;
+import net.katsuster.ememu.ui.*;
 
 /**
  * UART
@@ -298,14 +298,34 @@ public class UART extends Controller64Reg32
 
     @Override
     public void run() {
-        Scanner scanner = new Scanner(strInput).useDelimiter("\n");
-        String next;
+        mainLoop:
+        while (!shouldHalt()) {
+            try {
+                //NOTE: InputStream をポーリングします。
+                //CPU 資源は無駄ですが、strInput が System.in のとき、
+                //read() のブロックをキャンセルする方法がないためです。
+                //FIXME: この実装はマルチスレッドセーフではありません。
+                //他スレッドが同時に strInput にアクセスする場合、
+                //read() でブロックする可能性があります。
+                while (strInput.available() == 0) {
+                    Thread.sleep(50);
+                    if (shouldHalt()) {
+                        break mainLoop;
+                    }
+                }
 
-        while (!shouldHalt() && scanner.hasNext()) {
-            next = scanner.next();
-            bufInput.append(next);
-            bufInput.append("\n");
+                int c = strInput.read();
+                if (c == -1) {
+                    //EOF
+                    break;
+                }
+                bufInput.append((char)c);
+            } catch (InterruptedException e) {
+                //ignored
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+                break;
+            }
         }
-        scanner.close();
     }
 }
