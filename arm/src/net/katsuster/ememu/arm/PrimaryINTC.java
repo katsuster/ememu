@@ -432,4 +432,9 @@ public class PrimaryINTC extends Controller64Reg32 {
             return "PrimaryINTC FIQ";
         }
     }
+
+    @Override
+    public void run() {
+        //do nothing
+    }
 }

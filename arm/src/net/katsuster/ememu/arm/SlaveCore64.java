@@ -3,11 +3,14 @@ package net.katsuster.ememu.arm;
 /**
  * 64 ビットアドレスバスのスレーブコア。
  *
- * バスからの読み取り、書き込み要求に応答する形で動作します。
+ * 自身のタイミングで動作します。
+ * また、バスからの読み取り、書き込み要求に応答する形でも動作します。
+ *
+ * バスからのアクセス時に用いるアドレスは 64 ビット幅です。
  *
  * @author katsuhiro
  */
-public abstract class SlaveCore64 {
+public abstract class SlaveCore64 extends Core {
     public static long ADDR_MASK_8 = ~0x0L;
     public static long ADDR_MASK_16 = ~0x1L;
     public static long ADDR_MASK_32 = ~0x3L;

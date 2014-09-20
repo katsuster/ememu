@@ -158,4 +158,9 @@ public class RAM extends SlaveCore64 {
 
         words[wordAddr] = data;
     }
+
+    @Override
+    public void run() {
+        //do nothing
+    }
 }

@@ -142,4 +142,9 @@ public class SysController extends Controller64Reg32 {
             break;
         }
     }
+
+    @Override
+    public void run() {
+        //do nothing
+    }
 }

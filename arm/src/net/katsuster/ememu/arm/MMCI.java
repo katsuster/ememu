@@ -132,4 +132,9 @@ public class MMCI extends Controller64Reg32 {
             break;
         }
     }
+
+    @Override
+    public void run() {
+        //do nothing
+    }
 }

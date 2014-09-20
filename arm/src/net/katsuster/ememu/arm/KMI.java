@@ -122,4 +122,9 @@ public class KMI extends Controller64Reg32 {public static final int REG_KMICR   
             break;
         }
     }
+
+    @Override
+    public void run() {
+        //do nothing
+    }
 }

@@ -3,12 +3,15 @@ package net.katsuster.ememu.arm;
 /**
  * 64 ビットアドレスバスのマスターコア。
  *
- * 内部アドレスは 32 ビット幅を用い、
+ * 自身のタイミングで動作します。
+ *
  * バスへのアクセス時に用いるアドレスは 64 ビット幅です。
+ *
+ * TODO: 現在、コア内部アドレスは 32 ビット幅を用いています。
  *
  * @author katsuhiro
  */
-public abstract class MasterCore64 {
+public abstract class MasterCore64 extends Core {
     private Bus64 slaveBus;
 
     /**

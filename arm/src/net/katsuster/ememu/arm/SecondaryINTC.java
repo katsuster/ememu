@@ -92,4 +92,9 @@ public class SecondaryINTC extends Controller64Reg32 {
             break;
         }
     }
+
+    @Override
+    public void run() {
+        //do nothing
+    }
 }

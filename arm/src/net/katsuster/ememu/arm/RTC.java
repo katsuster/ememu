@@ -106,4 +106,9 @@ public class RTC extends Controller64Reg32 {
             break;
         }
     }
+
+    @Override
+    public void run() {
+        //do nothing
+    }
 }

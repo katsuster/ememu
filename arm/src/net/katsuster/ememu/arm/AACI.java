@@ -170,4 +170,9 @@ public class AACI extends Controller64Reg32 {
             break;
         }
     }
+
+    @Override
+    public void run() {
+        //do nothing
+    }
 }
