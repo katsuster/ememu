@@ -118,10 +118,9 @@ public class Main {
     }
 
     public static void addVersatileCores(ARMv5 cpu, Bus64 bus, RAM ramMain) {
-        //TODO: MPMC is not implemented
-        RAM mpmc_c0_0 = new RAM(128 * 1024);
-        RAM mpmc_c0_1 = new RAM(128 * 1024);
-        RAM mpmc_c1 = new RAM(128 * 1024);
+        MPMC mpmc_c0_0 = new MPMC();
+        MPMC mpmc_c0_1 = new MPMC();
+        MPMC mpmc_c1 = new MPMC();
 
         SysBaseboard sysBoard = new SysBaseboard();
         SecondaryINTC intc2nd = new SecondaryINTC();
@@ -132,6 +131,11 @@ public class Main {
         UART uart3 = new UART(System.in, SystemPane.out);
         SCard scard1 = new SCard();
         MMCI mci1 = new MMCI();
+        //TODO: implement Ethernet controller...
+        RAM ether = new RAM(4 * 1024);
+        //TODO: implement USB controller...
+        RAM usb = new RAM(4 * 1024);
+
         SSMC ssmc = new SSMC();
         MPMC mpmc = new MPMC();
         LCDC clcdc = new LCDC();
@@ -152,10 +156,10 @@ public class Main {
         UART uart2 = new UART(System.in, SystemPane.out);
         SSP ssp = new SSP();
 
-        //TODO: SSMC is not implemented
-        RAM ssmc_c0 = new RAM(512 * 1024);
-        RAM ssmc_c1 = new RAM(512 * 1024);
-        RAM ssmc_c2 = new RAM(512 * 1024);
+        //TODO: implement SSMC controller...
+        RAM ssmc_c0 = new RAM(256 * 1024);
+        RAM ssmc_c1 = new RAM(256 * 1024);
+        RAM ssmc_c2 = new RAM(256 * 1024);
 
         //RAM Image(tentative)
         //  0x00000000 - 0x03ffffff: MPMC Chip Select0, bottom of SDRAM
@@ -171,6 +175,8 @@ public class Main {
         //    0x10009000 - 0x10009fff: UART2 (PL011)
         //    0x1000a000 - 0x1000afff: Smart Card Interface 1 (PL131)
         //    0x1000b000 - 0x1000bfff: Multimedia Card Interface 1 (PL180)
+        //    0x10010000 - 0x1001ffff: Ethernet Interface (SMC LAN91C111)
+        //    0x10020000 - 0x1002ffff: USB Interface (OTG243)
         //    0x10100000 - 0x1010ffff: Synchronous Static Memory Controller (PL093)
         //    0x10110000 - 0x1011ffff: MultiPort Memory Controller (GX175)
         //    0x10120000 - 0x1012ffff: Color LCD Controller (PL110)
@@ -213,6 +219,9 @@ public class Main {
         bus.addSlaveCore(uart3, 0x10009000L, 0x1000a000L);
         bus.addSlaveCore(scard1, 0x1000a000L, 0x1000b000L);
         bus.addSlaveCore(mci1, 0x1000b000L, 0x1000c000L);
+        bus.addSlaveCore(ether, 0x10010000L, 0x10020000L);
+        bus.addSlaveCore(usb, 0x10020000L, 0x10030000L);
+
         bus.addSlaveCore(ssmc, 0x10100000L, 0x10110000L);
         bus.addSlaveCore(mpmc, 0x10110000L, 0x10120000L);
         bus.addSlaveCore(clcdc, 0x10120000L, 0x10130000L);
@@ -238,9 +247,6 @@ public class Main {
         bus.addSlaveCore(ssmc_c2, 0x38000000L, 0x3c000000L);
 
         bus.addSlaveCore(ramMain, 0x80000000L, 0x80000000L + (ramMain.getSize() & 0xffffffffL));
-
-        //TODO: implement ethernet controller...
-        bus.addSlaveCore(ssmc_c0, 0x10010000L, 0x10020000L);
 
         //INTC
         cpu.setINTCForIRQ(intc1st.getSubINTCForIRQ());
