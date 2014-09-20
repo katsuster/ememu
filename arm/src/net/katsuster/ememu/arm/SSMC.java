@@ -1,5 +1,7 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.ui.*;
+
 /**
  * メモリコントローラ
  *
@@ -93,7 +95,7 @@ public class SSMC extends Controller64Reg32 {
         //addReg(REG_SMBIDCYR0, "SMBIDCYR0", 0xf);
         //addReg(REG_SMBWSTRDR0, "SMBWSTRDR0", 0x1f);
         //addReg(REG_SMBWSTWRR0, "SMBWSTWRR0", 0x1f);
-        //addReg(REG_SMBWSTOENR0, "SMBWSTOENR0", 0x0);
+        addReg(REG_SMBWSTOENR0, "SMBWSTOENR0", 0x0);
         //addReg(REG_SMBWSTWENR0, "SMBWSTWENR0", 0x1);
         //addReg(REG_SMBCR0, "SMBCR0", 0x303020);
         //addReg(REG_SMBSR0, "SMBSR0", 0x0);
@@ -183,6 +185,7 @@ public class SSMC extends Controller64Reg32 {
 
     public boolean tryAccess(long addr) {
         int regaddr;
+        int result;
 
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
@@ -200,6 +203,11 @@ public class SSMC extends Controller64Reg32 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_SMBWSTOENR0:
+            //TODO: Not implemented
+            result = super.getReg(regaddr);
+            SystemPane.out.printf("SMBWSTOENR0: read 0x%08x\n", result);
+            break;
         default:
             result = super.getReg(regaddr);
             break;
@@ -215,6 +223,10 @@ public class SSMC extends Controller64Reg32 {
         regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_SMBWSTOENR0:
+            //TODO: Not implemented
+            SystemPane.out.printf("SMBWSTOENR0: 0x%08x\n", data);
+            break;
         case REG_SSMCPeriphID0:
         case REG_SSMCPeriphID1:
         case REG_SSMCPeriphID2:
