@@ -252,10 +252,10 @@ public class Main {
         intc1st.connectINTC(14, uart2);
 
         //run other cores
-        Thread thTimer0_1 = new Thread(timer0_1);
-        thTimer0_1.start();
-        Thread thUart0 = new Thread(uart0);
-        thUart0.start();
+        timer0_1.setName(timer0_1.getClass().getName());
+        timer0_1.start();
+        uart0.setName(uart0.getClass().getName());
+        uart0.start();
 
         //reset CPU
         cpu.setDisasmMode(false);

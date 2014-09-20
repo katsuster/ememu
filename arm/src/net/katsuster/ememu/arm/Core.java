@@ -5,7 +5,7 @@ package net.katsuster.ememu.arm;
  *
  * @author katsuhiro
  */
-public abstract class Core implements Runnable {
+public abstract class Core extends Thread {
     private boolean halted = false;
 
     /**

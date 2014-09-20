@@ -305,6 +305,20 @@ public class Bus64 {
         return null;
     }
 
+    /**
+     * バスに接続されている全てのスレーブコアに対し、
+     * コアの停止を要求します。
+     */
+    public void haltAllSlaveCores() {
+        Iterator<SlaveCoreAddress> it;
+        SlaveCoreAddress s;
+
+        for (it = slaveMap.iterator(); it.hasNext(); ) {
+            s = it.next();
+            s.slave.halt();
+        }
+    }
+
     public class SlaveCoreAddress {
         public SlaveCore64 slave;
         public long start;

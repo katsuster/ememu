@@ -22,6 +22,8 @@ public class MainApplet extends JApplet {
 
         @Override
         public void run() {
+            setName(getClass().getName());
+
             String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.14.16";
             String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz";
             String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/sh debug printk.time=1\0";
@@ -36,6 +38,7 @@ public class MainApplet extends JApplet {
 
         public void halt() {
             cpu.halt();
+            bus.haltAllSlaveCores();
         }
     }
 
