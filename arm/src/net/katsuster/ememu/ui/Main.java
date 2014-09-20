@@ -112,9 +112,13 @@ public class Main {
 
         ARMv5 cpu = new ARMv5();
         Bus64 bus = new Bus64();
-        RAM ramMain = new RAM(64 * 1024 * 1024); //64MB
+        RAM ramMain = new RAM(64 * 1024 * 1024);
+        ARMVersatile board = new ARMVersatile();
 
-        ARMVersatile.setupBoard(cpu, bus, ramMain);
+        board.setUARTInputStream(0, System.in);
+        board.setUARTOutputStream(0, SystemPane.out);
+        board.setup(cpu, bus, ramMain);
+
         bootFromFile(cpu, ramMain, kimage, initram, cmdline);
 
         //start cores

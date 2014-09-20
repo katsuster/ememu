@@ -1,5 +1,7 @@
 package net.katsuster.ememu.board;
 
+import java.io.*;
+
 import net.katsuster.ememu.arm.*;
 import net.katsuster.ememu.ui.*;
 
@@ -9,11 +11,21 @@ import net.katsuster.ememu.ui.*;
  * @author katsuhiro
  */
 public class ARMVersatile {
+    private InputStream[] uartIn = new InputStream[4];
+    private OutputStream[] uartOut = new OutputStream[4];
+
     public ARMVersatile() {
         //do nothing
     }
 
-    public static void setupBoard(ARMv5 cpu, Bus64 bus, RAM ramMain) {
+    public void setUARTInputStream(int index, InputStream is) {
+        uartIn[index] = is;
+    }
+    public void setUARTOutputStream(int index, OutputStream os) {
+        uartOut[index] = os;
+    }
+
+    public void setup(ARMv5 cpu, Bus64 bus, RAM ramMain) {
         MPMC mpmc_c0_0 = new MPMC();
         MPMC mpmc_c0_1 = new MPMC();
         MPMC mpmc_c1 = new MPMC();
@@ -24,7 +36,7 @@ public class ARMVersatile {
         MMCI mci0 = new MMCI();
         KMI kmiKey = new KMI();
         KMI kmiMouse = new KMI();
-        UART uart3 = new UART(null, null);
+        UART uart3 = new UART(uartIn[3], uartOut[3]);
         SCard scard1 = new SCard();
         MMCI mci1 = new MMCI();
         //TODO: implement Ethernet controller...
@@ -47,9 +59,9 @@ public class ARMVersatile {
         GPIO gpio3 = new GPIO();
         RTC rtc = new RTC();
         SCard scard0 = new SCard();
-        UART uart0 = new UART(System.in, SystemPane.out);
-        UART uart1 = new UART(null, null);
-        UART uart2 = new UART(null, null);
+        UART uart0 = new UART(uartIn[0], uartOut[0]);
+        UART uart1 = new UART(uartIn[1], uartOut[1]);
+        UART uart2 = new UART(uartIn[2], uartOut[2]);
         SSP ssp = new SSP();
 
         //TODO: implement SSMC controller...

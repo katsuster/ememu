@@ -10,6 +10,7 @@ import net.katsuster.ememu.board.*;
 public class MainApplet extends JApplet {
     private static final SystemPane spane = new SystemPane();
 
+    private VirtualTerminal vt;
     private Emulator emu;
 
     class Emulator extends Thread {
@@ -31,9 +32,13 @@ public class MainApplet extends JApplet {
 
             cpu = new ARMv5();
             bus = new Bus64();
-            ramMain = new RAM(64 * 1024 * 1024); //64MB
+            ramMain = new RAM(64 * 1024 * 1024);
+            ARMVersatile board = new ARMVersatile();
 
-            ARMVersatile.setupBoard(cpu, bus, ramMain);
+            board.setUARTInputStream(0, System.in);
+            board.setUARTOutputStream(0, SystemPane.out);
+            board.setup(cpu, bus, ramMain);
+
             Main.bootFromURL(cpu, ramMain, kimage, initram, cmdline);
 
             //start cores
@@ -109,10 +114,10 @@ public class MainApplet extends JApplet {
         panel.add("East", panelEast);
 
         //terminal
-        //VirtualTerminal vt = new VirtualTerminal();
+        vt = new VirtualTerminal();
 
         tabPane.addTab("stdout", panel);
-        //tabPane.addTab("vt", vt);
+        tabPane.addTab("vt", vt);
 
         setLayout(new BorderLayout());
         add(tabPane);

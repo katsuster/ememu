@@ -1,8 +1,9 @@
 package net.katsuster.ememu.ui;
 
+import java.awt.*;
+import java.awt.event.*;
 import java.lang.reflect.*;
 import java.io.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 /**
@@ -19,18 +20,47 @@ public class VirtualTerminal extends JPanel {
     private PipedInputStream outPin;
     private PipedOutputStream outPout;
     private JTextArea outText;
+    private Thread outDrainer;
 
-    public VirtualTerminal() throws IOException {
-        inPin = new PipedInputStream();
-        inPout = new PipedOutputStream(inPin);
+    public VirtualTerminal() {
+        super(new BorderLayout(), true);
 
-        outPin = new PipedInputStream();
-        outPout = new PipedOutputStream(outPin);
+        try {
+            inPin = new PipedInputStream();
+            inPout = new PipedOutputStream(inPin);
 
-        JScrollPane outScr = new JScrollPane(outText);
+            outPin = new PipedInputStream();
+            outPout = new PipedOutputStream(outPin);
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
+        }
+
         outText = new JTextArea();
-        outScr.add(outText);
+        JScrollPane outScr = new JScrollPane(outText);
+        outScr.setPreferredSize(new Dimension(160, 240));
+
         add(outScr);
+
+        outDrainer = new Thread(new TextDrainer());
+        outDrainer.start();
+    }
+
+    /**
+     * 仮想端末への入力を受け取るためのストリームを取得します。
+     *
+     * @return 仮想端末への入力を受け取るためのストリーム
+     */
+    public InputStream getInputStream() {
+        return inPin;
+    }
+
+    /**
+     * 仮想端末に出力するためのストリームを取得します。
+     *
+     * @return 仮想端末に出力するためのストリーム
+     */
+    public OutputStream getOutputStream() {
+        return outPout;
     }
 
     /**
