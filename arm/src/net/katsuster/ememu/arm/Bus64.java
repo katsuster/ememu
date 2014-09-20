@@ -1,8 +1,6 @@
 package net.katsuster.ememu.arm;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 64 ビットアドレスバス。
@@ -53,7 +51,7 @@ public class Bus64 {
         SlaveCoreAddress sca;
         long offSt;
 
-        sca = findSlaveCore(addr, addr + len - 1);
+        sca = findSlaveCoreAddress(addr, addr + len - 1);
         if (sca == null) {
             //TODO: for debug, will be removed
             throw new IllegalArgumentException(String.format(
@@ -61,9 +59,9 @@ public class Bus64 {
             //return false;
         }
 
-        offSt = addr - sca.start;
+        offSt = addr - sca.getStartAddress();
         //offEd = offSt + len - 1;
-        return sca.slave.tryRead(offSt);
+        return sca.getCore().tryRead(offSt);
     }
 
     /**
@@ -76,14 +74,14 @@ public class Bus64 {
         SlaveCoreAddress sca;
         long offSt;
 
-        sca = findSlaveCore(addr, addr);
+        sca = findSlaveCoreAddress(addr, addr);
         if (sca == null) {
             throw new IllegalArgumentException("Read from invalid address" +
                     String.format("(0x%08x).", addr));
         }
 
-        offSt = addr - sca.start;
-        return sca.slave.read8(offSt);
+        offSt = addr - sca.getStartAddress();
+        return sca.getCore().read8(offSt);
     }
 
     /**
@@ -96,14 +94,14 @@ public class Bus64 {
         SlaveCoreAddress sca;
         long offSt;
 
-        sca = findSlaveCore(addr, addr + 1);
+        sca = findSlaveCoreAddress(addr, addr + 1);
         if (sca == null) {
             throw new IllegalArgumentException("Read from invalid address" +
                     String.format("(0x%08x).", addr));
         }
 
-        offSt = addr - sca.start;
-        return sca.slave.read16(offSt);
+        offSt = addr - sca.getStartAddress();
+        return sca.getCore().read16(offSt);
     }
 
     /**
@@ -116,14 +114,14 @@ public class Bus64 {
         SlaveCoreAddress sca;
         long offSt;
 
-        sca = findSlaveCore(addr, addr + 3);
+        sca = findSlaveCoreAddress(addr, addr + 3);
         if (sca == null) {
             throw new IllegalArgumentException("Read from invalid address" +
                     String.format("(0x%08x).", addr));
         }
 
-        offSt = addr - sca.start;
-        return sca.slave.read32(offSt);
+        offSt = addr - sca.getStartAddress();
+        return sca.getCore().read32(offSt);
     }
 
     /**
@@ -136,14 +134,14 @@ public class Bus64 {
         SlaveCoreAddress sca;
         long offSt;
 
-        sca = findSlaveCore(addr, addr + 7);
+        sca = findSlaveCoreAddress(addr, addr + 7);
         if (sca == null) {
             throw new IllegalArgumentException("Read from invalid address" +
                     String.format("(0x%08x).", addr));
         }
 
-        offSt = addr - sca.start;
-        return sca.slave.read64(offSt);
+        offSt = addr - sca.getStartAddress();
+        return sca.getCore().read64(offSt);
     }
 
     /**
@@ -157,7 +155,7 @@ public class Bus64 {
         SlaveCoreAddress sca;
         long offSt;
 
-        sca = findSlaveCore(addr, addr + len - 1);
+        sca = findSlaveCoreAddress(addr, addr + len - 1);
         if (sca == null) {
             //TODO: for debug, will be removed
             throw new IllegalArgumentException(String.format(
@@ -165,9 +163,9 @@ public class Bus64 {
             //return false;
         }
 
-        offSt = addr - sca.start;
+        offSt = addr - sca.getStartAddress();
         //offEd = offSt + len - 1;
-        return sca.slave.tryWrite(offSt);
+        return sca.getCore().tryWrite(offSt);
     }
 
     /**
@@ -180,14 +178,14 @@ public class Bus64 {
         SlaveCoreAddress sca;
         long offSt;
 
-        sca = findSlaveCore(addr, addr);
+        sca = findSlaveCoreAddress(addr, addr);
         if (sca == null) {
             throw new IllegalArgumentException("Write to invalid address" +
                     String.format("(0x%08x).", addr));
         }
 
-        offSt = addr - sca.start;
-        sca.slave.write8(offSt, data);
+        offSt = addr - sca.getStartAddress();
+        sca.getCore().write8(offSt, data);
     }
 
     /**
@@ -200,14 +198,14 @@ public class Bus64 {
         SlaveCoreAddress sca;
         long offSt;
 
-        sca = findSlaveCore(addr, addr + 1);
+        sca = findSlaveCoreAddress(addr, addr + 1);
         if (sca == null) {
             throw new IllegalArgumentException("Write to invalid address" +
                     String.format("(0x%08x).", addr));
         }
 
-        offSt = addr - sca.start;
-        sca.slave.write16(offSt, data);
+        offSt = addr - sca.getStartAddress();
+        sca.getCore().write16(offSt, data);
     }
 
     /**
@@ -220,14 +218,14 @@ public class Bus64 {
         SlaveCoreAddress sca;
         long offSt;
 
-        sca = findSlaveCore(addr, addr + 3);
+        sca = findSlaveCoreAddress(addr, addr + 3);
         if (sca == null) {
             throw new IllegalArgumentException("Write to invalid address" +
                     String.format("(0x%08x).", addr));
         }
 
-        offSt = addr - sca.start;
-        sca.slave.write32(offSt, data);
+        offSt = addr - sca.getStartAddress();
+        sca.getCore().write32(offSt, data);
     }
 
     /**
@@ -240,14 +238,14 @@ public class Bus64 {
         SlaveCoreAddress sca;
         long offSt;
 
-        sca = findSlaveCore(addr, addr + 7);
+        sca = findSlaveCoreAddress(addr, addr + 7);
         if (sca == null) {
             throw new IllegalArgumentException("Write to invalid address" +
                     String.format("(0x%08x).", addr));
         }
 
-        offSt = addr - sca.start;
-        sca.slave.write64(offSt, data);
+        offSt = addr - sca.getStartAddress();
+        sca.getCore().write64(offSt, data);
     }
 
     /**
@@ -267,10 +265,11 @@ public class Bus64 {
     public void addSlaveCore(SlaveCore64 c, long start, long end) {
         SlaveCoreAddress sca;
 
-        sca = findSlaveCore(start, end);
+        sca = findSlaveCoreAddress(start, end);
         if (sca != null) {
             throw new IllegalArgumentException("Already exists on " +
-                    String.format("0x%08x - 0x%08x.", sca.start, sca.end));
+                    String.format("0x%08x - 0x%08x.",
+                            sca.getStartAddress(), sca.getEndAddress()));
         }
 
         c.setMasterBus(this);
@@ -278,14 +277,57 @@ public class Bus64 {
     }
 
     /**
-     * バスの指定したアドレスに割り当てられているスレーブコアを検索します。
+     * バスの指定したアドレスに割り当てられているスレーブコアを取得します。
      *
      * @param start 開始アドレス
      * @param end   終了アドレス
      * @return 指定したアドレスに割り当てられているスレーブコア、
      * 何も割り当てられていなければ null
      */
-    protected SlaveCoreAddress findSlaveCore(long start, long end) {
+    public SlaveCore64 getSlaveCore(long start, long end) {
+        SlaveCoreAddress sca;
+
+        sca = findSlaveCoreAddress(start, end);
+        if (sca != null) {
+            return sca.getCore();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * バスから指定したスレーブコアを削除します。
+     *
+     * @param c スレーブコア
+     * @return バスから指定したスレーブコアを削除できた場合は true、
+     * そうでなければ false
+     */
+    public boolean removeSlaveCore(SlaveCore64 c) {
+        Iterator<SlaveCoreAddress> it;
+        SlaveCore64 sc;
+
+        for (it = slaveMap.iterator(); it.hasNext(); ) {
+            sc = it.next().getCore();
+
+            if (sc.equals(c)) {
+                slaveMap.remove(sc);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * バスの指定したアドレスに割り当てられている、
+     * スレーブコアアドレスを検索します。
+     *
+     * @param start 開始アドレス
+     * @param end   終了アドレス
+     * @return 指定したアドレスに割り当てられているスレーブコアアドレス、
+     * 何も割り当てられていなければ null
+     */
+    protected SlaveCoreAddress findSlaveCoreAddress(long start, long end) {
         Iterator<SlaveCoreAddress> it;
         SlaveCoreAddress s;
 
@@ -315,15 +357,25 @@ public class Bus64 {
 
         for (it = slaveMap.iterator(); it.hasNext(); ) {
             s = it.next();
-            s.slave.halt();
+            s.getCore().halt();
         }
     }
 
-    public class SlaveCoreAddress {
-        public SlaveCore64 slave;
-        public long start;
-        public long end;
+    /**
+     * スレーブコアとスレーブコアが占めるアドレスを表すクラスです。
+     */
+    private class SlaveCoreAddress {
+        private SlaveCore64 slave;
+        private long start;
+        private long end;
 
+        /**
+         * 指定したアドレスの範囲にスレーブコアを割り当てます。
+         *
+         * @param slave スレーブコア
+         * @param st    開始アドレス
+         * @param ed    終了アドレス
+         */
         public SlaveCoreAddress(SlaveCore64 slave, long st, long ed) {
             if (st > ed) {
                 throw new IllegalArgumentException("Invalid address" +
@@ -335,10 +387,49 @@ public class Bus64 {
             this.end = ed;
         }
 
+        /**
+         * スレーブコアを取得します。
+         *
+         * @return スレーブコア
+         */
+        public SlaveCore64 getCore() {
+            return slave;
+        }
+
+        /**
+         * スレーブコアの開始アドレスを取得します。
+         *
+         * @return 開始アドレス
+         */
+        public long getStartAddress() {
+            return start;
+        }
+
+        /**
+         * スレーブコアの終了アドレスを取得します。
+         *
+         * @return 終了アドレス
+         */
+        public long getEndAddress() {
+            return end;
+        }
+
+        /**
+         * このスレーブコアが占めるアドレスの長さを取得します。
+         *
+         * @return コアが占めるアドレスの長さ
+         */
         public long length() {
             return end - start + 1;
         }
 
+        /**
+         * このスレーブコアが指定したアドレスの範囲を含むかどうかを判定します。
+         *
+         * @param st 開始アドレス
+         * @param ed 終了アドレス
+         * @return 指定したアドレスを含むなら true、含まないなら false
+         */
         public boolean contains(long st, long ed) {
             if (st > ed) {
                 throw new IllegalArgumentException("st(" + st + ") is " +
