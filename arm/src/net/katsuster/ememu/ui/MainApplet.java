@@ -35,6 +35,18 @@ public class MainApplet extends JApplet {
 
             ARMVersatile.setupBoard(cpu, bus, ramMain);
             Main.bootFromURL(cpu, ramMain, kimage, initram, cmdline);
+
+            //start cores
+            bus.startAllSlaveCores();
+            cpu.setName(cpu.getClass().getName());
+            cpu.start();
+
+            //wait CPU halted
+            try {
+                cpu.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace(System.err);
+            }
         }
 
         public void halt() {

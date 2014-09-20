@@ -116,6 +116,18 @@ public class Main {
 
         ARMVersatile.setupBoard(cpu, bus, ramMain);
         bootFromFile(cpu, ramMain, kimage, initram, cmdline);
+
+        //start cores
+        bus.startAllSlaveCores();
+        cpu.setName(cpu.getClass().getName());
+        cpu.start();
+
+        //wait CPU halted
+        try {
+            cpu.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace(System.err);
+        }
     }
 
     public static void bootFromFile(ARMv5 cpu, RAM ramMain, String kimage, String initram, String cmdline) {
@@ -195,9 +207,6 @@ public class Main {
         //pc: entry of stext
         cpu.setPC(addrImage);
         cpu.setJumped(false);
-
-        //run CPU
-        cpu.run();
     }
 
     public static void bootFromURL(ARMv5 cpu, RAM ramMain, String kimage, String initram, String cmdline) {
@@ -282,8 +291,5 @@ public class Main {
         //pc: entry of stext
         cpu.setPC(addrImage);
         cpu.setJumped(false);
-
-        //run CPU
-        cpu.run();
     }
 }

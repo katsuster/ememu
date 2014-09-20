@@ -24,7 +24,7 @@ public class ARMVersatile {
         MMCI mci0 = new MMCI();
         KMI kmiKey = new KMI();
         KMI kmiMouse = new KMI();
-        UART uart3 = new UART(System.in, SystemPane.out);
+        UART uart3 = new UART(null, null);
         SCard scard1 = new SCard();
         MMCI mci1 = new MMCI();
         //TODO: implement Ethernet controller...
@@ -48,8 +48,8 @@ public class ARMVersatile {
         RTC rtc = new RTC();
         SCard scard0 = new SCard();
         UART uart0 = new UART(System.in, SystemPane.out);
-        UART uart1 = new UART(System.in, SystemPane.out);
-        UART uart2 = new UART(System.in, SystemPane.out);
+        UART uart1 = new UART(null, null);
+        UART uart2 = new UART(null, null);
         SSP ssp = new SSP();
 
         //TODO: implement SSMC controller...
@@ -152,12 +152,6 @@ public class ARMVersatile {
         intc1st.connectINTC(12, uart0);
         intc1st.connectINTC(13, uart1);
         intc1st.connectINTC(14, uart2);
-
-        //run other cores
-        timer0_1.setName(timer0_1.getClass().getName());
-        timer0_1.start();
-        uart0.setName(uart0.getClass().getName());
-        uart0.start();
 
         //reset CPU
         cpu.setDisasmMode(false);

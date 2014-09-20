@@ -329,22 +329,38 @@ public class Bus64 {
      */
     protected SlaveCoreAddress findSlaveCoreAddress(long start, long end) {
         Iterator<SlaveCoreAddress> it;
-        SlaveCoreAddress s;
+        SlaveCoreAddress sca;
 
         if (cachedSlave != null && cachedSlave.contains(start, end)) {
             return cachedSlave;
         }
 
         for (it = slaveMap.iterator(); it.hasNext(); ) {
-            s = it.next();
+            sca = it.next();
 
-            if (s.contains(start, end)) {
-                cachedSlave = s;
-                return s;
+            if (sca.contains(start, end)) {
+                cachedSlave = sca;
+                return sca;
             }
         }
 
         return null;
+    }
+
+    /**
+     * バスに接続されている全てのスレーブコアを起動します。
+     */
+    public void startAllSlaveCores() {
+        Iterator<SlaveCoreAddress> it;
+        //SlaveCoreAddress sca;
+        SlaveCore64 sc;
+
+        for (it = slaveMap.iterator(); it.hasNext(); ) {
+            sc = it.next().getCore();
+
+            sc.setName(sc.getClass().getName());
+            sc.start();
+        }
     }
 
     /**
@@ -353,11 +369,11 @@ public class Bus64 {
      */
     public void haltAllSlaveCores() {
         Iterator<SlaveCoreAddress> it;
-        SlaveCoreAddress s;
+        SlaveCoreAddress sca;
 
         for (it = slaveMap.iterator(); it.hasNext(); ) {
-            s = it.next();
-            s.getCore().halt();
+            sca = it.next();
+            sca.getCore().halt();
         }
     }
 
