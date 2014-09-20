@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import net.katsuster.ememu.arm.*;
+import net.katsuster.ememu.board.*;
 
 public class MainApplet extends JApplet {
     private static final SystemPane spane = new SystemPane();
@@ -32,7 +33,7 @@ public class MainApplet extends JApplet {
             bus = new Bus64();
             ramMain = new RAM(64 * 1024 * 1024); //64MB
 
-            Main.addVersatileCores(cpu, bus, ramMain);
+            ARMVersatile.setupBoard(cpu, bus, ramMain);
             Main.bootFromURL(cpu, ramMain, kimage, initram, cmdline);
         }
 
@@ -57,6 +58,7 @@ public class MainApplet extends JApplet {
 
         ButtonListener listenButton = new ButtonListener();
 
+        //menu
         JMenuBar menuBar = new JMenuBar();
         JMenu menuSystem = new JMenu("System");
         JMenuItem itemReset = new JMenuItem("Reset");
@@ -67,6 +69,7 @@ public class MainApplet extends JApplet {
         menuSystem.addSeparator();
         menuSystem.add(itemClear);
         menuSystem.setMnemonic(KeyEvent.VK_S);
+
         itemReset.setActionCommand("reset");
         itemReset.addActionListener(listenButton);
         itemReset.setMnemonic(KeyEvent.VK_R);
@@ -74,7 +77,11 @@ public class MainApplet extends JApplet {
         itemClear.addActionListener(listenButton);
         itemClear.setMnemonic(KeyEvent.VK_C);
 
+        JTabbedPane tabPane = new JTabbedPane();
+
+        //stdout
         JPanel panel = new JPanel(new BorderLayout(), true);
+
         JPanel panelEast = new JPanel(new FlowLayout(), true);
         JButton btnReset = new JButton("Reset");
         JButton btnClear = new JButton("Clear");
@@ -83,13 +90,20 @@ public class MainApplet extends JApplet {
         btnReset.setActionCommand("reset");
         btnClear.addActionListener(listenButton);
         btnClear.setActionCommand("clear");
-
-        setLayout(new BorderLayout());
-        add(panel);
-        panel.add("Center", spane);
-        panel.add("East", panelEast);
         panelEast.add(btnReset);
         panelEast.add(btnClear);
+
+        panel.add("Center", spane);
+        panel.add("East", panelEast);
+
+        //terminal
+        //VirtualTerminal vt = new VirtualTerminal();
+
+        tabPane.addTab("stdout", panel);
+        //tabPane.addTab("vt", vt);
+
+        setLayout(new BorderLayout());
+        add(tabPane);
     }
 
     @Override
