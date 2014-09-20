@@ -92,7 +92,7 @@ public class SSMC extends Controller64Reg32 {
     public static final int REG_SSMCPCellID3  = 0xffc;
 
     public SSMC() {
-        //addReg(REG_SMBIDCYR0, "SMBIDCYR0", 0xf);
+        addReg(REG_SMBIDCYR0, "SMBIDCYR0", 0xf);
         //addReg(REG_SMBWSTRDR0, "SMBWSTRDR0", 0x1f);
         //addReg(REG_SMBWSTWRR0, "SMBWSTWRR0", 0x1f);
         addReg(REG_SMBWSTOENR0, "SMBWSTOENR0", 0x0);
@@ -203,6 +203,11 @@ public class SSMC extends Controller64Reg32 {
         regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_SMBIDCYR0:
+            //TODO: Not implemented
+            result = super.getReg(regaddr);
+            SystemPane.out.printf("SMBIDCYR0: read 0x%08x\n", result);
+            break;
         case REG_SMBWSTOENR0:
             //TODO: Not implemented
             result = super.getReg(regaddr);
@@ -223,6 +228,10 @@ public class SSMC extends Controller64Reg32 {
         regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
+        case REG_SMBIDCYR0:
+            //TODO: Not implemented
+            SystemPane.out.printf("SMBIDCYR0: 0x%08x\n", data);
+            break;
         case REG_SMBWSTOENR0:
             //TODO: Not implemented
             SystemPane.out.printf("SMBWSTOENR0: 0x%08x\n", data);
