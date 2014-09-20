@@ -1,5 +1,24 @@
 <html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+    <title>ememu - Embedded system emulator.</title>
+</head>
 <body>
-<applet codebase="./" archive="armemu_applet.jar" code="net.katsuster.semu.ui.MainApplet" width=640 height=480></applet>
+<h1>ememu</h1>
+<p>
+    ememu は Java で書かれた、組み込みシステムのエミュレータです。
+    対応システムは下記の通りです。
+</p>
+<dl>
+    <dt>ARM Versatile Application Baseboards (AB) and Platform Baseboards (PB)</dt>
+    <dd>作成中。Linux 起動可。CPU の一部、UART の一部が動作。</dd>
+</dl>
+<p>
+    ソースコードは GitHub より取得可能です。
+    <a href="https://github.com/katsuster/ememu">https://github.com/katsuster/ememu</a>.
+</p>
+
+<applet codebase="./" archive="armemu_applet.jar" code="net.katsuster.ememu.ui.MainApplet" width=640 height=480></applet>
+
 </body>
 </html>
