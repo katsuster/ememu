@@ -9,7 +9,7 @@ package net.katsuster.ememu.arm;
  * @author katsuhiro
  */
 public class DualTimer extends Controller64Reg32
-        implements INTC, Runnable {
+        implements INTC {
     public static final int REG_Timer1Load     = 0x000;
     public static final int REG_Timer1Value    = 0x004;
     public static final int REG_Timer1Control  = 0x008;
@@ -174,7 +174,7 @@ public class DualTimer extends Controller64Reg32
 
     @Override
     public void run() {
-        while (true) {
+        while (!shouldHalt()) {
             try {
                 Thread.sleep(100);
                 trigger = true;

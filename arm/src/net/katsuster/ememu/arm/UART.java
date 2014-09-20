@@ -1,9 +1,9 @@
 package net.katsuster.ememu.arm;
 
-import java.io.*;
-import java.util.*;
+        import java.io.*;
+        import java.util.*;
 
-import net.katsuster.ememu.ui.*;
+        import net.katsuster.ememu.ui.*;
 
 /**
  * UART
@@ -14,7 +14,7 @@ import net.katsuster.ememu.ui.*;
  * @author katsuhiro
  */
 public class UART extends Controller64Reg32
-        implements INTC, Runnable {
+        implements INTC {
     private int rawInt;
     private int maskInt;
 
@@ -231,8 +231,7 @@ public class UART extends Controller64Reg32
 
             break;
         case REG_UARTFR:
-            //TODO: Not implemented
-            SystemPane.out.printf("UARTFR: 0x%08x\n", data);
+            //read only, ignored
             break;
         case REG_UARTIBRD:
             //TODO: Not implemented
@@ -302,7 +301,7 @@ public class UART extends Controller64Reg32
         Scanner scanner = new Scanner(strInput).useDelimiter("\n");
         String next;
 
-        while (scanner.hasNext()) {
+        while (!shouldHalt() && scanner.hasNext()) {
             next = scanner.next();
             bufInput.append(next);
             bufInput.append("\n");
