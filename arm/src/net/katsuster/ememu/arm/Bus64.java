@@ -11,11 +11,11 @@ import java.util.*;
  */
 public class Bus64 {
     private MasterCore64 master;
-    private List<SlaveCoreAddress> slaveMap;
+    private List<SlaveCoreAddress> slaveList;
     private SlaveCoreAddress cachedSlave;
 
     public Bus64() {
-        this.slaveMap = new LinkedList<SlaveCoreAddress>();
+        this.slaveList = new ArrayList<SlaveCoreAddress>();
     }
 
     /**
@@ -273,7 +273,7 @@ public class Bus64 {
         }
 
         c.setMasterBus(this);
-        slaveMap.add(new SlaveCoreAddress(c, start, end));
+        slaveList.add(new SlaveCoreAddress(c, start, end));
     }
 
     /**
@@ -303,14 +303,11 @@ public class Bus64 {
      * そうでなければ false
      */
     public boolean removeSlaveCore(SlaveCore64 c) {
-        Iterator<SlaveCoreAddress> it;
-        SlaveCore64 sc;
-
-        for (it = slaveMap.iterator(); it.hasNext(); ) {
-            sc = it.next().getCore();
+        for (SlaveCoreAddress sca : slaveList) {
+            SlaveCore64 sc = sca.getCore();
 
             if (sc.equals(c)) {
-                slaveMap.remove(sc);
+                slaveList.remove(sc);
                 return true;
             }
         }
@@ -328,16 +325,11 @@ public class Bus64 {
      * 何も割り当てられていなければ null
      */
     protected SlaveCoreAddress findSlaveCoreAddress(long start, long end) {
-        Iterator<SlaveCoreAddress> it;
-        SlaveCoreAddress sca;
-
         if (cachedSlave != null && cachedSlave.contains(start, end)) {
             return cachedSlave;
         }
 
-        for (it = slaveMap.iterator(); it.hasNext(); ) {
-            sca = it.next();
-
+        for (SlaveCoreAddress sca : slaveList) {
             if (sca.contains(start, end)) {
                 cachedSlave = sca;
                 return sca;
@@ -351,12 +343,8 @@ public class Bus64 {
      * バスに接続されている全てのスレーブコアを起動します。
      */
     public void startAllSlaveCores() {
-        Iterator<SlaveCoreAddress> it;
-        //SlaveCoreAddress sca;
-        SlaveCore64 sc;
-
-        for (it = slaveMap.iterator(); it.hasNext(); ) {
-            sc = it.next().getCore();
+        for (SlaveCoreAddress sca : slaveList) {
+            SlaveCore64 sc = sca.getCore();
 
             sc.setName(sc.getClass().getName());
             sc.start();
@@ -368,11 +356,7 @@ public class Bus64 {
      * コアの停止を要求します。
      */
     public void haltAllSlaveCores() {
-        Iterator<SlaveCoreAddress> it;
-        SlaveCoreAddress sca;
-
-        for (it = slaveMap.iterator(); it.hasNext(); ) {
-            sca = it.next();
+        for (SlaveCoreAddress sca : slaveList) {
             sca.getCore().halt();
         }
     }
