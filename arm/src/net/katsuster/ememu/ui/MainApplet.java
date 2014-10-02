@@ -10,6 +10,7 @@ import net.katsuster.ememu.board.*;
 public class MainApplet extends JApplet {
     private static final SystemPane spane = new SystemPane();
 
+    private JTabbedPane tabPane;
     private VirtualTerminal vt;
     private Emulator emu;
 
@@ -36,7 +37,7 @@ public class MainApplet extends JApplet {
             ARMVersatile board = new ARMVersatile();
 
             board.setUARTInputStream(0, System.in);
-            board.setUARTOutputStream(0, SystemPane.out);
+            board.setUARTOutputStream(0, vt.getOutputStream());
             board.setup(cpu, bus, ramMain);
 
             Main.bootFromURL(cpu, ramMain, kimage, initram, cmdline);
@@ -94,7 +95,7 @@ public class MainApplet extends JApplet {
         itemClear.addActionListener(listenButton);
         itemClear.setMnemonic(KeyEvent.VK_C);
 
-        JTabbedPane tabPane = new JTabbedPane();
+        tabPane = new JTabbedPane();
 
         //stdout
         JPanel panel = new JPanel(new BorderLayout(), true);
@@ -113,11 +114,7 @@ public class MainApplet extends JApplet {
         panel.add("Center", spane);
         panel.add("East", panelEast);
 
-        //terminal
-        vt = new VirtualTerminal();
-
         tabPane.addTab("stdout", panel);
-        tabPane.addTab("vt", vt);
 
         setLayout(new BorderLayout());
         add(tabPane);
@@ -130,6 +127,14 @@ public class MainApplet extends JApplet {
         super.start();
 
         spane.clear();
+
+        //terminal
+        if (vt != null) {
+            tabPane.remove(vt);
+            vt = null;
+        }
+        vt = new VirtualTerminal();
+        tabPane.addTab("vt", vt);
 
         emu = new Emulator();
         emu.start();

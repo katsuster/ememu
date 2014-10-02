@@ -22,6 +22,8 @@ public class VirtualTerminal extends JPanel {
     private JTextArea outText;
     private Thread outDrainer;
 
+    private boolean halted = false;
+
     public VirtualTerminal() {
         super(new BorderLayout(), true);
 
@@ -61,6 +63,20 @@ public class VirtualTerminal extends JPanel {
      */
     public OutputStream getOutputStream() {
         return outPout;
+    }
+
+    /**
+     * 今すぐスレッドを停止すべきかどうかを取得します。
+     */
+    public boolean shouldHalt() {
+        return halted;
+    }
+
+    /**
+     * 今すぐスレッドを停止すべきであることを通知します。
+     */
+    public void halt() {
+        halted = true;
     }
 
     /**
@@ -107,7 +123,7 @@ public class VirtualTerminal extends JPanel {
                 StringBuffer b = new StringBuffer();
 
                 output:
-                while (true) {
+                while (!shouldHalt()) {
                     b.setLength(0);
                     do {
                         int ch = outPin.read();
