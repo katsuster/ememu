@@ -26,8 +26,58 @@
       <file leaf-file-name="MainApplet.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/MainApplet.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.3475298" vertical-offset="272" max-vertical-offset="2397">
-              <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+            <state vertical-scroll-proportion="0.63884157" vertical-offset="1767" max-vertical-offset="3077">
+              <caret line="131" column="25" selection-start-line="131" selection-start-column="25" selection-end-line="131" selection-end-column="25" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Main.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/Main.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="1972" max-vertical-offset="5185">
+              <caret line="116" column="0" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ARMVersatile.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/board/ARMVersatile.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="3060">
+              <caret line="16" column="27" selection-start-line="16" selection-start-column="27" selection-end-line="16" selection-end-column="27" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VirtualTerminal.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/VirtualTerminal.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="2003" max-vertical-offset="2618">
+              <caret line="140" column="23" selection-start-line="140" selection-start-column="23" selection-end-line="140" selection-end-column="23" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SystemPane.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/SystemPane.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="357" max-vertical-offset="1734">
+              <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UART.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/UART.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="4750" max-vertical-offset="5610">
+              <caret line="303" column="39" selection-start-line="303" selection-start-column="39" selection-end-line="303" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -46,42 +96,10 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/CoProcVFPv1.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/CoProcVFPv2.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Bus64.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/GPIO.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/MMUv5.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/ARMv5.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/CoProcStdv5.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/SysBaseboard.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/PrimaryINTC.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/DualTimer.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/Main.java" />
-        <option value="$PROJECT_DIR$/src/net/katsuster/semu/UART.java" />
-        <option value="$PROJECT_DIR$/armemu/src/semu/Instruction.java" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/AACI.java" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/test/SlaveCore64Test.java" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/test/CPUTest.java" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/test/BitOpTest.java" />
-        <option value="$PROJECT_DIR$/armemu/build.xml" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/CPU.java" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/SlaveCore64.java" />
-        <option value="$PROJECT_DIR$/util/initramfs.txt" />
-        <option value="$PROJECT_DIR$/doc/initramfs.txt" />
-        <option value="$PROJECT_DIR$/doc/hprof.txt" />
-        <option value="$PROJECT_DIR$/doc/busybox.txt" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/OreBufferedInputStream.java" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Main.java" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/SysBaseboard.java" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/Bus64.java" />
-        <option value="$PROJECT_DIR$/doc/linux.txt" />
-        <option value="$PROJECT_DIR$/armemu/src/net/katsuster/semu/arm/ARMv5.java" />
         <option value="$PROJECT_DIR$/arm/src/arm/ARMv5.java" />
         <option value="$PROJECT_DIR$/arm/src/net/katsuster/semu/arm/PSR.java" />
         <option value="$PROJECT_DIR$/arm/src/net/katsuster/semu/arm/INTC.java" />
         <option value="$PROJECT_DIR$/arm/src/net/katsuster/semu/arm/MainApplet.java" />
-        <option value="$PROJECT_DIR$/arm/applet_test.html" />
-        <option value="$PROJECT_DIR$/arm/build.xml" />
         <option value="$PROJECT_DIR$/arm/src/net/katsuster/semu/arm/Instruction.java" />
         <option value="$PROJECT_DIR$/arm/src/net/katsuster/semu/arm/test/SlaveCore64Test.java" />
         <option value="$PROJECT_DIR$/arm/src/net/katsuster/semu/arm/CoProc.java" />
@@ -97,6 +115,38 @@
         <option value="$PROJECT_DIR$/arm/src/net/katsuster/semu/ui/Main.java" />
         <option value="$PROJECT_DIR$/arm/src/net/katsuster/semu/ui/MainApplet.java" />
         <option value="$PROJECT_DIR$/arm/src/net/katsuster/semu/ui/SystemPane.java" />
+        <option value="$PROJECT_DIR$/arm/build.xml" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SlaveCore64.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/MasterCore64.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/Controller64Reg32.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/RAM.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SSP.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/PrimaryINTC.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/DMAC.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/LCDC.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/MPMC.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/AACI.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/KMI.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/Watchdog.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SysBaseboard.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/GPIO.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/MMCI.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SecondaryINTC.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SCard.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/RTC.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SysController.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/CPU.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/DualTimer.java" />
+        <option value="$PROJECT_DIR$/arm/applet_test.html" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SSMC.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/Core.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/board/ARMVersatile.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/Main.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/SystemPane.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/Bus64.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/UART.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/VirtualTerminal.java" />
+        <option value="$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/MainApplet.java" />
       </list>
     </option>
   </component>
@@ -120,43 +170,25 @@
             <id>Bitwise operation issues</id>
           </State>
           <State>
-            <id>Class structure</id>
-          </State>
-          <State>
-            <id>Code maturity issues</id>
-          </State>
-          <State>
-            <id>Code style issues</id>
-          </State>
-          <State>
             <id>Control FlowGroovy</id>
           </State>
           <State>
             <id>Control flow issues</id>
           </State>
           <State>
-            <id>Declaration redundancy</id>
-          </State>
-          <State>
-            <id>General</id>
+            <id>Data flow issuesGroovy</id>
           </State>
           <State>
             <id>Groovy</id>
           </State>
           <State>
-            <id>Imports</id>
+            <id>J2ME issues</id>
           </State>
           <State>
-            <id>Internationalization issues</id>
+            <id>JUnit issues</id>
           </State>
           <State>
-            <id>Java language level issues</id>
-          </State>
-          <State>
-            <id>Java language level migration aids</id>
-          </State>
-          <State>
-            <id>Javadoc issues</id>
+            <id>Manifest</id>
           </State>
           <State>
             <id>Naming conventions</id>
@@ -165,28 +197,13 @@
             <id>Numeric issues</id>
           </State>
           <State>
-            <id>Performance issues</id>
-          </State>
-          <State>
             <id>Potentially confusing code constructsGroovy</id>
           </State>
           <State>
             <id>Probable bugs</id>
           </State>
           <State>
-            <id>Resource management issues</id>
-          </State>
-          <State>
-            <id>Scala: General</id>
-          </State>
-          <State>
-            <id>TestNG</id>
-          </State>
-          <State>
-            <id>Threading issues</id>
-          </State>
-          <State>
-            <id>UI Form Problems</id>
+            <id>Scala: Method signature</id>
           </State>
         </expanded-state>
         <selected-state>
@@ -239,7 +256,7 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="ememu" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -249,59 +266,11 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="ememu" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="arm" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ememu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ememu" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="arm" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ememu" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ui" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ememu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ememu" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="arm" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ememu" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -317,7 +286,7 @@
     <property name="MemberChooser.showClasses" value="true" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="recentsLimit" value="5" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
+    <property name="options.lastSelected" value="preferences.keymap" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
@@ -326,7 +295,7 @@
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.includeInheritedMembers" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Global Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/hamcrest-core-1.3.jar!/" />
@@ -410,6 +379,19 @@
       <setting name="showProgressMessages" value="true" />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="0" />
+      <option name="HEIGHT" value="0" />
+      <option name="POLICY_FILE" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -435,19 +417,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="0" />
-      <option name="HEIGHT" value="0" />
-      <option name="POLICY_FILE" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -498,6 +467,19 @@
       <patterns />
       <method />
     </configuration>
+    <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <method />
+    </configuration>
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="" />
       <option name="ACTIVITY_CLASS" value="" />
@@ -516,19 +498,6 @@
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
-      <method />
-    </configuration>
-    <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
-      <module name="" />
-      <setting name="path" value="" />
-      <setting name="package" value="" />
-      <setting name="vmparams" value="" />
-      <setting name="params" value="" />
-      <setting name="workingDirectory" value="$PROJECT_DIR$" />
-      <setting name="searchForTest" value="Across module dependencies" />
-      <setting name="testName" value="" />
-      <setting name="testKind" value="Class" />
-      <setting name="showProgressMessages" value="true" />
       <method />
     </configuration>
     <configuration default="false" name="arm Applet" type="Applet" factoryName="Applet">
@@ -606,8 +575,8 @@
     <list size="4">
       <item index="0" class="java.lang.String" itemvalue="Applet.arm Applet" />
       <item index="1" class="java.lang.String" itemvalue="Application.arm Prof" />
-      <item index="2" class="java.lang.String" itemvalue="Application.arm Main" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.arm JUnit" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.arm JUnit" />
+      <item index="3" class="java.lang.String" itemvalue="Application.arm Main" />
     </list>
     <recent_temporary>
       <list size="1">
@@ -658,7 +627,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4498382" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47734627" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32847896" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -700,7 +669,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="416" />
+      <option name="time" value="438" />
     </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
@@ -708,6 +677,22 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/MainApplet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="2397">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/MainApplet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2397">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/doc/initramfs.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="901">
@@ -726,14 +711,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.1737649" vertical-offset="0" max-vertical-offset="680">
           <caret line="6" column="26" selection-start-line="6" selection-start-column="26" selection-end-line="6" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.01362862" vertical-offset="195" max-vertical-offset="782">
-          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -758,13 +735,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LICENSE">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3312102" vertical-offset="100" max-vertical-offset="3553">
-          <caret line="12" column="9" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/doc/hprof.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="357">
@@ -776,7 +746,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334" vertical-offset="390" max-vertical-offset="18394">
           <caret line="56" column="13" selection-start-line="56" selection-start-column="13" selection-end-line="56" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -784,14 +753,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="4997" max-vertical-offset="9027">
           <caret line="336" column="0" selection-start-line="336" selection-start-column="0" selection-end-line="336" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/app/java/jdk1.7.0_67_x64/src.zip!/java/lang/Thread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33215547" vertical-offset="11755" max-vertical-offset="33915">
-          <caret line="744" column="0" selection-start-line="744" selection-start-column="0" selection-end-line="744" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -806,29 +767,282 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3310811" vertical-offset="20013" max-vertical-offset="81736">
           <caret line="1253" column="0" selection-start-line="1253" selection-start-column="0" selection-end-line="1253" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/arm/applet_test.html">
+    <entry file="file://$PROJECT_DIR$/build.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.030303031" vertical-offset="0" max-vertical-offset="561">
-          <caret line="1" column="6" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="782">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/arm/build.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.26064736" vertical-offset="0" max-vertical-offset="2244">
-          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.28960818" vertical-offset="0" max-vertical-offset="2244">
+          <caret line="10" column="68" selection-start-line="10" selection-start-column="68" selection-end-line="10" selection-end-column="68" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SlaveCore64.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="121" max-vertical-offset="5015">
+          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/RAM.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2285" max-vertical-offset="2754">
+          <caret line="164" column="5" selection-start-line="0" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SSP.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1571" max-vertical-offset="2040">
+          <caret line="112" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="118" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/DMAC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.76831347" vertical-offset="3068" max-vertical-offset="3655">
+          <caret line="211" column="5" selection-start-line="0" selection-start-column="0" selection-end-line="213" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/LCDC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2965" max-vertical-offset="3434">
+          <caret line="198" column="5" selection-start-line="198" selection-start-column="5" selection-end-line="198" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/Watchdog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1631" max-vertical-offset="2074">
+          <caret line="118" column="5" selection-start-line="118" selection-start-column="5" selection-end-line="118" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/GPIO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2498" max-vertical-offset="2941">
+          <caret line="169" column="5" selection-start-line="169" selection-start-column="5" selection-end-line="169" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SCard.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2396" max-vertical-offset="2839">
+          <caret line="163" column="5" selection-start-line="163" selection-start-column="5" selection-end-line="163" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/RTC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1529" max-vertical-offset="1972">
+          <caret line="112" column="5" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SysController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.76831347" vertical-offset="1997" max-vertical-offset="2584">
+          <caret line="148" column="5" selection-start-line="148" selection-start-column="5" selection-end-line="148" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SecondaryINTC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.76831347" vertical-offset="1147" max-vertical-offset="1734">
+          <caret line="98" column="5" selection-start-line="98" selection-start-column="5" selection-end-line="98" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/MMCI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8262351" vertical-offset="1827" max-vertical-offset="2414">
+          <caret line="140" column="0" selection-start-line="140" selection-start-column="0" selection-end-line="140" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/KMI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.76831347" vertical-offset="1657" max-vertical-offset="2244">
+          <caret line="128" column="5" selection-start-line="128" selection-start-column="5" selection-end-line="128" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/AACI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.76831347" vertical-offset="2473" max-vertical-offset="3060">
+          <caret line="176" column="5" selection-start-line="176" selection-start-column="5" selection-end-line="176" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/MasterCore64.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2533">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LICENSE">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.7052813" vertical-offset="2966" max-vertical-offset="3553">
+          <caret line="12" column="9" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/DualTimer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2541" max-vertical-offset="3128">
+          <caret line="178" column="0" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/MPMC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.16181229" vertical-offset="3552" max-vertical-offset="4335">
+          <caret line="210" column="0" selection-start-line="210" selection-start-column="0" selection-end-line="210" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/Controller64Reg32.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1206" max-vertical-offset="3026">
+          <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SSMC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.009708738" vertical-offset="1323" max-vertical-offset="4471">
+          <caret line="78" column="0" selection-start-line="78" selection-start-column="0" selection-end-line="78" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/CPU.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.173765" vertical-offset="1572" max-vertical-offset="2363">
+          <caret line="145" column="0" selection-start-line="145" selection-start-column="0" selection-end-line="145" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/SysBaseboard.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.27597955" vertical-offset="2762" max-vertical-offset="3349">
+          <caret line="176" column="18" selection-start-line="176" selection-start-column="18" selection-end-line="176" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/applet_test.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3813084" vertical-offset="0" max-vertical-offset="535">
+          <caret line="12" column="78" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/ARMv5.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="85025" max-vertical-offset="85935">
+          <caret line="5058" column="0" selection-start-line="5058" selection-start-column="0" selection-end-line="5058" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/app/java/jdk1.7.0_67_x64/src.zip!/java/lang/Thread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="20476" max-vertical-offset="33915">
+          <caret line="1269" column="35" selection-start-line="1269" selection-start-column="35" selection-end-line="1269" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/ForkedPrintStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="9503">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/board/ARMVersatile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="118" max-vertical-offset="3060">
+          <caret line="16" column="27" selection-start-line="16" selection-start-column="27" selection-end-line="16" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1708" max-vertical-offset="5117">
+          <caret line="116" column="0" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/PrimaryINTC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5080906" vertical-offset="98" max-vertical-offset="7242">
+          <caret line="15" column="27" selection-start-line="15" selection-start-column="27" selection-end-line="15" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/Bus64.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="6278" max-vertical-offset="7412">
+          <caret line="387" column="9" selection-start-line="387" selection-start-column="9" selection-end-line="387" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/Core.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.54545456" vertical-offset="0" max-vertical-offset="561">
+          <caret line="22" column="5" selection-start-line="7" selection-start-column="43" selection-end-line="22" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/SystemPane.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="122" max-vertical-offset="1734">
+          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/arm/UART.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4750" max-vertical-offset="5610">
+          <caret line="303" column="39" selection-start-line="303" selection-start-column="39" selection-end-line="303" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/app/java/jdk1.7.0_67_x64/src.zip!/java/io/PipedInputStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4819" max-vertical-offset="7259">
+          <caret line="321" column="0" selection-start-line="321" selection-start-column="0" selection-end-line="321" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/VirtualTerminal.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2003" max-vertical-offset="2618">
+          <caret line="140" column="23" selection-start-line="140" selection-start-column="23" selection-end-line="140" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/arm/src/net/katsuster/ememu/ui/MainApplet.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.3475298" vertical-offset="272" max-vertical-offset="2397">
-          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.63884157" vertical-offset="1767" max-vertical-offset="3077">
+          <caret line="131" column="25" selection-start-line="131" selection-start-column="25" selection-end-line="131" selection-end-column="25" />
           <folding />
         </state>
       </provider>
@@ -848,9 +1062,20 @@
           </splitter-proportions>
         </settings>
       </state>
+      <state key="Copyright.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>No facets are configured</last-edited>
+          <last-edited>Detection</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -885,12 +1110,11 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>ememu</last-edited>
+          <last-edited>arm</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>

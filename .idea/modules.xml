@@ -3,8 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/arm/arm.iml" filepath="$PROJECT_DIR$/arm/arm.iml" />
-      <module fileurl="file://$PROJECT_DIR$//ememu.iml" filepath="$PROJECT_DIR$//ememu.iml" />
-      <module fileurl="file://$PROJECT_DIR$/semu.iml" filepath="$PROJECT_DIR$/semu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ememu.iml" filepath="$PROJECT_DIR$/ememu.iml" />
     </modules>
   </component>
 </project>
