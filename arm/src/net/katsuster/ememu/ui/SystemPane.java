@@ -81,12 +81,15 @@ public class SystemPane extends JPanel {
                         SwingUtilities.invokeAndWait(new StringAppender(b.toString()));
                     } catch (InterruptedException e) {
                         e.printStackTrace(System.err);
+                        //ignored
                     } catch (InvocationTargetException e) {
                         e.printStackTrace(System.err);
+                        //ignored
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace(System.err);
+                throw new RuntimeException(e);
             }
         }
 

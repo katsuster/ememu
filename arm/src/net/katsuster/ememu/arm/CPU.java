@@ -135,11 +135,11 @@ public abstract class CPU extends MasterCore64 {
                 step();
             }
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             printPC();
             printRegs();
 
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 }

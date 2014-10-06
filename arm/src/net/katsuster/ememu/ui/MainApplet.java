@@ -52,6 +52,7 @@ public class MainApplet extends JApplet {
                 cpu.join();
             } catch (InterruptedException e) {
                 e.printStackTrace(System.err);
+                //ignored
             }
         }
 
@@ -151,6 +152,7 @@ public class MainApplet extends JApplet {
             emu.join();
         } catch (InterruptedException e) {
             e.printStackTrace(System.err);
+            //ignored
         }
     }
 

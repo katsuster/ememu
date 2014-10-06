@@ -43,10 +43,10 @@ public class Main {
                 cpu.write8(addr + i, s.readByte());
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             throw new RuntimeException(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             throw new RuntimeException(e);
         }
 
@@ -75,10 +75,10 @@ public class Main {
                 //end
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             throw new RuntimeException(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             throw new RuntimeException(e);
         }
 
@@ -131,6 +131,7 @@ public class Main {
             cpu.join();
         } catch (InterruptedException e) {
             e.printStackTrace(System.err);
+            //ignored
         }
     }
 
@@ -237,7 +238,7 @@ public class Main {
                 sizeInitram = loadURLResource(new URL(initram), cpu, addrInitram);
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             return;
         }
 
