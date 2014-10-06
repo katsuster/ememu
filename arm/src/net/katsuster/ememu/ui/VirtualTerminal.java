@@ -178,6 +178,25 @@ public class VirtualTerminal extends JPanel {
         @Override
         public void keyPressed(KeyEvent e) {
             int c = e.getKeyCode();
+            int onmask, offmask;
+
+            switch (c) {
+            case KeyEvent.VK_ALT:
+            case KeyEvent.VK_CONTROL:
+            case KeyEvent.VK_SHIFT:
+                //ignore
+                return;
+            }
+
+            onmask = KeyEvent.SHIFT_DOWN_MASK;
+            offmask = 0;
+            if (e.getModifiersEx() & (onmask | offmask) == onmask) {
+
+            }
+
+            if (KeyEvent.VK_A <= c && c <= KeyEvent.VK_Z) {
+                c = 'a' + (c - KeyEvent.VK_A);
+            }
 
             try {
                 inPout.write(c);

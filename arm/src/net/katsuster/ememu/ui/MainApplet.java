@@ -36,7 +36,8 @@ public class MainApplet extends JApplet {
             ramMain = new RAM(64 * 1024 * 1024);
             ARMVersatile board = new ARMVersatile();
 
-            board.setUARTInputStream(0, System.in);
+            //board.setUARTInputStream(0, System.in);
+            board.setUARTInputStream(0, vt.getInputStream());
             board.setUARTOutputStream(0, vt.getOutputStream());
             board.setup(cpu, bus, ramMain);
 
