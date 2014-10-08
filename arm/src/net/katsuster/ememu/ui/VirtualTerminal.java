@@ -173,14 +173,21 @@ public class VirtualTerminal extends JPanel {
         @Override
         public void keyTyped(KeyEvent e) {
 
+            try {
+                inPout.write(e.getKeyChar());
+            } catch (IOException ex) {
+                //ignored
+            }
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            int c = e.getKeyCode();
+            int code = e.getKeyCode();
+            int dat = 0;
             int onmask, offmask;
+            boolean shift = false, ctrl = false, alt = false;
 
-            switch (c) {
+            switch (code) {
             case KeyEvent.VK_ALT:
             case KeyEvent.VK_CONTROL:
             case KeyEvent.VK_SHIFT:
@@ -189,20 +196,26 @@ public class VirtualTerminal extends JPanel {
             }
 
             onmask = KeyEvent.SHIFT_DOWN_MASK;
-            offmask = 0;
-            if (e.getModifiersEx() & (onmask | offmask) == onmask) {
-
+            offmask = KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK;
+            if ((e.getModifiersEx() & (onmask | offmask)) == onmask) {
+                //Shift のみ
+                shift = true;
             }
 
-            if (KeyEvent.VK_A <= c && c <= KeyEvent.VK_Z) {
-                c = 'a' + (c - KeyEvent.VK_A);
+            if (KeyEvent.VK_A <= code && code <= KeyEvent.VK_Z) {
+                if (shift) {
+                    dat = 'A';
+                } else {
+                    dat = 'a';
+                }
+                dat += code - KeyEvent.VK_A;
             }
 
-            try {
-                inPout.write(c);
+            /*try {
+                inPout.write(dat);
             } catch (IOException ex) {
                 //ignored
-            }
+            }*/
         }
 
         @Override
