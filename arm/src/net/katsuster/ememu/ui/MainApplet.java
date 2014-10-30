@@ -11,7 +11,7 @@ public class MainApplet extends JApplet {
     private static final SystemPane spane = new SystemPane();
 
     private JTabbedPane tabPane;
-    private VirtualTerminal vt;
+    private VirtualTerminal[] vttyAMA;
     private Emulator emu;
 
     class Emulator extends Thread {
@@ -37,8 +37,10 @@ public class MainApplet extends JApplet {
             ARMVersatile board = new ARMVersatile();
 
             //board.setUARTInputStream(0, System.in);
-            board.setUARTInputStream(0, vt.getInputStream());
-            board.setUARTOutputStream(0, vt.getOutputStream());
+            for (int i = 0; i < vttyAMA.length; i++) {
+                board.setUARTInputStream(i, vttyAMA[i].getInputStream());
+                board.setUARTOutputStream(i, vttyAMA[i].getOutputStream());
+            }
             board.setup(cpu, bus, ramMain);
 
             Main.bootFromURL(cpu, ramMain, kimage, initram, cmdline);
@@ -61,6 +63,10 @@ public class MainApplet extends JApplet {
             cpu.halt();
             bus.haltAllSlaveCores();
         }
+    }
+
+    public MainApplet() {
+        vttyAMA = new VirtualTerminal[3];
     }
 
     @Override
@@ -131,12 +137,14 @@ public class MainApplet extends JApplet {
         spane.clear();
 
         //terminal
-        if (vt != null) {
-            tabPane.remove(vt);
-            vt = null;
+        for (int i = 0; i < vttyAMA.length; i++) {
+            if (vttyAMA[i] != null) {
+                tabPane.remove(vttyAMA[i]);
+                vttyAMA[i] = null;
+            }
+            vttyAMA[i] = new VirtualTerminal();
+            tabPane.addTab("ttyAMA" + i, vttyAMA[i]);
         }
-        vt = new VirtualTerminal();
-        tabPane.addTab("vt", vt);
 
         emu = new Emulator();
         emu.start();
