@@ -10,8 +10,8 @@ import net.katsuster.ememu.board.*;
 public class MainApplet extends JApplet {
     private static final SystemPane spane = new SystemPane();
 
-    private JTabbedPane tabPane;
     private VirtualTerminal[] vttyAMA;
+    private JTabbedPane tabPane;
     private Emulator emu;
 
     class Emulator extends Thread {
@@ -104,6 +104,8 @@ public class MainApplet extends JApplet {
         itemClear.setMnemonic(KeyEvent.VK_C);
 
         tabPane = new JTabbedPane();
+        tabPane.setTabPlacement(JTabbedPane.BOTTOM);
+        tabPane.setFocusable(false);
 
         //stdout
         JPanel panel = new JPanel(new BorderLayout(), true);
@@ -142,9 +144,11 @@ public class MainApplet extends JApplet {
                 tabPane.remove(vttyAMA[i]);
                 vttyAMA[i] = null;
             }
+
             vttyAMA[i] = new VirtualTerminal();
             tabPane.addTab("ttyAMA" + i, vttyAMA[i]);
         }
+        tabPane.setSelectedIndex(1);
 
         emu = new Emulator();
         emu.start();
