@@ -45,7 +45,6 @@ public class VirtualTerminal extends JPanel
 
         //中央にバイナリデータ表示パネルを配置する
         vt = new VTInnerPane(this);
-        vt.setPreferredSize(new Dimension(160, 240));
         vt.setForeground(Color.GRAY);
         vt.setBackground(Color.BLACK);
         vt.setOpaque(false);

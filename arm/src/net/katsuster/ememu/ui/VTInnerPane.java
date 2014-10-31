@@ -20,6 +20,11 @@ class VTInnerPane extends JComponent
     //端末への出力データ
     private StringBuffer buf;
 
+    //端末画面の描画領域
+    ContentBox boxScreen;
+    //1文字の描画領域（ただし x, y は無視されます）
+    ContentBox boxChar;
+
     //1行の桁数
     private int columns;
     //1画面に表示できる行数
@@ -31,7 +36,7 @@ class VTInnerPane extends JComponent
     //カーソルの位置
     private int cursorX;
     private int cursorY;
-    //レイアウト枠
+    //画面上の文字の位置
     private char[][] layoutBox;
 
     public VTInnerPane(VirtualTerminal p) {
@@ -39,9 +44,14 @@ class VTInnerPane extends JComponent
 
         parent = p;
 
+        boxScreen = new ContentBox();
+        boxScreen.setPadding(10, 10, 10, 10);
+        boxChar = new ContentBox();
+        boxChar.setMargin(0, 2, 0, 2);
+
         buf = new StringBuffer();
         columns = 80;
-        lines = getHeight() / 16 - 1;
+        lines = 0;
         maxLines = 1000;
         currentLine = 0;
         cursorX = 0;
@@ -296,9 +306,12 @@ class VTInnerPane extends JComponent
         }
     }
 
-    protected void drawAll(Graphics g, int start) {
+    protected void drawAll(Graphics2D g, int start) {
         int yEnd = Math.min(start + getLines(), getMaxLines());
         Color before = g.getColor();
+        FontMetrics fm = g.getFontMetrics();
+        int ascent = fm.getMaxAscent();
+        Rectangle rscr, r;
 
         g.setColor(getBackground());
         g.fill3DRect(0, 0, getWidth(), getHeight(), false);
@@ -309,8 +322,12 @@ class VTInnerPane extends JComponent
                     continue;
                 }
 
+                rscr = boxScreen.getContents();
+                boxChar.setX(rscr.x + x * boxChar.getWidth());
+                boxChar.setY(rscr.y + (y - start) * boxChar.getHeight());
+                r = boxChar.getContents();
                 g.drawString(String.valueOf(layoutBox[x][y]),
-                        x * 8, (y - start + 1) * 16);
+                        r.x, r.y + ascent);
             }
         }
     }
@@ -319,7 +336,7 @@ class VTInnerPane extends JComponent
     public void paint(Graphics g) {
         super.paint(g);
 
-        drawAll(g, parent.getStartLine());
+        drawAll((Graphics2D)g, parent.getStartLine());
     }
 
     @Override
@@ -331,7 +348,25 @@ class VTInnerPane extends JComponent
 
     @Override
     public void componentResized(ComponentEvent e) {
-        setLines(getHeight() / 16 - 1);
+        Graphics g = getComponentGraphics(getGraphics());
+        FontMetrics fm = g.getFontMetrics();
+        int advance = fm.getMaxAdvance();
+        int ascent = fm.getMaxAscent();
+
+        //一行の高さの設定を更新する
+        if (advance == -1) {
+            advance = ascent / 2;
+        }
+        boxChar.setWidth(advance / 2);
+        boxChar.setHeight(ascent);
+
+        //一画面に表示できる行数の設定を更新する
+        boxScreen.setWidth(getWidth());
+        boxScreen.setHeight(getHeight());
+        setLines(boxScreen.getContents().height / boxChar.getHeight());
+
+        //スクロールできる範囲を更新する
+        setCurrentLine(getCurrentLine());
     }
 
     @Override
