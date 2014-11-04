@@ -12,7 +12,6 @@ import java.util.*;
  */
 public class PrimaryINTC extends Controller64Reg32 {
     private List<INTC> intcs;
-    private int rawHardInt;
     private int rawSoftInt;
     private int intEnable;
     private int intSelect;
@@ -84,7 +83,6 @@ public class PrimaryINTC extends Controller64Reg32 {
         }
 
         //割り込みステータスの初期化を行います
-        rawHardInt = 0;
         rawSoftInt = 0;
         intEnable = 0;
         intSelect = 0;
@@ -253,8 +251,6 @@ public class PrimaryINTC extends Controller64Reg32 {
         st |= rawSoftInt;
         st &= intEnable;
 
-        rawHardInt = st;
-
         return st;
     }
 
@@ -330,10 +326,10 @@ public class PrimaryINTC extends Controller64Reg32 {
             intSelect = data;
             break;
         case REG_VICINTENABLE:
-            intEnable = data;
+            intEnable |= data;
             break;
         case REG_VICINTENCLEAR:
-            rawHardInt &= ~data;
+            intEnable &= ~data;
             break;
         case REG_VICSOFTINT:
             rawSoftInt |= data;
