@@ -41,6 +41,22 @@ public class Bus64 {
     }
 
     /**
+     * バスに接続されている全てのマスターコアを起動します。
+     */
+    public void startAllMasterCores() {
+        master.setName(master.getClass().getName());
+        master.start();
+    }
+
+    /**
+     * バスに接続されている全てのマスターコアに対し、
+     * コアの停止を要求します。
+     */
+    public void haltAllMasterCores() {
+        master.halt();
+    }
+
+    /**
      * 指定されたアドレスからの読み取りが可能かどうかを判定します。
      *
      * @param addr アドレス

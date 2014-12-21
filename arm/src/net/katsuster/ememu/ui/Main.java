@@ -123,8 +123,7 @@ public class Main {
 
         //start cores
         bus.startAllSlaveCores();
-        cpu.setName(cpu.getClass().getName());
-        cpu.start();
+        bus.startAllMasterCores();
 
         //wait CPU halted
         try {

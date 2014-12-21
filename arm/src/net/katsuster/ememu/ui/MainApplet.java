@@ -47,8 +47,7 @@ public class MainApplet extends JApplet {
 
             //start cores
             bus.startAllSlaveCores();
-            cpu.setName(cpu.getClass().getName());
-            cpu.start();
+            bus.startAllMasterCores();
 
             //wait CPU halted
             try {
@@ -60,7 +59,7 @@ public class MainApplet extends JApplet {
         }
 
         public void halt() {
-            cpu.halt();
+            bus.haltAllMasterCores();
             bus.haltAllSlaveCores();
         }
     }
