@@ -5084,7 +5084,7 @@ public class ARMv5 extends CPU {
 
         //FIXME: tentative
         //割り込みチェック回数を減らすための仮実装
-        if (intCount >= 1) {
+        if (intCount >= 25) {
             intCount = 0;
             setInterrupted(true);
         }
