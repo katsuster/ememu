@@ -11,11 +11,19 @@ import java.util.*;
  */
 public class Bus64 {
     private MasterCore64 master;
+    //32bit アドレス内のスレーブコアに高速にアクセスするためのテーブル
+    private SlaveCoreAddress[] slaves;
+    //全スレーブコアを管理するリスト
     private List<SlaveCoreAddress> slaveList;
+    //直前にアクセスしたスレーブコアのキャッシュ
     private SlaveCoreAddress cachedSlave;
 
     public Bus64() {
+        //4KB ごとにスレーブコアを記録するため、
+        //2^32 / 2^12 = 2^20 の要素が必要となる
+        this.slaves = new SlaveCoreAddress[1024 * 1024];
         this.slaveList = new ArrayList<SlaveCoreAddress>();
+        this.cachedSlave = new SlaveCoreAddress(null, 0, 0);
     }
 
     /**
@@ -288,8 +296,19 @@ public class Bus64 {
                             sca.getStartAddress(), sca.getEndAddress()));
         }
 
-        c.setMasterBus(this);
+        //32bit アドレス範囲内のスレーブコアならばテーブルにも記録する
+        for (long i = start; i <= end; i += 4096) {
+            int ind = (int) (i >>> 12);
+            if (ind > 0xfffff) {
+                //32bit アドレスの範囲外
+                break;
+            }
+            slaves[ind] = new SlaveCoreAddress(c, start, end);
+        }
+
+        //リストにスレーブコアを記録する
         slaveList.add(new SlaveCoreAddress(c, start, end));
+        c.setMasterBus(this);
     }
 
     /**
@@ -319,11 +338,22 @@ public class Bus64 {
      * そうでなければ false
      */
     public boolean removeSlaveCore(SlaveCore64 c) {
+        //32bit アドレス範囲内のスレーブコアならばテーブルから消去する
+        for (long i = 0; i <= 0xffffffff; i += 4096) {
+            int ind = (int) (i >>> 12);
+
+            if (slaves[ind].getCore().equals(c)) {
+                slaves[ind] = null;
+            }
+        }
+
+        //リストからスレーブコアを消去する
         for (SlaveCoreAddress sca : slaveList) {
             SlaveCore64 sc = sca.getCore();
 
             if (sc.equals(c)) {
                 slaveList.remove(sc);
+                sc.setMasterBus(null);
                 return true;
             }
         }
@@ -341,10 +371,17 @@ public class Bus64 {
      * 何も割り当てられていなければ null
      */
     protected SlaveCoreAddress findSlaveCoreAddress(long start, long end) {
-        if (cachedSlave != null && cachedSlave.contains(start, end)) {
+        if (cachedSlave.contains(start, end)) {
             return cachedSlave;
         }
 
+        //テーブルから探索する
+        int ind = (int) (start >>> 12);
+        if (ind <= 0xfffff) {
+            return slaves[ind];
+        }
+
+        //リストから線形探索する
         for (SlaveCoreAddress sca : slaveList) {
             if (sca.contains(start, end)) {
                 cachedSlave = sca;
