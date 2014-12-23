@@ -90,8 +90,8 @@ public class ARMVersatile {
         //    0x10120000 - 0x1012ffff: Color LCD Controller (PL110)
         //    0x10130000 - 0x1013ffff: DMA Contoroller (PL080)
         //    0x10140000 - 0x1014ffff: Primary Interrupt Contoroller (PL190)
-        //    0x101e0000 - 0x101e1000: System Controller (SP810)
-        //    0x101e1000 - 0x101e2000: Watchdog Module (SP805)
+        //    0x101e0000 - 0x101e0fff: System Controller (SP810)
+        //    0x101e1000 - 0x101e1fff: Watchdog Module (SP805)
         //    0x101e2000 - 0x101e2fff: Dual-Timer 0 and 1 (SP804)
         //    0x101e3000 - 0x101e3fff: Dual-Timer 2 and 3 (SP804)
         //    0x101e4000 - 0x101e4fff: General Purpose I/O 0 (PL061)
@@ -114,47 +114,47 @@ public class ARMVersatile {
         //    0x81fff000 - 0x81ffffff: ATAG_XXX
         cpu.setSlaveBus(bus);
 
-        bus.addSlaveCore(mpmc_c0_0, 0x00000000L, 0x04000000L);
-        bus.addSlaveCore(mpmc_c0_1, 0x04000000L, 0x08000000L);
-        bus.addSlaveCore(mpmc_c1, 0x08000000L, 0x10000000L);
+        bus.addSlaveCore(mpmc_c0_0, 0x00000000L, 0x03ffffffL);
+        bus.addSlaveCore(mpmc_c0_1, 0x04000000L, 0x07ffffffL);
+        bus.addSlaveCore(mpmc_c1, 0x08000000L, 0x0fffffffL);
 
-        bus.addSlaveCore(sysBoard, 0x10000000L, 0x10001000L);
-        bus.addSlaveCore(intc2nd, 0x10003000L, 0x10004000L);
-        bus.addSlaveCore(aaci, 0x10004000L, 0x10005000L);
-        bus.addSlaveCore(mci0, 0x10005000L, 0x10006000L);
-        bus.addSlaveCore(kmiKey, 0x10006000L, 0x10007000L);
-        bus.addSlaveCore(kmiMouse, 0x10007000L, 0x10008000L);
-        bus.addSlaveCore(uart3, 0x10009000L, 0x1000a000L);
-        bus.addSlaveCore(scard1, 0x1000a000L, 0x1000b000L);
-        bus.addSlaveCore(mci1, 0x1000b000L, 0x1000c000L);
-        bus.addSlaveCore(ether, 0x10010000L, 0x10020000L);
-        bus.addSlaveCore(usb, 0x10020000L, 0x10030000L);
+        bus.addSlaveCore(sysBoard, 0x10000000L, 0x10000fffL);
+        bus.addSlaveCore(intc2nd, 0x10003000L, 0x10003fffL);
+        bus.addSlaveCore(aaci, 0x10004000L, 0x10004fffL);
+        bus.addSlaveCore(mci0, 0x10005000L, 0x10005fffL);
+        bus.addSlaveCore(kmiKey, 0x10006000L, 0x10006fffL);
+        bus.addSlaveCore(kmiMouse, 0x10007000L, 0x10007fffL);
+        bus.addSlaveCore(uart3, 0x10009000L, 0x10009fffL);
+        bus.addSlaveCore(scard1, 0x1000a000L, 0x1000afffL);
+        bus.addSlaveCore(mci1, 0x1000b000L, 0x1000bfffL);
+        bus.addSlaveCore(ether, 0x10010000L, 0x1001ffffL);
+        bus.addSlaveCore(usb, 0x10020000L, 0x1002ffffL);
 
-        bus.addSlaveCore(ssmc, 0x10100000L, 0x10110000L);
-        bus.addSlaveCore(mpmc, 0x10110000L, 0x10120000L);
-        bus.addSlaveCore(clcdc, 0x10120000L, 0x10130000L);
-        bus.addSlaveCore(dmac, 0x10130000L, 0x10140000L);
-        bus.addSlaveCore(intc1st, 0x10140000L, 0x10150000L);
-        bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e1000L);
-        bus.addSlaveCore(watchdog, 0x101e1000L, 0x101e2000L);
-        bus.addSlaveCore(timer0_1, 0x101e2000L, 0x101e3000L);
-        bus.addSlaveCore(timer2_3, 0x101e3000L, 0x101e4000L);
-        bus.addSlaveCore(gpio0, 0x101e4000L, 0x101e5000L);
-        bus.addSlaveCore(gpio1, 0x101e5000L, 0x101e6000L);
-        bus.addSlaveCore(gpio2, 0x101e6000L, 0x101e7000L);
-        bus.addSlaveCore(gpio3, 0x101e7000L, 0x101e8000L);
-        bus.addSlaveCore(rtc, 0x101e8000L, 0x101e9000L);
-        bus.addSlaveCore(scard0, 0x101f0000L, 0x101f1000L);
-        bus.addSlaveCore(uart0, 0x101f1000L, 0x101f2000L);
-        bus.addSlaveCore(uart1, 0x101f2000L, 0x101f3000L);
-        bus.addSlaveCore(uart2, 0x101f3000L, 0x101f4000L);
-        bus.addSlaveCore(ssp, 0x101f4000L, 0x101f5000L);
+        bus.addSlaveCore(ssmc, 0x10100000L, 0x1010ffffL);
+        bus.addSlaveCore(mpmc, 0x10110000L, 0x1011ffffL);
+        bus.addSlaveCore(clcdc, 0x10120000L, 0x1012ffffL);
+        bus.addSlaveCore(dmac, 0x10130000L, 0x1013ffffL);
+        bus.addSlaveCore(intc1st, 0x10140000L, 0x1014ffffL);
+        bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e0fffL);
+        bus.addSlaveCore(watchdog, 0x101e1000L, 0x101e1fffL);
+        bus.addSlaveCore(timer0_1, 0x101e2000L, 0x101e2fffL);
+        bus.addSlaveCore(timer2_3, 0x101e3000L, 0x101e3fffL);
+        bus.addSlaveCore(gpio0, 0x101e4000L, 0x101e4fffL);
+        bus.addSlaveCore(gpio1, 0x101e5000L, 0x101e5fffL);
+        bus.addSlaveCore(gpio2, 0x101e6000L, 0x101e6fffL);
+        bus.addSlaveCore(gpio3, 0x101e7000L, 0x101e7fffL);
+        bus.addSlaveCore(rtc, 0x101e8000L, 0x101e8fffL);
+        bus.addSlaveCore(scard0, 0x101f0000L, 0x101f0fffL);
+        bus.addSlaveCore(uart0, 0x101f1000L, 0x101f1fffL);
+        bus.addSlaveCore(uart1, 0x101f2000L, 0x101f2fffL);
+        bus.addSlaveCore(uart2, 0x101f3000L, 0x101f3fffL);
+        bus.addSlaveCore(ssp, 0x101f4000L, 0x101f4fffL);
 
-        bus.addSlaveCore(ssmc_c0, 0x30000000L, 0x34000000L);
-        bus.addSlaveCore(ssmc_c1, 0x34000000L, 0x38000000L);
-        bus.addSlaveCore(ssmc_c2, 0x38000000L, 0x3c000000L);
+        bus.addSlaveCore(ssmc_c0, 0x30000000L, 0x33ffffffL);
+        bus.addSlaveCore(ssmc_c1, 0x34000000L, 0x37ffffffL);
+        bus.addSlaveCore(ssmc_c2, 0x38000000L, 0x3bffffffL);
 
-        bus.addSlaveCore(ramMain, 0x80000000L, 0x80000000L + (ramMain.getSize() & 0xffffffffL));
+        bus.addSlaveCore(ramMain, 0x80000000L, 0x80000000L + ((ramMain.getSize() - 1) & 0x7fffffffL));
 
         //INTC
         cpu.setINTCForIRQ(intc1st.getSubINTCForIRQ());
