@@ -34,7 +34,12 @@ public class ARMv5 extends CPU {
 
     private boolean raised;
     private boolean jumped;
+    private boolean interrupted;
     private boolean highVector;
+
+    //FIXME: tentative
+    //割り込みチェック回数を減らすための仮実装
+    private int intCount;
 
     public ARMv5() {
         CoProcVFPv2 cpVfps;
@@ -64,6 +69,7 @@ public class ARMv5 extends CPU {
 
         raised = false;
         jumped = false;
+        interrupted = false;
         highVector = false;
     }
 
@@ -5013,6 +5019,35 @@ public class ARMv5 extends CPU {
     }
 
     /**
+     * CPU が外部コアから割り込みを例外を要求されているかどうかを取得します。
+     *
+     * @return CPU が割り込みを要求されている場合 true、
+     * 要求されていない場合 false
+     */
+    public boolean isInterrupted() {
+        return interrupted;
+    }
+
+    /**
+     * CPU が外部コアから割り込みを例外を要求されているかどうかを設定します。
+     *
+     * @param m CPU が割り込みを要求されている場合 true、
+     * 要求されていない場合 false
+     */
+    public void setInterrupted(boolean m) {
+        synchronized(this) {
+            interrupted = m;
+        }
+    }
+
+    /**
+     * CPU が外部コアから割り込みを要求されているかどうかの状態をクリアします。
+     */
+    public void clearInterrupted() {
+        setInterrupted(false);
+    }
+
+    /**
      * 例外ベクタの位置が、ハイベクタ 0xffff0000～0xffff001c にあるか、
      * 正規ベクタ 0x00000000～0x0000001c にあるかを取得します。
      *
@@ -5047,18 +5082,30 @@ public class ARMv5 extends CPU {
         //要求された例外のうち、優先度の高い例外を 1つだけ発生させます
         doImportantException();
 
-        //高速割り込み線がアサートされていれば、FIQ 例外を要求します
-        acceptFIQ();
-        if (isRaised()) {
-            clearRaised();
-            return;
+        //FIXME: tentative
+        //割り込みチェック回数を減らすための仮実装
+        if (intCount >= 1) {
+            intCount = 0;
+            setInterrupted(true);
         }
+        intCount++;
 
-        //割り込み線がアサートされていれば、IRQ 例外を要求します
-        acceptIRQ();
-        if (isRaised()) {
-            clearRaised();
-            return;
+        if (isInterrupted()) {
+            //高速割り込み線がアサートされていれば、FIQ 例外を要求します
+            acceptFIQ();
+            if (isRaised()) {
+                clearRaised();
+                return;
+            }
+
+            //割り込み線がアサートされていれば、IRQ 例外を要求します
+            acceptIRQ();
+            if (isRaised()) {
+                clearRaised();
+                return;
+            }
+
+            clearInterrupted();
         }
 
         //命令を取得します
