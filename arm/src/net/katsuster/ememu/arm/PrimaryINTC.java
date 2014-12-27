@@ -303,7 +303,7 @@ public class PrimaryINTC extends Controller64Reg32 {
             result = 0x0;
             break;
         default:
-            result = super.getReg(regaddr);
+            result = super.readReg(regaddr);
             break;
         }
 
@@ -380,7 +380,7 @@ public class PrimaryINTC extends Controller64Reg32 {
             //read only, ignored
             break;
         default:
-            super.setReg(regaddr, data);
+            super.writeReg(regaddr, data);
             break;
         }
     }

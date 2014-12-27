@@ -176,7 +176,7 @@ public class DMAC extends Controller64Reg32 {
 
         switch (regaddr) {
         default:
-            result = super.getReg(regaddr);
+            result = super.readReg(regaddr);
             break;
         }
 
@@ -201,7 +201,7 @@ public class DMAC extends Controller64Reg32 {
             //read only, ignored
             break;
         default:
-            super.setReg(regaddr, data);
+            super.writeReg(regaddr, data);
             break;
         }
     }

@@ -1,7 +1,6 @@
 package net.katsuster.ememu.arm;
 
 import java.io.*;
-import java.util.*;
 
 import net.katsuster.ememu.ui.*;
 
@@ -180,11 +179,11 @@ public class UART extends Controller64Reg32
 
             break;
         case REG_UARTLCR_H:
-            result = super.getReg(regaddr);
+            result = super.readReg(regaddr);
             //SystemPane.out.printf("UARTLCR_H: read 0x%08x\n", result);
             break;
         case REG_UARTCR:
-            result = super.getReg(regaddr);
+            result = super.readReg(regaddr);
             //SystemPane.out.printf("UARTCR: read 0x%08x\n", result);
             break;
         case REG_UARTIMSC:
@@ -197,7 +196,7 @@ public class UART extends Controller64Reg32
             result = getMaskedInt();
             break;
         default:
-            result = super.getReg(regaddr);
+            result = super.readReg(regaddr);
             break;
         }
 
@@ -242,12 +241,12 @@ public class UART extends Controller64Reg32
         case REG_UARTLCR_H:
             //TODO: Not implemented
             SystemPane.out.printf("UARTLCR_H: 0x%08x\n", data);
-            super.setReg(regaddr, data);
+            super.writeReg(regaddr, data);
             break;
         case REG_UARTCR:
             //TODO: Not implemented
             //SystemPane.out.printf("UARTCR: 0x%08x\n", data);
-            super.setReg(regaddr, data);
+            super.writeReg(regaddr, data);
             break;
         case REG_UARTIFLS:
             //TODO: Not implemented
@@ -274,7 +273,7 @@ public class UART extends Controller64Reg32
             //read only, ignored
             break;
         default:
-            super.setReg(regaddr, data);
+            super.writeReg(regaddr, data);
             break;
         }
     }

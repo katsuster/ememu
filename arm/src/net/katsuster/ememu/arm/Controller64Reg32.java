@@ -43,6 +43,15 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
     }
 
     /**
+     * レジスタの定義を削除します。
+     *
+     * @param addr レジスタアドレス
+     */
+    public void removeReg(int addr) {
+        regs.remove(addr);
+    }
+
+    /**
      * 指定したアドレスにレジスタが存在するか確認します。
      *
      * @param addr レジスタアドレス
@@ -68,7 +77,7 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
      * @param addr レジスタアドレス
      * @return レジスタの値
      */
-    public int getReg(int addr) {
+    public int readReg(int addr) {
         Reg32 r;
 
         r = regs.get(addr);
@@ -86,7 +95,7 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
      * @param addr レジスタアドレス
      * @param val 新しいレジスタの値
      */
-    public void setReg(int addr, int val) {
+    public void writeReg(int addr, int val) {
         Reg32 r;
 
         r = regs.get(addr);
