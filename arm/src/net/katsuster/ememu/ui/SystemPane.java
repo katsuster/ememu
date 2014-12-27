@@ -39,6 +39,7 @@ public class SystemPane extends JPanel {
 
         add(outScr);
         outScr.setPreferredSize(new Dimension(320, 240));
+        outDrainer.setName(TextDrainer.class.getName());
         outDrainer.start();
     }
 
