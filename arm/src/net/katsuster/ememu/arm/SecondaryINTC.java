@@ -8,7 +8,7 @@ package net.katsuster.ememu.arm;
  *
  * @author katsuhiro
  */
-public class SecondaryINTC extends Controller64Reg32 {
+public class SecondaryINTC extends INTC {
     public static final int REG_SIC_STATUS     = 0x000;
     public static final int REG_SIC_RAWSTAT    = 0x004;
     public static final int REG_SIC_ENABLE     = 0x008;

@@ -3,6 +3,9 @@ package net.katsuster.ememu.arm;
 /**
  * コア。
  *
+ * 自身のタイミングで動作します。
+ * 外部からの停止要求を受け付け、停止する努力をします。
+ *
  * @author katsuhiro
  */
 public abstract class Core extends Thread {

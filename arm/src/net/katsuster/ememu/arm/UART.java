@@ -13,7 +13,7 @@ import net.katsuster.ememu.ui.*;
  * @author katsuhiro
  */
 public class UART extends Controller64Reg32
-        implements INTC {
+        implements INTSource {
     private int rawInt;
     private int maskInt;
 

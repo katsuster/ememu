@@ -26,8 +26,8 @@ public class ARMv5 extends CPU {
     private PSR cpsr;
     private CoProc[] coProcs;
     private MMUv5 mmu;
-    private INTC intcIRQ;
-    private INTC intcFIQ;
+    private INTSource intsrcIRQ;
+    private INTSource intsrcFIQ;
 
     private boolean exceptions[];
     private String exceptionReasons[];
@@ -61,8 +61,8 @@ public class ARMv5 extends CPU {
         coProcs[10] = cpVfps;
         coProcs[15] = cpStd;
         mmu = new MMUv5(this, cpStd);
-        intcIRQ = new NullINTC();
-        intcFIQ = new NullINTC();
+        intsrcIRQ = new NullINTSource();
+        intsrcFIQ = new NullINTSource();
 
         exceptions = new boolean[7];
         exceptionReasons = new String[7];
@@ -4877,49 +4877,51 @@ public class ARMv5 extends CPU {
     }
 
     /**
-     * 割り込み線に接続するコントローラを取得します。
+     * 割り込み線に接続するコアを取得します。
      *
-     * 一度も setINTC() が呼ばれていなければ、
-     * NullINTC のインスタンスが返されます。
+     * 一度も setIRQSource() が呼ばれていなければ、
+     * NullINTSource のインスタンスが返されます。
      *
-     * @return 割り込みコントローラ
+     * @return 割り込みを発生させるコア
      */
-    public INTC getINTCForIRQ() {
-        return intcIRQ;
+    public INTSource getIRQSource() {
+        return intsrcIRQ;
     }
 
     /**
-     * 割り込み線に接続するコントローラを設定します。
+     * 割り込み線に接続するコアを設定します。
      *
-     * CPU の割り込み線に割り込みコントローラを接続することに相当します。
+     * CPU の割り込み線に、
+     * 割り込みを発生させるコアを接続することに相当します。
      *
-     * @param c 割り込みコントローラ
+     * @param c 割り込みを発生させるコア
      */
-    public void setINTCForIRQ(INTC c) {
-        intcIRQ = c;
+    public void setIRQSource(INTSource c) {
+        intsrcIRQ = c;
     }
 
     /**
-     * 高速割り込み線に接続するコントローラを取得します。
+     * 高速割り込み線に接続するコアを取得します。
      *
-     * 一度も setINTC() が呼ばれていなければ、
-     * NullINTC のインスタンスが返されます。
+     * 一度も setFIQSource() が呼ばれていなければ、
+     * NullINTSource のインスタンスが返されます。
      *
-     * @return 割り込みコントローラ
+     * @return 割り込みを発生させるコア
      */
-    public INTC getINTCForFIQ() {
-        return intcFIQ;
+    public INTSource getFIQSource() {
+        return intsrcFIQ;
     }
 
     /**
      * 高速割り込み線に接続するコントローラを設定します。
      *
-     * CPU の高速割り込み線に割り込みコントローラを接続することに相当します。
+     * CPU の高速割り込み線に、
+     * 割り込みを発生させるコアを接続することに相当します。
      *
-     * @param c 割り込みコントローラ
+     * @param c 割り込みを発生させるコア
      */
-    public void setINTCForFIQ(INTC c) {
-        intcFIQ = c;
+    public void setFIQSource(INTSource c) {
+        intsrcFIQ = c;
     }
 
     /**
@@ -4934,14 +4936,14 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!getINTCForIRQ().isAssert()) {
+        if (!getIRQSource().isAssert()) {
             //割り込み要求がない
             return;
         }
 
         //割り込み要求の詳細説明を得る
         msg = String.format("accept IRQ from '%s'",
-                getINTCForIRQ().getIRQMessage());
+                getIRQSource().getIRQMessage());
 
         raiseException(EXCEPT_IRQ, msg);
     }
@@ -4958,14 +4960,14 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!getINTCForFIQ().isAssert()) {
+        if (!getFIQSource().isAssert()) {
             //割り込み要求がない
             return;
         }
 
         //割り込み要求の詳細説明を得る
         msg = String.format("accept FIQ from '%s'",
-                getINTCForFIQ().getIRQMessage());
+                getFIQSource().getIRQMessage());
 
         raiseException(EXCEPT_FIQ, msg);
     }

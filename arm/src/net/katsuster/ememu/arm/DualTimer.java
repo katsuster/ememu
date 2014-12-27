@@ -9,7 +9,7 @@ package net.katsuster.ememu.arm;
  * @author katsuhiro
  */
 public class DualTimer extends Controller64Reg32
-        implements INTC {
+        implements INTSource {
     public static final int REG_Timer1Load     = 0x000;
     public static final int REG_Timer1Value    = 0x004;
     public static final int REG_Timer1Control  = 0x008;

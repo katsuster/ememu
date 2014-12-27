@@ -4,6 +4,7 @@ package net.katsuster.ememu.arm;
  * 64 ビットアドレスバスのマスターコア。
  *
  * 自身のタイミングで動作します。
+ * バスに read/write 要求を出します。
  *
  * バスへのアクセス時に用いるアドレスは 64 ビット幅です。
  *
@@ -29,7 +30,6 @@ public abstract class MasterCore64 extends Core {
      * @param bus スレーブバス
      */
     public void setSlaveBus(Bus64 bus) {
-        bus.setMasterCore(this);
         slaveBus = bus;
     }
 

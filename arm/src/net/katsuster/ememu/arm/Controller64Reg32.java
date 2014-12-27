@@ -3,8 +3,7 @@ package net.katsuster.ememu.arm;
 import java.util.*;
 
 /**
- * 64 ビットアドレスバス、
- * 32 ビットレジスタのコントローラ
+ * 64 ビットアドレスバス、32 ビットレジスタを持つコントローラ。
  *
  * @author katsuhiro
  */

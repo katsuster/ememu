@@ -3,20 +3,22 @@ package net.katsuster.ememu.arm;
 import java.util.*;
 
 /**
- * 割り込みコントローラ
+ * 割り込みコントローラ。
+ *
+ * ARM CPU の IRQ（割り込み線）用の信号と、
+ * FIQ（高速割り込み線）用の信号を同時に生成します。
  *
  * 参考: PrimeCell Vectored Interrupt Controller (PL190)
  * ARM DDI0181E
  *
  * @author katsuhiro
  */
-public class PrimaryINTC extends Controller64Reg32 {
-    private List<INTC> intcs;
+public class PrimaryINTC extends INTC {
     private int rawSoftInt;
     private int intEnable;
     private int intSelect;
 
-    public static final int MAX_INTCS = 32;
+    public static final int MAX_INTSRCS = 32;
 
     public static final int REG_VICIRQSTATUS    = 0x000;
     public static final int REG_VICFIQSTATUS    = 0x004;
@@ -77,10 +79,7 @@ public class PrimaryINTC extends Controller64Reg32 {
 
     public PrimaryINTC() {
         //割り込み元の初期化をします
-        intcs = new ArrayList<INTC>();
-        for (int i = 0; i < MAX_INTCS; i++) {
-            connectINTC(i, new NullINTC());
-        }
+        setMaxINTSources(MAX_INTSRCS);
 
         //割り込みステータスの初期化を行います
         rawSoftInt = 0;
@@ -131,83 +130,6 @@ public class PrimaryINTC extends Controller64Reg32 {
     }
 
     /**
-     * 割り込みコントローラにコアを接続します。
-     *
-     * 接続後、コアからの割り込みを受け付け、
-     * 条件に応じて割り込みコントローラの接続先（大抵は CPU です）に、
-     * 割り込みを要求します。
-     *
-     * @param n 0 から 31 までの割り込み線の番号
-     * @param c コア
-     */
-    public void connectINTC(int n, INTC c) {
-        if (n < 0 || MAX_INTCS <= n) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal IRQ source number %d.", n));
-        }
-
-        intcs.add(n, c);
-    }
-
-    /**
-     * 割り込みコントローラからコアを切断します。
-     *
-     * 切断後はコアからの割り込みを受け付けません。
-     *
-     * @param n 0 から 31 までの割り込み線の番号
-     */
-    public void disconnectINTC(int n) {
-        if (n < 0 || MAX_INTCS <= n) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal IRQ source number %d.", n));
-        }
-
-        intcs.add(n, new NullINTC());
-    }
-
-    /**
-     * 指定された割り込み線に接続されているコアを返します。
-     *
-     * @param n 割り込み線の番号
-     * @return コア
-     */
-    public INTC getINTC(int n) {
-        if (n < 0 || MAX_INTCS <= n) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal IRQ source number %d.", n));
-        }
-
-        return intcs.get(n);
-    }
-
-    /**
-     * 現在の割り込み線の状態を取得します。
-     *
-     * 状態の 0 ビット目は割り込み線 0 に、
-     * 1 ビット目は割り込み線 1 に、
-     * n ビット目は割り込み線 n に、それぞれ対応します。
-     *
-     * 状態の各ビットには、コアが割り込みを要求していれば 1、
-     * そうでなければ 0 が設定されます。
-     *
-     * @return 割り込み線の状態
-     */
-    public int getINTCStatus() {
-        INTC c;
-        int rawInt = 0;
-
-        for (int i = 0; i < MAX_INTCS; i++) {
-            c = getINTC(i);
-
-            if (c.isAssert()) {
-                rawInt |= 1 << i;
-            }
-        }
-
-        return rawInt;
-    }
-
-    /**
      * IRQ を要求しているコアの状態を取得します。
      *
      * @return IRQ を要求しているコアの状態
@@ -247,7 +169,7 @@ public class PrimaryINTC extends Controller64Reg32 {
     public int getRawHardInt() {
         int st;
 
-        st = getINTCStatus();
+        st = getINTStatus();
         st |= rawSoftInt;
         st &= intEnable;
 
@@ -385,18 +307,28 @@ public class PrimaryINTC extends Controller64Reg32 {
         }
     }
 
-    public INTC getSubINTCForIRQ() {
-        return new SubINTCForIRQ(this);
+    /**
+     * ARM CPU の IRQ（割り込み線）に接続するコアを取得します。
+     *
+     * @return 割り込み線に接続するコア
+     */
+    public INTSource getIRQSource() {
+        return new INTSourceIRQ(this);
     }
 
-    public INTC getSubINTCForFIQ() {
-        return new SubINTCForFIQ(this);
+    /**
+     * ARM CPU の FIQ（高速割り込み線）に接続するコアを取得します。
+     *
+     * @return 高速割り込み線に接続するコア
+     */
+    public INTSource getFIQSource() {
+        return new INTSourceFIQ(this);
     }
 
-    public class SubINTCForIRQ implements INTC {
+    public class INTSourceIRQ implements INTSource {
         private PrimaryINTC parent;
 
-        public SubINTCForIRQ(PrimaryINTC c) {
+        public INTSourceIRQ(PrimaryINTC c) {
             parent = c;
         }
 
@@ -411,10 +343,10 @@ public class PrimaryINTC extends Controller64Reg32 {
         }
     }
 
-    public class SubINTCForFIQ implements INTC {
+    public class INTSourceFIQ implements INTSource {
         private PrimaryINTC parent;
 
-        public SubINTCForFIQ(PrimaryINTC c) {
+        public INTSourceFIQ(PrimaryINTC c) {
             parent = c;
         }
 

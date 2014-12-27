@@ -3,7 +3,6 @@ package net.katsuster.ememu.board;
 import java.io.*;
 
 import net.katsuster.ememu.arm.*;
-import net.katsuster.ememu.ui.*;
 
 /**
  * ARM Versatile Application Baseboards (AB) and Platform Baseboards (PB).
@@ -69,6 +68,11 @@ public class ARMVersatile {
         RAM ssmc_c1 = new RAM(256 * 1024);
         RAM ssmc_c2 = new RAM(256 * 1024);
 
+        //Master core
+        cpu.setSlaveBus(bus);
+        bus.setMasterCore(cpu);
+
+        //Slave core
         //RAM Image(tentative)
         //  0x00000000 - 0x03ffffff: MPMC Chip Select0, bottom of SDRAM
         //  0x04000000 - 0x07ffffff: MPMC Chip Select0, top of SDRAM
@@ -112,8 +116,6 @@ public class ARMVersatile {
         //    0x80008000 - 0x807fffff: Linux Image
         //    0x80800000 - 0x80ffffff: Linux initramfs
         //    0x81fff000 - 0x81ffffff: ATAG_XXX
-        cpu.setSlaveBus(bus);
-
         bus.addSlaveCore(mpmc_c0_0, 0x00000000L, 0x03ffffffL);
         bus.addSlaveCore(mpmc_c0_1, 0x04000000L, 0x07ffffffL);
         bus.addSlaveCore(mpmc_c1, 0x08000000L, 0x0fffffffL);
@@ -157,13 +159,13 @@ public class ARMVersatile {
         bus.addSlaveCore(ramMain, 0x80000000L, 0x80000000L + ((ramMain.getSize() - 1) & 0x7fffffffL));
 
         //INTC
-        cpu.setINTCForIRQ(intc1st.getSubINTCForIRQ());
-        cpu.setINTCForFIQ(intc1st.getSubINTCForFIQ());
+        cpu.setIRQSource(intc1st.getIRQSource());
+        cpu.setFIQSource(intc1st.getFIQSource());
 
-        intc1st.connectINTC(4, timer0_1);
-        intc1st.connectINTC(12, uart0);
-        intc1st.connectINTC(13, uart1);
-        intc1st.connectINTC(14, uart2);
+        intc1st.connectINTSource(4, timer0_1);
+        intc1st.connectINTSource(12, uart0);
+        intc1st.connectINTSource(13, uart1);
+        intc1st.connectINTSource(14, uart2);
 
         //reset CPU
         cpu.setDisasmMode(false);
