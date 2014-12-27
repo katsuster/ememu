@@ -159,8 +159,8 @@ public class ARMVersatile {
         bus.addSlaveCore(ramMain, 0x80000000L, 0x80000000L + ((ramMain.getSize() - 1) & 0x7fffffffL));
 
         //INTC
-        cpu.setIRQSource(intc1st.getIRQSource());
-        cpu.setFIQSource(intc1st.getFIQSource());
+        cpu.connectINTSource(ARMv5.INTSRC_IRQ, intc1st.getIRQSource());
+        cpu.connectINTSource(ARMv5.INTSRC_FIQ, intc1st.getFIQSource());
 
         intc1st.connectINTSource(4, timer0_1);
         intc1st.connectINTSource(12, uart0);

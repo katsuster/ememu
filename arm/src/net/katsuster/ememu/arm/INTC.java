@@ -5,9 +5,22 @@ package net.katsuster.ememu.arm;
  *
  * @author katsuhiro
  */
-public abstract class INTC extends Controller64Reg32 {
-    private INTSource[] intsrcs = new INTSource[0];
-    private int maxintsrcs = 0;
+public class INTC {
+    private INTSource[] intsrcs;
+    private int maxintsrcs;
+
+    public INTC() {
+        this(0);
+    }
+
+    /**
+     * 割り込みコントローラを作成します。
+     *
+     * @param n コントローラに繋げられるコアの最大数
+     */
+    public INTC(int n) {
+        setMaxINTSources(n);
+    }
 
     /**
      * 割り込みコントローラに繋げられるコアの最大数を取得します。
@@ -36,11 +49,12 @@ public abstract class INTC extends Controller64Reg32 {
      * 割り込みコントローラにコアを接続します。
      *
      * 接続後、コアからの割り込みを受け付け、
-     * 条件に応じて割り込みコントローラの接続先（大抵は CPU です）に、
+     * 条件に応じて割り込みコントローラの接続先
+     * （CPU や、別の割り込みコントローラ）に、
      * 割り込みを要求します。
      *
      * @param n 割り込み線の番号
-     * @param c コア
+     * @param c 割り込みを発生させるコア
      */
     public void connectINTSource(int n, INTSource c) {
         if (n < 0 || getMaxINTSources() <= n) {

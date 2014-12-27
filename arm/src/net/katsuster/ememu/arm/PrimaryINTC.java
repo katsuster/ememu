@@ -13,7 +13,8 @@ import java.util.*;
  *
  * @author katsuhiro
  */
-public class PrimaryINTC extends INTC {
+public class PrimaryINTC extends Controller64Reg32 {
+    private INTC intc;
     private int rawSoftInt;
     private int intEnable;
     private int intSelect;
@@ -78,10 +79,8 @@ public class PrimaryINTC extends INTC {
     public static final int REG_VICPCELLID3     = 0xffc;
 
     public PrimaryINTC() {
-        //割り込み元の初期化をします
-        setMaxINTSources(MAX_INTSRCS);
-
         //割り込みステータスの初期化を行います
+        intc = new INTC(MAX_INTSRCS);
         rawSoftInt = 0;
         intEnable = 0;
         intSelect = 0;
@@ -130,6 +129,27 @@ public class PrimaryINTC extends INTC {
     }
 
     /**
+     * 割り込みコントローラにコアを接続します。
+     *
+     * @param n 割り込み線の番号
+     * @param c 割り込みを発生させるコア
+     */
+    public void connectINTSource(int n, INTSource c) {
+        intc.connectINTSource(n, c);
+    }
+
+    /**
+     * 割り込みコントローラからコアを切断します。
+     *
+     * 切断後はコアからの割り込みを受け付けません。
+     *
+     * @param n 割り込み線の番号
+     */
+    public void disconnectINTSource(int n) {
+        intc.disconnectINTSource(n);
+    }
+
+    /**
      * IRQ を要求しているコアの状態を取得します。
      *
      * @return IRQ を要求しているコアの状態
@@ -169,7 +189,7 @@ public class PrimaryINTC extends INTC {
     public int getRawHardInt() {
         int st;
 
-        st = getINTStatus();
+        st = intc.getINTStatus();
         st |= rawSoftInt;
         st &= intEnable;
 

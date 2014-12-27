@@ -8,7 +8,11 @@ package net.katsuster.ememu.arm;
  *
  * @author katsuhiro
  */
-public class SecondaryINTC extends INTC {
+public class SecondaryINTC extends Controller64Reg32 {
+    private INTC intc;
+
+    public static final int MAX_INTSRCS = 32;
+
     public static final int REG_SIC_STATUS     = 0x000;
     public static final int REG_SIC_RAWSTAT    = 0x004;
     public static final int REG_SIC_ENABLE     = 0x008;
@@ -21,8 +25,31 @@ public class SecondaryINTC extends INTC {
     public static final int REG_SIC_PICENCLR   = 0x024;
 
     public SecondaryINTC() {
+        intc = new INTC(MAX_INTSRCS);
+
         addReg(REG_SIC_ENCLR, "SIC_ENCLR", 0x00000000);
         addReg(REG_SIC_PICENSET, "SIC_PICENSET", 0x00000000);
+    }
+
+    /**
+     * 割り込みコントローラにコアを接続します。
+     *
+     * @param n 割り込み線の番号
+     * @param c 割り込みを発生させるコア
+     */
+    public void connectINTSource(int n, INTSource c) {
+        intc.connectINTSource(n, c);
+    }
+
+    /**
+     * 割り込みコントローラからコアを切断します。
+     *
+     * 切断後はコアからの割り込みを受け付けません。
+     *
+     * @param n 割り込み線の番号
+     */
+    public void disconnectINTSource(int n) {
+        intc.disconnectINTSource(n);
     }
 
     @Override
