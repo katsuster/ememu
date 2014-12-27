@@ -125,7 +125,7 @@ public class SysBaseboard extends Controller64Reg32 {
         switch (regaddr) {
         case REG_SYS_LED:
             //TODO: not implemented
-            result = super.readReg(regaddr);
+            result = super.readWord(regaddr);
             //System.out.printf("SYS_LED: read 0x%08x\n", result);
             break;
         case REG_SYS_OSC4:
@@ -148,7 +148,7 @@ public class SysBaseboard extends Controller64Reg32 {
             result = (int)((System.nanoTime() - start24MHz) / 1000 * 24);
             break;
         default:
-            result = super.readReg(regaddr);
+            result = super.readWord(regaddr);
             break;
         }
 
@@ -165,7 +165,7 @@ public class SysBaseboard extends Controller64Reg32 {
         case REG_SYS_LED:
             //TODO: not implemented
             //System.out.printf("SYS_LED: 0x%08x\n", data);
-            super.writeReg(regaddr, data);
+            super.writeWord(regaddr, data);
             break;
         case REG_SYS_OSC4:
             //TODO: not implemented
@@ -183,7 +183,7 @@ public class SysBaseboard extends Controller64Reg32 {
             //read only, ignored
             break;
         default:
-            super.writeReg(regaddr, data);
+            super.writeWord(regaddr, data);
             break;
         }
     }

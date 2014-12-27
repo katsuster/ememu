@@ -65,7 +65,7 @@ public class SecondaryINTC extends Controller64Reg32 {
             result = 0x0;
             break;
         default:
-            result = super.readReg(regaddr);
+            result = super.readWord(regaddr);
             break;
         }
 
@@ -88,7 +88,7 @@ public class SecondaryINTC extends Controller64Reg32 {
             System.out.printf("SIC_PICENSET: 0x%08x\n", data);
             break;
         default:
-            super.writeReg(regaddr, data);
+            super.writeWord(regaddr, data);
             break;
         }
     }

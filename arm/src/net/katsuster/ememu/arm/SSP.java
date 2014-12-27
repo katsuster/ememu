@@ -81,7 +81,7 @@ public class SSP extends Controller64Reg32 {
 
         switch (regaddr) {
         default:
-            result = super.readReg(regaddr);
+            result = super.readWord(regaddr);
             break;
         }
 
@@ -106,7 +106,7 @@ public class SSP extends Controller64Reg32 {
             //read only, ignored
             break;
         default:
-            super.writeReg(regaddr, data);
+            super.writeWord(regaddr, data);
             break;
         }
     }

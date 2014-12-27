@@ -93,7 +93,7 @@ public class KMI extends Controller64Reg32 {public static final int REG_KMICR   
 
         switch (regaddr) {
         default:
-            result = super.readReg(regaddr);
+            result = super.readWord(regaddr);
             break;
         }
 
@@ -118,7 +118,7 @@ public class KMI extends Controller64Reg32 {public static final int REG_KMICR   
             //read only, ignored
             break;
         default:
-            super.writeReg(regaddr, data);
+            super.writeWord(regaddr, data);
             break;
         }
     }

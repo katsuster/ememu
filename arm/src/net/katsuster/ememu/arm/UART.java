@@ -179,11 +179,11 @@ public class UART extends Controller64Reg32
 
             break;
         case REG_UARTLCR_H:
-            result = super.readReg(regaddr);
+            result = super.readWord(regaddr);
             //SystemPane.out.printf("UARTLCR_H: read 0x%08x\n", result);
             break;
         case REG_UARTCR:
-            result = super.readReg(regaddr);
+            result = super.readWord(regaddr);
             //SystemPane.out.printf("UARTCR: read 0x%08x\n", result);
             break;
         case REG_UARTIMSC:
@@ -196,7 +196,7 @@ public class UART extends Controller64Reg32
             result = getMaskedInt();
             break;
         default:
-            result = super.readReg(regaddr);
+            result = super.readWord(regaddr);
             break;
         }
 
@@ -241,12 +241,12 @@ public class UART extends Controller64Reg32
         case REG_UARTLCR_H:
             //TODO: Not implemented
             SystemPane.out.printf("UARTLCR_H: 0x%08x\n", data);
-            super.writeReg(regaddr, data);
+            super.writeWord(regaddr, data);
             break;
         case REG_UARTCR:
             //TODO: Not implemented
             //SystemPane.out.printf("UARTCR: 0x%08x\n", data);
-            super.writeReg(regaddr, data);
+            super.writeWord(regaddr, data);
             break;
         case REG_UARTIFLS:
             //TODO: Not implemented
@@ -273,7 +273,7 @@ public class UART extends Controller64Reg32
             //read only, ignored
             break;
         default:
-            super.writeReg(regaddr, data);
+            super.writeWord(regaddr, data);
             break;
         }
     }

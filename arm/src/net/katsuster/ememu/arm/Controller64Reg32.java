@@ -3,7 +3,7 @@ package net.katsuster.ememu.arm;
 import java.util.*;
 
 /**
- * 64 ビットアドレスバス（内部アドレスは 32 ビット）、
+ * 64 ビットアドレスバス、
  * 32 ビットレジスタのコントローラ
  *
  * @author katsuhiro
@@ -14,11 +14,11 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
     //データ幅（ビット単位）
     public static final int LEN_WORD_BITS = LEN_WORD * 8;
 
-    private Map<Integer, Reg32> regs;
+    private Map<Long, Reg32> regs;
 
     public Controller64Reg32() {
         regs = Collections.synchronizedMap(
-                new HashMap<Integer, Reg32>());
+                new HashMap<Long, Reg32>());
     }
 
     /**
@@ -27,7 +27,7 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
      * @param addr レジスタアドレス
      * @param name レジスタ名
      */
-    public void addReg(int addr, String name) {
+    public void addReg(long addr, String name) {
         regs.put(addr, new Reg32(name, 0));
     }
 
@@ -38,7 +38,7 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
      * @param name レジスタ名
      * @param val  レジスタの初期値
      */
-    public void addReg(int addr, String name, int val) {
+    public void addReg(long addr, String name, int val) {
         regs.put(addr, new Reg32(name, val));
     }
 
@@ -47,8 +47,26 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
      *
      * @param addr レジスタアドレス
      */
-    public void removeReg(int addr) {
+    public void removeReg(long addr) {
         regs.remove(addr);
+    }
+
+    /**
+     * 指定したアドレスに対応するレジスタを取得します。
+     *
+     * @param addr レジスタアドレス
+     * @return 32ビットレジスタ
+     */
+    public Reg32 getReg(long addr) {
+        Reg32 r;
+
+        r = regs.get(addr);
+        if (r == null) {
+            throw new IllegalArgumentException(String.format(
+                    "Get illegal address 0x%08x.", addr));
+        }
+
+        return r;
     }
 
     /**
@@ -57,7 +75,7 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
      * @param addr レジスタアドレス
      * @return レジスタが存在すれば true、存在しなければ false
      */
-    public boolean isValidReg(int addr) {
+    public boolean isValidReg(long addr) {
         Reg32 r;
 
         r = regs.get(addr);
@@ -69,42 +87,6 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
 
         //return (r != null);
         return true;
-    }
-
-    /**
-     * レジスタの値を取得します。
-     *
-     * @param addr レジスタアドレス
-     * @return レジスタの値
-     */
-    public int readReg(int addr) {
-        Reg32 r;
-
-        r = regs.get(addr);
-        if (r == null) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal address 0x%08x.", addr));
-        }
-
-        return r.getValue();
-    }
-
-    /**
-     * コプロセッサレジスタの値を設定します。
-     *
-     * @param addr レジスタアドレス
-     * @param val 新しいレジスタの値
-     */
-    public void writeReg(int addr, int val) {
-        Reg32 r;
-
-        r = regs.get(addr);
-        if (r == null) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal address 0x%08x.", addr));
-        }
-
-        r.setValue(val);
     }
 
     @Override
@@ -119,7 +101,9 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
      * @param addr アドレス
      * @return データ
      */
-    public abstract int readWord(long addr);
+    public int readWord(long addr) {
+        return getReg(addr).getValue();
+    }
 
     /**
      * 指定したアドレスへ 32 ビットのデータを書き込みます。
@@ -127,7 +111,9 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
      * @param addr アドレス
      * @param data データ
      */
-    public abstract void writeWord(long addr, int data);
+    public void writeWord(long addr, int data) {
+        getReg(addr).setValue(data);
+    }
 
     @Override
     public byte read8(long addr) {

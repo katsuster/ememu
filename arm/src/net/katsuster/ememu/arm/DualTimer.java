@@ -96,7 +96,7 @@ public class DualTimer extends Controller64Reg32
             result = 0x0;
             break;
         default:
-            result = super.readReg(regaddr);
+            result = super.readWord(regaddr);
             break;
         }
 
@@ -154,7 +154,7 @@ public class DualTimer extends Controller64Reg32
             //read only, ignored
             break;
         default:
-            super.writeReg(regaddr, data);
+            super.writeWord(regaddr, data);
             break;
         }
     }
