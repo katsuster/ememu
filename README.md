@@ -2,7 +2,7 @@
 'ememu' is EMbedded system EMUlator written by Java.
 
 #### Requires
-* Java 7 or lator
+* Java 7 or later
 
 #### Supported Systems
 * ARM Versatile AB/PB
