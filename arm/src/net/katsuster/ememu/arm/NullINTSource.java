@@ -9,8 +9,20 @@ package net.katsuster.ememu.arm;
  * @author katsuhiro
  */
 public class NullINTSource implements INTSource {
+    private INTC parentIntc = new INTC();
+
     public NullINTSource() {
         //do nothing
+    }
+
+    @Override
+    public INTC getINTC() {
+        return parentIntc;
+    }
+
+    @Override
+    public void setINTC(INTC ctr) {
+        parentIntc = ctr;
     }
 
     @Override

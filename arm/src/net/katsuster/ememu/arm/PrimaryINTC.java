@@ -346,15 +346,26 @@ public class PrimaryINTC extends Controller64Reg32 {
     }
 
     public class INTSourceIRQ implements INTSource {
-        private PrimaryINTC parent;
+        private INTC parentIntc = new INTC();
+        private PrimaryINTC parentPrim;
 
         public INTSourceIRQ(PrimaryINTC c) {
-            parent = c;
+            parentPrim = c;
+        }
+
+        @Override
+        public INTC getINTC() {
+            return parentIntc;
+        }
+
+        @Override
+        public void setINTC(INTC ctrl) {
+            parentIntc = ctrl;
         }
 
         @Override
         public boolean isAssert() {
-            return parent.getIRQStatus() != 0;
+            return parentPrim.getIRQStatus() != 0;
         }
 
         @Override
@@ -364,15 +375,26 @@ public class PrimaryINTC extends Controller64Reg32 {
     }
 
     public class INTSourceFIQ implements INTSource {
-        private PrimaryINTC parent;
+        private INTC parentIntc = new INTC();
+        private PrimaryINTC parentPrim;
 
         public INTSourceFIQ(PrimaryINTC c) {
-            parent = c;
+            parentPrim = c;
+        }
+
+        @Override
+        public INTC getINTC() {
+            return parentIntc;
+        }
+
+        @Override
+        public void setINTC(INTC ctrl) {
+            parentIntc = ctrl;
         }
 
         @Override
         public boolean isAssert() {
-            return parent.getFIQStatus() != 0;
+            return parentPrim.getFIQStatus() != 0;
         }
 
         @Override

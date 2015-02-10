@@ -10,6 +10,8 @@ package net.katsuster.ememu.arm;
  */
 public class DualTimer extends Controller64Reg32
         implements INTSource {
+    private INTC parentIntc = new INTC();
+
     public static final int REG_Timer1Load     = 0x000;
     public static final int REG_Timer1Value    = 0x004;
     public static final int REG_Timer1Control  = 0x008;
@@ -35,6 +37,9 @@ public class DualTimer extends Controller64Reg32
     public static final int REG_TimerPCellID2  = 0xff8;
     public static final int REG_TimerPCellID3  = 0xffc;
 
+    /**
+     * タイマーを作成します。
+     */
     public DualTimer() {
         addReg(REG_Timer1Load, "Timer1Load", 0x00000000);
         addReg(REG_Timer1Value, "Timer1Value", 0xffffffff);
@@ -161,6 +166,16 @@ public class DualTimer extends Controller64Reg32
 
     private int cnt;
     private boolean trigger;
+
+    @Override
+    public INTC getINTC() {
+        return parentIntc;
+    }
+
+    @Override
+    public void setINTC(INTC ctr) {
+        parentIntc = ctr;
+    }
 
     @Override
     public boolean isAssert() {

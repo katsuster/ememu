@@ -14,6 +14,8 @@ import net.katsuster.ememu.ui.*;
  */
 public class UART extends Controller64Reg32
         implements INTSource {
+    private INTC parentIntc = new INTC();
+
     private int rawInt;
     private int maskInt;
 
@@ -276,6 +278,16 @@ public class UART extends Controller64Reg32
             super.writeWord(regaddr, data);
             break;
         }
+    }
+
+    @Override
+    public INTC getINTC() {
+        return parentIntc;
+    }
+
+    @Override
+    public void setINTC(INTC ctr) {
+        parentIntc = ctr;
     }
 
     @Override

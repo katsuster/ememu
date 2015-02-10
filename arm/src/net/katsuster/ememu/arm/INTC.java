@@ -61,8 +61,13 @@ public class INTC {
             throw new IllegalArgumentException(String.format(
                     "Illegal IRQ source number %d.", n));
         }
+        if (c == null) {
+            throw new IllegalArgumentException(String.format(
+                    "number %d, INTSource is null.", n));
+        }
 
         intsrcs[n] = c;
+        c.setINTC(this);
     }
 
     /**
@@ -78,6 +83,7 @@ public class INTC {
                     "Illegal IRQ source number %d.", n));
         }
 
+        intsrcs[n].setINTC(new INTC());
         intsrcs[n] = new NullINTSource();
     }
 
