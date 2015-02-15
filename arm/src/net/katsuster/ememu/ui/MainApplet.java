@@ -43,7 +43,7 @@ public class MainApplet extends JApplet {
             }
             board.setup(cpu, bus, ramMain);
 
-            Main.bootFromURL(cpu, ramMain, kimage, initram, cmdline);
+            Main.bootFromURI(cpu, ramMain, kimage, initram, cmdline);
 
             //start cores
             bus.startAllSlaveCores();

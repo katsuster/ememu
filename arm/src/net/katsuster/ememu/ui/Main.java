@@ -18,52 +18,14 @@ public class Main {
     public static final int ATAG_VIDEOLFB  = 0x54410008;
     public static final int ATAG_CMDLINE   = 0x54410009;
 
-    public static int loadFile(String filename, CPU cpu, int addr) {
-        int len = 0;
+    public static int loadURIResource(URI uri, CPU cpu, int addr) {
         int i;
 
-        SystemPane.out.println("loadFile: " + filename);
-
-        try {
-            File f = new File(filename);
-            DataInputStream s = new DataInputStream(
-                    new BufferedInputStream(new FileInputStream(f)));
-
-            if (f.length() > Integer.MAX_VALUE) {
-                throw new IllegalArgumentException("Size is too large " +
-                        f.length() + ".");
-            }
-
-            i = 0;
-            len = (int)f.length();
-            for (; i < len - 8; i += 8) {
-                cpu.write64(addr + i, Long.reverseBytes(s.readLong()));
-            }
-            for (; i < len; i++) {
-                cpu.write8(addr + i, s.readByte());
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace(System.err);
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-            throw new RuntimeException(e);
-        }
-
-        SystemPane.out.printf("loadFile: '%s' done, %dbytes.\n",
-                filename, len);
-
-        return len;
-    }
-
-    public static int loadURLResource(URL url, CPU cpu, int addr) {
-        int i;
-
-        SystemPane.out.println("loadURL: " + url.toExternalForm());
+        SystemPane.out.println("loadURL: " + uri.toString());
 
         try {
             DataInputStream s = new DataInputStream(
-                    new BufferedInputStream(url.openStream()));
+                    new BufferedInputStream(uri.toURL().openStream()));
 
             i = 0;
             try {
@@ -83,7 +45,7 @@ public class Main {
         }
 
         SystemPane.out.printf("loadURL: '%s' done, %dbytes.\n",
-                url.toExternalForm(), i);
+                uri.toString(), i);
 
         return i;
     }
@@ -135,85 +97,13 @@ public class Main {
     }
 
     public static void bootFromFile(ARMv5 cpu, RAM ramMain, String kimage, String initram, String cmdline) {
-        byte[] cmdlb = cmdline.getBytes();
-        byte[] cmdalign = new byte[(cmdlb.length + 3) & ~0x3];
-        System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
+        String uriKimage = new File(kimage).toURI().toString();
+        String uriInitram = new File(initram).toURI().toString();
 
-        int addrRAM = 0x80000000;
-        int addrAtags = addrRAM + ramMain.getSize() - 4096;
-
-        //Cannot change this address
-        final int addrImage = 0x80008000;
-        int sizeImage = 0;
-        int addrInitram = 0x80800000;
-        int sizeInitram = 0;
-        boolean initramExist = !initram.equals("");
-
-        //tentative boot loader for Linux
-        //load Image file
-        sizeImage = loadFile(kimage, cpu, addrImage);
-        //load initramfs file
-        if (initramExist) {
-            sizeInitram = loadFile(initram, cpu, addrInitram);
-        }
-
-        //r0: 0
-        cpu.setReg(0, 0);
-
-        //r1: machine type
-        //ARM-Versatile PB
-        cpu.setReg(1, 0x00000183);
-        //ARM-Versatile AB
-        //cpu.setReg(1, 0x0000025e);
-
-        //r2: atags or dtb pointer.
-        cpu.setReg(2, addrAtags);
-        {
-            //ATAG_CORE, size, tag, [flags, pagesize, rootdev]
-            cpu.write32(addrAtags + 0x00, 0x00000002);
-            cpu.write32(addrAtags + 0x04, ATAG_CORE);
-            //cpu.write32(addrAtags + 0x08, 0x00000000);
-            //cpu.write32(addrAtags + 0x0c, 0x00001000);
-            //cpu.write32(addrAtags + 0x10, 0x00000000);
-            //addrAtags += 0x14;
-            addrAtags += 0x08;
-
-            //ATAG_MEM, size, tag, size, start
-            cpu.write32(addrAtags + 0x00, 0x00000004);
-            cpu.write32(addrAtags + 0x04, ATAG_MEM);
-            cpu.write32(addrAtags + 0x08, ramMain.getSize());
-            cpu.write32(addrAtags + 0x0c, addrRAM);
-            addrAtags += 0x10;
-
-            //ATAG_INITRD2, size, tag, size, start
-            if (initramExist) {
-                cpu.write32(addrAtags + 0x00, 0x00000004);
-                cpu.write32(addrAtags + 0x04, ATAG_INITRD2);
-                cpu.write32(addrAtags + 0x08, addrInitram);
-                cpu.write32(addrAtags + 0x0c, sizeInitram);
-                addrAtags += 0x10;
-            }
-
-            //ATAG_CMDLINE
-            cpu.write32(addrAtags + 0x00, 0x00000002 + cmdalign.length / 4);
-            cpu.write32(addrAtags + 0x04, ATAG_CMDLINE);
-            for (int i = 0; i < cmdalign.length; i++) {
-                cpu.write8(addrAtags + 0x08 + i, cmdalign[i]);
-            }
-            addrAtags += 0x08 + cmdalign.length;
-
-            //ATAG_NONE, size, tag
-            cpu.write32(addrAtags + 0x00, 0x00000002);
-            cpu.write32(addrAtags + 0x04, ATAG_NONE);
-            addrAtags += 0x08;
-        }
-
-        //pc: entry of stext
-        cpu.setPC(addrImage);
-        cpu.setJumped(false);
+        bootFromURI(cpu, ramMain, uriKimage, uriInitram, cmdline);
     }
 
-    public static void bootFromURL(ARMv5 cpu, RAM ramMain, String kimage, String initram, String cmdline) {
+    public static void bootFromURI(ARMv5 cpu, RAM ramMain, String kimage, String initram, String cmdline) {
         byte[] cmdlb = cmdline.getBytes();
         byte[] cmdalign = new byte[(cmdlb.length + 3) & ~0x3];
         System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
@@ -231,15 +121,25 @@ public class Main {
         //tentative boot loader for Linux
         try {
             //load Image file
-            sizeImage = loadURLResource(new URL(kimage), cpu, addrImage);
+            sizeImage = loadURIResource(new URI(kimage), cpu, addrImage);
             //load initramfs file
             if (initramExist) {
-                sizeInitram = loadURLResource(new URL(initram), cpu, addrInitram);
+                sizeInitram = loadURIResource(new URI(initram), cpu, addrInitram);
             }
-        } catch (MalformedURLException e) {
+        } catch (URISyntaxException e) {
             e.printStackTrace(System.err);
             return;
         }
+
+        //report address mapping
+        SystemPane.out.printf("Address mapping:\n" +
+                        "  RAM      : 0x%08x\n" +
+                        "  Kernel   : 0x%08x - 0x%08x\n" +
+                        "  Initramfs: 0x%08x - 0x%08x\n" +
+                        "  ATAGS    : 0x%08x - 0x%08x\n",
+                addrRAM, addrImage, addrImage + sizeImage - 1,
+                addrInitram, addrInitram + sizeInitram - 1,
+                addrAtags, addrAtags + 4096 - 1);
 
         //r0: 0
         cpu.setReg(0, 0);
