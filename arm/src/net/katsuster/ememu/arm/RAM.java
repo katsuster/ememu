@@ -58,23 +58,29 @@ public class RAM extends SlaveCore64 {
         }
     }
 
+    @Override
+    public boolean tryRead(long addr, int len) {
+        return tryAccess(addr, len);
+    }
+
+    @Override
+    public boolean tryWrite(long addr, int len) {
+        return tryAccess(addr, len);
+    }
+
     /**
      * 指定されたアドレスからの読み書きが可能かどうかを判定します。
      *
      * @param addr アドレス
+     * @param len  データのサイズ
      * @return 読み書きが可能な場合は true、不可能な場合は false
      */
-    public boolean tryAccess(long addr) {
+    public boolean tryAccess(long addr, int len) {
         int wordAddr;
 
         wordAddr = (int)(addr / LEN_WORD);
 
         return words.length > wordAddr;
-    }
-
-    @Override
-    public boolean tryRead(long addr) {
-        return tryAccess(addr);
     }
 
     @Override
@@ -101,11 +107,6 @@ public class RAM extends SlaveCore64 {
     @Override
     public long read64(long addr) {
         return readWord(addr);
-    }
-
-    @Override
-    public boolean tryWrite(long addr) {
-        return tryAccess(addr);
     }
 
     @Override

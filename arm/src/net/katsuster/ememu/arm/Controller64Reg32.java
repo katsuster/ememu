@@ -89,10 +89,10 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
     }
 
     @Override
-    public abstract boolean tryRead(long addr);
+    public abstract boolean tryRead(long addr, int len);
 
     @Override
-    public abstract boolean tryWrite(long addr);
+    public abstract boolean tryWrite(long addr, int len);
 
     /**
      * 指定されたアドレスから 32 ビットのデータを読み取ります。

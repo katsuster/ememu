@@ -215,9 +215,10 @@ public abstract class SlaveCore64 extends Core {
      * 指定されたアドレスからの読み取りが可能かどうかを判定します。
      *
      * @param addr アドレス
+     * @param len  書き込むデータのサイズ
      * @return 読み取りが可能な場合は true、不可能な場合は false
      */
-    public abstract boolean tryRead(long addr);
+    public abstract boolean tryRead(long addr, int len);
 
     /**
      * 指定されたアドレスから 8 ビットのデータを読み取ります。
@@ -255,9 +256,10 @@ public abstract class SlaveCore64 extends Core {
      * 指定されたアドレスへの書き込みが可能かどうかを判定します。
      *
      * @param addr アドレス
+     * @param len  書き込むデータのサイズ
      * @return 書き込みが可能な場合は true、不可能な場合は false
      */
-    public abstract boolean tryWrite(long addr);
+    public abstract boolean tryWrite(long addr, int len);
 
     /**
      * 指定したアドレスへ 8 ビットのデータを書き込みます。

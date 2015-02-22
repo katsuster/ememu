@@ -85,7 +85,7 @@ public class Bus64 {
 
         offSt = addr - sca.getStartAddress();
         //offEd = offSt + len - 1;
-        return sca.getCore().tryRead(offSt);
+        return sca.getCore().tryRead(offSt, len);
     }
 
     /**
@@ -189,7 +189,7 @@ public class Bus64 {
 
         offSt = addr - sca.getStartAddress();
         //offEd = offSt + len - 1;
-        return sca.getCore().tryWrite(offSt);
+        return sca.getCore().tryWrite(offSt, len);
     }
 
     /**
