@@ -41,6 +41,148 @@ public abstract class CPU extends MasterCore64 {
     }
 
     /**
+     * 指定されたアドレスからデータを読み出せるかどうかを取得します。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @param len  読み取るデータのサイズ
+     * @return 読み出しが可能ならば true、不可能ならば false
+     */
+    public boolean tryRead_a32(int addr, int len) {
+        long addrl = addr & 0xffffffffL;
+        return tryRead(addrl, len);
+    }
+
+    /**
+     * 指定したアドレスから 8 ビットを読み出します。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @return 指定したアドレスにあるデータ
+     */
+    public byte read8_a32(int addr) {
+        long addrl = addr & 0xffffffffL;
+        return read8(addrl);
+    }
+
+    /**
+     * 指定したアドレスから 16 ビットを読み出します。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @return 指定したアドレスにあるデータ
+     */
+    public short read16_a32(int addr) {
+        long addrl = addr & 0xffffffffL;
+        return read16(addrl);
+    }
+
+    /**
+     * 指定したアドレスから 32 ビットを読み出します。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @return 指定したアドレスにあるデータ
+     */
+    public int read32_a32(int addr) {
+        long addrl = addr & 0xffffffffL;
+        return read32(addrl);
+    }
+
+    /**
+     * 指定したアドレスから 64 ビットを読み出します。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @return 指定したアドレスにあるデータ
+     */
+    public long read64_a32(int addr) {
+        long addrl = addr & 0xffffffffL;
+        return read64(addrl);
+    }
+
+    /**
+     * 指定したアドレスにデータを書き込めるかどうかを取得します。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @param len  書き込むデータのサイズ
+     * @return 書き込みが可能ならば true、不可能ならば false
+     */
+    public boolean tryWrite_a32(int addr, int len) {
+        long addrl = addr & 0xffffffffL;
+        return tryWrite(addrl, len);
+    }
+
+    /**
+     * 指定したアドレスに 8 ビットを書き込みます。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @param data 書き込むデータ
+     */
+    public void write8_a32(int addr, byte data) {
+        long addrl = addr & 0xffffffffL;
+        write8(addrl, data);
+    }
+
+    /**
+     * 指定したアドレスに 16 ビットを書き込みます。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @param data 書き込むデータ
+     */
+    public void write16_a32(int addr, short data) {
+        long addrl = addr & 0xffffffffL;
+        write16(addrl, data);
+    }
+
+    /**
+     * 指定したアドレスに 32 ビットを書き込みます。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @param data 書き込むデータ
+     */
+    public void write32_a32(int addr, int data) {
+        long addrl = addr & 0xffffffffL;
+        write32(addrl, data);
+    }
+
+    /**
+     * 指定したアドレスに 64 ビットを書き込みます。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @param data 書き込むデータ
+     */
+    public void write64_a32(int addr, long data) {
+        long addrl = addr & 0xffffffffL;
+        write64(addrl, data);
+    }
+
+    /**
      * キャリーが発生する（符号無し演算の加算がオーバーフローする）か、
      * 否か、を取得します。
      *

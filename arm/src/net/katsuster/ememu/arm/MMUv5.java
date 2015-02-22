@@ -333,13 +333,13 @@ public class MMUv5 {
         }
 
         paL1 = getL1Address(va);
-        if (!getCPU().tryRead(paL1, 4)) {
+        if (!getCPU().tryRead_a32(paL1, 4)) {
             //変換時の外部アボート、第1レベル
             faultMMU(FS_TRANS_L1, 0, va, inst, priv, read,
                     String.format("MMU trans L1, paL1:0x%08x", paL1));
             return 0;
         }
-        entryL1 = getCPU().read32(paL1);
+        entryL1 = getCPU().read32_a32(paL1);
         typeL1 = BitOp.getField32(entryL1, 0, 2);
 
         switch (typeL1) {
@@ -749,14 +749,14 @@ public class MMUv5 {
         int pa;
 
         paL2 = getL2AddressCoarse(va, entryL1);
-        if (!getCPU().tryRead(paL2, 4)) {
+        if (!getCPU().tryRead_a32(paL2, 4)) {
             //変換時の外部アボート、第2レベル
             faultMMU(FS_TRANS_L2, 0, va, inst, priv, read,
                     String.format("MMU trans L2 coarse, entryL1:0x%08x, paL2:0x%08x",
                             entryL1, paL2));
             return 0;
         }
-        entryL2 = getCPU().read32(paL2);
+        entryL2 = getCPU().read32_a32(paL2);
         typeL2 = BitOp.getField32(entryL2, 0, 2);
 
         switch (typeL2) {
@@ -810,14 +810,14 @@ public class MMUv5 {
         int pa;
 
         paL2 = getL2AddressFine(va, entryL1);
-        if (!getCPU().tryRead(paL2, 4)) {
+        if (!getCPU().tryRead_a32(paL2, 4)) {
             //変換時の外部アボート、第2レベル
             faultMMU(FS_TRANS_L2, 0, va, inst, priv, read,
                     String.format("MMU trans L2 fine, entryL1:0x%08x, paL2:0x%08x",
                             entryL1, paL2));
             return 0;
         }
-        entryL2 = getCPU().read32(paL2);
+        entryL2 = getCPU().read32_a32(paL2);
         typeL2 = BitOp.getField32(entryL2, 0, 2);
 
         switch (typeL2) {

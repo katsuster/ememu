@@ -2353,12 +2353,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr, 4) || !tryWrite(paddr, 4)) {
+        if (!tryRead_a32(paddr, 4) || !tryWrite_a32(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("swp [%08x]", paddr));
             return;
         }
-        right = read32(paddr);
+        right = read32_a32(paddr);
 
         switch (rot) {
         case 0:
@@ -2379,7 +2379,7 @@ public class ARMv5 extends CPU {
                             inst.getInst(), rn, rot));
         }
 
-        write32(paddr, left);
+        write32_a32(paddr, left);
         setReg(rd, right);
     }
 
@@ -2418,12 +2418,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr, 4)) {
+        if (!tryRead_a32(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrt [%08x]", paddr));
             return;
         }
-        value = read32(paddr);
+        value = read32_a32(paddr);
 
         switch (rot) {
         case 0:
@@ -2488,12 +2488,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr, 1)) {
+        if (!tryRead_a32(paddr, 1)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrbt [%08x]", paddr));
             return;
         }
-        value = (int)(read8(paddr)) & 0xff;
+        value = (int)(read8_a32(paddr)) & 0xff;
 
         setReg(rd, value);
 
@@ -2541,12 +2541,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr, 1)) {
+        if (!tryRead_a32(paddr, 1)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrb [%08x]", paddr));
             return;
         }
-        value = (int)(read8(paddr)) & 0xff;
+        value = (int)(read8_a32(paddr)) & 0xff;
 
         setReg(rd, value);
 
@@ -2599,12 +2599,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr, 4)) {
+        if (!tryRead_a32(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldr [%08x]", paddr));
             return;
         }
-        value = read32(paddr);
+        value = read32_a32(paddr);
 
         switch (rot) {
         case 0:
@@ -2680,12 +2680,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr, 2)) {
+        if (!tryRead_a32(paddr, 2)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrh [%08x]", paddr));
             return;
         }
-        value = read16(paddr) & 0xffff;
+        value = read16_a32(paddr) & 0xffff;
 
         setReg(rd, value);
 
@@ -2737,12 +2737,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr, 1)) {
+        if (!tryRead_a32(paddr, 1)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrsb [%08x]", paddr));
             return;
         }
-        value = read8(paddr);
+        value = read8_a32(paddr);
 
         setReg(rd, value);
 
@@ -2794,12 +2794,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr, 2)) {
+        if (!tryRead_a32(paddr, 2)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrsh [%08x]", paddr));
             return;
         }
-        value = read16(paddr);
+        value = read16_a32(paddr);
 
         setReg(rd, value);
 
@@ -2851,13 +2851,13 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr, 4) || !tryRead(paddr + 4, 4)) {
+        if (!tryRead_a32(paddr, 4) || !tryRead_a32(paddr + 4, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrd [%08x]", paddr));
             return;
         }
-        value1 = read32(paddr);
-        value2 = read32(paddr + 4);
+        value1 = read32_a32(paddr);
+        value2 = read32_a32(paddr + 4);
 
         setReg(rd, value1);
         setReg(rd + 1, value2);
@@ -2918,12 +2918,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr, 4)) {
+        if (!tryWrite_a32(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strt [%08x]", paddr));
             return;
         }
-        write32(paddr, getReg(rd));
+        write32_a32(paddr, getReg(rd));
 
         //P ビットは必ず 0、W ビットは必ず 1、ベースレジスタを更新する
         setReg(rn, offset);
@@ -2962,12 +2962,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr, 1)) {
+        if (!tryWrite_a32(paddr, 1)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strbt [%08x]", paddr));
             return;
         }
-        write8(paddr, (byte) getReg(rd));
+        write8_a32(paddr, (byte) getReg(rd));
 
         //P ビットは必ず 0、W ビットは必ず 1、ベースレジスタを更新する
         setReg(rn, offset);
@@ -3013,12 +3013,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr, 1)) {
+        if (!tryWrite_a32(paddr, 1)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strb [%08x]", paddr));
             return;
         }
-        write8(paddr, (byte) getReg(rd));
+        write8_a32(paddr, (byte) getReg(rd));
 
         if (!p || w) {
             //ベースレジスタを更新する
@@ -3068,12 +3068,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr, 4)) {
+        if (!tryWrite_a32(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("str [%08x]", paddr));
             return;
         }
-        write32(paddr, getReg(rd));
+        write32_a32(paddr, getReg(rd));
 
         if (!p || w) {
             //ベースレジスタを更新する
@@ -3123,12 +3123,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr, 2)) {
+        if (!tryWrite_a32(paddr, 2)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strh [%08x]", paddr));
             return;
         }
-        write16(paddr, (short) getReg(rd));
+        write16_a32(paddr, (short) getReg(rd));
 
         if (!p || w) {
             //ベースレジスタを更新する
@@ -3178,13 +3178,13 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr, 4) || !tryWrite(paddr + 4, 4)) {
+        if (!tryWrite_a32(paddr, 4) || !tryWrite_a32(paddr + 4, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strd [%08x]", paddr));
             return;
         }
-        write32(paddr, getReg(rd));
-        write32(paddr + 4, getReg(rd + 1));
+        write32_a32(paddr, getReg(rd));
+        write32_a32(paddr + 4, getReg(rd + 1));
 
         if (!p || w) {
             //ベースレジスタを更新する
@@ -3235,12 +3235,12 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryRead(paddr, 4)) {
+            if (!tryRead_a32(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(1) [%08x]", paddr));
                 return;
             }
-            setReg(i, read32(paddr));
+            setReg(i, read32_a32(paddr));
             vaddr += 4;
         }
         //r15
@@ -3253,12 +3253,12 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryRead(paddr, 4)) {
+            if (!tryRead_a32(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(1) [%08x]", paddr));
                 return;
             }
-            v = read32(paddr);
+            v = read32_a32(paddr);
 
             setPC(v & 0xfffffffe);
             getCPSR().setTBit(BitOp.getBit32(v, 0));
@@ -3312,13 +3312,13 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryRead(paddr, 4)) {
+            if (!tryRead_a32(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(2) [%08x]", paddr));
                 return;
             }
             //必ずユーザモードのレジスタをロードする
-            v = read32(paddr);
+            v = read32_a32(paddr);
             vaddr += 4;
 
             mod = getCPSR().getMode();
@@ -3372,12 +3372,12 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryRead(paddr, 4)) {
+            if (!tryRead_a32(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(3) [%08x]", paddr));
                 return;
             }
-            setReg(i, read32(paddr));
+            setReg(i, read32_a32(paddr));
             vaddr += 4;
         }
 
@@ -3391,12 +3391,12 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr, 4)) {
+        if (!tryRead_a32(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldm(3) [%08x]", paddr));
             return;
         }
-        v = read32(paddr);
+        v = read32_a32(paddr);
 
         setPC(v & 0xfffffffe);
         getCPSR().setTBit(BitOp.getBit32(v, 0));
@@ -3448,12 +3448,12 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryWrite(paddr, 4)) {
+            if (!tryWrite_a32(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("stm(1) [%08x]", paddr));
                 return;
             }
-            write32(paddr, getReg(i));
+            write32_a32(paddr, getReg(i));
             vaddr += 4;
         }
 
@@ -3503,7 +3503,7 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryWrite(paddr, 4)) {
+            if (!tryWrite_a32(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("stm(2) [%08x]", paddr));
                 return;
@@ -3514,7 +3514,7 @@ public class ARMv5 extends CPU {
             v = getReg(i);
             getCPSR().setMode(mod);
 
-            write32(paddr, v);
+            write32_a32(paddr, v);
             vaddr += 4;
         }
     }
@@ -3901,12 +3901,12 @@ public class ARMv5 extends CPU {
                 return null;
             }
 
-            if (!tryRead(paddr, 4)) {
+            if (!tryRead_a32(paddr, 4)) {
                 raiseException(EXCEPT_ABT_INST,
                         String.format("exec [%08x]", paddr));
                 return null;
             }
-            v = read32(paddr);
+            v = read32_a32(paddr);
             inst = new Instruction(v);
 
             return inst;

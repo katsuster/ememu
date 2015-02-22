@@ -30,7 +30,7 @@ public class Main {
             i = 0;
             try {
                 while (true) {
-                    cpu.write8(addr + i, s.readByte());
+                    cpu.write8_a32(addr + i, s.readByte());
                     i++;
                 }
             } catch (EOFException e) {
@@ -154,8 +154,8 @@ public class Main {
         cpu.setReg(2, addrAtags);
         {
             //ATAG_CORE, size, tag, [flags, pagesize, rootdev]
-            cpu.write32(addrAtags + 0x00, 0x00000002);
-            cpu.write32(addrAtags + 0x04, ATAG_CORE);
+            cpu.write32_a32(addrAtags + 0x00, 0x00000002);
+            cpu.write32_a32(addrAtags + 0x04, ATAG_CORE);
             //cpu.write32(addrAtags + 0x08, 0x00000000);
             //cpu.write32(addrAtags + 0x0c, 0x00001000);
             //cpu.write32(addrAtags + 0x10, 0x00000000);
@@ -163,32 +163,32 @@ public class Main {
             addrAtags += 0x08;
 
             //ATAG_MEM, size, tag, size, start
-            cpu.write32(addrAtags + 0x00, 0x00000004);
-            cpu.write32(addrAtags + 0x04, ATAG_MEM);
-            cpu.write32(addrAtags + 0x08, ramMain.getSize());
-            cpu.write32(addrAtags + 0x0c, addrRAM);
+            cpu.write32_a32(addrAtags + 0x00, 0x00000004);
+            cpu.write32_a32(addrAtags + 0x04, ATAG_MEM);
+            cpu.write32_a32(addrAtags + 0x08, ramMain.getSize());
+            cpu.write32_a32(addrAtags + 0x0c, addrRAM);
             addrAtags += 0x10;
 
             //ATAG_INITRD2, size, tag, size, start
             if (initramExist) {
-                cpu.write32(addrAtags + 0x00, 0x00000004);
-                cpu.write32(addrAtags + 0x04, ATAG_INITRD2);
-                cpu.write32(addrAtags + 0x08, addrInitram);
-                cpu.write32(addrAtags + 0x0c, sizeInitram);
+                cpu.write32_a32(addrAtags + 0x00, 0x00000004);
+                cpu.write32_a32(addrAtags + 0x04, ATAG_INITRD2);
+                cpu.write32_a32(addrAtags + 0x08, addrInitram);
+                cpu.write32_a32(addrAtags + 0x0c, sizeInitram);
                 addrAtags += 0x10;
             }
 
             //ATAG_CMDLINE
-            cpu.write32(addrAtags + 0x00, 0x00000002 + cmdalign.length / 4);
-            cpu.write32(addrAtags + 0x04, ATAG_CMDLINE);
+            cpu.write32_a32(addrAtags + 0x00, 0x00000002 + cmdalign.length / 4);
+            cpu.write32_a32(addrAtags + 0x04, ATAG_CMDLINE);
             for (int i = 0; i < cmdalign.length; i++) {
-                cpu.write8(addrAtags + 0x08 + i, cmdalign[i]);
+                cpu.write8_a32(addrAtags + 0x08 + i, cmdalign[i]);
             }
             addrAtags += 0x08 + cmdalign.length;
 
             //ATAG_NONE, size, tag
-            cpu.write32(addrAtags + 0x00, 0x00000002);
-            cpu.write32(addrAtags + 0x04, ATAG_NONE);
+            cpu.write32_a32(addrAtags + 0x00, 0x00000002);
+            cpu.write32_a32(addrAtags + 0x04, ATAG_NONE);
             addrAtags += 0x08;
         }
 

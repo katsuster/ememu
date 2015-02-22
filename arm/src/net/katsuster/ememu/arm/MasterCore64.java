@@ -8,8 +8,6 @@ package net.katsuster.ememu.arm;
  *
  * バスへのアクセス時に用いるアドレスは 64 ビット幅です。
  *
- * TODO: 現在、コア内部アドレスは 32 ビット幅を用いています。
- *
  * @author katsuhiro
  */
 public abstract class MasterCore64 extends Core {
@@ -40,9 +38,8 @@ public abstract class MasterCore64 extends Core {
      * @param len  読み取るデータのサイズ
      * @return 読み出しが可能ならば true、不可能ならば false
      */
-    public boolean tryRead(int addr, int len) {
-        long addrl = addr & 0xffffffffL;
-        return slaveBus.tryRead(addrl, len);
+    public boolean tryRead(long addr, int len) {
+        return slaveBus.tryRead(addr, len);
     }
 
     /**
@@ -51,9 +48,8 @@ public abstract class MasterCore64 extends Core {
      * @param addr アドレス
      * @return 指定したアドレスにあるデータ
      */
-    public byte read8(int addr) {
-        long addrl = addr & 0xffffffffL;
-        return slaveBus.read8(addrl);
+    public byte read8(long addr) {
+        return slaveBus.read8(addr);
     }
 
     /**
@@ -62,9 +58,8 @@ public abstract class MasterCore64 extends Core {
      * @param addr アドレス
      * @return 指定したアドレスにあるデータ
      */
-    public short read16(int addr) {
-        long addrl = addr & 0xffffffffL;
-        return slaveBus.read16(addrl);
+    public short read16(long addr) {
+        return slaveBus.read16(addr);
     }
 
     /**
@@ -73,9 +68,8 @@ public abstract class MasterCore64 extends Core {
      * @param addr アドレス
      * @return 指定したアドレスにあるデータ
      */
-    public int read32(int addr) {
-        long addrl = addr & 0xffffffffL;
-        return slaveBus.read32(addrl);
+    public int read32(long addr) {
+        return slaveBus.read32(addr);
     }
 
     /**
@@ -84,9 +78,8 @@ public abstract class MasterCore64 extends Core {
      * @param addr アドレス
      * @return 指定したアドレスにあるデータ
      */
-    public long read64(int addr) {
-        long addrl = addr & 0xffffffffL;
-        return slaveBus.read64(addrl);
+    public long read64(long addr) {
+        return slaveBus.read64(addr);
     }
 
     /**
@@ -96,9 +89,8 @@ public abstract class MasterCore64 extends Core {
      * @param len  書き込むデータのサイズ
      * @return 書き込みが可能ならば true、不可能ならば false
      */
-    public boolean tryWrite(int addr, int len) {
-        long addrl = addr & 0xffffffffL;
-        return slaveBus.tryWrite(addrl, len);
+    public boolean tryWrite(long addr, int len) {
+        return slaveBus.tryWrite(addr, len);
     }
 
     /**
@@ -107,9 +99,8 @@ public abstract class MasterCore64 extends Core {
      * @param addr アドレス
      * @param data 書き込むデータ
      */
-    public void write8(int addr, byte data) {
-        long addrl = addr & 0xffffffffL;
-        slaveBus.write8(addrl, data);
+    public void write8(long addr, byte data) {
+        slaveBus.write8(addr, data);
     }
 
     /**
@@ -118,9 +109,8 @@ public abstract class MasterCore64 extends Core {
      * @param addr アドレス
      * @param data 書き込むデータ
      */
-    public void write16(int addr, short data) {
-        long addrl = addr & 0xffffffffL;
-        slaveBus.write16(addrl, data);
+    public void write16(long addr, short data) {
+        slaveBus.write16(addr, data);
     }
 
     /**
@@ -129,9 +119,8 @@ public abstract class MasterCore64 extends Core {
      * @param addr アドレス
      * @param data 書き込むデータ
      */
-    public void write32(int addr, int data) {
-        long addrl = addr & 0xffffffffL;
-        slaveBus.write32(addrl, data);
+    public void write32(long addr, int data) {
+        slaveBus.write32(addr, data);
     }
 
     /**
@@ -140,8 +129,7 @@ public abstract class MasterCore64 extends Core {
      * @param addr アドレス
      * @param data 書き込むデータ
      */
-    public void write64(int addr, long data) {
-        long addrl = addr & 0xffffffffL;
-        slaveBus.write64(addrl, data);
+    public void write64(long addr, long data) {
+        slaveBus.write64(addr, data);
     }
 }
