@@ -10,7 +10,8 @@ package net.katsuster.ememu.arm;
  *
  * @author katsuhiro
  */
-public abstract class SlaveCore64 extends Core {
+public abstract class SlaveCore64 extends Core
+        implements RWCore64 {
     public static long ADDR_MASK_8 = ~0x0L;
     public static long ADDR_MASK_16 = ~0x1L;
     public static long ADDR_MASK_32 = ~0x3L;
@@ -211,85 +212,33 @@ public abstract class SlaveCore64 extends Core {
         return (data & ~(eraseMask << sh)) | ((newData & eraseMask) << sh);
     }
 
-    /**
-     * 指定されたアドレスからの読み取りが可能かどうかを判定します。
-     *
-     * @param addr アドレス
-     * @param len  書き込むデータのサイズ
-     * @return 読み取りが可能な場合は true、不可能な場合は false
-     */
+    @Override
     public abstract boolean tryRead(long addr, int len);
 
-    /**
-     * 指定されたアドレスから 8 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
+    @Override
     public abstract byte read8(long addr);
 
-    /**
-     * 指定されたアドレスから 16 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
+    @Override
     public abstract short read16(long addr);
 
-    /**
-     * 指定されたアドレスから 32 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
+    @Override
     public abstract int read32(long addr);
 
-    /**
-     * 指定されたアドレスから 64 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
+    @Override
     public abstract long read64(long addr);
 
-    /**
-     * 指定されたアドレスへの書き込みが可能かどうかを判定します。
-     *
-     * @param addr アドレス
-     * @param len  書き込むデータのサイズ
-     * @return 書き込みが可能な場合は true、不可能な場合は false
-     */
+    @Override
     public abstract boolean tryWrite(long addr, int len);
 
-    /**
-     * 指定したアドレスへ 8 ビットのデータを書き込みます。
-     *
-     * @param addr アドレス
-     * @param data データ
-     */
+    @Override
     public abstract void write8(long addr, byte data);
 
-    /**
-     * 指定したアドレスへ 16 ビットのデータを書き込みます。
-     *
-     * @param addr アドレス
-     * @param data データ
-     */
+    @Override
     public abstract void write16(long addr, short data);
 
-    /**
-     * 指定したアドレスへ 32 ビットのデータを書き込みます。
-     *
-     * @param addr アドレス
-     * @param data データ
-     */
+    @Override
     public abstract void write32(long addr, int data);
 
-    /**
-     * 指定したアドレスへ 64 ビットのデータを書き込みます。
-     *
-     * @param addr アドレス
-     * @param data データ
-     */
+    @Override
     public abstract void write64(long addr, long data);
 }

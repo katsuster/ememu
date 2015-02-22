@@ -9,7 +9,8 @@ import java.util.*;
  *
  * @author katsuhiro
  */
-public class Bus64 {
+public class Bus64
+        implements RWCore64 {
     private MasterCore64 master;
     //32bit アドレス内のスレーブコアに高速にアクセスするためのテーブル
     private SlaveCoreAddress[] slaves;
@@ -64,13 +65,7 @@ public class Bus64 {
         master.halt();
     }
 
-    /**
-     * 指定されたアドレスからの読み取りが可能かどうかを判定します。
-     *
-     * @param addr アドレス
-     * @param len  読み取るデータのサイズ
-     * @return 読み取りが可能な場合は true、不可能な場合は false
-     */
+    @Override
     public boolean tryRead(long addr, int len) {
         SlaveCoreAddress sca;
         long offSt;
@@ -88,12 +83,7 @@ public class Bus64 {
         return sca.getCore().tryRead(offSt, len);
     }
 
-    /**
-     * 指定されたアドレスから 8 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
+    @Override
     public byte read8(long addr) {
         SlaveCoreAddress sca;
         long offSt;
@@ -108,12 +98,7 @@ public class Bus64 {
         return sca.getCore().read8(offSt);
     }
 
-    /**
-     * 指定されたアドレスから 16 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
+    @Override
     public short read16(long addr) {
         SlaveCoreAddress sca;
         long offSt;
@@ -128,12 +113,7 @@ public class Bus64 {
         return sca.getCore().read16(offSt);
     }
 
-    /**
-     * 指定されたアドレスから 32 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
+    @Override
     public int read32(long addr) {
         SlaveCoreAddress sca;
         long offSt;
@@ -148,12 +128,7 @@ public class Bus64 {
         return sca.getCore().read32(offSt);
     }
 
-    /**
-     * 指定されたアドレスから 64 ビットのデータを読み取ります。
-     *
-     * @param addr アドレス
-     * @return データ
-     */
+    @Override
     public long read64(long addr) {
         SlaveCoreAddress sca;
         long offSt;
@@ -168,13 +143,7 @@ public class Bus64 {
         return sca.getCore().read64(offSt);
     }
 
-    /**
-     * 指定されたアドレスへの書き込みが可能かどうかを判定します。
-     *
-     * @param addr アドレス
-     * @param len  書き込むデータのサイズ
-     * @return 書き込みが可能な場合は true、不可能な場合は false
-     */
+    @Override
     public boolean tryWrite(long addr, int len) {
         SlaveCoreAddress sca;
         long offSt;
@@ -192,12 +161,7 @@ public class Bus64 {
         return sca.getCore().tryWrite(offSt, len);
     }
 
-    /**
-     * 指定したアドレスへ 8 ビットのデータを書き込みます。
-     *
-     * @param addr アドレス
-     * @param data データ
-     */
+    @Override
     public void write8(long addr, byte data) {
         SlaveCoreAddress sca;
         long offSt;
@@ -212,12 +176,7 @@ public class Bus64 {
         sca.getCore().write8(offSt, data);
     }
 
-    /**
-     * 指定したアドレスへ 16 ビットのデータを書き込みます。
-     *
-     * @param addr アドレス
-     * @param data データ
-     */
+    @Override
     public void write16(long addr, short data) {
         SlaveCoreAddress sca;
         long offSt;
@@ -232,12 +191,7 @@ public class Bus64 {
         sca.getCore().write16(offSt, data);
     }
 
-    /**
-     * 指定したアドレスへ 32 ビットのデータを書き込みます。
-     *
-     * @param addr アドレス
-     * @param data データ
-     */
+    @Override
     public void write32(long addr, int data) {
         SlaveCoreAddress sca;
         long offSt;
@@ -252,12 +206,7 @@ public class Bus64 {
         sca.getCore().write32(offSt, data);
     }
 
-    /**
-     * 指定したアドレスへ 64 ビットのデータを書き込みます。
-     *
-     * @param addr アドレス
-     * @param data データ
-     */
+    @Override
     public void write64(long addr, long data) {
         SlaveCoreAddress sca;
         long offSt;
