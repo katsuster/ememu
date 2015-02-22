@@ -89,10 +89,32 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
     }
 
     @Override
-    public abstract boolean tryRead(long addr, int len);
+    public boolean tryRead(long addr, int len) {
+        return tryAccess(addr, len);
+    }
 
     @Override
-    public abstract boolean tryWrite(long addr, int len);
+    public boolean tryWrite(long addr, int len) {
+        return tryAccess(addr, len);
+    }
+
+    /**
+     * 指定されたアドレスからの読み書きが可能かどうかを判定します。
+     *
+     * @param addr アドレス
+     * @param len  データのサイズ
+     * @return 読み書きが可能な場合は true、不可能な場合は false
+     */
+    public boolean tryAccess(long addr, int len) {
+        int regaddr;
+
+        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+
+        switch (regaddr) {
+        default:
+            return isValidReg(regaddr);
+        }
+    }
 
     /**
      * 指定されたアドレスから 32 ビットのデータを読み取ります。

@@ -61,35 +61,6 @@ public class LCDC extends Controller64Reg32 {
         addReg(REG_CLCDPCELLID3, "CLCDPCELLID3", 0xb1);
     }
 
-
-    @Override
-    public boolean tryRead(long addr, int len) {
-        return tryAccess(addr, len);
-    }
-
-    @Override
-    public boolean tryWrite(long addr, int len) {
-        return tryAccess(addr, len);
-    }
-
-    /**
-     * 指定されたアドレスからの読み書きが可能かどうかを判定します。
-     *
-     * @param addr アドレス
-     * @param len  データのサイズ
-     * @return 読み書きが可能な場合は true、不可能な場合は false
-     */
-    public boolean tryAccess(long addr, int len) {
-        int regaddr;
-
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
-
-        switch (regaddr) {
-        default:
-            return super.isValidReg(regaddr);
-        }
-    }
-
     @Override
     public int readWord(long addr) {
         int regaddr;
