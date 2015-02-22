@@ -12,14 +12,14 @@ package net.katsuster.ememu.arm;
  */
 public abstract class SlaveCore64 extends Core
         implements RWCore64 {
-    public static long ADDR_MASK_8 = ~0x0L;
-    public static long ADDR_MASK_16 = ~0x1L;
-    public static long ADDR_MASK_32 = ~0x3L;
-    public static long ADDR_MASK_64 = ~0x7L;
-    public static long DATA_MASK_8 = 0xffL;
-    public static long DATA_MASK_16 = 0xffffL;
-    public static long DATA_MASK_32 = 0xffffffffL;
-    public static long DATA_MASK_64 = 0xffffffffffffffffL;
+    final public static long ADDR_MASK_8 = ~0x0L;
+    final public static long ADDR_MASK_16 = ~0x1L;
+    final public static long ADDR_MASK_32 = ~0x3L;
+    final public static long ADDR_MASK_64 = ~0x7L;
+    final public static long DATA_MASK_8 = 0xffL;
+    final public static long DATA_MASK_16 = 0xffffL;
+    final public static long DATA_MASK_32 = 0xffffffffL;
+    final public static long DATA_MASK_64 = 0xffffffffffffffffL;
 
     private Bus64 masterBus;
 
@@ -211,34 +211,4 @@ public abstract class SlaveCore64 extends Core
 
         return (data & ~(eraseMask << sh)) | ((newData & eraseMask) << sh);
     }
-
-    @Override
-    public abstract boolean tryRead(long addr, int len);
-
-    @Override
-    public abstract byte read8(long addr);
-
-    @Override
-    public abstract short read16(long addr);
-
-    @Override
-    public abstract int read32(long addr);
-
-    @Override
-    public abstract long read64(long addr);
-
-    @Override
-    public abstract boolean tryWrite(long addr, int len);
-
-    @Override
-    public abstract void write8(long addr, byte data);
-
-    @Override
-    public abstract void write16(long addr, short data);
-
-    @Override
-    public abstract void write32(long addr, int data);
-
-    @Override
-    public abstract void write64(long addr, long data);
 }
