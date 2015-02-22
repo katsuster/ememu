@@ -37,11 +37,12 @@ public abstract class MasterCore64 extends Core {
      * 指定されたアドレスからデータを読み出せるかどうかを取得します。
      *
      * @param addr アドレス
+     * @param len  読み取るデータのサイズ
      * @return 読み出しが可能ならば true、不可能ならば false
      */
-    public boolean tryRead(int addr) {
+    public boolean tryRead(int addr, int len) {
         long addrl = addr & 0xffffffffL;
-        return slaveBus.tryRead(addrl, 4);
+        return slaveBus.tryRead(addrl, len);
     }
 
     /**
@@ -92,11 +93,12 @@ public abstract class MasterCore64 extends Core {
      * 指定したアドレスにデータを書き込めるかどうかを取得します。
      *
      * @param addr アドレス
+     * @param len  書き込むデータのサイズ
      * @return 書き込みが可能ならば true、不可能ならば false
      */
-    public boolean tryWrite(int addr) {
+    public boolean tryWrite(int addr, int len) {
         long addrl = addr & 0xffffffffL;
-        return slaveBus.tryWrite(addrl, 4);
+        return slaveBus.tryWrite(addrl, len);
     }
 
     /**

@@ -333,7 +333,7 @@ public class MMUv5 {
         }
 
         paL1 = getL1Address(va);
-        if (!getCPU().tryRead(paL1)) {
+        if (!getCPU().tryRead(paL1, 4)) {
             //変換時の外部アボート、第1レベル
             faultMMU(FS_TRANS_L1, 0, va, inst, priv, read,
                     String.format("MMU trans L1, paL1:0x%08x", paL1));
@@ -749,7 +749,7 @@ public class MMUv5 {
         int pa;
 
         paL2 = getL2AddressCoarse(va, entryL1);
-        if (!getCPU().tryRead(paL2)) {
+        if (!getCPU().tryRead(paL2, 4)) {
             //変換時の外部アボート、第2レベル
             faultMMU(FS_TRANS_L2, 0, va, inst, priv, read,
                     String.format("MMU trans L2 coarse, entryL1:0x%08x, paL2:0x%08x",
@@ -810,7 +810,7 @@ public class MMUv5 {
         int pa;
 
         paL2 = getL2AddressFine(va, entryL1);
-        if (!getCPU().tryRead(paL2)) {
+        if (!getCPU().tryRead(paL2, 4)) {
             //変換時の外部アボート、第2レベル
             faultMMU(FS_TRANS_L2, 0, va, inst, priv, read,
                     String.format("MMU trans L2 fine, entryL1:0x%08x, paL2:0x%08x",

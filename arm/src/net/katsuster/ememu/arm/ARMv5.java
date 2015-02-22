@@ -2353,7 +2353,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr) || !tryWrite(paddr)) {
+        if (!tryRead(paddr, 4) || !tryWrite(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("swp [%08x]", paddr));
             return;
@@ -2418,7 +2418,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr)) {
+        if (!tryRead(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrt [%08x]", paddr));
             return;
@@ -2488,7 +2488,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr)) {
+        if (!tryRead(paddr, 1)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrbt [%08x]", paddr));
             return;
@@ -2541,7 +2541,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr)) {
+        if (!tryRead(paddr, 1)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrb [%08x]", paddr));
             return;
@@ -2599,7 +2599,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr)) {
+        if (!tryRead(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldr [%08x]", paddr));
             return;
@@ -2680,7 +2680,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr)) {
+        if (!tryRead(paddr, 2)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrh [%08x]", paddr));
             return;
@@ -2737,7 +2737,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr)) {
+        if (!tryRead(paddr, 1)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrsb [%08x]", paddr));
             return;
@@ -2794,7 +2794,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr)) {
+        if (!tryRead(paddr, 2)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrsh [%08x]", paddr));
             return;
@@ -2851,7 +2851,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr) || !tryRead(paddr + 4)) {
+        if (!tryRead(paddr, 4) || !tryRead(paddr + 4, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldrd [%08x]", paddr));
             return;
@@ -2918,7 +2918,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr)) {
+        if (!tryWrite(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strt [%08x]", paddr));
             return;
@@ -2962,7 +2962,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr)) {
+        if (!tryWrite(paddr, 1)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strbt [%08x]", paddr));
             return;
@@ -3013,7 +3013,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr)) {
+        if (!tryWrite(paddr, 1)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strb [%08x]", paddr));
             return;
@@ -3068,7 +3068,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr)) {
+        if (!tryWrite(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("str [%08x]", paddr));
             return;
@@ -3123,7 +3123,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr)) {
+        if (!tryWrite(paddr, 2)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strh [%08x]", paddr));
             return;
@@ -3178,7 +3178,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryWrite(paddr) || !tryWrite(paddr + 4)) {
+        if (!tryWrite(paddr, 4) || !tryWrite(paddr + 4, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("strd [%08x]", paddr));
             return;
@@ -3235,7 +3235,7 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryRead(paddr)) {
+            if (!tryRead(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(1) [%08x]", paddr));
                 return;
@@ -3253,7 +3253,7 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryRead(paddr)) {
+            if (!tryRead(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(1) [%08x]", paddr));
                 return;
@@ -3312,7 +3312,7 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryRead(paddr)) {
+            if (!tryRead(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(2) [%08x]", paddr));
                 return;
@@ -3372,7 +3372,7 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryRead(paddr)) {
+            if (!tryRead(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("ldm(3) [%08x]", paddr));
                 return;
@@ -3391,7 +3391,7 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        if (!tryRead(paddr)) {
+        if (!tryRead(paddr, 4)) {
             raiseException(EXCEPT_ABT_DATA,
                     String.format("ldm(3) [%08x]", paddr));
             return;
@@ -3448,7 +3448,7 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryWrite(paddr)) {
+            if (!tryWrite(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("stm(1) [%08x]", paddr));
                 return;
@@ -3503,7 +3503,7 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            if (!tryWrite(paddr)) {
+            if (!tryWrite(paddr, 4)) {
                 raiseException(EXCEPT_ABT_DATA,
                         String.format("stm(2) [%08x]", paddr));
                 return;
@@ -3901,7 +3901,7 @@ public class ARMv5 extends CPU {
                 return null;
             }
 
-            if (!tryRead(paddr)) {
+            if (!tryRead(paddr, 4)) {
                 raiseException(EXCEPT_ABT_INST,
                         String.format("exec [%08x]", paddr));
                 return null;
