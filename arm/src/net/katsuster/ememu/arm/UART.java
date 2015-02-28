@@ -14,7 +14,7 @@ import net.katsuster.ememu.ui.*;
  */
 public class UART extends Controller64Reg32
         implements INTSource {
-    private INTC parentIntc = new INTC();
+    private INTDestination intDst = new NullINTDestination();
 
     private int rawInt;
     private int maskInt;
@@ -260,13 +260,18 @@ public class UART extends Controller64Reg32
     }
 
     @Override
-    public INTC getINTC() {
-        return parentIntc;
+    public INTDestination getINTDestination() {
+        return intDst;
     }
 
     @Override
-    public void setINTC(INTC ctr) {
-        parentIntc = ctr;
+    public void connectINTDestination(INTDestination c) {
+        intDst = c;
+    }
+
+    @Override
+    public void disconnectINTDestination() {
+        intDst = new NullINTDestination();
     }
 
     @Override
@@ -316,6 +321,8 @@ public class UART extends Controller64Reg32
                     break;
                 }
                 bufInput.append((char)c);
+
+                intDst.setRaisedInterrupt(true);
             } catch (InterruptedException e) {
                 //ignored
             } catch (IOException e) {

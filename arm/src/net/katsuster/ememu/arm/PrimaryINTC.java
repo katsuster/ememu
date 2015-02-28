@@ -1,20 +1,25 @@
 package net.katsuster.ememu.arm;
 
-import java.util.*;
-
 /**
  * 割り込みコントローラ。
  *
+ * <p>
  * ARM CPU の IRQ（割り込み線）用の信号と、
  * FIQ（高速割り込み線）用の信号を同時に生成します。
+ * </p>
  *
+ * <p>
  * 参考: PrimeCell Vectored Interrupt Controller (PL190)
  * ARM DDI0181E
+ * </p>
  *
  * @author katsuhiro
  */
-public class PrimaryINTC extends Controller64Reg32 {
-    private INTC intc;
+public class PrimaryINTC extends Controller64Reg32
+        implements INTDestination {
+    private NormalINTC intc;
+    private INTSourceIRQ intSrcIrq;
+    private INTSourceFIQ intSrcFiq;
     private int rawSoftInt;
     private int intEnable;
     private int intSelect;
@@ -79,8 +84,11 @@ public class PrimaryINTC extends Controller64Reg32 {
     public static final int REG_VICPCELLID3     = 0xffc;
 
     public PrimaryINTC() {
+        intc = new NormalINTC(MAX_INTSRCS);
+        intc.connectINTDestination(this);
+        intSrcIrq = new INTSourceIRQ(this);
+        intSrcFiq = new INTSourceFIQ(this);
         //割り込みステータスの初期化を行います
-        intc = new INTC(MAX_INTSRCS);
         rawSoftInt = 0;
         intEnable = 0;
         intSelect = 0;
@@ -189,7 +197,7 @@ public class PrimaryINTC extends Controller64Reg32 {
     public int getRawHardInt() {
         int st;
 
-        st = intc.getINTStatus();
+        st = intc.getSourcesStatus();
         st |= rawSoftInt;
         st &= intEnable;
 
@@ -312,7 +320,7 @@ public class PrimaryINTC extends Controller64Reg32 {
      * @return 割り込み線に接続するコア
      */
     public INTSource getIRQSource() {
-        return new INTSourceIRQ(this);
+        return intSrcIrq;
     }
 
     /**
@@ -321,11 +329,22 @@ public class PrimaryINTC extends Controller64Reg32 {
      * @return 高速割り込み線に接続するコア
      */
     public INTSource getFIQSource() {
-        return new INTSourceFIQ(this);
+        return intSrcFiq;
     }
 
-    public class INTSourceIRQ implements INTSource {
-        private INTC parentIntc = new INTC();
+    @Override
+    public boolean isRaisedInterrupt() {
+        return false;
+    }
+
+    @Override
+    public void setRaisedInterrupt(boolean m) {
+        intSrcIrq.setRaisedInterrupt(m);
+        intSrcFiq.setRaisedInterrupt(m);
+    }
+
+    public class INTSourceIRQ implements INTSource, INTDestination {
+        private INTDestination intDst = new NullINTDestination();
         private PrimaryINTC parentPrim;
 
         public INTSourceIRQ(PrimaryINTC c) {
@@ -333,28 +352,43 @@ public class PrimaryINTC extends Controller64Reg32 {
         }
 
         @Override
-        public INTC getINTC() {
-            return parentIntc;
+        public INTDestination getINTDestination() {
+            return intDst;
         }
 
         @Override
-        public void setINTC(INTC ctrl) {
-            parentIntc = ctrl;
+        public void connectINTDestination(INTDestination c) {
+            intDst = c;
+        }
+
+        @Override
+        public void disconnectINTDestination() {
+            intDst = new NullINTDestination();
         }
 
         @Override
         public boolean isAssert() {
-            return parentPrim.getIRQStatus() != 0;
+            return isRaisedInterrupt();
         }
 
         @Override
         public String getIRQMessage() {
             return "PrimaryINTC IRQ";
         }
+
+        @Override
+        public boolean isRaisedInterrupt() {
+            return parentPrim.getIRQStatus() != 0;
+        }
+
+        @Override
+        public void setRaisedInterrupt(boolean m) {
+            intDst.setRaisedInterrupt(isRaisedInterrupt());
+        }
     }
 
-    public class INTSourceFIQ implements INTSource {
-        private INTC parentIntc = new INTC();
+    public class INTSourceFIQ implements INTSource, INTDestination {
+        private INTDestination intDst = new NullINTDestination();
         private PrimaryINTC parentPrim;
 
         public INTSourceFIQ(PrimaryINTC c) {
@@ -362,23 +396,38 @@ public class PrimaryINTC extends Controller64Reg32 {
         }
 
         @Override
-        public INTC getINTC() {
-            return parentIntc;
+        public INTDestination getINTDestination() {
+            return intDst;
         }
 
         @Override
-        public void setINTC(INTC ctrl) {
-            parentIntc = ctrl;
+        public void connectINTDestination(INTDestination c) {
+            intDst = c;
+        }
+
+        @Override
+        public void disconnectINTDestination() {
+            intDst = new NullINTDestination();
         }
 
         @Override
         public boolean isAssert() {
-            return parentPrim.getFIQStatus() != 0;
+            return isRaisedInterrupt();
         }
 
         @Override
         public String getIRQMessage() {
             return "PrimaryINTC FIQ";
+        }
+
+        @Override
+        public boolean isRaisedInterrupt() {
+            return parentPrim.getFIQStatus() != 0;
+        }
+
+        @Override
+        public void setRaisedInterrupt(boolean m) {
+            intDst.setRaisedInterrupt(isRaisedInterrupt());
         }
     }
 

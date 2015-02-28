@@ -3,13 +3,16 @@ package net.katsuster.ememu.arm;
 /**
  * 2nd 割り込みコントローラ
  *
+ * <p>
  * 参考: Versatile Application Baseboard for ARM926EJ-S User Guide
  * ARM DUI0225D
+ * </p>
  *
  * @author katsuhiro
  */
-public class SecondaryINTC extends Controller64Reg32 {
-    private INTC intc;
+public class SecondaryINTC extends Controller64Reg32
+        implements INTDestination {
+    private NormalINTC intc;
 
     public static final int MAX_INTSRCS = 32;
 
@@ -25,7 +28,8 @@ public class SecondaryINTC extends Controller64Reg32 {
     public static final int REG_SIC_PICENCLR   = 0x024;
 
     public SecondaryINTC() {
-        intc = new INTC(MAX_INTSRCS);
+        intc = new NormalINTC(MAX_INTSRCS);
+        intc.connectINTDestination(this);
 
         addReg(REG_SIC_ENCLR, "SIC_ENCLR", 0x00000000);
         addReg(REG_SIC_PICENSET, "SIC_PICENSET", 0x00000000);
@@ -97,6 +101,17 @@ public class SecondaryINTC extends Controller64Reg32 {
             super.writeWord(regaddr, data);
             break;
         }
+    }
+
+    @Override
+    public boolean isRaisedInterrupt() {
+        return false;
+    }
+
+    @Override
+    public void setRaisedInterrupt(boolean m) {
+        //FIXME: do nothing
+        m = false;
     }
 
     @Override

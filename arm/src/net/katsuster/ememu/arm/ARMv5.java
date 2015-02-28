@@ -26,14 +26,13 @@ public class ARMv5 extends CPU {
     private PSR cpsr;
     private CoProc[] coProcs;
     private MMUv5 mmu;
-    private INTC intc;
+    private NormalINTC intc;
 
     private boolean exceptions[];
     private String exceptionReasons[];
 
-    private boolean raised;
+    private boolean raisedException;
     private boolean jumped;
-    private boolean interrupted;
     private boolean highVector;
 
     //FIXME: tentative
@@ -65,14 +64,14 @@ public class ARMv5 extends CPU {
         coProcs[10] = cpVfps;
         coProcs[15] = cpStd;
         mmu = new MMUv5(this, cpStd);
-        intc = new INTC(MAX_INTSRCS);
+        intc = new NormalINTC(MAX_INTSRCS);
+        intc.connectINTDestination(this);
 
         exceptions = new boolean[7];
         exceptionReasons = new String[7];
 
-        raised = false;
+        raisedException = false;
         jumped = false;
-        interrupted = false;
         highVector = false;
     }
 
@@ -4567,7 +4566,7 @@ public class ARMv5 extends CPU {
             throw new IllegalArgumentException("Illegal exception number " + num);
         }
 
-        if (isRaised()) {
+        if (isRaisedException()) {
             //例外状態がクリアされず残っている
             //一度の命令で二度、例外が起きるのはおそらくバグでしょう
             throw new IllegalStateException("Exception status is not cleared.");
@@ -4576,7 +4575,7 @@ public class ARMv5 extends CPU {
         exceptions[num] = true;
         exceptionReasons[num] = dbgmsg;
 
-        setRaised(true);
+        setRaisedException(true);
     }
 
     /**
@@ -4960,8 +4959,8 @@ public class ARMv5 extends CPU {
      *
      * @return CPU が例外を要求した場合 true、要求していない場合 false
      */
-    public boolean isRaised() {
-        return raised;
+    public boolean isRaisedException() {
+        return raisedException;
     }
 
     /**
@@ -4969,17 +4968,10 @@ public class ARMv5 extends CPU {
      *
      * @param m CPU が例外を要求した場合 true、要求していない場合 false
      */
-    public void setRaised(boolean m) {
+    public void setRaisedException(boolean m) {
         synchronized(this) {
-            raised = m;
+            raisedException = m;
         }
-    }
-
-    /**
-     * CPU が例外を要求したかどうかの状態をクリアします。
-     */
-    public void clearRaised() {
-        setRaised(false);
     }
 
     /**
@@ -5000,35 +4992,6 @@ public class ARMv5 extends CPU {
         synchronized(this) {
             jumped = b;
         }
-    }
-
-    /**
-     * CPU が外部コアから割り込みを例外を要求されているかどうかを取得します。
-     *
-     * @return CPU が割り込みを要求されている場合 true、
-     * 要求されていない場合 false
-     */
-    public boolean isInterrupted() {
-        return interrupted;
-    }
-
-    /**
-     * CPU が外部コアから割り込みを例外を要求されているかどうかを設定します。
-     *
-     * @param m CPU が割り込みを要求されている場合 true、
-     * 要求されていない場合 false
-     */
-    public void setInterrupted(boolean m) {
-        synchronized(this) {
-            interrupted = m;
-        }
-    }
-
-    /**
-     * CPU が外部コアから割り込みを要求されているかどうかの状態をクリアします。
-     */
-    public void clearInterrupted() {
-        setInterrupted(false);
     }
 
     /**
@@ -5068,34 +5031,35 @@ public class ARMv5 extends CPU {
 
         //FIXME: tentative
         //割り込みチェック回数を減らすための仮実装
-        if (intCount >= 25) {
-            intCount = 0;
-            setInterrupted(true);
+        if (intCount >= 1000) {
+            setRaisedInterrupt(true);
         }
         intCount++;
 
-        if (isInterrupted()) {
+        if (isRaisedInterrupt()) {
+            intCount = 0;
+
             //高速割り込み線がアサートされていれば、FIQ 例外を要求します
             acceptFIQ();
-            if (isRaised()) {
-                clearRaised();
+            if (isRaisedException()) {
+                setRaisedException(false);
                 return;
             }
 
             //割り込み線がアサートされていれば、IRQ 例外を要求します
             acceptIRQ();
-            if (isRaised()) {
-                clearRaised();
+            if (isRaisedException()) {
+                setRaisedException(false);
                 return;
             }
 
-            clearInterrupted();
+            setRaisedInterrupt(false);
         }
 
         //命令を取得します
         inst = fetch();
-        if (isRaised()) {
-            clearRaised();
+        if (isRaisedException()) {
+            setRaisedException(false);
             return;
         }
 
@@ -5119,8 +5083,8 @@ public class ARMv5 extends CPU {
 
         //実行して、次の命令へ
         execute(inst);
-        if (isRaised()) {
-            clearRaised();
+        if (isRaisedException()) {
+            setRaisedException(false);
             return;
         }
         nextPC();

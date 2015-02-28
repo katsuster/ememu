@@ -1,132 +1,94 @@
 package net.katsuster.ememu.arm;
 
 /**
- * 割り込みを受け付けるコア。
+ * 割り込みコントローラ。
+ *
+ * <p>
+ * 複数の割り込み発生元となるコア（下位コア）から割り込みを受け付け、
+ * 他のコア（上位コア）に割り込みを掛けます。
+ * </p>
+ *
+ * <p>
+ * 上位コアと下位コアの関係は下記の通りです。
+ * 矢印は割り込みを掛ける方向を表します。
+ * </p>
+ *
+ * <pre>
+ * 上位                                   下位
+ * -------------------------------------------
+ * INTDestination <----- INTC <--+-- INTSource
+ *                               +-- INTSource
+ *                               +-- ...
+ *                               `-- INTSource
+ * </pre>
  *
  * @author katsuhiro
  */
-public class INTC {
-    private INTSource[] intsrcs;
-    private int maxintsrcs;
-
-    public INTC() {
-        this(0);
-    }
-
-    /**
-     * 割り込みコントローラを作成します。
-     *
-     * @param n コントローラに繋げられるコアの最大数
-     */
-    public INTC(int n) {
-        setMaxINTSources(n);
-    }
-
+public interface INTC extends INTDestination {
     /**
      * 割り込みコントローラに繋げられるコアの最大数を取得します。
      *
      * @return コントローラに繋げられるコアの最大数
      */
-    public int getMaxINTSources() {
-        return maxintsrcs;
-    }
+    public abstract int getMaxINTSources();
 
     /**
      * 割り込みコントローラに繋げられるコアの最大数を設定します。
      *
      * @param n コントローラに繋げられるコアの最大数
      */
-    public void setMaxINTSources(int n) {
-        //割り込み元の初期化をします
-        intsrcs = new INTSource[n];
-        maxintsrcs = n;
-        for (int i = 0; i < n; i++) {
-            connectINTSource(i, new NullINTSource());
-        }
-    }
+    public abstract void setMaxINTSources(int n);
 
     /**
      * 割り込みコントローラにコアを接続します。
      *
-     * 接続後、コアからの割り込みを受け付け、
-     * 条件に応じて割り込みコントローラの接続先
-     * （CPU や、別の割り込みコントローラ）に、
-     * 割り込みを要求します。
+     * <p>
+     * 接続後、コアからの割り込みを受け付けます。
+     * </p>
      *
-     * @param n 割り込み線の番号
+     * @param n 下位の割り込み線の番号
      * @param c 割り込みを発生させるコア
      */
-    public void connectINTSource(int n, INTSource c) {
-        if (n < 0 || getMaxINTSources() <= n) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal IRQ source number %d.", n));
-        }
-        if (c == null) {
-            throw new IllegalArgumentException(String.format(
-                    "number %d, INTSource is null.", n));
-        }
-
-        intsrcs[n] = c;
-        c.setINTC(this);
-    }
+    public abstract void connectINTSource(int n, INTSource c);
 
     /**
      * 割り込みコントローラからコアを切断します。
      *
+     * <p>
      * 切断後はコアからの割り込みを受け付けません。
+     * </p>
      *
-     * @param n 割り込み線の番号
+     * @param n 下位の割り込み線の番号
      */
-    public void disconnectINTSource(int n) {
-        if (n < 0 || getMaxINTSources() <= n) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal IRQ source number %d.", n));
-        }
-
-        intsrcs[n].setINTC(new INTC());
-        intsrcs[n] = new NullINTSource();
-    }
+    public abstract void disconnectINTSource(int n);
 
     /**
      * 指定された割り込み線に接続されているコアを返します。
      *
-     * @param n 割り込み線の番号
+     * @param n 下位の割り込み線の番号
      * @return コア
      */
-    public INTSource getINTSource(int n) {
-        if (n < 0 || getMaxINTSources() <= n) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal IRQ source number %d.", n));
-        }
-
-        return intsrcs[n];
-    }
+    public abstract INTSource getINTSource(int n);
 
     /**
-     * 現在の割り込み線の状態を一度に取得します。
-     * 先頭の 32コアまでを同時に扱えます。
+     * 下位の割り込み線の状態を一度に取得します。
      *
+     * <p>
+     * 先頭の 32コアまでを同時に扱えます。
+     * </p>
+     *
+     * <p>
      * 状態の 0 ビット目は割り込み線 0 に、
      * 1 ビット目は割り込み線 1 に、
      * n ビット目は割り込み線 n に、それぞれ対応します。
+     * </p>
      *
+     * <p>
      * 状態の各ビットには、コアが割り込みを要求していれば 1、
      * そうでなければ 0 が設定されます。
+     * </p>
      *
-     * @return 割り込み線の状態
+     * @return 下位の割り込み線の状態
      */
-    public int getINTStatus() {
-        INTSource c;
-        int rawInt = 0;
-
-        for (int i = 0; i < getMaxINTSources(); i++) {
-            c = getINTSource(i);
-
-            if (c.isAssert()) {
-                rawInt |= 1 << i;
-            }
-        }
-
-        return rawInt;
-    }
+    public abstract int getSourcesStatus();
 }

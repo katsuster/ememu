@@ -5,15 +5,18 @@ package net.katsuster.ememu.arm;
  *
  * @author katsuhiro
  */
-public abstract class CPU extends MasterCore64 {
+public abstract class CPU extends MasterCore64
+        implements INTDestination {
     private boolean fDisasmMode;
     private boolean fPrintDisasm;
     private boolean fPrintRegs;
+    private boolean raisedInterrupt;
 
     public CPU() {
         fDisasmMode = false;
         fPrintDisasm = false;
         fPrintRegs = false;
+        raisedInterrupt = false;
     }
 
     public boolean isDisasmMode() {
@@ -38,6 +41,18 @@ public abstract class CPU extends MasterCore64 {
 
     public void setPrintRegs(boolean b) {
         fPrintRegs = b;
+    }
+
+    @Override
+    public boolean isRaisedInterrupt() {
+        return raisedInterrupt;
+    }
+
+    @Override
+    public void setRaisedInterrupt(boolean m) {
+        synchronized(this) {
+            raisedInterrupt = m;
+        }
     }
 
     /**

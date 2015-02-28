@@ -3,14 +3,16 @@ package net.katsuster.ememu.arm;
 /**
  * タイマー
  *
+ * <p>
  * 参考: ARM Dual-Timer Module (SP804)
  * ARM DDI0271C
+ * </p>
  *
  * @author katsuhiro
  */
 public class DualTimer extends Controller64Reg32
         implements INTSource {
-    private INTC parentIntc = new INTC();
+    private INTDestination intDst = new NullINTDestination();
 
     public static final int REG_Timer1Load     = 0x000;
     public static final int REG_Timer1Value    = 0x004;
@@ -147,13 +149,18 @@ public class DualTimer extends Controller64Reg32
     private boolean trigger;
 
     @Override
-    public INTC getINTC() {
-        return parentIntc;
+    public INTDestination getINTDestination() {
+        return intDst;
     }
 
     @Override
-    public void setINTC(INTC ctr) {
-        parentIntc = ctr;
+    public void connectINTDestination(INTDestination c) {
+        intDst = c;
+    }
+
+    @Override
+    public void disconnectINTDestination() {
+        intDst = new NullINTDestination();
     }
 
     @Override
@@ -170,8 +177,10 @@ public class DualTimer extends Controller64Reg32
     public void run() {
         while (!shouldHalt()) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
                 trigger = true;
+
+                intDst.setRaisedInterrupt(true);
             } catch (InterruptedException e) {
                 //ignore
             }

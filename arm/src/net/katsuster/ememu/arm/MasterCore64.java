@@ -3,14 +3,18 @@ package net.katsuster.ememu.arm;
 /**
  * 64 ビットアドレスバスのマスターコア。
  *
+ * <p>
  * 自身のタイミングで動作します。
- * バスに read/write 要求を出します。
+ * スレーブバスを持ち、バスに read/write 要求を出します。
+ * </p>
  *
+ * <p>
  * バスへのアクセス時に用いるアドレスは 64 ビット幅です。
+ * </p>
  *
  * @author katsuhiro
  */
-public abstract class MasterCore64 extends Core
+public abstract class MasterCore64 extends AbstractCore
         implements RWCore64 {
     private Bus64 slaveBus;
 

@@ -7,18 +7,23 @@ package net.katsuster.ememu.arm;
  */
 public interface INTSource {
     /**
-     * コアが接続している割り込みコントローラを取得します。
+     * 割り込み先となるコアを取得します。
      *
-     * @return 割り込みコントローラ
+     * @return 割り込み先のコア
      */
-    public abstract INTC getINTC();
+    public abstract INTDestination getINTDestination();
 
     /**
-     * コアが接続する割り込みコントローラを設定します。
+     * 割り込み先となるコアを設定します。
      *
-     * @param ctr 割り込みコントローラ
+     * @param c 割り込み先のコア
      */
-    public abstract void setINTC(INTC ctr);
+    public abstract void connectINTDestination(INTDestination c);
+
+    /**
+     * 割り込み先となるコアを解除します。
+     */
+    public abstract void disconnectINTDestination();
 
     /**
      * コアが割り込みを要求しているかどうかを取得します。

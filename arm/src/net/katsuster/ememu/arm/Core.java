@@ -3,26 +3,21 @@ package net.katsuster.ememu.arm;
 /**
  * コア。
  *
+ * <p>
  * 自身のタイミングで動作します。
  * 外部からの停止要求を受け付け、停止する努力をします。
+ * </p>
  *
  * @author katsuhiro
  */
-public abstract class Core extends Thread {
-    private boolean halted = false;
-
+public interface Core extends Runnable {
     /**
      * 今すぐコアを停止すべきかどうかを取得します。
      */
-    public boolean shouldHalt() {
-        return halted;
-    }
+    public abstract boolean shouldHalt();
 
     /**
      * 今すぐコアを停止すべきであることを通知します。
      */
-    public void halt() {
-        halted = true;
-    }
-
+    public abstract void halt();
 }
