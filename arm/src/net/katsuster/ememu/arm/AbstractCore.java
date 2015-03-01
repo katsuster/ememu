@@ -21,6 +21,9 @@ public abstract class AbstractCore extends Thread
 
     @Override
     public void halt() {
-        halted = true;
+        synchronized(this) {
+            halted = true;
+            notifyAll();
+        }
     }
 }
