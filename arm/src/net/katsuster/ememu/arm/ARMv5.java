@@ -4910,8 +4910,6 @@ public class ARMv5 extends CPU {
      * IRQ 例外を要求します。
      */
     public void acceptIRQ() {
-        String msg;
-
         if (getCPSR().getIBit()) {
             //I ビットが 1 の場合は、IRQ 無効を意味する
             return;
@@ -4923,7 +4921,7 @@ public class ARMv5 extends CPU {
         }
 
         //割り込み要求の詳細説明を得る
-        msg = String.format("accept IRQ from '%s'",
+        String msg = String.format("accept IRQ from '%s'",
                 intc.getINTSource(INTSRC_IRQ).getIRQMessage());
 
         raiseException(EXCEPT_IRQ, msg);
@@ -4934,8 +4932,6 @@ public class ARMv5 extends CPU {
      * FIQ 例外を要求します。
      */
     public void acceptFIQ() {
-        String msg;
-
         if (getCPSR().getFBit()) {
             //F ビットが 1 の場合は、FIQ 無効を意味する
             return;
@@ -4947,7 +4943,7 @@ public class ARMv5 extends CPU {
         }
 
         //割り込み要求の詳細説明を得る
-        msg = String.format("accept FIQ from '%s'",
+        String msg = String.format("accept FIQ from '%s'",
                 intc.getINTSource(INTSRC_FIQ).getIRQMessage());
 
         raiseException(EXCEPT_FIQ, msg);
@@ -5053,7 +5049,10 @@ public class ARMv5 extends CPU {
                 return;
             }
 
-            setRaisedInterrupt(false);
+            if (!intc.getINTSource(INTSRC_IRQ).isAssert() &&
+                    !intc.getINTSource(INTSRC_FIQ).isAssert()) {
+                setRaisedInterrupt(false);
+            }
         }
 
         //命令を取得します

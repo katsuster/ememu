@@ -52,6 +52,9 @@ public abstract class CPU extends MasterCore64
     public void setRaisedInterrupt(boolean m) {
         synchronized(this) {
             raisedInterrupt = m;
+            if (m) {
+                notifyAll();
+            }
         }
     }
 

@@ -163,8 +163,8 @@ public class CoProcStdv5 extends CoProc {
         //------------------------------------------------------------
         //  implementer: 0x41(ARM), variant: 0x0(nothing),
         //  arch: 0x6(ARMv5TEJ), part: 0x926(ARM926), revision: 0x0
-        addCReg(CR00_MIDR, "MIDR",   0x41069260);
-        addCReg(CR00_CTR, "CTR",     0x00000000);
+        addCReg(CR00_MIDR, "MIDR", 0x41069260);
+        addCReg(CR00_CTR, "CTR", 0x00000000);
         addCReg(CR00_TCMTR, "TCMTR", 0x00000000);
         addCReg(CR00_TLBTR, "TLBTR", 0x00000000);
         addCReg(CR00_MPIDR, "MPIDR", 0x00000000);
@@ -256,6 +256,9 @@ public class CoProcStdv5 extends CoProc {
             break;
         case CR03_MMU_DACR:
             setDACR(val);
+            break;
+        case CR07_INTWAIT:
+            waitInt(val);
             break;
         case CR07_UCH_INVALL:
             //System.out.printf("I&D-cache: all invalidated.\n");
@@ -369,5 +372,24 @@ public class CoProcStdv5 extends CoProc {
         }
 
         super.setCReg(CR03_MMU_DACR, val);
+    }
+
+    /**
+     * 割り込み待ち。
+     *
+     * @param val 新たなレジスタの値
+     */
+    public void waitInt(int val) {
+        ARMv5 cpu = getCPU();
+
+        synchronized (cpu) {
+            while (!cpu.isRaisedInterrupt()) {
+                try {
+                    cpu.wait(100000);
+                } catch (InterruptedException ex) {
+                    //do nothing
+                }
+            }
+        }
     }
 }
