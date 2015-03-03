@@ -35,10 +35,6 @@ public class ARMv5 extends CPU {
     private boolean jumped;
     private boolean highVector;
 
-    //FIXME: tentative
-    //割り込みチェック回数を減らすための仮実装
-    private int intCount;
-
     //IRQ, FIQ の 2つの割り込み線を持つ
     public static final int MAX_INTSRCS = 2;
     public static final int INTSRC_IRQ = 0;
@@ -5025,16 +5021,7 @@ public class ARMv5 extends CPU {
         //要求された例外のうち、優先度の高い例外を 1つだけ発生させます
         doImportantException();
 
-        //FIXME: tentative
-        //割り込みチェック回数を減らすための仮実装
-        if (intCount >= 1000) {
-            setRaisedInterrupt(true);
-        }
-        intCount++;
-
         if (isRaisedInterrupt()) {
-            intCount = 0;
-
             //高速割り込み線がアサートされていれば、FIQ 例外を要求します
             acceptFIQ();
             if (isRaisedException()) {
