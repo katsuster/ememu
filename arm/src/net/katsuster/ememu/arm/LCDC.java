@@ -4,7 +4,10 @@ package net.katsuster.ememu.arm;
  * カラー LCD コントローラ
  *
  * 参考: ARM PrimeCell Color LCD Controller (PL110)
- * ARM DDI0161E
+ * ARM DDI0161DJ
+ *
+ * ARM DDI0161E はレジスタアドレスの仕様が変わっている。
+ * Linux のドライバは DDI0161E に対応していない。
  *
  * @author katsuhiro
  */
@@ -15,13 +18,12 @@ public class LCDC extends Controller64Reg32 {
     public static final int REG_LCDTiming3       = 0x00c;
     public static final int REG_LCDUPBASE        = 0x010;
     public static final int REG_LCDLPBASE        = 0x014;
-    public static final int REG_LCDIMSC          = 0x018;
+    public static final int REG_LCDINTRENABLE    = 0x018;
     public static final int REG_LCDControl       = 0x01c;
-    public static final int REG_LCDRIS           = 0x020;
-    public static final int REG_LCDMIS           = 0x024;
-    public static final int REG_LCDICR           = 0x028;
-    public static final int REG_LCDUPCURR        = 0x02c;
-    public static final int REG_LCDLPCURR        = 0x030;
+    public static final int REG_LCDStatus        = 0x020;
+    public static final int REG_LCDInterrupt    = 0x024;
+    public static final int REG_LCDUPCURR        = 0x028;
+    public static final int REG_LCDLPCURR        = 0x02c;
 
     //0x200-0x3FC: LCDPalette
 
@@ -41,13 +43,12 @@ public class LCDC extends Controller64Reg32 {
         addReg(REG_LCDTiming3, "LCDTiming3", 0x00000);
         addReg(REG_LCDUPBASE, "LCDUPBASE", 0x0000000);
         addReg(REG_LCDLPBASE, "LCDLPBASE", 0x00000000);
-        addReg(REG_LCDIMSC, "LCDIMSC", 0x00);
+        addReg(REG_LCDINTRENABLE, "LCDINTRENABLE", 0x00);
         addReg(REG_LCDControl, "LCDControl", 0x0000);
-        //addReg(REG_LCDRIS, "LCDRIS", 0x00);
-        //addReg(REG_LCDMIS, "LCDMIS", 0x00);
-        //addReg(REG_LCDICR, "LCDICR", 0x00);
-        //addReg(REG_LCDUPCURR, "LCDUPCURR", X);
-        //addReg(REG_LCDLPCURR, "LCDLPCURR", X);
+        addReg(REG_LCDStatus, "LCDStatus", 0x00);
+        addReg(REG_LCDInterrupt, "LCDInterrupt", 0x00);
+        addReg(REG_LCDUPCURR, "LCDUPCURR", 0x00000000);
+        addReg(REG_LCDLPCURR, "LCDLPCURR", 0x00000000);
 
         //0x200-0x3FC: LCDPalette
 
@@ -99,7 +100,7 @@ public class LCDC extends Controller64Reg32 {
             System.out.printf("LCDLPBASE: read 0x%08x\n", 0);
             result = 0;
             break;
-        case REG_LCDIMSC:
+        case REG_LCDINTRENABLE:
             //TODO: not implemented
             System.out.printf("LCDIMSC: read 0x%08x\n", 0);
             result = 0;
@@ -107,6 +108,16 @@ public class LCDC extends Controller64Reg32 {
         case REG_LCDControl:
             //TODO: not implemented
             System.out.printf("LCDControl: read 0x%08x\n", 0);
+            result = 0;
+            break;
+        case REG_LCDStatus:
+            //TODO: not implemented
+            System.out.printf("LCDStatus: read 0x%08x\n", 0);
+            result = 0;
+            break;
+        case REG_LCDInterrupt:
+            //TODO: not implemented
+            System.out.printf("LCDInterrupt: read 0x%08x\n", 0);
             result = 0;
             break;
         default:
@@ -148,13 +159,21 @@ public class LCDC extends Controller64Reg32 {
             //TODO: not implemented
             System.out.printf("LCDLPBASE: 0x%08x\n", data);
             break;
-        case REG_LCDIMSC:
+        case REG_LCDINTRENABLE:
             //TODO: not implemented
             System.out.printf("LCDIMSC: 0x%08x\n", data);
             break;
         case REG_LCDControl:
             //TODO: not implemented
             System.out.printf("LCDControl: 0x%08x\n", data);
+            break;
+        case REG_LCDStatus:
+            //TODO: not implemented
+            System.out.printf("LCDStatus: 0x%08x\n", data);
+            break;
+        case REG_LCDInterrupt:
+            //TODO: not implemented
+            System.out.printf("LCDInterrupt: 0x%08x\n", data);
             break;
         case REG_CLCDPERIPHID0:
         case REG_CLCDPERIPHID1:
