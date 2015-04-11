@@ -25,11 +25,18 @@ public class ARMVersatile {
     }
 
     public void setup(ARMv5 cpu, Bus64 bus, RAM ramMain) {
-        MPMC mpmc_c0_0 = new MPMC();
-        MPMC mpmc_c0_1 = new MPMC();
-        MPMC mpmc_c1 = new MPMC();
+        //TODO: implement MPMC controller...
+        RAM mpmc_c0_0 = new RAM(4 * 1024);
+        RAM mpmc_c0_1 = new RAM(4 * 1024);
+        RAM mpmc_c1 = new RAM(4 * 1024);
 
         SysBaseboard sysBoard = new SysBaseboard();
+
+        //TODO: implement PCI controller...
+        RAM pci_conf = new RAM(4 * 1024);
+        //TODO: implement Serial Bus controller...
+        RAM serial_bus = new RAM(4 * 1024);
+
         SecondaryINTC intc2nd = new SecondaryINTC();
         AACI aaci = new AACI();
         MMCI mci0 = new MMCI();
@@ -64,21 +71,28 @@ public class ARMVersatile {
         SSP ssp = new SSP();
 
         //TODO: implement SSMC controller...
-        RAM ssmc_c0 = new RAM(256 * 1024);
+        RAM ssmc_c4_7 = new RAM(4 * 1024);
+        RAM ssmc_c0 = new RAM(4 * 1024);
         RAM ssmc_c1 = new RAM(256 * 1024);
-        RAM ssmc_c2 = new RAM(256 * 1024);
+        RAM ssmc_c2 = new RAM(4 * 1024);
+        RAM pci_area = new RAM(4 * 1024);
+        //TODO: implement MBX Graphics controller...
+        RAM mbx = new RAM(4 * 1024);
+        //TODO: implement MPMC controller...
+        RAM mpmc_c2_3 = ramMain;
 
         //Master core
         cpu.setSlaveBus(bus);
         bus.setMasterCore(cpu);
 
-        //Slave core
-        //RAM Image(tentative)
+        //Memory map of versatile
         //  0x00000000 - 0x03ffffff: MPMC Chip Select0, bottom of SDRAM
         //  0x04000000 - 0x07ffffff: MPMC Chip Select0, top of SDRAM
         //  0x08000000 - 0x0fffffff: MPMC Chip Select1
         //  0x10000000 - 0x13ffffff: CS5
         //    0x10000000 - 0x10000fff: System Registers
+        //    0x10001000 - 0x10001fff: PCI configuration registers
+        //    0x10002000 - 0x10002fff: Serial Bus Interface(for Real Time Clock, DS1338)
         //    0x10003000 - 0x10003fff: Secondary Interrupt Controller
         //    0x10004000 - 0x10004fff: Advanced Audio CODEC Interface (PL041)
         //    0x10005000 - 0x10005fff: Multimedia Card Interface 0 (PL180)
@@ -108,19 +122,26 @@ public class ARMVersatile {
         //    0x101f2000 - 0x101f2fff: UART1 (PL011)
         //    0x101f3000 - 0x101f3fff: UART2 (PL011)
         //    0x101f4000 - 0x101f4fff: SSP (PL022)
-        //  0x30000000 - 0x33ffffff: SSMC Chip Select0
-        //  0x34000000 - 0x37ffffff: SSMC Chip Select1
-        //  0x38000000 - 0x3bffffff: SSMC Chip Select2
-        //  0x80000000 - 0x82ffffff: Main
-        //    0x80000000 - 0x80007fff: Linux pagetable
-        //    0x80008000 - 0x807fffff: Linux Image
-        //    0x80800000 - 0x80ffffff: Linux initramfs
-        //    0x81fff000 - 0x81ffffff: ATAG_XXX
+        //  0x20000000 - 0x2fffffff: SSMC Chip Select4-7(static expansion mem)
+        //  0x30000000 - 0x33ffffff: SSMC Chip Select0(disk on chip)
+        //  0x34000000 - 0x37ffffff: SSMC Chip Select1(NOR flash)
+        //  0x38000000 - 0x3bffffff: SSMC Chip Select2(SRAM)
+        //  0x40000000 - 0x40ffffff: MBX Graphics Accelerator Interface
+        //  0x41000000 - 0x6fffffff: PCI interface
+        //  0x70000000 - 0x7fffffff: MPMC Chip Select2-3(dynamic memory)
+        //    (tentative main RAM map)
+        //    0x70000000 - 0x70007fff: Linux pagetable
+        //    0x70008000 - 0x707fffff: Linux Image
+        //    0x70800000 - 0x70ffffff: Linux initramfs
+        //    0x71fff000 - 0x71ffffff: ATAG_XXX
+        //  0x80000000 - 0xffffffff: Reserved for Logic Tile Expansion
         bus.addSlaveCore(mpmc_c0_0, 0x00000000L, 0x03ffffffL);
         bus.addSlaveCore(mpmc_c0_1, 0x04000000L, 0x07ffffffL);
         bus.addSlaveCore(mpmc_c1, 0x08000000L, 0x0fffffffL);
 
         bus.addSlaveCore(sysBoard, 0x10000000L, 0x10000fffL);
+        bus.addSlaveCore(pci_conf, 0x10001000L, 0x10001fffL);
+        bus.addSlaveCore(serial_bus, 0x10002000L, 0x10002fffL);
         bus.addSlaveCore(intc2nd, 0x10003000L, 0x10003fffL);
         bus.addSlaveCore(aaci, 0x10004000L, 0x10004fffL);
         bus.addSlaveCore(mci0, 0x10005000L, 0x10005fffL);
@@ -152,11 +173,14 @@ public class ARMVersatile {
         bus.addSlaveCore(uart2, 0x101f3000L, 0x101f3fffL);
         bus.addSlaveCore(ssp, 0x101f4000L, 0x101f4fffL);
 
+        bus.addSlaveCore(ssmc_c4_7, 0x20000000L, 0x2fffffffL);
         bus.addSlaveCore(ssmc_c0, 0x30000000L, 0x33ffffffL);
         bus.addSlaveCore(ssmc_c1, 0x34000000L, 0x37ffffffL);
         bus.addSlaveCore(ssmc_c2, 0x38000000L, 0x3bffffffL);
-
-        bus.addSlaveCore(ramMain, 0x80000000L, 0x80000000L + ((ramMain.getSize() - 1) & 0x7fffffffL));
+        bus.addSlaveCore(mbx, 0x40000000L, 0x40ffffffL);
+        bus.addSlaveCore(pci_area, 0x41000000L, 0x6fffffffL);
+        //main RAM
+        bus.addSlaveCore(mpmc_c2_3, 0x70000000L, 0x7fffffffL);
 
         //INTC
         cpu.connectINTSource(ARMv5.INTSRC_IRQ, intc1st.getIRQSource());

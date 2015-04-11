@@ -27,9 +27,9 @@ public class MainApplet extends JApplet {
         public void run() {
             setName(getClass().getName());
 
-            String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.14.16";
+            String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.14.27";
             String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz";
-            String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/sh debug printk.time=1\0";
+            String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1\0";
 
             cpu = new ARMv5();
             bus = new Bus64();

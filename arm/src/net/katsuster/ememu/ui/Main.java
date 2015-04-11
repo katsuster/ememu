@@ -53,7 +53,7 @@ public class Main {
     public static void main(String[] args) {
         String kimage = "Image";
         String initram = "initramfs.gz";
-        String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/sh debug printk.time=1\0";
+        String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1\0";
 
         if (args.length <= 0) {
             SystemPane.out.println("usage:\n" +
@@ -108,13 +108,12 @@ public class Main {
         byte[] cmdalign = new byte[(cmdlb.length + 3) & ~0x3];
         System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
 
-        int addrRAM = 0x80000000;
-        int addrAtags = addrRAM + ramMain.getSize() - 4096;
-
-        //Cannot change this address
-        final int addrImage = 0x80008000;
+        final int addrRAM = 0x70000000;
+        final int addrAtagsStart = addrRAM + ramMain.getSize() - 4096;
+        int addrAtags = addrAtagsStart;
+        final int addrImage = addrRAM + 0x00008000;
         int sizeImage = 0;
-        int addrInitram = 0x80800000;
+        final int addrInitram = addrRAM + 0x00800000;
         int sizeInitram = 0;
         boolean initramExist = !initram.equals("");
 
