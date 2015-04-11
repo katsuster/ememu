@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class Bus64
         implements RWCore64 {
-    private MasterCore64 master;
+    private List<MasterCore64> masterList;
     //32bit アドレス内のスレーブコアに高速にアクセスするためのテーブル
     private SlaveCoreAddress[] slaves;
     //全スレーブコアを管理するリスト
@@ -20,6 +20,7 @@ public class Bus64
     private SlaveCoreAddress cachedSlave;
 
     public Bus64() {
+        this.masterList = new ArrayList<MasterCore64>();
         //4KB ごとにスレーブコアを記録するため、
         //2^32 / 2^12 = 2^20 の要素が必要となる
         this.slaves = new SlaveCoreAddress[1024 * 1024];
@@ -28,33 +29,35 @@ public class Bus64
     }
 
     /**
-     * バスのマスターコアを取得します。
+     * バスのマスターコアを追加します。
      *
      * マスターコアはバスに読み取り、書き込みのリクエストができます。
      *
-     * @return マスターコア、設定されていなければ null
+     * @param core 追加するマスターコア
      */
-    public MasterCore64 getMasterCore() {
-        return master;
+    public void addMasterCore(MasterCore64 core) {
+        masterList.add(core);
     }
 
     /**
-     * バスのマスターコアを設定します。
+     * バスのマスターコアを削除します。
      *
      * マスターコアはバスに読み取り、書き込みのリクエストができます。
      *
-     * @param core マスターコア
+     * @param core 削除するマスターコア
      */
-    public void setMasterCore(MasterCore64 core) {
-        master = core;
+    public void removeMasterCore(MasterCore64 core) {
+        masterList.remove(core);
     }
 
     /**
      * バスに接続されている全てのマスターコアを起動します。
      */
     public void startAllMasterCores() {
-        master.setName(master.getClass().getName());
-        master.start();
+        for (MasterCore64 mc : masterList) {
+            mc.setName(mc.getClass().getName());
+            mc.start();
+        }
     }
 
     /**
@@ -62,7 +65,9 @@ public class Bus64
      * コアの停止を要求します。
      */
     public void haltAllMasterCores() {
-        master.halt();
+        for (MasterCore64 mc : masterList) {
+            mc.halt();
+        }
     }
 
     @Override
@@ -95,7 +100,9 @@ public class Bus64
         }
 
         offSt = addr - sca.getStartAddress();
-        return sca.getCore().read8(offSt);
+        synchronized (this) {
+            return sca.getCore().read8(offSt);
+        }
     }
 
     @Override
@@ -110,7 +117,9 @@ public class Bus64
         }
 
         offSt = addr - sca.getStartAddress();
-        return sca.getCore().read16(offSt);
+        synchronized (this) {
+            return sca.getCore().read16(offSt);
+        }
     }
 
     @Override
@@ -125,7 +134,9 @@ public class Bus64
         }
 
         offSt = addr - sca.getStartAddress();
-        return sca.getCore().read32(offSt);
+        synchronized (this) {
+            return sca.getCore().read32(offSt);
+        }
     }
 
     @Override
@@ -140,7 +151,9 @@ public class Bus64
         }
 
         offSt = addr - sca.getStartAddress();
-        return sca.getCore().read64(offSt);
+        synchronized (this) {
+            return sca.getCore().read64(offSt);
+        }
     }
 
     @Override
@@ -173,7 +186,9 @@ public class Bus64
         }
 
         offSt = addr - sca.getStartAddress();
-        sca.getCore().write8(offSt, data);
+        synchronized (this) {
+            sca.getCore().write8(offSt, data);
+        }
     }
 
     @Override
@@ -188,7 +203,9 @@ public class Bus64
         }
 
         offSt = addr - sca.getStartAddress();
-        sca.getCore().write16(offSt, data);
+        synchronized (this) {
+            sca.getCore().write16(offSt, data);
+        }
     }
 
     @Override
@@ -203,7 +220,9 @@ public class Bus64
         }
 
         offSt = addr - sca.getStartAddress();
-        sca.getCore().write32(offSt, data);
+        synchronized (this) {
+            sca.getCore().write32(offSt, data);
+        }
     }
 
     @Override
@@ -218,7 +237,9 @@ public class Bus64
         }
 
         offSt = addr - sca.getStartAddress();
-        sca.getCore().write64(offSt, data);
+        synchronized (this) {
+            sca.getCore().write64(offSt, data);
+        }
     }
 
     /**

@@ -83,7 +83,7 @@ public class ARMVersatile {
 
         //Master core
         cpu.setSlaveBus(bus);
-        bus.setMasterCore(cpu);
+        bus.addMasterCore(cpu);
 
         //Memory map of versatile
         //  0x00000000 - 0x03ffffff: MPMC Chip Select0, bottom of SDRAM
