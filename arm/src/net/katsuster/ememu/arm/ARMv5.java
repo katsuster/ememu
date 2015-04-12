@@ -3564,8 +3564,11 @@ public class ARMv5 extends CPU {
         }
         v = read32_a32(paddr);
 
-        setPC(v & 0xfffffffe);
-        getCPSR().setTBit(BitOp.getBit32(v, 0));
+        if (getCPSR().getTBit()) {
+            setPC(v & 0xfffffffe);
+        } else {
+            setPC(v & 0xfffffffc);
+        }
         vaddr += 4;
 
         if (w) {
