@@ -2314,6 +2314,177 @@ public class ARMv5 extends CPU {
     }
 
     /**
+     * 符号付き積和ロング命令。
+     *
+     * レジスタ内の 16bit に対して演算します。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSmlalxy(Instruction inst, boolean exec) {
+        int rdhi = inst.getField(16, 4);
+        int rdlo = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        boolean y = inst.getBit(6);
+        boolean x = inst.getBit(5);
+        int rm = inst.getRmField();
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("smlal%s%s%s",
+                            (x) ? "t" : "b", (y) ? "t" : "b",
+                            inst.getCondFieldName()),
+                    String.format("%s, %s, %s, %s",
+                            getRegName(rdlo), getRegName(rdhi),
+                            getRegName(rm), getRegName(rs)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 符号付き積和命令。
+     *
+     * レジスタ内の 16bit に対して演算します。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSmlaxy(Instruction inst, boolean exec) {
+        int rd = inst.getField(16, 4);
+        int rn = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        boolean y = inst.getBit(6);
+        boolean x = inst.getBit(5);
+        int rm = inst.getRmField();
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("smla%s%s%s",
+                            (x) ? "t" : "b", (y) ? "t" : "b",
+                            inst.getCondFieldName()),
+                    String.format("%s, %s, %s, %s",
+                            getRegName(rd), getRegName(rm),
+                            getRegName(rs), getRegName(rn)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 符号付き積和命令。
+     *
+     * レジスタ内の 16bit に対して演算し、48ビット積の下位 32ビットを得ます。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSmlawy(Instruction inst, boolean exec) {
+        int rd = inst.getField(16, 4);
+        int rn = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        boolean y = inst.getBit(6);
+        int rm = inst.getRmField();
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("smlaw%s%s",
+                            (y) ? "t" : "b",
+                            inst.getCondFieldName()),
+                    String.format("%s, %s, %s, %s",
+                            getRegName(rd), getRegName(rm),
+                            getRegName(rs), getRegName(rn)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 符号付き乗算命令。
+     *
+     * レジスタ内の 16bit に対して演算します。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSmulxy(Instruction inst, boolean exec) {
+        int rd = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        boolean y = inst.getBit(6);
+        boolean x = inst.getBit(5);
+        int rm = inst.getRmField();
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("smul%s%s%s",
+                            (x) ? "t" : "b", (y) ? "t" : "b",
+                            inst.getCondFieldName()),
+                    String.format("%s, %s, %s",
+                            getRegName(rd),
+                            getRegName(rm), getRegName(rs)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 符号付き乗算命令。
+     *
+     * レジスタ内の 16bit に対して演算し、48ビット積の下位 32ビットを得ます。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSmulwy(Instruction inst, boolean exec) {
+        int rd = inst.getField(16, 4);
+        int rs = inst.getField(8, 4);
+        boolean y = inst.getBit(6);
+        int rm = inst.getRmField();
+
+        if (!exec) {
+            disasmInst(inst,
+                    String.format("smulw%s%s",
+                            (y) ? "t" : "b",
+                            inst.getCondFieldName()),
+                    String.format("%s, %s, %s",
+                            getRegName(rd),
+                            getRegName(rm), getRegName(rs)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
      * スワップ命令。
      *
      * @param inst ARM 命令
@@ -4238,15 +4409,26 @@ public class ARMv5 extends CPU {
      *
      * 各ビットと命令の対応は下記の通りです。
      *
-     *        | 22  | 21  |  7  |  6  |  5  |  4  |
-     * -------+-----+-----+-----+-----+-----+-----+
-     * MRS    |  x  |  0  |  0  |  0  |  0  |  0  |
-     * MSR    |  x  |  1  |  0  |  0  |  0  |  0  |
-     * BX     |  0  |  1  |  0  |  0  |  0  |  1  |
-     * CLZ    |  1  |  1  |  0  |  0  |  0  |  1  |
-     * BLX(2) |  0  |  1  |  0  |  0  |  1  |  1  |
-     * BKPT   |  0  |  1  |  0  |  1  |  1  |  1  |
-     * -------+-----+-----+-----+-----+-----+-----+
+     *         | 22  | 21  ||  7  |  6  |  5  |  4  |
+     * --------+-----+-----++-----+-----+-----+-----+
+     * MRS     |  x  |  0  ||  0  |  0  |  0  |  0  |
+     * MSR     |  x  |  1  ||  0  |  0  |  0  |  0  |
+     * BX      |  0  |  1  ||  0  |  0  |  0  |  1  |
+     * CLZ     |  1  |  1  ||  0  |  0  |  0  |  1  |
+     * BLX(2)  |  0  |  1  ||  0  |  0  |  1  |  1  |
+     * BKPT    |  0  |  1  ||  0  |  1  |  1  |  1  |
+     * --------+-----+-----++-----+-----+-----+-----+
+     * QADD    |  0  |  0  ||  0  |  1  |  0  |  1  |
+     * QSUB    |  0  |  1  ||  0  |  1  |  0  |  1  |
+     * QDADD   |  1  |  0  ||  0  |  1  |  0  |  1  |
+     * QDSUB   |  1  |  1  ||  0  |  1  |  0  |  1  |
+     * --------+-----+-----++-----+-----+-----+-----+
+     * SMLAxy  |  0  |  0  ||  1  |  y  |  x  |  0  |
+     * SMLAWxy |  0  |  1  ||  1  |  y  |  0  |  0  |
+     * SMULWxy |  0  |  1  ||  1  |  y  |  1  |  0  |
+     * SMLALxy |  1  |  0  ||  1  |  y  |  x  |  0  |
+     * SMULxy  |  1  |  1  ||  1  |  y  |  x  |  0  |
+     * --------+-----+-----++-----+-----+-----+-----+
      *
      * これ以外のパターンは全て未定義命令です。
      *
@@ -4290,6 +4472,25 @@ public class ARMv5 extends CPU {
                 executeUnd(inst, exec);
             }
             break;
+        case 0x5:
+            if (!b22 && !b21) {
+                //qdsub
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            } else if (!b22 && b21) {
+                //qdadd
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            } else if (b22 && !b21) {
+                //qsub
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            } else {
+                //qadd
+                //TODO: Not implemented
+                throw new IllegalArgumentException("Sorry, not implemented.");
+            }
+            //break;
         case 0x7:
             if (cond == Instruction.COND_AL && !b22 && b21) {
                 //bkpt
@@ -4298,6 +4499,38 @@ public class ARMv5 extends CPU {
             } else {
                 //未定義
                 executeUnd(inst, exec);
+            }
+            break;
+        case 0x8:
+        case 0xc:
+            if (!b22 && !b21) {
+                //smla
+                executeSmlaxy(inst, exec);
+            } else if (!b22 && b21) {
+                //smlaw
+                executeSmlawy(inst, exec);
+            } else if (b22 && !b21) {
+                //smlal
+                executeSmlalxy(inst, exec);
+            } else {
+                //smul
+                executeSmulxy(inst, exec);
+            }
+            break;
+        case 0xa:
+        case 0xe:
+            if (!b22 && !b21) {
+                //smla
+                executeSmlaxy(inst, exec);
+            } else if (!b22 && b21) {
+                //smulw
+                executeSmulwy(inst, exec);
+            } else if (b22 && !b21) {
+                //smlal
+                executeSmlalxy(inst, exec);
+            } else {
+                //smul
+                executeSmulxy(inst, exec);
             }
             break;
         default:
