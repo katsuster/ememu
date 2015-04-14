@@ -83,7 +83,7 @@ public class ARMv5 extends CPU {
 
     @Override
     public void printPC() {
-        System.out.printf("pc: %08x\n", getPC() - 8);
+        System.out.printf("pc: %08x\n", getRegRaw(15));
     }
 
     @Override
@@ -200,7 +200,13 @@ public class ARMv5 extends CPU {
      */
     public int getReg(int n) {
         if (n == 15) {
-            return getRegRaw(n) + 8;
+            if (getCPSR().getTBit()) {
+                //Thumb モード
+                return getRegRaw(n) + 4;
+            } else {
+                //ARM モード
+                return getRegRaw(n) + 8;
+            }
         } else {
             return getRegRaw(n);
         }
