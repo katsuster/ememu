@@ -2,6 +2,7 @@ package net.katsuster.ememu.arm;
 
 import java.io.*;
 
+import net.katsuster.ememu.generic.*;
 import net.katsuster.ememu.ui.*;
 
 /**

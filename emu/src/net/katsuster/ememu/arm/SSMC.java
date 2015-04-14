@@ -1,5 +1,6 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.generic.Controller64Reg32;
 import net.katsuster.ememu.ui.*;
 
 /**

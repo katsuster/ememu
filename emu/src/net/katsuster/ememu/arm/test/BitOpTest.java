@@ -1,6 +1,6 @@
 package net.katsuster.ememu.arm.test;
 
-import net.katsuster.ememu.arm.BitOp;
+import net.katsuster.ememu.generic.BitOp;
 import org.junit.*;
 
 public class BitOpTest {

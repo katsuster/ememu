@@ -1,4 +1,4 @@
-package net.katsuster.ememu.arm;
+package net.katsuster.ememu.generic;
 
 /**
  * 整数値へのビット演算ユーティリティクラス。

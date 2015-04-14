@@ -1,5 +1,10 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.generic.Controller64Reg32;
+import net.katsuster.ememu.generic.INTDestination;
+import net.katsuster.ememu.generic.INTSource;
+import net.katsuster.ememu.generic.NormalINTC;
+
 /**
  * 2nd 割り込みコントローラ
  *

@@ -1,5 +1,10 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.generic.BitOp;
+import net.katsuster.ememu.generic.CPU;
+import net.katsuster.ememu.generic.INTSource;
+import net.katsuster.ememu.generic.NormalINTC;
+
 /**
  * ARMv5TE CPU
  *

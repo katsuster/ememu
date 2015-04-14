@@ -1,5 +1,7 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.generic.BitOp;
+
 /**
  * ARM コプロセッサ 15: 標準コプロセッサ。
  *

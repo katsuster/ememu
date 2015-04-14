@@ -1,4 +1,6 @@
-package net.katsuster.ememu.arm;
+package net.katsuster.ememu.generic;
+
+import net.katsuster.ememu.generic.SlaveCore64;
 
 /**
  * 64 ビットアドレス RAM

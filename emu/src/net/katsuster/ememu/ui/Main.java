@@ -5,6 +5,9 @@ import java.net.*;
 
 import net.katsuster.ememu.arm.*;
 import net.katsuster.ememu.board.*;
+import net.katsuster.ememu.generic.Bus64;
+import net.katsuster.ememu.generic.CPU;
+import net.katsuster.ememu.generic.RAM;
 
 public class Main {
     public static final int ATAG_NONE      = 0x00000000;

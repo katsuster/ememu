@@ -1,6 +1,6 @@
 package net.katsuster.ememu.arm.test;
 
-import net.katsuster.ememu.arm.CPU;
+import net.katsuster.ememu.generic.CPU;
 import org.junit.*;
 
 public class CPUTest {

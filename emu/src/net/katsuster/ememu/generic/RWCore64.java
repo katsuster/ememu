@@ -1,4 +1,4 @@
-package net.katsuster.ememu.arm;
+package net.katsuster.ememu.generic;
 
 /**
  * 64 ビットアドレスを扱うコア。

@@ -6,6 +6,8 @@ import javax.swing.*;
 
 import net.katsuster.ememu.arm.*;
 import net.katsuster.ememu.board.*;
+import net.katsuster.ememu.generic.Bus64;
+import net.katsuster.ememu.generic.RAM;
 
 public class MainApplet extends JApplet {
     private static final SystemPane spane = new SystemPane();

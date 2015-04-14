@@ -1,5 +1,7 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.generic.*;
+
 /**
  * 割り込みコントローラ。
  *

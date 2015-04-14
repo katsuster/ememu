@@ -1,6 +1,6 @@
 package net.katsuster.ememu.arm.test;
 
-import net.katsuster.ememu.arm.SlaveCore64;
+import net.katsuster.ememu.generic.SlaveCore64;
 import org.junit.*;
 
 public class SlaveCore64Test {

@@ -2,6 +2,8 @@ package net.katsuster.ememu.arm;
 
 import java.util.*;
 
+import net.katsuster.ememu.generic.Reg32;
+
 /**
  * ARM コプロセッサ。
  *
