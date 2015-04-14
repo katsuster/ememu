@@ -2,7 +2,7 @@
 <!DOCTYPE project>
 
 <project name="armemu" default="dist">
-    <property name="src.dir"      location="../arm/src"/>
+    <property name="src.dir"      location="../emu/src"/>
     <property name="lib.dir"      location="../lib"/>
     <property name="ant.dir"      location="ant"/>
     <property name="build.dir"    location="${ant.dir}/build"/>
