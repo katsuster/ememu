@@ -5,8 +5,6 @@ import java.util.*;
 /**
  * 64 ビットアドレスバス。
  *
- * バスのマスターは 1つに限られます。
- *
  * @author katsuhiro
  */
 public class Bus64
