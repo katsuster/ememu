@@ -97,13 +97,13 @@ Build the emulator using Apache Ant.
     $ cd ememu
     $ ant
 
-JAR file is created on ememu/arm/ant/dist directory.
+JAR file is created on ememu/emu/ant/dist directory.
 
 #### Run the Emulator
 Run the emulator (console version) on the Windows Command Prompt 
 or some of Linux terminal as you like.
 
-    $ java -jar arm/ant/dist/armemu.jar linux/arch/arm/boot/Image initramfs.gz
+    $ java -jar emu/ant/dist/armemu.jar linux/arch/arm/boot/Image initramfs.gz
     Exception: Reset by 'Init.'.
     loadFile: linux/arch/arm/boot/Image
     loadFile: 'linux/arch/arm/boot/Image' done, 3912832bytes.
@@ -112,8 +112,8 @@ or some of Linux terminal as you like.
     ...
 
 ## Known BUGS
-* Emulator is hanging up on booting Linux kernel 3.14.x.
-To avoid this bug, please turn OFF the `CONFIG_FB_ARMCLCD` config.
+* Terminal window of the ememu is not understand escape sequences, 
+so some of output is ugly or difficult to read.
 
 ## FAQ
 Sorry, not yet...
