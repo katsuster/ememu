@@ -4,7 +4,7 @@ hprof について
 実行例
 --------------------
 java -Xrunhprof:cpu=times \
--jar armemu/ant/dist/armemu.jar \
+-jar ememu/emu/ant/dist/armemu.jar \
 linux-3.12.26/arch/arm/boot/Image \
 initramfs.gz
 

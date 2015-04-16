@@ -20,8 +20,8 @@ Linaro の glibc には Thumb 命令が含まれますが、
 代わりに CodeSourcery のクロスコンパイラを使って下さい。
 
 export ARCH=arm
-#export CROSS_COMPILE=/home/katsuhiro/share/arm_cross/gcc-linaro-arm-linux-gnueabihf-4.9-2014.07_linux/bin/arm-linux-gnueabihf-
-export CROSS_COMPILE=/home/katsuhiro/share/arm_cross/arm-2013.11/bin/arm-none-linux-gnueabi-
+#export CROSS_COMPILE=/home/username/gcc-linaro-arm-linux-gnueabihf-4.9-2014.07_linux/bin/arm-linux-gnueabihf-
+export CROSS_COMPILE=/home/username/arm-2013.11/bin/arm-none-linux-gnueabi-
 
 cd busybox-1.22.1
 make defconfig

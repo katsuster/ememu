@@ -3,8 +3,9 @@ Linux について
 
 動作確認
 --------------------
-Linux 3.12.26: OK: BusyBox まで動作
-Linux 3.14.16: NG: 起動中にハング
+Linux 3.12.35: OK: BusyBox まで動作
+Linux 3.14.37: OK: BusyBox まで動作
+Linux 3.18.11: OK: BusyBox まで動作
 
 
 追加、削除すべきコンフィグ
@@ -15,16 +16,11 @@ Linux 3.12.26
   最近のクロスコンパイラでビルドした場合、システムコールの呼び出し規則に
   EABI が使われるためです。
 
-Linux 3.14.16
-- CONFIG_FB_ARMCLCD
-  削除、またはモジュール指定でも OK です。
-  原因は未調査ですが、起動時にハングします。
-
 
 ビルド方法
 --------------------
 export ARCH=arm
-export CROSS_COMPILE=/home/katsuhiro/share/arm_cross/gcc-linaro-arm-linux-gnueabihf-4.9-2014.07_linux/bin/arm-linux-gnueabihf-
+export CROSS_COMPILE=/home/username/gcc-linaro-arm-linux-gnueabihf-4.9-2014.07_linux/bin/arm-linux-gnueabihf-
 
 cd linux-3.14.16
 make KBUILD_DEFCONFIG=versatile_defconfig defconfig
