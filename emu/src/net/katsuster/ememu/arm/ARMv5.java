@@ -4067,7 +4067,7 @@ public class ARMv5 extends CPU {
         int v, vaddr, paddr;
 
         //現在の PC の指すアドレスから命令を取得します
-        vaddr = getPC() - 8;
+        vaddr = getRegRaw(15);
 
         if (getCPSR().getTBit()) {
             //Thumb モード
