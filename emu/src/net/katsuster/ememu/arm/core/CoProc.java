@@ -1,7 +1,8 @@
-package net.katsuster.ememu.arm;
+package net.katsuster.ememu.arm.core;
 
 import java.util.*;
 
+import net.katsuster.ememu.arm.core.ARMv5;
 import net.katsuster.ememu.generic.Reg32;
 
 /**

@@ -3,6 +3,7 @@ package net.katsuster.ememu.board;
 import java.io.*;
 
 import net.katsuster.ememu.arm.*;
+import net.katsuster.ememu.arm.core.ARMv5;
 import net.katsuster.ememu.generic.Bus64;
 import net.katsuster.ememu.generic.RAM;
 

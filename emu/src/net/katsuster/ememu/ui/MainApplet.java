@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import net.katsuster.ememu.arm.*;
+import net.katsuster.ememu.arm.core.ARMv5;
 import net.katsuster.ememu.board.*;
 import net.katsuster.ememu.generic.Bus64;
 import net.katsuster.ememu.generic.RAM;

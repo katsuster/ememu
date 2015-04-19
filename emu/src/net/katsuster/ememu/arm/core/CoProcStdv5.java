@@ -1,4 +1,4 @@
-package net.katsuster.ememu.arm;
+package net.katsuster.ememu.arm.core;
 
 import net.katsuster.ememu.generic.BitOp;
 

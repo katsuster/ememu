@@ -1,4 +1,4 @@
-package net.katsuster.ememu.arm;
+package net.katsuster.ememu.arm.core;
 
 /**
  * ARM コプロセッサ 10: ベクタ浮動小数点プロセッサ（VFP）
