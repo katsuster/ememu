@@ -18,18 +18,38 @@ public class Reg32 {
         this.val = val;
     }
 
+    /**
+     * レジスタ名を取得します。
+     *
+     * @return レジスタ名
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * レジスタ名を設定します。
+     *
+     * @param s レジスタ名
+     */
     public void setName(String s) {
         name = s;
     }
 
+    /**
+     * レジスタの値を取得します。
+     *
+     * @return レジスタの値
+     */
     public int getValue() {
         return val;
     }
 
+    /**
+     * レジスタの値を設定します。
+     *
+     * @param v レジスタの値
+     */
     public void setValue(int v) {
         val = v;
     }

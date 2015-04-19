@@ -29,6 +29,7 @@ public class ARMv5 extends CPU {
     private int[] regs_irq;
     private int[] regs_fiq;
     private PSR cpsr;
+    private PSR spsr;
     private CoProc[] coProcs;
     private MMUv5 mmu;
     private NormalINTC intc;
@@ -60,7 +61,8 @@ public class ARMv5 extends CPU {
         regs_und = new int[17];
         regs_irq = new int[17];
         regs_fiq = new int[17];
-        cpsr = new PSR();
+        cpsr = new PSR("cpsr", 0);
+        spsr = new PSR("spsr", 0);
         coProcs = new CoProc[16];
         coProcs[10] = cpVfps;
         coProcs[15] = cpStd;
@@ -102,7 +104,7 @@ public class ARMv5 extends CPU {
                     i, getRegRaw(i), i + 1, getRegRaw(i + 1),
                     i + 2, getRegRaw(i + 2), i + 3, getRegRaw(i + 3));
         }
-        System.out.printf("  cpsr: %s, spsr: %s\n",
+        System.out.printf("  %s, %s\n",
                 getCPSR().toString(), getSPSR().toString());
     }
 
@@ -353,10 +355,13 @@ public class ARMv5 extends CPU {
      *
      * N, Z, C, V, Q, GE のみ取得され、他の値は 0 でマスクされます。
      *
+     * FIXME: getAPSR().setValue(xx) としても apsr の値は変わりません
+     * FIXME: setAPSR(xx) を使用したときだけ apsr の値が変わります
+     *
      * @return APSR の値
      */
     public PSR getAPSR() {
-        return new PSR(getCPSR().getValue() & 0xf80f0000);
+        return new PSR("apsr", getCPSR().getValue() & 0xf80f0000);
     }
 
     /**
@@ -390,10 +395,14 @@ public class ARMv5 extends CPU {
     /**
      * SPSR（保存されたプログラムステートレジスタ）の値を取得します。
      *
+     * FIXME: getSPSR().setValue(xx) としても spsr の値は変わりません
+     * FIXME: setSPSR(xx) を使用したときだけ spsr の値が変わります
+     *
      * @return SPSR の値
      */
     public PSR getSPSR() {
-        return new PSR(getReg(16));
+        spsr.setValue(getReg(16));
+        return spsr;
     }
 
     /**
@@ -4874,13 +4883,13 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionReset(String dbgmsg) {
-        int cpsrORg;
+        int cpsrOrg;
 
         System.out.printf("Exception: Reset by '%s'.\n",
                 dbgmsg);
 
         //cpsr の値を取っておく
-        cpsrORg = getCPSR().getValue();
+        cpsrOrg = getCPSR().getValue();
 
         //スーパーバイザモード、ARM 状態、高速割り込み禁止、割り込み禁止、
         //へ移行
@@ -4890,7 +4899,7 @@ public class ARMv5 extends CPU {
         getCPSR().setIBit(true);
 
         //spsr にリセット前の cpsr を保存する
-        setSPSR(cpsrORg);
+        setSPSR(cpsrOrg);
 
         //リセット例外ベクタへ
         if (isHighVector()) {
@@ -4909,14 +4918,14 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionUndefined(String dbgmsg) {
-        int pcOrg, cpsrORg;
+        int pcOrg, cpsrOrg;
 
         System.out.printf("Exception: Undefined instruction by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
-        cpsrORg = getCPSR().getValue();
+        cpsrOrg = getCPSR().getValue();
 
         //未定義モード、ARM 状態、割り込み禁止、
         //へ移行
@@ -4927,7 +4936,7 @@ public class ARMv5 extends CPU {
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(cpsrORg);
+        setSPSR(cpsrOrg);
 
         //未定義例外ベクタへ
         if (isHighVector()) {
@@ -4949,14 +4958,14 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionSoftware(String dbgmsg) {
-        int pcOrg, cpsrORg;
+        int pcOrg, cpsrOrg;
 
         //System.out.printf("Exception: Software interrupt by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
-        cpsrORg = getCPSR().getValue();
+        cpsrOrg = getCPSR().getValue();
 
         //スーパバイザモード、ARM 状態、割り込み禁止、
         //へ移行
@@ -4967,7 +4976,7 @@ public class ARMv5 extends CPU {
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(cpsrORg);
+        setSPSR(cpsrOrg);
 
         //ソフトウェア割り込み例外ベクタへ
         if (isHighVector()) {
@@ -4985,14 +4994,14 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionPrefetch(String dbgmsg) {
-        int pcOrg, cpsrORg;
+        int pcOrg, cpsrOrg;
 
         //System.out.printf("Exception: Prefetch abort by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
-        cpsrORg = getCPSR().getValue();
+        cpsrOrg = getCPSR().getValue();
 
         //アボートモード、ARM 状態、割り込み禁止、
         //へ移行
@@ -5003,7 +5012,7 @@ public class ARMv5 extends CPU {
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(cpsrORg);
+        setSPSR(cpsrOrg);
 
         //プリフェッチアボート例外ベクタへ
         if (isHighVector()) {
@@ -5021,14 +5030,14 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionData(String dbgmsg) {
-        int pcOrg, cpsrORg;
+        int pcOrg, cpsrOrg;
 
         //System.out.printf("Exception: Data abort by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC();
-        cpsrORg = getCPSR().getValue();
+        cpsrOrg = getCPSR().getValue();
 
         //アボートモード、ARM 状態、割り込み禁止、
         //へ移行
@@ -5039,7 +5048,7 @@ public class ARMv5 extends CPU {
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(cpsrORg);
+        setSPSR(cpsrOrg);
 
         //データアボート例外ベクタへ
         if (isHighVector()) {
@@ -5057,14 +5066,14 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionIRQ(String dbgmsg) {
-        int pcOrg, cpsrORg;
+        int pcOrg, cpsrOrg;
 
         //System.out.printf("Exception: IRQ by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
-        cpsrORg = getCPSR().getValue();
+        cpsrOrg = getCPSR().getValue();
 
         //IRQ モード、ARM 状態、割り込み禁止、
         //へ移行
@@ -5075,7 +5084,7 @@ public class ARMv5 extends CPU {
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(cpsrORg);
+        setSPSR(cpsrOrg);
 
         //IRQ 例外ベクタへ
         if (isHighVector()) {
@@ -5093,14 +5102,14 @@ public class ARMv5 extends CPU {
      * @param dbgmsg デバッグ用のメッセージ
      */
     public void doExceptionFIQ(String dbgmsg) {
-        int pcOrg, cpsrORg;
+        int pcOrg, cpsrOrg;
 
         System.out.printf("Exception: FIQ by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
         pcOrg = getPC() - 4;
-        cpsrORg = getCPSR().getValue();
+        cpsrOrg = getCPSR().getValue();
 
         //FIQ モード、ARM 状態、高速割り込み禁止、割り込み禁止、
         //へ移行
@@ -5111,7 +5120,7 @@ public class ARMv5 extends CPU {
 
         //lr, spsr に例外前の pc, cpsr を保存する
         setReg(14, pcOrg);
-        setSPSR(cpsrORg);
+        setSPSR(cpsrOrg);
 
         //FIQ 例外ベクタへ
         if (isHighVector()) {

@@ -1,13 +1,12 @@
 package net.katsuster.ememu.arm;
 
 import net.katsuster.ememu.generic.BitOp;
+import net.katsuster.ememu.generic.Reg32;
 
 /**
  * PSR（プログラムステートレジスタ）。
  */
-public class PSR {
-    private int reg;
-
+public class PSR extends Reg32 {
     public static final int BIT_N = 31;
     public static final int BIT_Z = 30;
     public static final int BIT_C = 29;
@@ -28,7 +27,7 @@ public class PSR {
      * 値 0 を持つ PSR（プログラムステートレジスタ）を作成します。
      */
     public PSR() {
-        //do nothing
+        super("psr", 0);
     }
 
     /**
@@ -36,26 +35,8 @@ public class PSR {
      *
      * @param val レジスタの初期値
      */
-    public PSR(int val) {
-        reg = val;
-    }
-
-    /**
-     * PSR（プログラムステートレジスタ）の値を取得します。
-     *
-     * @return PSR の値
-     */
-    public int getValue() {
-        return reg;
-    }
-
-    /**
-     * PSR（プログラムステートレジスタ）の値を設定します。
-     *
-     * @param val 新しい PSR の値
-     */
-    public void setValue(int val) {
-        reg = val;
+    public PSR(String name, int val) {
+        super(name, val);
     }
 
     /**
@@ -149,8 +130,8 @@ public class PSR {
      *
      * @return PSR の状態を表す文字列
      */
-    public String getName() {
-        return getName(getValue());
+    public String getStatusName() {
+        return getStatusName(getValue());
     }
 
     /**
@@ -159,7 +140,7 @@ public class PSR {
      * @param val PSR の値
      * @return PSR の状態を表す文字列
      */
-    public static String getName(int val) {
+    public static String getStatusName(int val) {
         return String.format("%s%s%s%s_%s%s%s%5s",
                 BitOp.getBit32(val, BIT_N) ? "N" : "n",
                 BitOp.getBit32(val, BIT_Z) ? "Z" : "z",
@@ -398,6 +379,7 @@ public class PSR {
 
     @Override
     public String toString() {
-        return String.format("0x%08x(%s)", getValue(), getName());
+        return String.format("%s: 0x%08x(%s)",
+                getName(), getValue(), getStatusName());
     }
 }
