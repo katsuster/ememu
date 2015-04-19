@@ -2,6 +2,7 @@ package net.katsuster.ememu.arm.core;
 
 import net.katsuster.ememu.generic.BitOp;
 import net.katsuster.ememu.generic.CPU;
+import net.katsuster.ememu.generic.Instruction;
 import net.katsuster.ememu.generic.INTSource;
 import net.katsuster.ememu.generic.NormalINTC;
 
@@ -431,7 +432,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return シフタオペランド
      */
-    public int getAddrMode1(Instruction inst) {
+    public int getAddrMode1(InstructionARM inst) {
         boolean i = inst.getIBit();
         boolean b7 = inst.getBit(7);
         boolean b4 = inst.getBit(4);
@@ -468,7 +469,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return イミディエート
      */
-    public int getAddrMode1Imm(Instruction inst) {
+    public int getAddrMode1Imm(InstructionARM inst) {
         int rotR = inst.getField(8, 4);
         int imm8 = inst.getField(0, 8);
 
@@ -495,7 +496,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return イミディエートシフトオペランド
      */
-    public int getAddrMode1ImmShift(Instruction inst) {
+    public int getAddrMode1ImmShift(InstructionARM inst) {
         int shift_imm = inst.getField(7, 5);
         int shift = inst.getField(5, 2);
         int rm = inst.getRmField();
@@ -567,7 +568,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return レジスタシフトオペランド
      */
-    public int getAddrMode1RegShift(Instruction inst) {
+    public int getAddrMode1RegShift(InstructionARM inst) {
         int shift = inst.getField(5, 2);
         int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
@@ -635,7 +636,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return キャリーアウトがあれば true、なければ false
      */
-    public boolean getAddrMode1Carry(Instruction inst) {
+    public boolean getAddrMode1Carry(InstructionARM inst) {
         boolean i = inst.getIBit();
         boolean b7 = inst.getBit(7);
         boolean b4 = inst.getBit(4);
@@ -663,7 +664,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return キャリーアウトする場合は true、そうでなければ false
      */
-    public boolean getAddrMode1CarryImm(Instruction inst) {
+    public boolean getAddrMode1CarryImm(InstructionARM inst) {
         int rotR = inst.getField(8, 4);
 
         if (rotR == 0) {
@@ -693,7 +694,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return キャリーアウトする場合は true、そうでなければ false
      */
-    public boolean getAddrMode1CarryImmShift(Instruction inst) {
+    public boolean getAddrMode1CarryImmShift(InstructionARM inst) {
         int shift_imm = inst.getField(7, 5);
         int shift = inst.getField(5, 2);
         int rm = inst.getRmField();
@@ -739,7 +740,7 @@ public class ARMv5 extends CPU {
                         inst.getInst(), shift));
     }
 
-    public boolean getAddrMode1CarryRegShift(Instruction inst) {
+    public boolean getAddrMode1CarryRegShift(InstructionARM inst) {
         int shift = inst.getField(5, 2);
         int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
@@ -803,7 +804,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return シフタオペランドの名前
      */
-    public String getAddrMode1Name(Instruction inst) {
+    public String getAddrMode1Name(InstructionARM inst) {
         boolean i = inst.getIBit();
         boolean b7 = inst.getBit(7);
         boolean b4 = inst.getBit(4);
@@ -831,7 +832,7 @@ public class ARMv5 extends CPU {
      * @param inst 命令コード
      * @return イミディエートの文字列表現
      */
-    public String getAddrMode1ImmName(Instruction inst) {
+    public String getAddrMode1ImmName(InstructionARM inst) {
         int imm32 = getAddrMode1Imm(inst);
 
         return String.format("#%d    ; 0x%x", imm32, imm32);
@@ -857,7 +858,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return イミディエートシフトオペランドの名前
      */
-    public String getAddrMode1ImmShiftName(Instruction inst) {
+    public String getAddrMode1ImmShiftName(InstructionARM inst) {
         int shift_imm = inst.getField(7, 5);
         int shift = inst.getField(5, 2);
         int rm = inst.getRmField();
@@ -918,7 +919,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return レジスタシフトオペランドの名前
      */
-    public String getAddrMode1RegShiftName(Instruction inst) {
+    public String getAddrMode1RegShiftName(InstructionARM inst) {
         int shift = inst.getField(5, 2);
         int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
@@ -967,7 +968,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレス
      */
-    public int getAddrMode2(Instruction inst) {
+    public int getAddrMode2(InstructionARM inst) {
         boolean i = inst.getIBit();
         boolean u = inst.getBit(23);
         int rn = inst.getRnField();
@@ -1001,7 +1002,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return イミディエートオフセットアドレス
      */
-    public int getAddrMode2Imm(Instruction inst) {
+    public int getAddrMode2Imm(InstructionARM inst) {
         int offset12 = inst.getField(0, 12);
 
         return offset12;
@@ -1017,7 +1018,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return レジスタオフセットアドレス
      */
-    public int getAddrMode2Reg(Instruction inst) {
+    public int getAddrMode2Reg(InstructionARM inst) {
         return getAddrMode1ImmShift(inst);
     }
 
@@ -1031,7 +1032,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return スケーリング済みレジスタオフセットアドレス
      */
-    public int getAddrMode2Scaled(Instruction inst) {
+    public int getAddrMode2Scaled(InstructionARM inst) {
         return getAddrMode1ImmShift(inst);
     }
 
@@ -1046,7 +1047,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレスの文字列表記
      */
-    public String getAddrMode2Name(Instruction inst) {
+    public String getAddrMode2Name(InstructionARM inst) {
         boolean i = inst.getIBit();
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
@@ -1103,7 +1104,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return イミディエートオフセットアドレスの文字列表記
      */
-    public String getAddrMode2ImmName(Instruction inst) {
+    public String getAddrMode2ImmName(InstructionARM inst) {
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
         //boolean b = inst.getBit(22);
@@ -1142,7 +1143,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return レジスタオフセットアドレス
      */
-    public String getAddrMode2RegName(Instruction inst) {
+    public String getAddrMode2RegName(InstructionARM inst) {
         return getAddrMode1ImmShiftName(inst);
     }
 
@@ -1156,7 +1157,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレスの文字列表記
      */
-    public String getAddrMode2ScaledName(Instruction inst) {
+    public String getAddrMode2ScaledName(InstructionARM inst) {
         return getAddrMode1ImmShiftName(inst);
     }
 
@@ -1167,7 +1168,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレス
      */
-    public int getAddrMode3(Instruction inst) {
+    public int getAddrMode3(InstructionARM inst) {
         boolean u = inst.getBit(23);
         boolean b = inst.getBit(22);
         int rn = inst.getRnField();
@@ -1195,7 +1196,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレス
      */
-    public int getAddrMode3Imm(Instruction inst) {
+    public int getAddrMode3Imm(InstructionARM inst) {
         int immh = inst.getField(8, 4);
         int imml = inst.getField(0, 4);
 
@@ -1209,7 +1210,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレス
      */
-    public int getAddrMode3Reg(Instruction inst) {
+    public int getAddrMode3Reg(InstructionARM inst) {
         int rm = inst.getRmField();
 
         return getReg(rm);
@@ -1222,7 +1223,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレスの文字列表記
      */
-    public String getAddrMode3Name(Instruction inst) {
+    public String getAddrMode3Name(InstructionARM inst) {
         boolean b = inst.getBit(22);
 
         if (b) {
@@ -1241,7 +1242,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレスの文字列表記
      */
-    public String getAddrMode3ImmName(Instruction inst) {
+    public String getAddrMode3ImmName(InstructionARM inst) {
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
         boolean w = inst.getBit(21);
@@ -1276,7 +1277,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @return アドレスの文字列表記
      */
-    public String getAddrMode3RegName(Instruction inst) {
+    public String getAddrMode3RegName(InstructionARM inst) {
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
         boolean w = inst.getBit(21);
@@ -1315,13 +1316,13 @@ public class ARMv5 extends CPU {
      */
     public int getAddrMode4StartAddress(int pu, int rn, int rlist) {
         switch (pu) {
-        case Instruction.PU_ADDR4_IA:
+        case InstructionARM.PU_ADDR4_IA:
             return getReg(rn);
-        case Instruction.PU_ADDR4_IB:
+        case InstructionARM.PU_ADDR4_IB:
             return getReg(rn) + 4;
-        case Instruction.PU_ADDR4_DA:
+        case InstructionARM.PU_ADDR4_DA:
             return getReg(rn) - (Integer.bitCount(rlist) * 4) + 4;
-        case Instruction.PU_ADDR4_DB:
+        case InstructionARM.PU_ADDR4_DB:
             return getReg(rn) - (Integer.bitCount(rlist) * 4);
         default:
             //do nothing
@@ -1342,11 +1343,11 @@ public class ARMv5 extends CPU {
      */
     public int getAddrMode4Length(int pu, int rlist) {
         switch (pu) {
-        case Instruction.PU_ADDR4_IA:
-        case Instruction.PU_ADDR4_IB:
+        case InstructionARM.PU_ADDR4_IA:
+        case InstructionARM.PU_ADDR4_IB:
             return Integer.bitCount(rlist) * 4;
-        case Instruction.PU_ADDR4_DA:
-        case Instruction.PU_ADDR4_DB:
+        case InstructionARM.PU_ADDR4_DA:
+        case InstructionARM.PU_ADDR4_DB:
             return -(Integer.bitCount(rlist) * 4);
         default:
             //do nothing
@@ -1363,7 +1364,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeMrs(Instruction inst, boolean exec) {
+    public void executeMrs(InstructionARM inst, boolean exec) {
         boolean r = inst.getBit(22);
         int sbo = inst.getField(16, 4);
         int rd = inst.getRdField();
@@ -1401,7 +1402,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeMsr(Instruction inst, boolean exec) {
+    public void executeMsr(InstructionARM inst, boolean exec) {
         //boolean i = inst.getIBit();
         boolean r = inst.getBit(22);
         boolean mask_f = inst.getBit(19);
@@ -1475,7 +1476,7 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      * @param id   オペコードフィールドと S ビットが示す演算の ID
      */
-    public void executeALU(Instruction inst, boolean exec, int id) {
+    public void executeALU(InstructionARM inst, boolean exec, int id) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -1483,16 +1484,16 @@ public class ARMv5 extends CPU {
 
         if (!exec) {
             switch (id) {
-            case Instruction.OPCODE_S_ADC:
-            case Instruction.OPCODE_S_ADD:
-            case Instruction.OPCODE_S_AND:
-            case Instruction.OPCODE_S_BIC:
-            case Instruction.OPCODE_S_EOR:
-            case Instruction.OPCODE_S_ORR:
-            case Instruction.OPCODE_S_RSB:
-            case Instruction.OPCODE_S_RSC:
-            case Instruction.OPCODE_S_SBC:
-            case Instruction.OPCODE_S_SUB:
+            case InstructionARM.OPCODE_S_ADC:
+            case InstructionARM.OPCODE_S_ADD:
+            case InstructionARM.OPCODE_S_AND:
+            case InstructionARM.OPCODE_S_BIC:
+            case InstructionARM.OPCODE_S_EOR:
+            case InstructionARM.OPCODE_S_ORR:
+            case InstructionARM.OPCODE_S_RSB:
+            case InstructionARM.OPCODE_S_RSC:
+            case InstructionARM.OPCODE_S_SBC:
+            case InstructionARM.OPCODE_S_SUB:
                 //with S bit
                 strInst = String.format("%s%s%s", inst.getOpcodeFieldName(),
                         inst.getCondFieldName(),
@@ -1501,8 +1502,8 @@ public class ARMv5 extends CPU {
                 strOperand = String.format("%s, %s, %s", getRegName(rd),
                         getRegName(rn), getAddrMode1Name(inst));
                 break;
-            case Instruction.OPCODE_S_MOV:
-            case Instruction.OPCODE_S_MVN:
+            case InstructionARM.OPCODE_S_MOV:
+            case InstructionARM.OPCODE_S_MVN:
                 //with S bit
                 strInst = String.format("%s%s%s", inst.getOpcodeFieldName(),
                         inst.getCondFieldName(),
@@ -1511,10 +1512,10 @@ public class ARMv5 extends CPU {
                 strOperand = String.format("%s, %s", getRegName(rd),
                         getAddrMode1Name(inst));
                 break;
-            case Instruction.OPCODE_S_CMN:
-            case Instruction.OPCODE_S_CMP:
-            case Instruction.OPCODE_S_TEQ:
-            case Instruction.OPCODE_S_TST:
+            case InstructionARM.OPCODE_S_CMN:
+            case InstructionARM.OPCODE_S_CMP:
+            case InstructionARM.OPCODE_S_TEQ:
+            case InstructionARM.OPCODE_S_TST:
                 //S bit is 1
                 strInst = String.format("%s%s", inst.getOpcodeFieldName(),
                         inst.getCondFieldName());
@@ -1536,52 +1537,52 @@ public class ARMv5 extends CPU {
         }
 
         switch (id) {
-        case Instruction.OPCODE_S_AND:
+        case InstructionARM.OPCODE_S_AND:
             executeALUAnd(inst, exec);
             break;
-        case Instruction.OPCODE_S_EOR:
+        case InstructionARM.OPCODE_S_EOR:
             executeALUEor(inst, exec);
             break;
-        case Instruction.OPCODE_S_SUB:
+        case InstructionARM.OPCODE_S_SUB:
             executeALUSub(inst, exec);
             break;
-        case Instruction.OPCODE_S_RSB:
+        case InstructionARM.OPCODE_S_RSB:
             executeALURsb(inst, exec);
             break;
-        case Instruction.OPCODE_S_ADD:
+        case InstructionARM.OPCODE_S_ADD:
             executeALUAdd(inst, exec);
             break;
-        case Instruction.OPCODE_S_ADC:
+        case InstructionARM.OPCODE_S_ADC:
             executeALUAdc(inst, exec);
             break;
-        case Instruction.OPCODE_S_SBC:
+        case InstructionARM.OPCODE_S_SBC:
             executeALUSbc(inst, exec);
             break;
-        case Instruction.OPCODE_S_RSC:
+        case InstructionARM.OPCODE_S_RSC:
             executeALURsc(inst, exec);
             break;
-        case Instruction.OPCODE_S_TST:
+        case InstructionARM.OPCODE_S_TST:
             executeALUTst(inst, exec);
             break;
-        case Instruction.OPCODE_S_TEQ:
+        case InstructionARM.OPCODE_S_TEQ:
             executeALUTeq(inst, exec);
             break;
-        case Instruction.OPCODE_S_CMP:
+        case InstructionARM.OPCODE_S_CMP:
             executeALUCmp(inst, exec);
             break;
-        case Instruction.OPCODE_S_CMN:
+        case InstructionARM.OPCODE_S_CMN:
             executeALUCmn(inst, exec);
             break;
-        case Instruction.OPCODE_S_ORR:
+        case InstructionARM.OPCODE_S_ORR:
             executeALUOrr(inst, exec);
             break;
-        case Instruction.OPCODE_S_MOV:
+        case InstructionARM.OPCODE_S_MOV:
             executeALUMov(inst, exec);
             break;
-        case Instruction.OPCODE_S_BIC:
+        case InstructionARM.OPCODE_S_BIC:
             executeALUBic(inst, exec);
             break;
-        case Instruction.OPCODE_S_MVN:
+        case InstructionARM.OPCODE_S_MVN:
             executeALUMvn(inst, exec);
             break;
         default:
@@ -1596,7 +1597,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUAnd(Instruction inst, boolean exec) {
+    public void executeALUAnd(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -1625,7 +1626,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUEor(Instruction inst, boolean exec) {
+    public void executeALUEor(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -1654,7 +1655,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUSub(Instruction inst, boolean exec) {
+    public void executeALUSub(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -1683,7 +1684,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALURsb(Instruction inst, boolean exec) {
+    public void executeALURsb(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -1712,7 +1713,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUAdd(Instruction inst, boolean exec) {
+    public void executeALUAdd(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -1741,7 +1742,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUAdc(Instruction inst, boolean exec) {
+    public void executeALUAdc(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -1775,7 +1776,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUSbc(Instruction inst, boolean exec) {
+    public void executeALUSbc(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -1809,7 +1810,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALURsc(Instruction inst, boolean exec) {
+    public void executeALURsc(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -1843,7 +1844,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUTst(Instruction inst, boolean exec) {
+    public void executeALUTst(InstructionARM inst, boolean exec) {
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
         int opr = getAddrMode1(inst);
@@ -1870,7 +1871,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUTeq(Instruction inst, boolean exec) {
+    public void executeALUTeq(InstructionARM inst, boolean exec) {
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
         int opr = getAddrMode1(inst);
@@ -1897,7 +1898,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUCmp(Instruction inst, boolean exec) {
+    public void executeALUCmp(InstructionARM inst, boolean exec) {
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
         int opr = getAddrMode1(inst);
@@ -1924,7 +1925,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUCmn(Instruction inst, boolean exec) {
+    public void executeALUCmn(InstructionARM inst, boolean exec) {
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
         int opr = getAddrMode1(inst);
@@ -1951,7 +1952,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUOrr(Instruction inst, boolean exec) {
+    public void executeALUOrr(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -1980,7 +1981,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUMov(Instruction inst, boolean exec) {
+    public void executeALUMov(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int sbz = inst.getField(16, 4);
         int rd = inst.getRdField();
@@ -2013,7 +2014,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUBic(Instruction inst, boolean exec) {
+    public void executeALUBic(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -2042,7 +2043,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeALUMvn(Instruction inst, boolean exec) {
+    public void executeALUMvn(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
@@ -2069,7 +2070,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeMla(Instruction inst, boolean exec) {
+    public void executeMla(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rd = inst.getField(16, 4);
         int rn = inst.getField(12, 4);
@@ -2112,7 +2113,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeMul(Instruction inst, boolean exec) {
+    public void executeMul(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rd = inst.getField(16, 4);
         int rs = inst.getField(8, 4);
@@ -2153,7 +2154,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSmlal(Instruction inst, boolean exec) {
+    public void executeSmlal(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rdhi = inst.getField(16, 4);
         int rdlo = inst.getRdField();
@@ -2200,7 +2201,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSmull(Instruction inst, boolean exec) {
+    public void executeSmull(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rdhi = inst.getField(16, 4);
         int rdlo = inst.getRdField();
@@ -2246,7 +2247,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeUmlal(Instruction inst, boolean exec) {
+    public void executeUmlal(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rdhi = inst.getField(16, 4);
         int rdlo = inst.getRdField();
@@ -2293,7 +2294,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeUmull(Instruction inst, boolean exec) {
+    public void executeUmull(InstructionARM inst, boolean exec) {
         boolean s = inst.getSBit();
         int rdhi = inst.getField(16, 4);
         int rdlo = inst.getRdField();
@@ -2341,7 +2342,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSmlalxy(Instruction inst, boolean exec) {
+    public void executeSmlalxy(InstructionARM inst, boolean exec) {
         int rdhi = inst.getField(16, 4);
         int rdlo = inst.getRdField();
         int rs = inst.getField(8, 4);
@@ -2376,7 +2377,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSmlaxy(Instruction inst, boolean exec) {
+    public void executeSmlaxy(InstructionARM inst, boolean exec) {
         int rd = inst.getField(16, 4);
         int rn = inst.getRdField();
         int rs = inst.getField(8, 4);
@@ -2411,7 +2412,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSmlawy(Instruction inst, boolean exec) {
+    public void executeSmlawy(InstructionARM inst, boolean exec) {
         int rd = inst.getField(16, 4);
         int rn = inst.getRdField();
         int rs = inst.getField(8, 4);
@@ -2445,7 +2446,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSmulxy(Instruction inst, boolean exec) {
+    public void executeSmulxy(InstructionARM inst, boolean exec) {
         int rd = inst.getRdField();
         int rs = inst.getField(8, 4);
         boolean y = inst.getBit(6);
@@ -2479,7 +2480,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSmulwy(Instruction inst, boolean exec) {
+    public void executeSmulwy(InstructionARM inst, boolean exec) {
         int rd = inst.getField(16, 4);
         int rs = inst.getField(8, 4);
         boolean y = inst.getBit(6);
@@ -2510,7 +2511,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSwp(Instruction inst, boolean exec) {
+    public void executeSwp(InstructionARM inst, boolean exec) {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int rm = inst.getRmField();
@@ -2575,7 +2576,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdrt(Instruction inst, boolean exec) {
+    public void executeLdrt(InstructionARM inst, boolean exec) {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getAddrMode2(inst);
@@ -2647,7 +2648,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdrbt(Instruction inst, boolean exec) {
+    public void executeLdrbt(InstructionARM inst, boolean exec) {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getAddrMode2(inst);
@@ -2693,7 +2694,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdrb(Instruction inst, boolean exec) {
+    public void executeLdrb(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -2750,7 +2751,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdr(Instruction inst, boolean exec) {
+    public void executeLdr(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -2832,7 +2833,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdrh(Instruction inst, boolean exec) {
+    public void executeLdrh(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -2889,7 +2890,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdrsb(Instruction inst, boolean exec) {
+    public void executeLdrsb(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -2946,7 +2947,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdrsh(Instruction inst, boolean exec) {
+    public void executeLdrsh(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -3003,7 +3004,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdrd(Instruction inst, boolean exec) {
+    public void executeLdrd(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -3056,7 +3057,7 @@ public class ARMv5 extends CPU {
         }
     }
 
-    public void executePld(Instruction inst, boolean exec) {
+    public void executePld(InstructionARM inst, boolean exec) {
         boolean r = inst.getBit(22);
 
         if (!exec) {
@@ -3077,7 +3078,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeStrt(Instruction inst, boolean exec) {
+    public void executeStrt(InstructionARM inst, boolean exec) {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getAddrMode2(inst);
@@ -3121,7 +3122,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeStrbt(Instruction inst, boolean exec) {
+    public void executeStrbt(InstructionARM inst, boolean exec) {
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getAddrMode2(inst);
@@ -3165,7 +3166,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeStrb(Instruction inst, boolean exec) {
+    public void executeStrb(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -3220,7 +3221,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeStr(Instruction inst, boolean exec) {
+    public void executeStr(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -3275,7 +3276,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeStrh(Instruction inst, boolean exec) {
+    public void executeStrh(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -3330,7 +3331,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeStrd(Instruction inst, boolean exec) {
+    public void executeStrd(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -3386,7 +3387,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdm1(Instruction inst, boolean exec) {
+    public void executeLdm1(InstructionARM inst, boolean exec) {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
@@ -3465,7 +3466,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdm2(Instruction inst, boolean exec) {
+    public void executeLdm2(InstructionARM inst, boolean exec) {
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
         int vaddr, paddr, v, mod;
@@ -3523,7 +3524,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeLdm3(Instruction inst, boolean exec) {
+    public void executeLdm3(InstructionARM inst, boolean exec) {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
@@ -3602,7 +3603,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeStm1(Instruction inst, boolean exec) {
+    public void executeStm1(InstructionARM inst, boolean exec) {
         int pu = inst.getPUField();
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
@@ -3659,7 +3660,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeStm2(Instruction inst, boolean exec) {
+    public void executeStm2(InstructionARM inst, boolean exec) {
         int pu = inst.getPUField();
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
@@ -3714,7 +3715,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeBl(Instruction inst, boolean exec) {
+    public void executeBl(InstructionARM inst, boolean exec) {
         boolean l = inst.getBit(24);
         int imm24 = inst.getField(0, 24);
         int simm24 = (int) BitOp.signExt64(imm24, 24) << 2;
@@ -3749,7 +3750,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeBlx1(Instruction inst, boolean exec) {
+    public void executeBlx1(InstructionARM inst, boolean exec) {
         boolean h = inst.getBit(24);
         int vh = BitOp.toInt(h) << 1;
         int imm24 = inst.getField(0, 24);
@@ -3785,7 +3786,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeBlx2(Instruction inst, boolean exec) {
+    public void executeBlx2(InstructionARM inst, boolean exec) {
         int rm = inst.getRmField();
         int dest;
 
@@ -3816,7 +3817,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeBx(Instruction inst, boolean exec) {
+    public void executeBx(InstructionARM inst, boolean exec) {
         int rm = inst.getRmField();
         int dest;
 
@@ -3844,7 +3845,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeClz(Instruction inst, boolean exec) {
+    public void executeClz(InstructionARM inst, boolean exec) {
         int rd = inst.getRdField();
         int rm = inst.getRmField();
         int dest;
@@ -3872,7 +3873,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeCdp(Instruction inst, boolean exec) {
+    public void executeCdp(InstructionARM inst, boolean exec) {
         int opcode1 = inst.getField(20, 4);
         int crn = inst.getField(16, 4);
         int crd = inst.getField(12, 4);
@@ -3917,7 +3918,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeMcr(Instruction inst, boolean exec) {
+    public void executeMcr(InstructionARM inst, boolean exec) {
         int opcode1 = inst.getField(21, 3);
         int crn = inst.getField(16, 4);
         int rd = inst.getRdField();
@@ -3972,7 +3973,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeMrc(Instruction inst, boolean exec) {
+    public void executeMrc(InstructionARM inst, boolean exec) {
         int opcode1 = inst.getField(21, 3);
         int crn = inst.getField(16, 4);
         int rd = inst.getRdField();
@@ -4030,7 +4031,7 @@ public class ARMv5 extends CPU {
         }
     }
 
-    public void executeSwi(Instruction inst, boolean exec) {
+    public void executeSwi(InstructionARM inst, boolean exec) {
         int imm24 = inst.getField(0, 24);
 
         if (!exec) {
@@ -4054,7 +4055,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeUnd(Instruction inst, boolean exec) {
+    public void executeUnd(InstructionARM inst, boolean exec) {
         if (!exec) {
             disasmInst(inst,
                     String.format("und%s", inst.getCondFieldName()),
@@ -4071,8 +4072,8 @@ public class ARMv5 extends CPU {
      *
      * @return inst ARM 命令
      */
-    public Instruction fetch() {
-        Instruction inst;
+    public InstructionARM fetch() {
+        InstructionARM inst;
         int v, vaddr, paddr;
 
         //現在の PC の指すアドレスから命令を取得します
@@ -4096,7 +4097,7 @@ public class ARMv5 extends CPU {
                 return null;
             }
             v = read32_a32(paddr);
-            inst = new Instruction(v);
+            inst = new InstructionARM(v);
 
             return inst;
         }
@@ -4107,7 +4108,7 @@ public class ARMv5 extends CPU {
      *
      * @param inst ARM 命令
      */
-    public void disasm(Instruction inst) {
+    public void disasm(InstructionARM inst) {
         executeInst(inst, false);
     }
 
@@ -4118,7 +4119,7 @@ public class ARMv5 extends CPU {
      * @param operation 命令の文字列表記
      * @param operand   オペランドの文字列表記
      */
-    public void disasmInst(Instruction inst, String operation, String operand) {
+    public void disasmInst(InstructionARM inst, String operation, String operand) {
         printDisasm(inst, operation, operand);
         printRegs();
     }
@@ -4128,7 +4129,7 @@ public class ARMv5 extends CPU {
      *
      * @param inst ARM 命令
      */
-    public void execute(Instruction inst) {
+    public void execute(InstructionARM inst) {
         executeInst(inst, true);
     }
 
@@ -4139,7 +4140,7 @@ public class ARMv5 extends CPU {
      * @param exec 逆アセンブルと実行なら true、
      *             逆アセンブルのみなら false
      */
-    public void executeInst(Instruction inst, boolean exec) {
+    public void executeInst(InstructionARM inst, boolean exec) {
         //int cond = inst.getCondField();
         int subcode = inst.getSubCodeField();
 
@@ -4150,16 +4151,16 @@ public class ARMv5 extends CPU {
         } else {
             //ARM モード
             switch (subcode) {
-            case Instruction.SUBCODE_USEALU:
+            case InstructionARM.SUBCODE_USEALU:
                 executeSubALU(inst, exec);
                 return;
-            case Instruction.SUBCODE_LDRSTR:
+            case InstructionARM.SUBCODE_LDRSTR:
                 executeSubLdrStr(inst, exec);
                 return;
-            case Instruction.SUBCODE_LDMSTM:
+            case InstructionARM.SUBCODE_LDMSTM:
                 executeSubLdmStm(inst, exec);
                 return;
-            case Instruction.SUBCODE_COPSWI:
+            case InstructionARM.SUBCODE_COPSWI:
                 executeSubCopSwi(inst, exec);
                 return;
             default:
@@ -4180,7 +4181,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubALU(Instruction inst, boolean exec) {
+    public void executeSubALU(InstructionARM inst, boolean exec) {
         boolean i = inst.getIBit();
         boolean b7 = inst.getBit(7);
         boolean b4 = inst.getBit(4);
@@ -4203,7 +4204,7 @@ public class ARMv5 extends CPU {
                 boolean p = inst.getBit(24);
                 int op = inst.getField(5, 2);
 
-                if (cond != Instruction.COND_NV && !p && op == 0) {
+                if (cond != InstructionARM.COND_NV && !p && op == 0) {
                     //算術命令拡張空間
                     executeSubExtALU(inst, exec);
                 } else {
@@ -4224,11 +4225,11 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubALUShiftImm(Instruction inst, boolean exec) {
+    public void executeSubALUShiftImm(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
 
         switch (id) {
-        case Instruction.OPCODE_S_OTH:
+        case InstructionARM.OPCODE_S_OTH:
             executeSubALUOther(inst, exec);
             break;
         default:
@@ -4244,11 +4245,11 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubALUShiftReg(Instruction inst, boolean exec) {
+    public void executeSubALUShiftReg(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
 
         switch (id) {
-        case Instruction.OPCODE_S_OTH:
+        case InstructionARM.OPCODE_S_OTH:
             executeSubALUOther(inst, exec);
             break;
         default:
@@ -4268,7 +4269,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubExtALU(Instruction inst, boolean exec) {
+    public void executeSubExtALU(InstructionARM inst, boolean exec) {
         //U, B, W ビット[23:21]
         int ubw = inst.getField(21, 3);
 
@@ -4342,7 +4343,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubExtLdrStr(Instruction inst, boolean exec) {
+    public void executeSubExtLdrStr(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         //U, B, W ビット[23:21]
         int ubw = inst.getField(21, 3);
@@ -4407,14 +4408,14 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubALUImm(Instruction inst, boolean exec) {
+    public void executeSubALUImm(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitImmID();
 
         switch (id) {
-        case Instruction.OPCODE_S_MSR:
+        case InstructionARM.OPCODE_S_MSR:
             executeMsr(inst, exec);
             break;
-        case Instruction.OPCODE_S_UND:
+        case InstructionARM.OPCODE_S_UND:
             executeUnd(inst, exec);
             break;
         default:
@@ -4458,7 +4459,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubALUOther(Instruction inst, boolean exec) {
+    public void executeSubALUOther(InstructionARM inst, boolean exec) {
         int cond = inst.getCondField();
         boolean b22 = inst.getBit(22);
         boolean b21 = inst.getBit(21);
@@ -4515,7 +4516,7 @@ public class ARMv5 extends CPU {
             }
             //break;
         case 0x7:
-            if (cond == Instruction.COND_AL && !b22 && b21) {
+            if (cond == InstructionARM.COND_AL && !b22 && b21) {
                 //bkpt
                 //TODO: Not implemented
                 throw new IllegalArgumentException("Sorry, not implemented.");
@@ -4591,7 +4592,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubLdrStr(Instruction inst, boolean exec) {
+    public void executeSubLdrStr(InstructionARM inst, boolean exec) {
         int cond = inst.getCondField();
         boolean i = inst.getBit(25);
         boolean p = inst.getBit(24);
@@ -4612,7 +4613,7 @@ public class ARMv5 extends CPU {
                 //ldrbt
                 executeLdrbt(inst, exec);
             } else if (b) {
-                if (cond == Instruction.COND_NV && p && !w && rd == 15) {
+                if (cond == InstructionARM.COND_NV && p && !w && rd == 15) {
                     //pld
                     executePld(inst, exec);
                 } else {
@@ -4657,14 +4658,14 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubLdmStm(Instruction inst, boolean exec) {
+    public void executeSubLdmStm(InstructionARM inst, boolean exec) {
         int cond = inst.getCondField();
         boolean b25 = inst.getBit(25);
         boolean l = inst.getLBit();
 
         if (!b25) {
             //ロードマルチプル、ストアマルチプル
-            if (cond == Instruction.COND_NV) {
+            if (cond == InstructionARM.COND_NV) {
                 //未定義
                 executeUnd(inst, exec);
             } else {
@@ -4678,7 +4679,7 @@ public class ARMv5 extends CPU {
             }
         } else {
             //分岐命令
-            if (cond == Instruction.COND_NV) {
+            if (cond == InstructionARM.COND_NV) {
                 //blx
                 executeBlx1(inst, exec);
             } else {
@@ -4696,7 +4697,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubLdm(Instruction inst, boolean exec) {
+    public void executeSubLdm(InstructionARM inst, boolean exec) {
         boolean s = inst.getBit(22);
         boolean b15 = inst.getBit(15);
 
@@ -4722,7 +4723,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubStm(Instruction inst, boolean exec) {
+    public void executeSubStm(InstructionARM inst, boolean exec) {
         boolean s = inst.getBit(22);
         boolean w = inst.getBit(21);
 
@@ -4748,7 +4749,7 @@ public class ARMv5 extends CPU {
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
-    public void executeSubCopSwi(Instruction inst, boolean exec) {
+    public void executeSubCopSwi(InstructionARM inst, boolean exec) {
         int cond = inst.getCondField();
         int subsub = inst.getField(24, 2);
         boolean b20 = inst.getBit(20);
@@ -4782,7 +4783,7 @@ public class ARMv5 extends CPU {
             }
             return;
         case 3:
-            if (cond == Instruction.COND_NV) {
+            if (cond == InstructionARM.COND_NV) {
                 //未定義
                 executeUnd(inst, exec);
             } else {
@@ -5268,7 +5269,7 @@ public class ARMv5 extends CPU {
 
     @Override
     public void step() {
-        Instruction inst;
+        InstructionARM inst;
 
         //for debug
         int target_address1 = 0x0;//0xc036aee8; //<versatile_init_irq>

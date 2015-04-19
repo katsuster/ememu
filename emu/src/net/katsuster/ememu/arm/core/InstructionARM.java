@@ -1,47 +1,16 @@
 package net.katsuster.ememu.arm.core;
 
 import net.katsuster.ememu.generic.BitOp;
+import net.katsuster.ememu.generic.Instruction;
 
 /**
- * 命令。
+ * ARM 命令。
  *
  * @author katsuhiro
  */
-public class Instruction {
-    private int rawInst;
-
-    public Instruction(int inst) {
-        this.rawInst = inst;
-    }
-
-    /**
-     * ARM 命令のバイナリデータを取得します。
-     *
-     * @return ARM 命令のバイナリデータ
-     */
-    public int getInst() {
-        return rawInst;
-    }
-
-    /**
-     * ARM 命令のバイナリデータの指定された 1ビットを取得します。
-     *
-     * @param bit ビット位置
-     * @return 指定されたビットがセットされていれば true、そうでなければ false
-     */
-    public boolean getBit(int bit) {
-        return BitOp.getBit32(rawInst, bit);
-    }
-
-    /**
-     * ARM 命令のバイナリデータの指定されたビットフィールドを取得します。
-     *
-     * @param pos ビット位置
-     * @param len ビットフィールドの長さ
-     * @return ビットフィールドの値
-     */
-    public int getField(int pos, int len) {
-        return BitOp.getField32(rawInst, pos, len);
+public class InstructionARM extends Instruction {
+    public InstructionARM(int inst) {
+        super(inst);
     }
 
     public static final int COND_EQ = 0;
@@ -69,7 +38,7 @@ public class Instruction {
      * @return cond フィールド
      */
     public int getCondField() {
-        return getCondField(rawInst);
+        return getCondField(getInst());
     }
 
     /**
@@ -151,36 +120,36 @@ public class Instruction {
         boolean v = psr.getVBit();
 
         switch (cond) {
-        case Instruction.COND_EQ:
+        case InstructionARM.COND_EQ:
             return z;
-        case Instruction.COND_NE:
+        case InstructionARM.COND_NE:
             return !z;
-        case Instruction.COND_CS:
+        case InstructionARM.COND_CS:
             return c;
-        case Instruction.COND_CC:
+        case InstructionARM.COND_CC:
             return !c;
-        case Instruction.COND_MI:
+        case InstructionARM.COND_MI:
             return n;
-        case Instruction.COND_PL:
+        case InstructionARM.COND_PL:
             return !n;
-        case Instruction.COND_VS:
+        case InstructionARM.COND_VS:
             return v;
-        case Instruction.COND_VC:
+        case InstructionARM.COND_VC:
             return !v;
-        case Instruction.COND_HI:
+        case InstructionARM.COND_HI:
             return c && !z;
-        case Instruction.COND_LS:
+        case InstructionARM.COND_LS:
             return !c || z;
-        case Instruction.COND_GE:
+        case InstructionARM.COND_GE:
             return n == v;
-        case Instruction.COND_LT:
+        case InstructionARM.COND_LT:
             return n != v;
-        case Instruction.COND_GT:
+        case InstructionARM.COND_GT:
             return !z && (n == v);
-        case Instruction.COND_LE:
+        case InstructionARM.COND_LE:
             return z || (n != v);
-        case Instruction.COND_AL:
-        case Instruction.COND_NV:
+        case InstructionARM.COND_AL:
+        case InstructionARM.COND_NV:
             return true;
         default:
             throw new IllegalArgumentException(String.format(
@@ -202,7 +171,7 @@ public class Instruction {
      * @return サブコード
      */
     public int getSubCodeField() {
-        return getSubCodeField(rawInst);
+        return getSubCodeField(getInst());
     }
 
     /**
@@ -227,7 +196,7 @@ public class Instruction {
      * @return I ビットがセットされていれば true, そうでなければ false
      */
     public boolean getIBit() {
-        return getIBit(rawInst);
+        return getIBit(getInst());
     }
 
     /**
@@ -268,7 +237,7 @@ public class Instruction {
      * @return オペコード
      */
     public int getOpcodeField() {
-        return getOpcodeField(rawInst);
+        return getOpcodeField(getInst());
     }
 
     /**
@@ -394,7 +363,7 @@ public class Instruction {
      * @return 演算を示す ID
      */
     public int getOpcodeSBitShiftID() {
-        return getOpcodeSBitShiftID(rawInst);
+        return getOpcodeSBitShiftID(getInst());
     }
 
     /**
@@ -421,7 +390,7 @@ public class Instruction {
      * @return 演算を示す ID
      */
     public int getOpcodeSBitImmID() {
-        return getOpcodeSBitImmID(rawInst);
+        return getOpcodeSBitImmID(getInst());
     }
 
     /**
@@ -453,7 +422,7 @@ public class Instruction {
      * @return P, U ビット
      */
     public int getPUField() {
-        return getPUField(rawInst);
+        return getPUField(getInst());
     }
 
     /**
@@ -518,7 +487,7 @@ public class Instruction {
      * @return S ビットがセットされていれば true, そうでなければ false
      */
     public boolean getSBit() {
-        return getSBit(rawInst);
+        return getSBit(getInst());
     }
 
     /**
@@ -544,7 +513,7 @@ public class Instruction {
      * @return L ビットがセットされていれば true, そうでなければ false
      */
     public boolean getLBit() {
-        return getLBit(rawInst);
+        return getLBit(getInst());
     }
 
     /**
@@ -566,7 +535,7 @@ public class Instruction {
      * @return Rn フィールド
      */
     public int getRnField() {
-        return getRnField(rawInst);
+        return getRnField(getInst());
     }
 
     /**
@@ -585,7 +554,7 @@ public class Instruction {
      * @return Rd フィールド
      */
     public int getRdField() {
-        return getRdField(rawInst);
+        return getRdField(getInst());
     }
 
     /**
@@ -609,7 +578,7 @@ public class Instruction {
      * @return Rm フィールド
      */
     public int getRmField() {
-        return getRmField(rawInst);
+        return getRmField(getInst());
     }
 
     /**
@@ -636,7 +605,7 @@ public class Instruction {
      * @return レジスタリストフィールド
      */
     public int getRegListField() {
-        return getRegListField(rawInst);
+        return getRegListField(getInst());
     }
 
     /**

@@ -1,7 +1,5 @@
 package net.katsuster.ememu.generic;
 
-import net.katsuster.ememu.arm.core.Instruction;
-
 /**
  * CPU の基本クラス
  *
