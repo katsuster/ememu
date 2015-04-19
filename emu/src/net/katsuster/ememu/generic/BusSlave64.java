@@ -10,5 +10,5 @@ package net.katsuster.ememu.generic;
  * @author katsuhiro
  */
 public interface BusSlave64 {
-    public SlaveCore64 getSlaveCore();
+    public abstract SlaveCore64 getSlaveCore();
 }

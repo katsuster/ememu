@@ -13,9 +13,9 @@ import net.katsuster.ememu.ui.*;
  *
  * @author katsuhiro
  */
-public class UART extends Controller64Reg32
-        implements INTSource {
+public class UART implements INTSource, BusSlave64 {
     private INTDestination intDst = new NullINTDestination();
+    private UARTSlave slave;
 
     private int rawInt;
     private int maskInt;
@@ -85,28 +85,7 @@ public class UART extends Controller64Reg32
         strOutput = ostr;
         bufInput = new StringBuffer();
 
-        addReg(REG_UARTDR, "UARTDR", 0x00000000);
-        addReg(REG_UARTFR, "UARTFR", 0x00000000);
-
-        addReg(REG_UARTIBRD, "UARTIBRD", 0x00000000);
-        addReg(REG_UARTFBRD, "UARTFBRD", 0x00000000);
-        addReg(REG_UARTLCR_H, "UARTLCR_H", 0x00000000);
-        addReg(REG_UARTCR, "UARTCR", 0x00000000);
-        addReg(REG_UARTIFLS, "UARTIFLS", 0x00000000);
-
-        addReg(REG_UARTIMSC, "UARTIMSC", 0x00000000);
-        addReg(REG_UARTRIS, "UARTRIS", 0x00000000);
-        addReg(REG_UARTMIS, "UARTMIS", 0x00000000);
-        addReg(REG_UARTICR, "UARTICR", 0x00000000);
-
-        addReg(REG_UARTPeriphID0, "UARTPeriphID0", 0x00000011);
-        addReg(REG_UARTPeriphID1, "UARTPeriphID1", 0x00000010);
-        addReg(REG_UARTPeriphID2, "UARTPeriphID2", 0x00000014);
-        addReg(REG_UARTPeriphID3, "UARTPeriphID3", 0x00000000);
-        addReg(REG_UARTPCellID0, "UARTPCellID0", 0x0000000d);
-        addReg(REG_UARTPCellID1, "UARTPCellID1", 0x000000f0);
-        addReg(REG_UARTPCellID2, "UARTPCellID2", 0x00000005);
-        addReg(REG_UARTPCellID3, "UARTPCellID3", 0x000000b1);
+        slave = new UARTSlave();
     }
 
     /**
@@ -133,131 +112,6 @@ public class UART extends Controller64Reg32
      */
     public int getMaskedInt() {
         return getRawInt() & maskInt;
-    }
-
-    @Override
-    public int readWord(long addr) {
-        int regaddr;
-        int result;
-
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
-
-        switch (regaddr) {
-        case REG_UARTDR:
-            if (bufInput.length() > 0) {
-                result = bufInput.charAt(0);
-                bufInput.deleteCharAt(0);
-            } else {
-                result = 0;
-            }
-            break;
-        case REG_UARTFR:
-            result = 0;
-
-            //送信 FIFO は常に空いていることにする
-            result = BitOp.setBit32(result, FR_TXFE, true);
-            //受信 FIFO はバッファ残量に応じて設定する
-            result = BitOp.setBit32(result, FR_RXFE, bufInput.length() == 0);
-
-            break;
-        case REG_UARTLCR_H:
-            result = super.readWord(regaddr);
-            //SystemPane.out.printf("UARTLCR_H: read 0x%08x\n", result);
-            break;
-        case REG_UARTCR:
-            result = super.readWord(regaddr);
-            //SystemPane.out.printf("UARTCR: read 0x%08x\n", result);
-            break;
-        case REG_UARTIMSC:
-            result = maskInt;
-            break;
-        case REG_UARTRIS:
-            result = getRawInt();
-            break;
-        case REG_UARTMIS:
-            result = getMaskedInt();
-            break;
-        default:
-            result = super.readWord(regaddr);
-            break;
-        }
-
-        return result;
-    }
-
-    @Override
-    public void writeWord(long addr, int data) {
-        int regaddr;
-
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
-
-        switch (regaddr) {
-        case REG_UARTDR:
-            char ascii = (char)(data & 0xff);
-
-            if (ascii == 0x00) {
-                //FIXME: IntelliJ の Console でコピーできないため無視
-                break;
-            }
-            if (strOutput != null) {
-                try {
-                    strOutput.write(ascii);
-                    strOutput.flush();
-                } catch (IOException ex) {
-                    //ignore
-                }
-            }
-
-            break;
-        case REG_UARTFR:
-            //read only, ignored
-            break;
-        case REG_UARTIBRD:
-            //TODO: Not implemented
-            SystemPane.out.printf("UARTIBRD: 0x%08x\n", data);
-            break;
-        case REG_UARTFBRD:
-            //TODO: Not implemented
-            SystemPane.out.printf("UARTFBRD: 0x%08x\n", data);
-            break;
-        case REG_UARTLCR_H:
-            //TODO: Not implemented
-            SystemPane.out.printf("UARTLCR_H: 0x%08x\n", data);
-            super.writeWord(regaddr, data);
-            break;
-        case REG_UARTCR:
-            //TODO: Not implemented
-            //SystemPane.out.printf("UARTCR: 0x%08x\n", data);
-            super.writeWord(regaddr, data);
-            break;
-        case REG_UARTIFLS:
-            //TODO: Not implemented
-            SystemPane.out.printf("UARTIFLS: 0x%08x\n", data);
-            break;
-        case REG_UARTIMSC:
-            maskInt = data;
-            break;
-        case REG_UARTRIS:
-        case REG_UARTMIS:
-            //read only, ignored
-            break;
-        case REG_UARTICR:
-            rawInt &= ~data;
-            break;
-        case REG_UARTPeriphID0:
-        case REG_UARTPeriphID1:
-        case REG_UARTPeriphID2:
-        case REG_UARTPeriphID3:
-        case REG_UARTPCellID0:
-        case REG_UARTPCellID1:
-        case REG_UARTPCellID2:
-        case REG_UARTPCellID3:
-            //read only, ignored
-            break;
-        default:
-            super.writeWord(regaddr, data);
-            break;
-        }
     }
 
     @Override
@@ -291,45 +145,203 @@ public class UART extends Controller64Reg32
     }
 
     @Override
-    public void run() {
-        mainLoop:
-        while (!shouldHalt()) {
-            try {
-                while (strInput == null) {
-                    Thread.sleep(50);
-                    if (shouldHalt()) {
-                        break mainLoop;
-                    }
-                }
+    public SlaveCore64 getSlaveCore() {
+        return slave;
+    }
 
-                //NOTE: InputStream をポーリングします。
-                //strInput が System.in かつ read() がブロックしたとき、
-                //他のスレッドからブロッキングをキャンセルする方法がないため、
-                //read() のブロックを避ける必要があるためです。
-                //FIXME: この実装はマルチスレッドセーフではありません。
-                //他スレッドが同時に strInput にアクセスする場合、
-                //read() でブロックする可能性があります。
-                while (strInput.available() == 0) {
-                    Thread.sleep(50);
-                    if (shouldHalt()) {
-                        break mainLoop;
-                    }
-                }
+    class UARTSlave extends Controller64Reg32 {
+        public UARTSlave() {
+            addReg(REG_UARTDR, "UARTDR", 0x00000000);
+            addReg(REG_UARTFR, "UARTFR", 0x00000000);
 
-                int c = strInput.read();
-                if (c == -1) {
-                    //EOF
+            addReg(REG_UARTIBRD, "UARTIBRD", 0x00000000);
+            addReg(REG_UARTFBRD, "UARTFBRD", 0x00000000);
+            addReg(REG_UARTLCR_H, "UARTLCR_H", 0x00000000);
+            addReg(REG_UARTCR, "UARTCR", 0x00000000);
+            addReg(REG_UARTIFLS, "UARTIFLS", 0x00000000);
+
+            addReg(REG_UARTIMSC, "UARTIMSC", 0x00000000);
+            addReg(REG_UARTRIS, "UARTRIS", 0x00000000);
+            addReg(REG_UARTMIS, "UARTMIS", 0x00000000);
+            addReg(REG_UARTICR, "UARTICR", 0x00000000);
+
+            addReg(REG_UARTPeriphID0, "UARTPeriphID0", 0x00000011);
+            addReg(REG_UARTPeriphID1, "UARTPeriphID1", 0x00000010);
+            addReg(REG_UARTPeriphID2, "UARTPeriphID2", 0x00000014);
+            addReg(REG_UARTPeriphID3, "UARTPeriphID3", 0x00000000);
+            addReg(REG_UARTPCellID0, "UARTPCellID0", 0x0000000d);
+            addReg(REG_UARTPCellID1, "UARTPCellID1", 0x000000f0);
+            addReg(REG_UARTPCellID2, "UARTPCellID2", 0x00000005);
+            addReg(REG_UARTPCellID3, "UARTPCellID3", 0x000000b1);
+        }
+
+        @Override
+        public int readWord(long addr) {
+            int regaddr;
+            int result;
+
+            regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+
+            switch (regaddr) {
+            case REG_UARTDR:
+                if (bufInput.length() > 0) {
+                    result = bufInput.charAt(0);
+                    bufInput.deleteCharAt(0);
+                } else {
+                    result = 0;
+                }
+                break;
+            case REG_UARTFR:
+                result = 0;
+
+                //送信 FIFO は常に空いていることにする
+                result = BitOp.setBit32(result, FR_TXFE, true);
+                //受信 FIFO はバッファ残量に応じて設定する
+                result = BitOp.setBit32(result, FR_RXFE, bufInput.length() == 0);
+
+                break;
+            case REG_UARTLCR_H:
+                result = super.readWord(regaddr);
+                //SystemPane.out.printf("UARTLCR_H: read 0x%08x\n", result);
+                break;
+            case REG_UARTCR:
+                result = super.readWord(regaddr);
+                //SystemPane.out.printf("UARTCR: read 0x%08x\n", result);
+                break;
+            case REG_UARTIMSC:
+                result = maskInt;
+                break;
+            case REG_UARTRIS:
+                result = getRawInt();
+                break;
+            case REG_UARTMIS:
+                result = getMaskedInt();
+                break;
+            default:
+                result = super.readWord(regaddr);
+                break;
+            }
+
+            return result;
+        }
+
+        @Override
+        public void writeWord(long addr, int data) {
+            int regaddr;
+
+            regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+
+            switch (regaddr) {
+            case REG_UARTDR:
+                char ascii = (char)(data & 0xff);
+
+                if (ascii == 0x00) {
+                    //FIXME: IntelliJ の Console でコピーできないため無視
                     break;
                 }
-                bufInput.append((char)c);
+                if (strOutput != null) {
+                    try {
+                        strOutput.write(ascii);
+                        strOutput.flush();
+                    } catch (IOException ex) {
+                        //ignore
+                    }
+                }
 
-                intDst.setRaisedInterrupt(true);
-            } catch (InterruptedException e) {
-                //ignored
-            } catch (IOException e) {
-                e.printStackTrace(System.err);
+                break;
+            case REG_UARTFR:
+                //read only, ignored
+                break;
+            case REG_UARTIBRD:
+                //TODO: Not implemented
+                SystemPane.out.printf("UARTIBRD: 0x%08x\n", data);
+                break;
+            case REG_UARTFBRD:
+                //TODO: Not implemented
+                SystemPane.out.printf("UARTFBRD: 0x%08x\n", data);
+                break;
+            case REG_UARTLCR_H:
+                //TODO: Not implemented
+                SystemPane.out.printf("UARTLCR_H: 0x%08x\n", data);
+                super.writeWord(regaddr, data);
+                break;
+            case REG_UARTCR:
+                //TODO: Not implemented
+                //SystemPane.out.printf("UARTCR: 0x%08x\n", data);
+                super.writeWord(regaddr, data);
+                break;
+            case REG_UARTIFLS:
+                //TODO: Not implemented
+                SystemPane.out.printf("UARTIFLS: 0x%08x\n", data);
+                break;
+            case REG_UARTIMSC:
+                maskInt = data;
+                break;
+            case REG_UARTRIS:
+            case REG_UARTMIS:
+                //read only, ignored
+                break;
+            case REG_UARTICR:
+                rawInt &= ~data;
+                break;
+            case REG_UARTPeriphID0:
+            case REG_UARTPeriphID1:
+            case REG_UARTPeriphID2:
+            case REG_UARTPeriphID3:
+            case REG_UARTPCellID0:
+            case REG_UARTPCellID1:
+            case REG_UARTPCellID2:
+            case REG_UARTPCellID3:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
                 break;
             }
         }
+
+        @Override
+        public void run() {
+            mainLoop:
+            while (!shouldHalt()) {
+                try {
+                    while (strInput == null) {
+                        Thread.sleep(50);
+                        if (shouldHalt()) {
+                            break mainLoop;
+                        }
+                    }
+
+                    //NOTE: InputStream をポーリングします。
+                    //strInput が System.in かつ read() がブロックしたとき、
+                    //他のスレッドからブロッキングをキャンセルする方法がないため、
+                    //read() のブロックを避ける必要があるためです。
+                    //FIXME: この実装はマルチスレッドセーフではありません。
+                    //他スレッドが同時に strInput にアクセスする場合、
+                    //read() でブロックする可能性があります。
+                    while (strInput.available() == 0) {
+                        Thread.sleep(50);
+                        if (shouldHalt()) {
+                            break mainLoop;
+                        }
+                    }
+
+                    int c = strInput.read();
+                    if (c == -1) {
+                        //EOF
+                        break;
+                    }
+                    bufInput.append((char)c);
+
+                    intDst.setRaisedInterrupt(true);
+                } catch (InterruptedException e) {
+                    //ignored
+                } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                    break;
+                }
+            }
+        }
     }
+
 }

@@ -150,7 +150,7 @@ public class ARMVersatile {
         bus.addSlaveCore(mci0, 0x10005000L, 0x10005fffL);
         bus.addSlaveCore(kmiKey, 0x10006000L, 0x10006fffL);
         bus.addSlaveCore(kmiMouse, 0x10007000L, 0x10007fffL);
-        bus.addSlaveCore(uart3, 0x10009000L, 0x10009fffL);
+        bus.addSlaveCore(uart3.getSlaveCore(), 0x10009000L, 0x10009fffL);
         bus.addSlaveCore(scard1, 0x1000a000L, 0x1000afffL);
         bus.addSlaveCore(mci1, 0x1000b000L, 0x1000bfffL);
         bus.addSlaveCore(ether, 0x10010000L, 0x1001ffffL);
@@ -163,17 +163,17 @@ public class ARMVersatile {
         bus.addSlaveCore(intc1st, 0x10140000L, 0x1014ffffL);
         bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e0fffL);
         bus.addSlaveCore(watchdog, 0x101e1000L, 0x101e1fffL);
-        bus.addSlaveCore(timer0_1, 0x101e2000L, 0x101e2fffL);
-        bus.addSlaveCore(timer2_3, 0x101e3000L, 0x101e3fffL);
+        bus.addSlaveCore(timer0_1.getSlaveCore(), 0x101e2000L, 0x101e2fffL);
+        bus.addSlaveCore(timer2_3.getSlaveCore(), 0x101e3000L, 0x101e3fffL);
         bus.addSlaveCore(gpio0, 0x101e4000L, 0x101e4fffL);
         bus.addSlaveCore(gpio1, 0x101e5000L, 0x101e5fffL);
         bus.addSlaveCore(gpio2, 0x101e6000L, 0x101e6fffL);
         bus.addSlaveCore(gpio3, 0x101e7000L, 0x101e7fffL);
         bus.addSlaveCore(rtc, 0x101e8000L, 0x101e8fffL);
         bus.addSlaveCore(scard0, 0x101f0000L, 0x101f0fffL);
-        bus.addSlaveCore(uart0, 0x101f1000L, 0x101f1fffL);
-        bus.addSlaveCore(uart1, 0x101f2000L, 0x101f2fffL);
-        bus.addSlaveCore(uart2, 0x101f3000L, 0x101f3fffL);
+        bus.addSlaveCore(uart0.getSlaveCore(), 0x101f1000L, 0x101f1fffL);
+        bus.addSlaveCore(uart1.getSlaveCore(), 0x101f2000L, 0x101f2fffL);
+        bus.addSlaveCore(uart2.getSlaveCore(), 0x101f3000L, 0x101f3fffL);
         bus.addSlaveCore(ssp, 0x101f4000L, 0x101f4fffL);
 
         bus.addSlaveCore(ssmc_c4_7, 0x20000000L, 0x2fffffffL);
