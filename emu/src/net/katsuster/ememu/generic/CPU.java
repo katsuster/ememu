@@ -265,6 +265,18 @@ public abstract class CPU extends MasterCore64
     }
 
     /**
+     * 逆アセンブルした命令を表示します。
+     *
+     * @param inst      ARM 命令
+     * @param operation 命令の文字列表記
+     * @param operand   オペランドの文字列表記
+     */
+    public void showDisasm(Instruction inst, String operation, String operand) {
+        printDisasm(inst, operation, operand);
+        printRegs();
+    }
+
+    /**
      * 命令を逆アセンブルした結果を表示します。
      *
      * @param inst      命令
