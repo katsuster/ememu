@@ -46,7 +46,8 @@
 
     <target name="compile" depends="init">
         <echo message="----- compile in ${ant.project.name} -----"/>
-        <javac srcdir="${src.dir}" destdir="${build.dir}" target="1.6"
+        <javac srcdir="${src.dir}" destdir="${build.dir}"
+               target="1.6" source="1.6"
                encoding="UTF-8" includeantruntime="false">
             <classpath refid="build.classpath"/>
         </javac>
