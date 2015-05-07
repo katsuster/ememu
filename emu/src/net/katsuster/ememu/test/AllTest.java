@@ -1,4 +1,4 @@
-package net.katsuster.ememu.arm.test;
+package net.katsuster.ememu.test;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;

@@ -10,7 +10,7 @@
 
     <property name="manifest.mainclass.armemu" value="net.katsuster.ememu.ui.Main"/>
     <property name="manifest.mainclass.armemu_applet" value="net.katsuster.ememu.ui.MainApplet"/>
-    <property name="manifest.mainclass.junit" value="net.katsuster.ememu.arm.test.AllTest"/>
+    <property name="manifest.mainclass.junit" value="net.katsuster.ememu.test.AllTest"/>
     <property name="manifest.classpath" value="/"/>
     <property name="manifest.title"     value="armemu"/>
     <property name="manifest.version"   value="0.1"/>

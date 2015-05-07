@@ -1,4 +1,4 @@
-package net.katsuster.ememu.arm.test;
+package net.katsuster.ememu.test;
 
 import net.katsuster.ememu.generic.CPU;
 import org.junit.*;
