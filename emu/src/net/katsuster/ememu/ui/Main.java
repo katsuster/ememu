@@ -188,6 +188,19 @@ public class Main {
             }
             addrAtags += 0x08 + cmdalign.length;
 
+            //ATAG_SERIAL, size, tag, low, high
+            cpu.write32_a32(addrAtags + 0x00, 0x00000004);
+            cpu.write32_a32(addrAtags + 0x04, ATAG_SERIAL);
+            cpu.write32_a32(addrAtags + 0x08, 0x00000020);
+            cpu.write32_a32(addrAtags + 0x0c, 0x00000030);
+            addrAtags += 0x10;
+
+            //ATAG_REVISION, size, tag, rev
+            cpu.write32_a32(addrAtags + 0x00, 0x00000003);
+            cpu.write32_a32(addrAtags + 0x04, ATAG_REVISION);
+            cpu.write32_a32(addrAtags + 0x08, 0x00000010);
+            addrAtags += 0x0c;
+
             //ATAG_NONE, size, tag
             //It is unique in that its size field in the header
             //should be set to 0 (not 2).
