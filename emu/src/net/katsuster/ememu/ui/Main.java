@@ -189,7 +189,9 @@ public class Main {
             addrAtags += 0x08 + cmdalign.length;
 
             //ATAG_NONE, size, tag
-            cpu.write32_a32(addrAtags + 0x00, 0x00000002);
+            //It is unique in that its size field in the header
+            //should be set to 0 (not 2).
+            cpu.write32_a32(addrAtags + 0x00, 0x00000000);
             cpu.write32_a32(addrAtags + 0x04, ATAG_NONE);
             addrAtags += 0x08;
         }
