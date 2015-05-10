@@ -1,10 +1,6 @@
 package net.katsuster.ememu.arm.core;
 
-import net.katsuster.ememu.generic.BitOp;
-import net.katsuster.ememu.generic.CPU;
-import net.katsuster.ememu.generic.Instruction;
-import net.katsuster.ememu.generic.INTSource;
-import net.katsuster.ememu.generic.NormalINTC;
+import net.katsuster.ememu.generic.*;
 
 /**
  * ARMv5TE CPU
@@ -1673,8 +1669,8 @@ public class ARMv5 extends CPU {
         } else if (s) {
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(!borrowFrom32(left, right));
-            getCPSR().setVBit(overflowFrom32(left, right, false));
+            getCPSR().setCBit(!IntegerExt.borrowFrom(left, right));
+            getCPSR().setVBit(IntegerExt.overflowFrom(left, right, false));
         }
 
         setReg(rd, dest);
@@ -1702,8 +1698,8 @@ public class ARMv5 extends CPU {
         } else if (s) {
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(!borrowFrom32(left, right));
-            getCPSR().setVBit(overflowFrom32(left, right, false));
+            getCPSR().setCBit(!IntegerExt.borrowFrom(left, right));
+            getCPSR().setVBit(IntegerExt.overflowFrom(left, right, false));
         }
 
         setReg(rd, dest);
@@ -1731,8 +1727,8 @@ public class ARMv5 extends CPU {
         } else if (s) {
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(carryFrom32(left, right));
-            getCPSR().setVBit(overflowFrom32(left, right, true));
+            getCPSR().setCBit(IntegerExt.carryFrom(left, right));
+            getCPSR().setVBit(IntegerExt.overflowFrom(left, right, true));
         }
 
         setReg(rd, dest);
@@ -1759,14 +1755,14 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            int left_center = left + center;
-            boolean lc_c = carryFrom32(left, center);
-            boolean lc_v = overflowFrom32(left, center, true);
+            int lc = left + center;
+            boolean lc_c = IntegerExt.carryFrom(left, center);
+            boolean lc_v = IntegerExt.overflowFrom(left, center, true);
 
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(lc_c || carryFrom32(left_center, right));
-            getCPSR().setVBit(lc_v || overflowFrom32(left_center, right, true));
+            getCPSR().setCBit(lc_c || IntegerExt.carryFrom(lc, right));
+            getCPSR().setVBit(lc_v || IntegerExt.overflowFrom(lc, right, true));
         }
 
         setReg(rd, dest);
@@ -1793,14 +1789,14 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            int left_center = left - center;
-            boolean lc_c = borrowFrom32(left, center);
-            boolean lc_v = overflowFrom32(left, center, false);
+            int lc = left - center;
+            boolean lc_c = IntegerExt.borrowFrom(left, center);
+            boolean lc_v = IntegerExt.overflowFrom(left, center, false);
 
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(!(lc_c || borrowFrom32(left_center, right)));
-            getCPSR().setVBit(lc_v || overflowFrom32(left_center, right, false));
+            getCPSR().setCBit(!(lc_c || IntegerExt.borrowFrom(lc, right)));
+            getCPSR().setVBit(lc_v || IntegerExt.overflowFrom(lc, right, false));
         }
 
         setReg(rd, dest);
@@ -1827,14 +1823,14 @@ public class ARMv5 extends CPU {
         if (s && rd == 15) {
             setCPSR(getSPSR());
         } else if (s) {
-            int left_center = left - center;
-            boolean lc_c = borrowFrom32(left, center);
-            boolean lc_v = overflowFrom32(left, center, false);
+            int lc = left - center;
+            boolean lc_c = IntegerExt.borrowFrom(left, center);
+            boolean lc_v = IntegerExt.overflowFrom(left, center, false);
 
             getCPSR().setNBit(BitOp.getBit32(dest, 31));
             getCPSR().setZBit(dest == 0);
-            getCPSR().setCBit(!(lc_c || borrowFrom32(left_center, right)));
-            getCPSR().setVBit(lc_v || overflowFrom32(left_center, right, false));
+            getCPSR().setCBit(!(lc_c || IntegerExt.borrowFrom(lc, right)));
+            getCPSR().setVBit(lc_v || IntegerExt.overflowFrom(lc, right, false));
         }
 
         setReg(rd, dest);
@@ -1917,8 +1913,8 @@ public class ARMv5 extends CPU {
 
         getCPSR().setNBit(BitOp.getBit32(dest, 31));
         getCPSR().setZBit(dest == 0);
-        getCPSR().setCBit(!borrowFrom32(left, right));
-        getCPSR().setVBit(overflowFrom32(left, right, false));
+        getCPSR().setCBit(!IntegerExt.borrowFrom(left, right));
+        getCPSR().setVBit(IntegerExt.overflowFrom(left, right, false));
     }
 
     /**
@@ -1944,8 +1940,8 @@ public class ARMv5 extends CPU {
 
         getCPSR().setNBit(BitOp.getBit32(dest, 31));
         getCPSR().setZBit(dest == 0);
-        getCPSR().setCBit(carryFrom32(left, right));
-        getCPSR().setVBit(overflowFrom32(left, right, true));
+        getCPSR().setCBit(IntegerExt.carryFrom(left, right));
+        getCPSR().setVBit(IntegerExt.overflowFrom(left, right, true));
     }
 
     /**
