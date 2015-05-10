@@ -6,7 +6,7 @@ import org.junit.*;
 public class IntegerExtTest {
     @org.junit.Test
     public void testCarryFrom() throws Exception {
-        String msg1 = "CPU.carryFrom() failed.";
+        String msg1 = "IntegerExt.carryFrom() failed.";
 
         Assert.assertEquals(msg1, true, IntegerExt.carryFrom(1, 0xffffffff));
         Assert.assertEquals(msg1, true, IntegerExt.carryFrom(2, 0xffffffff));
@@ -23,7 +23,7 @@ public class IntegerExtTest {
 
     @org.junit.Test
     public void testBorrowFrom() throws Exception {
-        String msg1 = "CPU.borrowFrom() failed.";
+        String msg1 = "IntegerExt.borrowFrom() failed.";
 
         Assert.assertEquals(msg1, true, IntegerExt.borrowFrom(0, 1));
         Assert.assertEquals(msg1, true, IntegerExt.borrowFrom(0, 2));
@@ -43,9 +43,9 @@ public class IntegerExtTest {
 
     @org.junit.Test
     public void testOverflowFrom() throws Exception {
-        String msg1 = "CPU.overflowFrom() failed.";
+        String msg1 = "IntegerExt.overflowFrom() failed.";
 
-        //‰ÁŽZ
+        //åŠ ç®—
         Assert.assertEquals(msg1, true, IntegerExt.overflowFrom(0x40000000, 0x40000000, true));
         Assert.assertEquals(msg1, true, IntegerExt.overflowFrom(0x7fffffff, 1, true));
         Assert.assertEquals(msg1, true, IntegerExt.overflowFrom(0x7fffffff, 0x7fffffff, true));
@@ -63,7 +63,7 @@ public class IntegerExtTest {
         Assert.assertEquals(msg1, false, IntegerExt.overflowFrom(0x80000000, 0x7fffffff, true));
         Assert.assertEquals(msg1, false, IntegerExt.overflowFrom(0x7fffffff, 0x8fffffff, true));
 
-        //Œ¸ŽZ
+        //æ¸›ç®—
         Assert.assertEquals(msg1, true, IntegerExt.overflowFrom(0x7fffffff, 0x80000000, false));
         Assert.assertEquals(msg1, true, IntegerExt.overflowFrom(0x8fffffff, 0x7fffffff, false));
         Assert.assertEquals(msg1, true, IntegerExt.overflowFrom(0x80000000, 1, false));

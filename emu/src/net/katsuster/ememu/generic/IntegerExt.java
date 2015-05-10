@@ -1,18 +1,18 @@
 package net.katsuster.ememu.generic;
 
 /**
- * ®”‰‰Z‚ÌƒNƒ‰ƒX
+ * æ•´æ•°æ¼”ç®—ã®ã‚¯ãƒ©ã‚¹
  *
  * @author katsuhiro
  */
 public class IntegerExt {
     /**
-     * ƒLƒƒƒŠ[‚ª”­¶‚·‚éi•„†–³‚µ‰‰Z‚Ì‰ÁZ‚ªƒI[ƒo[ƒtƒ[‚·‚éj‚©A
-     * ”Û‚©A‚ğæ“¾‚µ‚Ü‚·B
+     * ã‚­ãƒ£ãƒªãƒ¼ãŒç™ºç”Ÿã™ã‚‹ï¼ˆç¬¦å·ç„¡ã—æ¼”ç®—ã®åŠ ç®—ãŒã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼ã™ã‚‹ï¼‰ã‹ã€
+     * å¦ã‹ã€ã‚’å–å¾—ã—ã¾ã™ã€‚
      *
-     * @param left  ”í‰ÁZ”
-     * @param right ‰ÁZ‚·‚é”
-     * @return ƒLƒƒƒŠ[‚ª”­¶‚·‚éê‡‚Í trueA”­¶‚µ‚È‚¢ê‡‚Í false
+     * @param left  è¢«åŠ ç®—æ•°
+     * @param right åŠ ç®—ã™ã‚‹æ•°
+     * @return ã‚­ãƒ£ãƒªãƒ¼ãŒç™ºç”Ÿã™ã‚‹å ´åˆã¯ trueã€ç™ºç”Ÿã—ãªã„å ´åˆã¯ false
      */
     public static boolean carryFrom(int left, int right) {
         long ll = left & 0xffffffffL;
@@ -22,12 +22,12 @@ public class IntegerExt {
     }
 
     /**
-     * ƒ{ƒ[‚ª”­¶‚·‚éi•„†–³‚µ‰‰Z‚ÌŒ¸Z‚ªƒAƒ“ƒ_[ƒtƒ[‚·‚éj‚©A
-     * ”Û‚©A‚ğæ“¾‚µ‚Ü‚·B
+     * ãƒœãƒ­ãƒ¼ãŒç™ºç”Ÿã™ã‚‹ï¼ˆç¬¦å·ç„¡ã—æ¼”ç®—ã®æ¸›ç®—ãŒã‚¢ãƒ³ãƒ€ãƒ¼ãƒ•ãƒ­ãƒ¼ã™ã‚‹ï¼‰ã‹ã€
+     * å¦ã‹ã€ã‚’å–å¾—ã—ã¾ã™ã€‚
      *
-     * @param left  ”íŒ¸Z”
-     * @param right Œ¸Z‚·‚é”
-     * @return ƒLƒƒƒŠ[‚ª”­¶‚·‚éê‡‚Í trueA”­¶‚µ‚È‚¢ê‡‚Í false
+     * @param left  è¢«æ¸›ç®—æ•°
+     * @param right æ¸›ç®—ã™ã‚‹æ•°
+     * @return ã‚­ãƒ£ãƒªãƒ¼ãŒç™ºç”Ÿã™ã‚‹å ´åˆã¯ trueã€ç™ºç”Ÿã—ãªã„å ´åˆã¯ false
      */
     public static boolean borrowFrom(int left, int right) {
         long ll = left & 0xffffffffL;
@@ -37,33 +37,33 @@ public class IntegerExt {
     }
 
     /**
-     * ƒI[ƒo[ƒtƒ[‚ª”­¶‚·‚éi•„†•t‚«‰‰Z‚ÌŒ‹‰Ê‚ª•„†‚ª•Ï‚í‚éj‚©A
-     * ”Û‚©A‚ğæ“¾‚µ‚Ü‚·B
+     * ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼ãŒç™ºç”Ÿã™ã‚‹ï¼ˆç¬¦å·ä»˜ãæ¼”ç®—ã®çµæœãŒç¬¦å·ãŒå¤‰ã‚ã‚‹ï¼‰ã‹ã€
+     * å¦ã‹ã€ã‚’å–å¾—ã—ã¾ã™ã€‚
      *
-     * @param left  ”í‰‰Z”
-     * @param right ‰‰Z”
-     * @param add   ‰ÁZ‚È‚ç trueAŒ¸Z‚È‚ç false
-     * @return ƒI[ƒo[ƒtƒ[‚ª”­¶‚µ‚½‚È‚ç trueA‚»‚¤‚Å‚È‚¯‚ê‚Î false
+     * @param left  è¢«æ¼”ç®—æ•°
+     * @param right æ¼”ç®—æ•°
+     * @param add   åŠ ç®—ãªã‚‰ trueã€æ¸›ç®—ãªã‚‰ false
+     * @return ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼ãŒç™ºç”Ÿã—ãŸãªã‚‰ trueã€ãã†ã§ãªã‘ã‚Œã° false
      */
     public static boolean overflowFrom(int left, int right, boolean add) {
         int dest;
         boolean cond1, cond2;
 
         if (add) {
-            //‰ÁZ‚Ìê‡
+            //åŠ ç®—ã®å ´åˆ
             dest = left + right;
 
-            //left ‚Æ right ‚ª“¯‚¶•„†
+            //left ã¨ right ãŒåŒã˜ç¬¦å·
             cond1 = (left >= 0 && right >= 0) || (left < 0 && right < 0);
-            //‚È‚¨‚©‚Â left, right ‚Æ dest ‚Ì•„†‚ªˆÙ‚È‚é
+            //ãªãŠã‹ã¤ left, right ã¨ dest ã®ç¬¦å·ãŒç•°ãªã‚‹
             cond2 = (left < 0 && dest >= 0) || (left >= 0 && dest < 0);
         } else {
-            //Œ¸Z‚Ìê‡
+            //æ¸›ç®—ã®å ´åˆ
             dest = left - right;
 
-            //left ‚Æ right ‚ªˆÙ‚È‚é•„†
+            //left ã¨ right ãŒç•°ãªã‚‹ç¬¦å·
             cond1 = (left < 0 && right >= 0) || (left >= 0 && right < 0);
-            //‚È‚¨‚©‚Â left ‚Æ dest ‚Ì•„†‚ªˆÙ‚È‚é
+            //ãªãŠã‹ã¤ left ã¨ dest ã®ç¬¦å·ãŒç•°ãªã‚‹
             cond2 = (left < 0 && dest >= 0) || (left >= 0 && dest < 0);
         }
 
