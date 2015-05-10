@@ -5,6 +5,12 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class MainApplet extends JApplet {
+    public static final String PARAM_PROXY_HOST = "proxyHost";
+    public static final String PARAM_PROXY_PORT = "proxyPort";
+    public static final String PARAM_KERNEL_IMAGE = "kernelImage";
+    public static final String PARAM_INITRAMFS_IMAGE = "initramfsImage";
+    public static final String PARAM_COMMAND_LINE = "commandLine";
+
     private static final SystemPane spane = new SystemPane();
 
     private JTabbedPane tabPane;
@@ -25,32 +31,36 @@ public class MainApplet extends JApplet {
 
         super.init();
 
-        if (getParameter("proxyHost") != null &&
-                getParameter("proxyPort") != null) {
+        if (getParameter(PARAM_PROXY_HOST) != null &&
+                getParameter(PARAM_PROXY_PORT) != null) {
             System.setProperty("proxySet", "true");
-            System.setProperty("proxyHost", getParameter("proxyHost"));
-            System.setProperty("proxyPort", getParameter("proxyPort"));
+            System.setProperty("proxyHost", getParameter(PARAM_PROXY_HOST));
+            System.setProperty("proxyPort", getParameter(PARAM_PROXY_PORT));
         } else {
-            SystemPane.out.println("Parameter 'proxyHost', 'proxyPort' are not found. " +
-                    "We will use no proxy.");
+            SystemPane.out.printf("Parameter '%s', '%s' not found, " +
+                            "use no proxy.\n",
+                    PARAM_PROXY_HOST, PARAM_PROXY_PORT);
         }
-        if (getParameter("kernelImage") != null) {
-            kimage = getParameter("kernelImage");
+        if (getParameter(PARAM_KERNEL_IMAGE) != null) {
+            kimage = getParameter(PARAM_KERNEL_IMAGE);
         } else {
-            SystemPane.out.println("Parameter 'kernelImage' is not found. " +
-                    "We will use default kernel image.");
+            SystemPane.out.printf("Parameter '%s' not found, " +
+                            "use default kernel image.\n",
+                    PARAM_KERNEL_IMAGE);
         }
-        if (getParameter("initramfsImage") != null) {
-            initram = getParameter("initramfsImage");
+        if (getParameter(PARAM_INITRAMFS_IMAGE) != null) {
+            initram = getParameter(PARAM_INITRAMFS_IMAGE);
         } else {
-            SystemPane.out.println("Parameter 'initramfsImage' is not found. " +
-                    "We will use default initramfs image.");
+            SystemPane.out.printf("Parameter '%s' not found, " +
+                            "use default initramfs image.\n",
+                    PARAM_INITRAMFS_IMAGE);
         }
-        if (getParameter("commandLine") != null) {
-            cmdline = getParameter("commandLine");
+        if (getParameter(PARAM_COMMAND_LINE) != null) {
+            cmdline = getParameter(PARAM_COMMAND_LINE);
         } else {
-            SystemPane.out.println("Parameter 'commandLine' is not found. " +
-                    "We will use default command line.");
+            SystemPane.out.printf("Parameter '%s' not found, " +
+                            "use default command line.\n",
+                    PARAM_COMMAND_LINE);
         }
 
         ButtonListener listenButton = new ButtonListener();
