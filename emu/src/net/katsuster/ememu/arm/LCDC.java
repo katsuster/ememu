@@ -1,5 +1,6 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.ui.SystemPane;
 import net.katsuster.ememu.generic.Controller64Reg32;
 
 /**
@@ -74,52 +75,52 @@ public class LCDC extends Controller64Reg32 {
         switch (regaddr) {
         case REG_LCDTiming0:
             //TODO: not implemented
-            System.out.printf("LCDTiming0: read 0x%08x\n", 0);
+            SystemPane.out.printf("LCDTiming0: read 0x%08x\n", 0);
             result = 0;
             break;
         case REG_LCDTiming1:
             //TODO: not implemented
-            System.out.printf("LCDTiming1: read 0x%08x\n", 0);
+            SystemPane.out.printf("LCDTiming1: read 0x%08x\n", 0);
             result = 0;
             break;
         case REG_LCDTiming2:
             //TODO: not implemented
-            System.out.printf("LCDTiming2: read 0x%08x\n", 0);
+            SystemPane.out.printf("LCDTiming2: read 0x%08x\n", 0);
             result = 0;
             break;
         case REG_LCDTiming3:
             //TODO: not implemented
-            System.out.printf("LCDTiming3: read 0x%08x\n", 0);
+            SystemPane.out.printf("LCDTiming3: read 0x%08x\n", 0);
             result = 0;
             break;
         case REG_LCDUPBASE:
             //TODO: not implemented
-            System.out.printf("LCDUPBASE: read 0x%08x\n", 0);
+            SystemPane.out.printf("LCDUPBASE: read 0x%08x\n", 0);
             result = 0;
             break;
         case REG_LCDLPBASE:
             //TODO: not implemented
-            System.out.printf("LCDLPBASE: read 0x%08x\n", 0);
+            SystemPane.out.printf("LCDLPBASE: read 0x%08x\n", 0);
             result = 0;
             break;
         case REG_LCDINTRENABLE:
             //TODO: not implemented
-            System.out.printf("LCDIMSC: read 0x%08x\n", 0);
+            SystemPane.out.printf("LCDIMSC: read 0x%08x\n", 0);
             result = 0;
             break;
         case REG_LCDControl:
             //TODO: not implemented
-            System.out.printf("LCDControl: read 0x%08x\n", 0);
+            SystemPane.out.printf("LCDControl: read 0x%08x\n", 0);
             result = 0;
             break;
         case REG_LCDStatus:
             //TODO: not implemented
-            System.out.printf("LCDStatus: read 0x%08x\n", 0);
+            SystemPane.out.printf("LCDStatus: read 0x%08x\n", 0);
             result = 0;
             break;
         case REG_LCDInterrupt:
             //TODO: not implemented
-            System.out.printf("LCDInterrupt: read 0x%08x\n", 0);
+            SystemPane.out.printf("LCDInterrupt: read 0x%08x\n", 0);
             result = 0;
             break;
         default:
@@ -139,43 +140,43 @@ public class LCDC extends Controller64Reg32 {
         switch (regaddr) {
         case REG_LCDTiming0:
             //TODO: not implemented
-            System.out.printf("LCDTiming0: 0x%08x\n", data);
+            SystemPane.out.printf("LCDTiming0: 0x%08x\n", data);
             break;
         case REG_LCDTiming1:
             //TODO: not implemented
-            System.out.printf("LCDTiming1: 0x%08x\n", data);
+            SystemPane.out.printf("LCDTiming1: 0x%08x\n", data);
             break;
         case REG_LCDTiming2:
             //TODO: not implemented
-            System.out.printf("LCDTiming2: 0x%08x\n", data);
+            SystemPane.out.printf("LCDTiming2: 0x%08x\n", data);
             break;
         case REG_LCDTiming3:
             //TODO: not implemented
-            System.out.printf("LCDTiming3: 0x%08x\n", data);
+            SystemPane.out.printf("LCDTiming3: 0x%08x\n", data);
             break;
         case REG_LCDUPBASE:
             //TODO: not implemented
-            System.out.printf("LCDUPBASE: 0x%08x\n", data);
+            SystemPane.out.printf("LCDUPBASE: 0x%08x\n", data);
             break;
         case REG_LCDLPBASE:
             //TODO: not implemented
-            System.out.printf("LCDLPBASE: 0x%08x\n", data);
+            SystemPane.out.printf("LCDLPBASE: 0x%08x\n", data);
             break;
         case REG_LCDINTRENABLE:
             //TODO: not implemented
-            System.out.printf("LCDIMSC: 0x%08x\n", data);
+            SystemPane.out.printf("LCDIMSC: 0x%08x\n", data);
             break;
         case REG_LCDControl:
             //TODO: not implemented
-            System.out.printf("LCDControl: 0x%08x\n", data);
+            SystemPane.out.printf("LCDControl: 0x%08x\n", data);
             break;
         case REG_LCDStatus:
             //TODO: not implemented
-            System.out.printf("LCDStatus: 0x%08x\n", data);
+            SystemPane.out.printf("LCDStatus: 0x%08x\n", data);
             break;
         case REG_LCDInterrupt:
             //TODO: not implemented
-            System.out.printf("LCDInterrupt: 0x%08x\n", data);
+            SystemPane.out.printf("LCDInterrupt: 0x%08x\n", data);
             break;
         case REG_CLCDPERIPHID0:
         case REG_CLCDPERIPHID1:

@@ -1,5 +1,6 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.ui.SystemPane;
 import net.katsuster.ememu.generic.Controller64Reg32;
 
 /**
@@ -107,22 +108,22 @@ public class SysBaseboard extends Controller64Reg32 {
         case REG_SYS_LED:
             //TODO: not implemented
             result = super.readWord(regaddr);
-            //System.out.printf("SYS_LED: read 0x%08x\n", result);
+            //SystemPane.out.printf("SYS_LED: read 0x%08x\n", result);
             break;
         case REG_SYS_OSC4:
             //TODO: not implemented
             result = 0;
-            System.out.printf("SYS_OSC4: read 0x%08x\n", result);
+            SystemPane.out.printf("SYS_OSC4: read 0x%08x\n", result);
             break;
         case REG_SYS_LOCK:
             //TODO: not implemented
             result = 0;
-            System.out.printf("SYS_LOCK: read 0x%08x\n", result);
+            SystemPane.out.printf("SYS_LOCK: read 0x%08x\n", result);
             break;
         case REG_SYS_CLCD:
             //TODO: not implemented
             result = 0x1f00;
-            System.out.printf("SYS_CLCD: read 0x%08x\n", result);
+            SystemPane.out.printf("SYS_CLCD: read 0x%08x\n", result);
             break;
         case REG_SYS_24MHz:
             //TODO: 桁あふれ問題が未解決のまま
@@ -145,20 +146,20 @@ public class SysBaseboard extends Controller64Reg32 {
         switch (regaddr) {
         case REG_SYS_LED:
             //TODO: not implemented
-            //System.out.printf("SYS_LED: 0x%08x\n", data);
+            //SystemPane.out.printf("SYS_LED: 0x%08x\n", data);
             super.writeWord(regaddr, data);
             break;
         case REG_SYS_OSC4:
             //TODO: not implemented
-            System.out.printf("SYS_OSC4: 0x%08x\n", data);
+            SystemPane.out.printf("SYS_OSC4: 0x%08x\n", data);
             break;
         case REG_SYS_LOCK:
             //TODO: not implemented
-            System.out.printf("SYS_LOCK: 0x%08x\n", data);
+            SystemPane.out.printf("SYS_LOCK: 0x%08x\n", data);
             break;
         case REG_SYS_CLCD:
             //TODO: not implemented
-            System.out.printf("SYS_CLCD: 0x%08x\n", data);
+            SystemPane.out.printf("SYS_CLCD: 0x%08x\n", data);
             break;
         case REG_SYS_24MHz:
             //read only, ignored

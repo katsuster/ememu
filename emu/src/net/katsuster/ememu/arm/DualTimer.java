@@ -1,5 +1,6 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.ui.SystemPane;
 import net.katsuster.ememu.generic.*;
 
 /**
@@ -157,13 +158,13 @@ public class DualTimer implements INTSource, BusSlave64 {
             boolean size32 = BitOp.getBit32(val, 1);
             boolean one = BitOp.getBit32(val, 0);
 
-            System.out.printf("Timer%dControl: 0x%x.\n", id + 1, val);
-            System.out.printf("  timerEn      : %b\n", en);
-            System.out.printf("  timerPeriodic: %b\n", peri);
-            System.out.printf("  intEnable    : %b\n", inten);
-            System.out.printf("  timerPre     : %d\n", pre);
-            System.out.printf("  timerSize32  : %b\n", size32);
-            System.out.printf("  oneshot      : %b\n", one);
+            SystemPane.out.printf("Timer%dControl: 0x%x.\n", id + 1, val);
+            SystemPane.out.printf("  timerEn      : %b\n", en);
+            SystemPane.out.printf("  timerPeriodic: %b\n", peri);
+            SystemPane.out.printf("  intEnable    : %b\n", inten);
+            SystemPane.out.printf("  timerPre     : %d\n", pre);
+            SystemPane.out.printf("  timerSize32  : %b\n", size32);
+            SystemPane.out.printf("  oneshot      : %b\n", one);
 
             timerEn[id] = en;
             timerPeriodic[id] = peri;

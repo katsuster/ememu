@@ -1,5 +1,6 @@
 package net.katsuster.ememu.arm.core;
 
+import net.katsuster.ememu.ui.SystemPane;
 import net.katsuster.ememu.generic.*;
 
 /**
@@ -81,13 +82,13 @@ public class ARMv5 extends CPU {
             return;
         }
 
-        System.out.printf("%08x:    %08x    %-7s %s\n",
+        SystemPane.out.printf("%08x:    %08x    %-7s %s\n",
                 getPC() - 8, inst.getInst(), operation, operand);
     }
 
     @Override
     public void printPC() {
-        System.out.printf("pc: %08x\n", getRegRaw(15));
+        SystemPane.out.printf("pc: %08x\n", getRegRaw(15));
     }
 
     @Override
@@ -97,11 +98,11 @@ public class ARMv5 extends CPU {
         }
 
         for (int i = 0; i < 16; i += 4) {
-            System.out.printf("  r%-2d: %08x, r%-2d: %08x, r%-2d: %08x, r%-2d: %08x, \n",
+            SystemPane.out.printf("  r%-2d: %08x, r%-2d: %08x, r%-2d: %08x, r%-2d: %08x, \n",
                     i, getRegRaw(i), i + 1, getRegRaw(i + 1),
                     i + 2, getRegRaw(i + 2), i + 3, getRegRaw(i + 3));
         }
-        System.out.printf("  %s, %s\n",
+        SystemPane.out.printf("  %s, %s\n",
                 getCPSR().toString(), getSPSR().toString());
     }
 
@@ -1381,7 +1382,7 @@ public class ARMv5 extends CPU {
         }
 
         if (sbo != 0xf) {
-            System.out.println("Warning: Illegal instruction, " +
+            SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("mrs SBO[19:16](0x%01x) != 0xf.", sbo));
         }
 
@@ -1429,7 +1430,7 @@ public class ARMv5 extends CPU {
         }
 
         if (sbo != 0xf) {
-            System.out.println("Warning: Illegal instruction, " +
+            SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("msr SBO[15:12](0x%01x) != 0xf.", sbo));
         }
 
@@ -1849,7 +1850,7 @@ public class ARMv5 extends CPU {
         int left, right, dest;
 
         if (sbz != 0x0) {
-            System.out.println("Warning: Illegal instruction, " +
+            SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("tst SBZ[15:12](0x%01x) != 0x0.", sbz));
         }
 
@@ -1876,7 +1877,7 @@ public class ARMv5 extends CPU {
         int left, right, dest;
 
         if (sbz != 0x0) {
-            System.out.println("Warning: Illegal instruction, " +
+            SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("teq SBZ[15:12](0x%01x) != 0x0.", sbz));
         }
 
@@ -1903,7 +1904,7 @@ public class ARMv5 extends CPU {
         int left, right, dest;
 
         if (sbz != 0x0) {
-            System.out.println("Warning: Illegal instruction, " +
+            SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("cmp SBZ[15:12](0x%01x) != 0x0.", sbz));
         }
 
@@ -1930,7 +1931,7 @@ public class ARMv5 extends CPU {
         int left, right, dest;
 
         if (sbz != 0x0) {
-            System.out.println("Warning: Illegal instruction, " +
+            SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("cmp SBZ[15:12](0x%01x) != 0x0.", sbz));
         }
 
@@ -1987,7 +1988,7 @@ public class ARMv5 extends CPU {
         int right, dest;
 
         if (sbz != 0x0) {
-            System.out.println("Warning: Illegal instruction, " +
+            SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("mov SBZ[19:16](0x%01x) != 0x0.", sbz));
         }
 
@@ -4872,7 +4873,7 @@ public class ARMv5 extends CPU {
     public void doExceptionReset(String dbgmsg) {
         int cpsrOrg;
 
-        System.out.printf("Exception: Reset by '%s'.\n",
+        SystemPane.out.printf("Exception: Reset by '%s'.\n",
                 dbgmsg);
 
         //cpsr の値を取っておく
@@ -4907,7 +4908,7 @@ public class ARMv5 extends CPU {
     public void doExceptionUndefined(String dbgmsg) {
         int pcOrg, cpsrOrg;
 
-        System.out.printf("Exception: Undefined instruction by '%s'.\n",
+        SystemPane.out.printf("Exception: Undefined instruction by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
@@ -4947,7 +4948,7 @@ public class ARMv5 extends CPU {
     public void doExceptionSoftware(String dbgmsg) {
         int pcOrg, cpsrOrg;
 
-        //System.out.printf("Exception: Software interrupt by '%s'.\n",
+        //SystemPane.out.printf("Exception: Software interrupt by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
@@ -4983,7 +4984,7 @@ public class ARMv5 extends CPU {
     public void doExceptionPrefetch(String dbgmsg) {
         int pcOrg, cpsrOrg;
 
-        //System.out.printf("Exception: Prefetch abort by '%s'.\n",
+        //SystemPane.out.printf("Exception: Prefetch abort by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
@@ -5019,7 +5020,7 @@ public class ARMv5 extends CPU {
     public void doExceptionData(String dbgmsg) {
         int pcOrg, cpsrOrg;
 
-        //System.out.printf("Exception: Data abort by '%s'.\n",
+        //SystemPane.out.printf("Exception: Data abort by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
@@ -5055,7 +5056,7 @@ public class ARMv5 extends CPU {
     public void doExceptionIRQ(String dbgmsg) {
         int pcOrg, cpsrOrg;
 
-        //System.out.printf("Exception: IRQ by '%s'.\n",
+        //SystemPane.out.printf("Exception: IRQ by '%s'.\n",
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
@@ -5091,7 +5092,7 @@ public class ARMv5 extends CPU {
     public void doExceptionFIQ(String dbgmsg) {
         int pcOrg, cpsrOrg;
 
-        System.out.printf("Exception: FIQ by '%s'.\n",
+        SystemPane.out.printf("Exception: FIQ by '%s'.\n",
                 dbgmsg);
 
         //pc, cpsr の値を取っておく

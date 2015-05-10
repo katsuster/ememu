@@ -1,5 +1,6 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.ui.SystemPane;
 import net.katsuster.ememu.generic.*;
 
 /**
@@ -225,12 +226,12 @@ public class PrimaryINTC extends Controller64Reg32
             break;
         case REG_VICVECTADDR:
             //TODO: not implemented
-            System.out.printf("VICVECTADDR: read 0x%08x\n", 0);
+            SystemPane.out.printf("VICVECTADDR: read 0x%08x\n", 0);
             result = 0x0;
             break;
         case REG_VICDEFVECTADDR:
             //TODO: not implemented
-            System.out.printf("VICDEFVECTADDR: read 0x%08x\n", 0);
+            SystemPane.out.printf("VICDEFVECTADDR: read 0x%08x\n", 0);
             result = 0x0;
             break;
         default:
@@ -270,15 +271,15 @@ public class PrimaryINTC extends Controller64Reg32
             break;
         case REG_VICVECTADDR:
             //TODO: not implemented
-            System.out.printf("VICVECTADDR: 0x%08x\n", data);
+            SystemPane.out.printf("VICVECTADDR: 0x%08x\n", data);
             break;
         case REG_VICDEFVECTADDR:
             //TODO: not implemented
-            System.out.printf("VICDEFVECTADDR: 0x%08x\n", data);
+            SystemPane.out.printf("VICDEFVECTADDR: 0x%08x\n", data);
             break;
         case REG_VICITCR:
             //TODO: not implemented
-            System.out.printf("VICITCR: 0x%08x\n", data);
+            SystemPane.out.printf("VICITCR: 0x%08x\n", data);
             break;
         case REG_VICVECTCNTL0:
         case REG_VICVECTCNTL1:
@@ -297,7 +298,7 @@ public class PrimaryINTC extends Controller64Reg32
         case REG_VICVECTCNTL14:
         case REG_VICVECTCNTL15:
             //TODO: not implemented
-            System.out.printf("VICVECTCNTL[%d]: 0x%08x\n",
+            SystemPane.out.printf("VICVECTCNTL[%d]: 0x%08x\n",
                     (regaddr - REG_VICVECTCNTL0) / 4, data);
             break;
         case REG_VICPERIPHID0:

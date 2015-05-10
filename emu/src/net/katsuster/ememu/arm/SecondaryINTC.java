@@ -1,9 +1,7 @@
 package net.katsuster.ememu.arm;
 
-import net.katsuster.ememu.generic.Controller64Reg32;
-import net.katsuster.ememu.generic.INTDestination;
-import net.katsuster.ememu.generic.INTSource;
-import net.katsuster.ememu.generic.NormalINTC;
+import net.katsuster.ememu.ui.SystemPane;
+import net.katsuster.ememu.generic.*;
 
 /**
  * 2nd 割り込みコントローラ
@@ -71,12 +69,12 @@ public class SecondaryINTC extends Controller64Reg32
         switch (regaddr) {
         case REG_SIC_ENCLR:
             //TODO: not implemented
-            System.out.printf("SIC_ENCLR: read 0x%08x\n", 0);
+            SystemPane.out.printf("SIC_ENCLR: read 0x%08x\n", 0);
             result = 0x0;
             break;
         case REG_SIC_PICENSET:
             //TODO: not implemented
-            System.out.printf("SIC_PICENSET: read 0x%08x\n", 0);
+            SystemPane.out.printf("SIC_PICENSET: read 0x%08x\n", 0);
             result = 0x0;
             break;
         default:
@@ -96,11 +94,11 @@ public class SecondaryINTC extends Controller64Reg32
         switch (regaddr) {
         case REG_SIC_ENCLR:
             //TODO: not implemented
-            System.out.printf("SIC_ENCLR: 0x%08x\n", data);
+            SystemPane.out.printf("SIC_ENCLR: 0x%08x\n", data);
             break;
         case REG_SIC_PICENSET:
             //TODO: not implemented
-            System.out.printf("SIC_PICENSET: 0x%08x\n", data);
+            SystemPane.out.printf("SIC_PICENSET: 0x%08x\n", data);
             break;
         default:
             super.writeWord(regaddr, data);
