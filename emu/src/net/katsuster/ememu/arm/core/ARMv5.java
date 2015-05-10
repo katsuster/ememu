@@ -269,6 +269,8 @@ public class ARMv5 extends CPU {
 
     /**
      * PC を次の命令に移します。
+     *
+     * ただし、ブランチ命令の後は PC を変更しません。
      */
     public void nextPC() {
         if (isJumped()) {
@@ -4892,9 +4894,9 @@ public class ARMv5 extends CPU {
 
         //リセット例外ベクタへ
         if (isHighVector()) {
-            setPC(0xffff0000);
+            setRegRaw(15, 0xffff0000);
         } else {
-            setPC(0x00000000);
+            setRegRaw(15, 0x00000000);
         }
     }
 
@@ -4929,9 +4931,9 @@ public class ARMv5 extends CPU {
 
         //未定義例外ベクタへ
         if (isHighVector()) {
-            setPC(0xffff0004);
+            setRegRaw(15, 0xffff0004);
         } else {
-            setPC(0x00000004);
+            setRegRaw(15, 0x00000004);
         }
 
         //tentative...
@@ -4969,9 +4971,9 @@ public class ARMv5 extends CPU {
 
         //ソフトウェア割り込み例外ベクタへ
         if (isHighVector()) {
-            setPC(0xffff0008);
+            setRegRaw(15, 0xffff0008);
         } else {
-            setPC(0x00000008);
+            setRegRaw(15, 0x00000008);
         }
     }
 
@@ -5005,9 +5007,9 @@ public class ARMv5 extends CPU {
 
         //プリフェッチアボート例外ベクタへ
         if (isHighVector()) {
-            setPC(0xffff000c);
+            setRegRaw(15, 0xffff000c);
         } else {
-            setPC(0x0000000c);
+            setRegRaw(15, 0x0000000c);
         }
     }
 
@@ -5041,9 +5043,9 @@ public class ARMv5 extends CPU {
 
         //データアボート例外ベクタへ
         if (isHighVector()) {
-            setPC(0xffff0010);
+            setRegRaw(15, 0xffff0010);
         } else {
-            setPC(0x00000010);
+            setRegRaw(15, 0x00000010);
         }
     }
 
@@ -5077,9 +5079,9 @@ public class ARMv5 extends CPU {
 
         //IRQ 例外ベクタへ
         if (isHighVector()) {
-            setPC(0xffff0018);
+            setRegRaw(15, 0xffff0018);
         } else {
-            setPC(0x00000018);
+            setRegRaw(15, 0x00000018);
         }
     }
 
@@ -5113,9 +5115,9 @@ public class ARMv5 extends CPU {
 
         //FIQ 例外ベクタへ
         if (isHighVector()) {
-            setPC(0xffff001c);
+            setRegRaw(15, 0xffff001c);
         } else {
-            setPC(0x0000001c);
+            setRegRaw(15, 0x0000001c);
         }
     }
 
@@ -5263,7 +5265,7 @@ public class ARMv5 extends CPU {
         int target_address1 = 0x0;//0xc036aee8; //<versatile_init_irq>
         int target_address2 = 0x0;//0xc036aee8; //<versatile_init_irq>
 
-        //要求された例外のうち、優先度の高い例外を 1つだけ発生させます
+        //要求された例外のうち、優先度の高い例外を 1つだけ処理します
         doImportantException();
 
         if (isRaisedInterrupt()) {
