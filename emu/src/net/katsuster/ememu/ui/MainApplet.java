@@ -4,67 +4,16 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import net.katsuster.ememu.arm.core.ARMv5;
-import net.katsuster.ememu.board.*;
-import net.katsuster.ememu.generic.Bus64;
-import net.katsuster.ememu.generic.RAM;
-
 public class MainApplet extends JApplet {
     private static final SystemPane spane = new SystemPane();
 
-    private VirtualTerminal[] vttyAMA;
     private JTabbedPane tabPane;
     private Emulator emu;
+    private VirtualTerminal[] vttyAMA;
 
-    class Emulator extends Thread {
-        private ARMv5 cpu;
-        private Bus64 bus;
-        private RAM ramMain;
-
-        public Emulator() {
-            //do nothing
-        }
-
-        @Override
-        public void run() {
-            setName(getClass().getName());
-
-            String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.18.11";
-            String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz";
-            String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1\0";
-
-            cpu = new ARMv5();
-            bus = new Bus64();
-            ramMain = new RAM(64 * 1024 * 1024);
-            ARMVersatile board = new ARMVersatile();
-
-            //board.setUARTInputStream(0, System.in);
-            for (int i = 0; i < vttyAMA.length; i++) {
-                board.setUARTInputStream(i, vttyAMA[i].getInputStream());
-                board.setUARTOutputStream(i, vttyAMA[i].getOutputStream());
-            }
-            board.setup(cpu, bus, ramMain);
-
-            Main.bootFromURI(cpu, ramMain, kimage, initram, cmdline);
-
-            //start cores
-            bus.startAllSlaveCores();
-            bus.startAllMasterCores();
-
-            //wait CPU halted
-            try {
-                cpu.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace(System.err);
-                //ignored
-            }
-        }
-
-        public void halt() {
-            bus.haltAllMasterCores();
-            bus.haltAllSlaveCores();
-        }
-    }
+    private String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.18.11";
+    private String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz";
+    private String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1\0";
 
     public MainApplet() {
         vttyAMA = new VirtualTerminal[3];
@@ -152,6 +101,14 @@ public class MainApplet extends JApplet {
         tabPane.setSelectedIndex(1);
 
         emu = new Emulator();
+        emu.setKernelImage(kimage);
+        emu.setInitramfsImage(initram);
+        emu.setCommandLine(cmdline);
+        //board.setUARTInputStream(0, System.in);
+        for (int i = 0; i < vttyAMA.length; i++) {
+            emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());
+            emu.getBoard().setUARTOutputStream(i, vttyAMA[i].getOutputStream());
+        }
         emu.start();
     }
 
