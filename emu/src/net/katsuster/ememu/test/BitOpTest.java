@@ -80,4 +80,41 @@ public class BitOpTest {
         Assert.assertEquals(msg1, 0x80000001, BitOp.setField32(0x00340000, 0, 32, 0x80000001));
         Assert.assertEquals(msg1, 0xff4321ff, BitOp.setField32(0x12000000, 0, 32, 0xff4321ff));
     }
+
+    @org.junit.Test
+    public void testToInt() throws Exception {
+        String msg1 = "BitOp.toInt() failed.";
+
+        Assert.assertEquals(msg1, 0x0, BitOp.toInt(false));
+        Assert.assertEquals(msg1, 0x1, BitOp.toInt(true));
+    }
+
+    @org.junit.Test
+    public void testSignExt64() throws Exception {
+        String msg1 = "BitOp.signExt64() failed.";
+
+        Assert.assertEquals(msg1, 0L, BitOp.signExt64(0x1L, -1));
+        Assert.assertEquals(msg1, 0L, BitOp.signExt64(0x1L, 0));
+
+        Assert.assertEquals(msg1, -2L, BitOp.signExt64(0xeL, 66));
+        Assert.assertEquals(msg1, 0L, BitOp.signExt64(0xeL, 65));
+        Assert.assertEquals(msg1, -2L, BitOp.signExt64(0xfffffffffffffffeL, 64));
+        Assert.assertEquals(msg1, -2L, BitOp.signExt64(0x7ffffffffffffffeL, 63));
+
+        Assert.assertEquals(msg1, -1L, BitOp.signExt64(0x1L, 1));
+        Assert.assertEquals(msg1, 1L, BitOp.signExt64(0x1L, 2));
+        Assert.assertEquals(msg1, -3L, BitOp.signExt64(0x5L, 3));
+        Assert.assertEquals(msg1, 5L, BitOp.signExt64(0x5L, 4));
+
+        Assert.assertEquals(msg1, -16L, BitOp.signExt64(0xff0L, 12));
+        Assert.assertEquals(msg1, -57360L, BitOp.signExt64(0xff1ff0L, 24));
+        Assert.assertEquals(msg1, -218161168L, BitOp.signExt64(0xff2ff1ff0L, 36));
+        Assert.assertEquals(msg1, -824851882000L, BitOp.signExt64(0xff3ff2ff1ff0L, 48));
+        Assert.assertEquals(msg1, -3097049595699216L, BitOp.signExt64(0xff4ff3ff2ff1ff0L, 60));
+
+        Assert.assertEquals(msg1, -16L, BitOp.signExt64(0xbffffff0L, 30));
+        Assert.assertEquals(msg1, 0x3ffffff0L, BitOp.signExt64(0xbffffff0L, 31));
+        Assert.assertEquals(msg1, -1073741840L, BitOp.signExt64(0xbffffff0L, 32));
+        Assert.assertEquals(msg1, 0xbffffff0L, BitOp.signExt64(0xbffffff0L, 33));
+    }
 }

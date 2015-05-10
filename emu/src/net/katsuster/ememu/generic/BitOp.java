@@ -118,12 +118,13 @@ public class BitOp {
      * 符号拡張を行います。
      *
      * @param v 任意の値
-     * @param n 値のビット数
+     * @param n 値のビット数、64 を指定すると v を返します。
+     *          65 以上を指定すると 64 で割った余りを使います。
      */
     public static long signExt64(long v, int n) {
         long sb, mb;
 
-        if (n == 0) {
+        if (n <= 0) {
             return 0;
         }
 
