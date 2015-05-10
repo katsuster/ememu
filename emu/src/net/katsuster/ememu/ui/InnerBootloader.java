@@ -57,7 +57,8 @@ public class InnerBootloader {
 
     public static void bootFromURI(ARMv5 cpu, RAM ramMain, String kimage, String initram, String cmdline) {
         byte[] cmdlb = cmdline.getBytes();
-        byte[] cmdalign = new byte[(cmdlb.length + 3) & ~0x3];
+        //+1: need null char at the end of line
+        byte[] cmdalign = new byte[(cmdlb.length + 1 + 3) & ~0x3];
         System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
 
         final int addrRAM = 0x70000000;

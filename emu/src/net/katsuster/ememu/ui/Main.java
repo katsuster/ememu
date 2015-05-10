@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         String kimage = "Image";
         String initram = "initramfs.gz";
-        String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1\0";
+        String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1";
 
         if (args.length <= 0) {
             SystemPane.out.println("usage:\n" +
