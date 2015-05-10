@@ -15,10 +15,7 @@ public class IntegerExt {
      * @return キャリーが発生する場合は true、発生しない場合は false
      */
     public static boolean carryFrom(int left, int right) {
-        long ll = left & 0xffffffffL;
-        long lr = right & 0xffffffffL;
-
-        return ((ll + lr) & ~0xffffffffL) != 0;
+        return compareUnsigned(left + right, left) < 0;
     }
 
     /**
@@ -30,10 +27,7 @@ public class IntegerExt {
      * @return キャリーが発生する場合は true、発生しない場合は false
      */
     public static boolean borrowFrom(int left, int right) {
-        long ll = left & 0xffffffffL;
-        long lr = right & 0xffffffffL;
-
-        return lr > ll;
+        return compareUnsigned(left, right) < 0;
     }
 
     /**
