@@ -69,4 +69,26 @@ public class IntegerExt {
 
         return cond1 && cond2;
     }
+
+    /**
+     * 2 つの int 値を符号無しと見なして数値的に比較します。
+     *
+     * @param x 比較する最初の int
+     * @param y 比較する 2番目の int
+     * @return x == y の場合は値 0、
+     * x < y の場合は 0 より小さい値、
+     * x > y の場合は 0 より大きい値
+     */
+    public static int compareUnsigned(int x, int y) {
+        int r;
+
+        //上位 63ビットを比べる
+        r = (x >>> 1) - (y >>> 1);
+        if (r != 0) {
+            return r;
+        }
+
+        //下位 1ビットを比べる
+        return (x & 1) - (y & 1);
+    }
 }
