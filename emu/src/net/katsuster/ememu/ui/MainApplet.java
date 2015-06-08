@@ -32,7 +32,9 @@ public class MainApplet extends JApplet {
 
     @Override
     public void init() {
-        String kimage, initram, cmdline;
+        String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.18.11";
+        String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz";
+        String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1";
 
         SystemPane.out.println("init");
 
@@ -71,37 +73,22 @@ public class MainApplet extends JApplet {
         }
 
         try {
-            opts.setKernelImage(new URI("http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.18.11"));
-            opts.setInitramfsImage(new URI("http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz"));
-            opts.setCommandLine("console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1");
+            opts.setKernelImage(new URI(kimage));
+            opts.setInitramfsImage(new URI(initram));
+            opts.setCommandLine(cmdline);
         } catch (URISyntaxException ex) {
             //ignore
         }
 
-        ButtonListener listenButton = new ButtonListener();
-
         //menu
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menuSystem = new JMenu("System");
-        JMenuItem itemReset = new JMenuItem("Reset");
-        JMenuItem itemClear = new JMenuItem("Clear Log");
-        setJMenuBar(menuBar);
-        menuBar.add(menuSystem);
-        menuSystem.add(itemReset);
-        menuSystem.addSeparator();
-        menuSystem.add(itemClear);
-        menuSystem.setMnemonic(KeyEvent.VK_S);
+        ButtonListener listenButton = new ButtonListener();
+        setJMenuBar(new MainMenuBar(listenButton));
 
-        itemReset.setActionCommand("reset");
-        itemReset.addActionListener(listenButton);
-        itemReset.setMnemonic(KeyEvent.VK_R);
-        itemClear.setActionCommand("clear");
-        itemClear.addActionListener(listenButton);
-        itemClear.setMnemonic(KeyEvent.VK_C);
-
+        //tabs
         tabPane = new JTabbedPane();
         tabPane.setTabPlacement(JTabbedPane.BOTTOM);
         tabPane.setFocusable(false);
+        tabPane.transferFocus();
 
         //stdout
         JPanel panel = new JPanel(new BorderLayout(), true);
