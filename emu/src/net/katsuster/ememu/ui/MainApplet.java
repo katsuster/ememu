@@ -1,9 +1,15 @@
 package net.katsuster.ememu.ui;
 
+import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+/**
+ * エミュレータのグラフィカル画面、ログ表示用のアプレット。
+ *
+ * @author katsuhiro
+ */
 public class MainApplet extends JApplet {
     public static final String PARAM_PROXY_HOST = "proxyHost";
     public static final String PARAM_PROXY_PORT = "proxyPort";
@@ -17,16 +23,17 @@ public class MainApplet extends JApplet {
     private Emulator emu;
     private VirtualTerminal[] vttyAMA;
 
-    private String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.18.11";
-    private String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz";
-    private String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1";
+    private EmulatorOption opts;
 
     public MainApplet() {
         vttyAMA = new VirtualTerminal[3];
+        opts = new EmulatorOption();
     }
 
     @Override
     public void init() {
+        String kimage, initram, cmdline;
+
         SystemPane.out.println("init");
 
         super.init();
@@ -61,6 +68,14 @@ public class MainApplet extends JApplet {
             SystemPane.out.printf("Parameter '%s' not found, " +
                             "use default command line.\n",
                     PARAM_COMMAND_LINE);
+        }
+
+        try {
+            opts.setKernelImage(new URI("http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.18.11"));
+            opts.setInitramfsImage(new URI("http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz"));
+            opts.setCommandLine("console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1");
+        } catch (URISyntaxException ex) {
+            //ignore
         }
 
         ButtonListener listenButton = new ButtonListener();
@@ -132,9 +147,7 @@ public class MainApplet extends JApplet {
         tabPane.setSelectedIndex(1);
 
         emu = new Emulator();
-        emu.setKernelImage(kimage);
-        emu.setInitramfsImage(initram);
-        emu.setCommandLine(cmdline);
+        emu.setOption(opts);
         //board.setUARTInputStream(0, System.in);
         for (int i = 0; i < vttyAMA.length; i++) {
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());

@@ -15,69 +15,14 @@ class Emulator extends Thread {
     private RAM ram;
     private ARMVersatile board;
 
-    private String kimage;
-    private String initram;
-    private String cmdline;
+    private EmulatorOption opts;
 
     public Emulator() {
         cpu = new ARMv5();
         bus = new Bus64();
         ram = new RAM(64 * 1024 * 1024);
         board = new ARMVersatile();
-    }
-
-    /**
-     * Linux カーネルイメージファイルの位置を取得します。
-     *
-     * @return Linux カーネルイメージファイルの位置
-     */
-    public String getKernelImage() {
-        return kimage;
-    }
-
-    /**
-     * Linux カーネルイメージファイルの位置を設定します。
-     *
-     * @param uri Linux カーネルイメージファイルの位置
-     */
-    public void setKernelImage(String uri) {
-        kimage = uri;
-    }
-
-    /**
-     * ブート時にカーネルに渡す initramfs イメージファイルの位置を取得します。
-     *
-     * @return initramfs イメージファイルの位置
-     */
-    public String getInitramfsImage() {
-        return initram;
-    }
-
-    /**
-     * ブート時にカーネルに渡す initramfs イメージファイルの位置を設定します。
-     *
-     * @param uri initramfs イメージファイルの位置
-     */
-    public void setInitramfsImage(String uri) {
-        initram = uri;
-    }
-
-    /**
-     * ブート時にカーネルに渡すコマンドラインを取得します。
-     *
-     * @return コマンドライン文字列
-     */
-    public String getCommandLine() {
-        return cmdline;
-    }
-
-    /**
-     * ブート時にカーネルに渡すコマンドラインを設定します。
-     *
-     * @param str コマンドライン文字列
-     */
-    public void setCommandLine(String str) {
-        cmdline = str;
+        opts = new EmulatorOption();
     }
 
     /**
@@ -118,12 +63,35 @@ class Emulator extends Thread {
         return board;
     }
 
+    /**
+     * エミュレータ起動のオプションを取得します。
+     *
+     * @return エミュレータに渡すオプション
+     */
+    public EmulatorOption getOption() {
+        return opts;
+    }
+
+    /**
+     * エミュレータ起動のオプションを設定します。
+     *
+     * @param op エミュレータに渡すオプション
+     */
+    public void setOption(EmulatorOption op) {
+        opts = op;
+    }
+
     @Override
     public void run() {
+        String kimage, initram, cmdline;
+
         setName(getClass().getName());
 
         board.setup(cpu, bus, ram);
 
+        kimage = opts.getKernelImage().toString();
+        initram = opts.getInitramfsImage().toString();
+        cmdline = opts.getCommandLine();
         InnerBootloader.bootFromURI(cpu, ram, kimage, initram, cmdline);
 
         //start cores
