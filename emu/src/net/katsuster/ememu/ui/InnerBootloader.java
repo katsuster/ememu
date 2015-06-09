@@ -61,8 +61,8 @@ public class InnerBootloader {
         byte[] cmdalign = new byte[(cmdlb.length + 1 + 3) & ~0x3];
         System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
 
-        final int addrRAM = 0x70000000;
-        final int addrAtagsStart = addrRAM + ramMain.getSize() - 4096;
+        final int addrRAM = 0x00000000;
+        final int addrAtagsStart = addrRAM + 0x100;
         int addrAtags = addrAtagsStart;
         final int addrImage = addrRAM + 0x00008000;
         int sizeImage = 0;
@@ -106,13 +106,13 @@ public class InnerBootloader {
         cpu.setReg(2, addrAtags);
         {
             //ATAG_CORE, size, tag, [flags, pagesize, rootdev]
-            cpu.write32_a32(addrAtags + 0x00, 0x00000002);
+            cpu.write32_a32(addrAtags + 0x00, 0x00000005);
             cpu.write32_a32(addrAtags + 0x04, ATAG_CORE);
-            //cpu.write32(addrAtags + 0x08, 0x00000000);
-            //cpu.write32(addrAtags + 0x0c, 0x00001000);
-            //cpu.write32(addrAtags + 0x10, 0x00000000);
-            //addrAtags += 0x14;
-            addrAtags += 0x08;
+            //bit 0: read only
+            cpu.write32(addrAtags + 0x08, 0x00000001);
+            cpu.write32(addrAtags + 0x0c, 0x00001000);
+            cpu.write32(addrAtags + 0x10, 0x00000000);
+            addrAtags += 0x14;
 
             //ATAG_MEM, size, tag, size, start
             cpu.write32_a32(addrAtags + 0x00, 0x00000004);

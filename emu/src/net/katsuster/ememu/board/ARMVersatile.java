@@ -30,7 +30,7 @@ public class ARMVersatile {
 
     public void setup(ARMv5 cpu, Bus64 bus, RAM ramMain) {
         //TODO: implement MPMC controller...
-        RAM mpmc_c0_0 = new RAM(4 * 1024);
+        RAM mpmc_c0_0 = ramMain;
         RAM mpmc_c0_1 = new RAM(4 * 1024);
         RAM mpmc_c1 = new RAM(4 * 1024);
 
@@ -83,7 +83,7 @@ public class ARMVersatile {
         //TODO: implement MBX Graphics controller...
         RAM mbx = new RAM(4 * 1024);
         //TODO: implement MPMC controller...
-        RAM mpmc_c2_3 = ramMain;
+        RAM mpmc_c2_3 = new RAM(4 * 1024);
 
         //Master core
         cpu.setSlaveBus(bus);
