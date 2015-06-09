@@ -23,7 +23,7 @@ public class Bus64
         //2^32 / 2^12 = 2^20 の要素が必要となる
         this.slaves = new SlaveCoreAddress[1024 * 1024];
         this.slaveList = new ArrayList<SlaveCoreAddress>();
-        this.cachedSlave = new SlaveCoreAddress(null, 0, 0);
+        this.cachedSlave = null;
     }
 
     /**
@@ -339,7 +339,7 @@ public class Bus64
      * 何も割り当てられていなければ null
      */
     protected SlaveCoreAddress findSlaveCoreAddress(long start, long end) {
-        if (cachedSlave.contains(start, end)) {
+        if (cachedSlave != null && cachedSlave.contains(start, end)) {
             return cachedSlave;
         }
 
