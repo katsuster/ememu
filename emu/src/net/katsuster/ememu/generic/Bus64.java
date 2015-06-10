@@ -23,7 +23,7 @@ public class Bus64
         //2^32 / 2^12 = 2^20 の要素が必要となる
         this.slaves = new SlaveCoreAddress[1024 * 1024];
         this.slaveList = new ArrayList<SlaveCoreAddress>();
-        this.cachedSlave = null;
+        this.cachedSlave = new InvalidSlaveCoreAddress();
     }
 
     /**
@@ -339,13 +339,16 @@ public class Bus64
      * 何も割り当てられていなければ null
      */
     protected SlaveCoreAddress findSlaveCoreAddress(long start, long end) {
-        if (cachedSlave != null && cachedSlave.contains(start, end)) {
+        if (cachedSlave.contains(start, end)) {
             return cachedSlave;
         }
 
         //テーブルから探索する
         int ind = (int) (start >>> 12);
         if (ind <= 0xfffff) {
+            if (slaves[ind] != null) {
+                cachedSlave = slaves[ind];
+            }
             return slaves[ind];
         }
 
@@ -458,6 +461,42 @@ public class Bus64
             }
 
             return start <= st && ed <= end;
+        }
+    }
+
+    /**
+     * 無効なスレーブコアが占めるアドレスを表すクラスです。
+     */
+    private class InvalidSlaveCoreAddress extends SlaveCoreAddress {
+        /**
+         * 無効なアドレスを生成します。
+         */
+        public InvalidSlaveCoreAddress() {
+            super(null, 0, 0);
+        }
+
+        /**
+         * スレーブコアを返します。
+         * 常に IllegalStateException 例外をスローします。
+         *
+         * @return 値を返しません
+         */
+        @Override
+        public SlaveCore64 getCore() {
+            throw new IllegalStateException("Invalid slave core.");
+        }
+
+        /**
+         * このスレーブコアが指定したアドレスの範囲を含むかどうかを判定します。
+         * 常に false を返します。
+         *
+         * @param st 開始アドレス
+         * @param ed 終了アドレス
+         * @return 常に false
+         */
+        @Override
+        public boolean contains(long st, long ed) {
+            return false;
         }
     }
 }
