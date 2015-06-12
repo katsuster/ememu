@@ -3,14 +3,14 @@ Linux について
 
 動作確認
 --------------------
-Linux 3.12.35: OK: BusyBox まで動作
-Linux 3.14.37: OK: BusyBox まで動作
-Linux 3.18.11: OK: BusyBox まで動作
+Linux 3.12.43: OK: BusyBox まで動作
+Linux 3.14.44: OK: BusyBox まで動作
+Linux 3.18.14: OK: BusyBox まで動作
 
 
 追加、削除すべきコンフィグ
 --------------------
-Linux 3.12.26
+Linux 3.12.x
 - CONFIG_AEABI
   追加。Busybox の実行に必要です。
   最近のクロスコンパイラでビルドした場合、システムコールの呼び出し規則に
@@ -22,7 +22,7 @@ Linux 3.12.26
 export ARCH=arm
 export CROSS_COMPILE=/home/username/gcc-linaro-arm-linux-gnueabihf-4.9-2014.07_linux/bin/arm-linux-gnueabihf-
 
-cd linux-3.14.16
+cd linux
 make KBUILD_DEFCONFIG=versatile_defconfig defconfig
 make -j4
 

@@ -32,8 +32,8 @@ public class MainApplet extends JApplet {
 
     @Override
     public void init() {
-        String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/Image-3.18.11";
-        String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/initramfs.gz";
+        String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/ememu/Image-3.18.14";
+        String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/ememu/initramfs.gz";
         String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1";
 
         SystemPane.out.println("init");
