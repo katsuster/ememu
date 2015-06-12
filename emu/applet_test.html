@@ -18,7 +18,11 @@
     <a href="https://github.com/katsuster/ememu">https://github.com/katsuster/ememu</a>.
 </p>
 
-<applet codebase="./" archive="armemu_applet.jar" code="net.katsuster.ememu.ui.MainApplet" width=640 height=480></applet>
+<applet codebase="./" archive="armemu_applet.jar" code="net.katsuster.ememu.ui.MainApplet" width=800 height=480>
+    <param name="kernelImage" value="http://www2.katsuster.net/~katsuhiro/contents/java/ememu/Image-3.18.11">
+    <param name="initramfsImage" value="http://www2.katsuster.net/~katsuhiro/contents/java/ememu/initramfs.gz">
+    <param name="commandLine" value="console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1">
+</applet>
 
 </body>
 </html>
