@@ -11,12 +11,13 @@
     * Not yet: Thumb, EE, VFP, Jazelle
   * Devices: Timer, UART
   * Not yet: Ethernet, NAND, LCD, and so on...
-  * OS: Linux 3.14.x, Linux 3.12.x
+  * OS: Linux 3.18.x, Linux 3.14.x, Linux 3.12.x
+   * 3.12.x: Need to enable CONFIG_EABI if you want to use recently cross-compiler.
 
 #### Live DEMO
 You can run the ememu (applet version) on my WEB site.
 
-http://www2.katsuster.net/~katsuhiro/contents/java/applet_test.html
+http://www2.katsuster.net/~katsuhiro/contents/java/ememu/ememu_applet.html
 
 
 ## How to use
@@ -112,6 +113,8 @@ or some of Linux terminal as you like.
     ...
 
 ## Known BUGS
+* The emulator has crashed when execute the thumb instructions.
+For example, glibc of Linaro cross compiler includes thumb instructions.
 * Terminal window of the ememu is not understand escape sequences, 
 so some of output is ugly or difficult to read.
 
