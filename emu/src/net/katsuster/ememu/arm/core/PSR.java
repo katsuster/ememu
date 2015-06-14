@@ -33,7 +33,8 @@ public class PSR extends Reg32 {
     /**
      * 初期値を指定して PSR（プログラムステートレジスタ）を作成します。
      *
-     * @param val レジスタの初期値
+     * @param name レジスタ名
+     * @param val  レジスタの初期値
      */
     public PSR(String name, int val) {
         super(name, val);

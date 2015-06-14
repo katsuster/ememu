@@ -29,6 +29,7 @@ public class BitOp {
      * @param val 整数値
      * @param bit ビット位置
      * @param nv  新しいビットの値、セットするなら true、クリアするなら false
+     * @return val の指定されたビット位置を変更した後の値
      */
     public static int setBit32(int val, int bit, boolean nv) {
         int m = 1 << bit;
@@ -83,6 +84,7 @@ public class BitOp {
      * @param pos ビット位置
      * @param len ビットフィールドの長さ
      * @param nv  ビットフィールドに設定する値
+     * @return val の指定されたビットフィールドを変更した後の値
      */
     public static int setField32(int val, int pos, int len, int nv) {
         int mask;
@@ -120,6 +122,7 @@ public class BitOp {
      * @param v 任意の値
      * @param n 値のビット数、64 を指定すると v を返します。
      *          65 以上を指定すると 64 で割った余りを使います。
+     * @return v を符号拡張した値
      */
     public static long signExt64(long v, int n) {
         long sb, mb;

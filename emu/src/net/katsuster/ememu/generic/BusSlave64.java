@@ -10,5 +10,10 @@ package net.katsuster.ememu.generic;
  * @author katsuhiro
  */
 public interface BusSlave64 {
+    /**
+     * バススレーブとなるコアを取得します。
+     *
+     * @return バススレーブコア
+     */
     public abstract SlaveCore64 getSlaveCore();
 }

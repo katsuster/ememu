@@ -70,8 +70,8 @@ public class IntegerExt {
      * @param x 比較する最初の int
      * @param y 比較する 2番目の int
      * @return x == y の場合は値 0、
-     * x < y の場合は 0 より小さい値、
-     * x > y の場合は 0 より大きい値
+     * x &lt; y の場合は 0 より小さい値、
+     * x &gt; y の場合は 0 より大きい値
      */
     public static int compareUnsigned(int x, int y) {
         int r;

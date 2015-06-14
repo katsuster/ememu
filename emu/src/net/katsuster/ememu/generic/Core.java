@@ -13,6 +13,8 @@ package net.katsuster.ememu.generic;
 public interface Core extends Runnable {
     /**
      * 今すぐコアを停止すべきかどうかを取得します。
+     *
+     * @return すぐに停止すべきならば true、そうでなければ false
      */
     public abstract boolean shouldHalt();
 

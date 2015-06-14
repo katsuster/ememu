@@ -102,6 +102,8 @@ public class VirtualTerminal extends JPanel
 
     /**
      * 今すぐスレッドを停止すべきかどうかを取得します。
+     *
+     * @return 停止すべきならば true、そうでなければ false
      */
     public boolean shouldHalt() {
         return halted;

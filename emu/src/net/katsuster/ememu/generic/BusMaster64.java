@@ -9,5 +9,10 @@ package net.katsuster.ememu.generic;
  * @author katsuhiro
  */
 public interface BusMaster64 {
+    /**
+     * バスマスターとなるコアを取得します。
+     *
+     * @return バスマスターコア
+     */
     public abstract MasterCore64 getMasterCore();
 }

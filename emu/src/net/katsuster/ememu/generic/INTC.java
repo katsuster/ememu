@@ -16,7 +16,7 @@ package net.katsuster.ememu.generic;
  * <pre>
  * 上位                                   下位
  * -------------------------------------------
- * INTDestination <----- INTC <--+-- INTSource
+ * INTDestination &lt;----- INTC &lt;--+-- INTSource
  *                               +-- INTSource
  *                               +-- ...
  *                               `-- INTSource
