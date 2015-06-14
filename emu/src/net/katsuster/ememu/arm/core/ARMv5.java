@@ -1476,65 +1476,6 @@ public class ARMv5 extends CPU {
      * @param id   オペコードフィールドと S ビットが示す演算の ID
      */
     public void executeALU(InstructionARM inst, boolean exec, int id) {
-        boolean s = inst.getSBit();
-        int rn = inst.getRnField();
-        int rd = inst.getRdField();
-        String strInst, strOperand;
-
-        if (!exec) {
-            switch (id) {
-            case InstructionARM.OPCODE_S_ADC:
-            case InstructionARM.OPCODE_S_ADD:
-            case InstructionARM.OPCODE_S_AND:
-            case InstructionARM.OPCODE_S_BIC:
-            case InstructionARM.OPCODE_S_EOR:
-            case InstructionARM.OPCODE_S_ORR:
-            case InstructionARM.OPCODE_S_RSB:
-            case InstructionARM.OPCODE_S_RSC:
-            case InstructionARM.OPCODE_S_SBC:
-            case InstructionARM.OPCODE_S_SUB:
-                //with S bit
-                strInst = String.format("%s%s%s", inst.getOpcodeFieldName(),
-                        inst.getCondFieldName(),
-                        (s) ? "s" : "");
-                //rd, rn, shifter_operand
-                strOperand = String.format("%s, %s, %s", getRegName(rd),
-                        getRegName(rn), getAddrMode1Name(inst));
-                break;
-            case InstructionARM.OPCODE_S_MOV:
-            case InstructionARM.OPCODE_S_MVN:
-                //with S bit
-                strInst = String.format("%s%s%s", inst.getOpcodeFieldName(),
-                        inst.getCondFieldName(),
-                        (s) ? "s" : "");
-                //rd, shifter_operand
-                strOperand = String.format("%s, %s", getRegName(rd),
-                        getAddrMode1Name(inst));
-                break;
-            case InstructionARM.OPCODE_S_CMN:
-            case InstructionARM.OPCODE_S_CMP:
-            case InstructionARM.OPCODE_S_TEQ:
-            case InstructionARM.OPCODE_S_TST:
-                //S bit is 1
-                strInst = String.format("%s%s", inst.getOpcodeFieldName(),
-                        inst.getCondFieldName());
-                //rn, shifter_operand
-                strOperand = String.format("%s, %s", getRegName(rn),
-                        getAddrMode1Name(inst));
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown opcode S-bit ID " +
-                        String.format("%d.", id));
-            }
-            showDisasm(inst, strInst, strOperand);
-
-            return;
-        }
-
-        if (!inst.satisfiesCond(getCPSR())) {
-            return;
-        }
-
         switch (id) {
         case InstructionARM.OPCODE_S_AND:
             executeALUAnd(inst, exec);
@@ -1591,17 +1532,86 @@ public class ARMv5 extends CPU {
     }
 
     /**
+     * データ処理命令を逆アセンブルします。
+     *
+     * @param inst ARM 命令
+     * @param id   オペコードフィールドと S ビットが示す演算の ID
+     */
+    public void showDisasmALU(InstructionARM inst, int id) {
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        String strInst, strOperand;
+
+        switch (id) {
+        case InstructionARM.OPCODE_S_ADC:
+        case InstructionARM.OPCODE_S_ADD:
+        case InstructionARM.OPCODE_S_AND:
+        case InstructionARM.OPCODE_S_BIC:
+        case InstructionARM.OPCODE_S_EOR:
+        case InstructionARM.OPCODE_S_ORR:
+        case InstructionARM.OPCODE_S_RSB:
+        case InstructionARM.OPCODE_S_RSC:
+        case InstructionARM.OPCODE_S_SBC:
+        case InstructionARM.OPCODE_S_SUB:
+            //with S bit
+            strInst = String.format("%s%s%s", inst.getOpcodeFieldName(),
+                    inst.getCondFieldName(),
+                    (s) ? "s" : "");
+            //rd, rn, shifter_operand
+            strOperand = String.format("%s, %s, %s", getRegName(rd),
+                    getRegName(rn), getAddrMode1Name(inst));
+            break;
+        case InstructionARM.OPCODE_S_MOV:
+        case InstructionARM.OPCODE_S_MVN:
+            //with S bit
+            strInst = String.format("%s%s%s", inst.getOpcodeFieldName(),
+                    inst.getCondFieldName(),
+                    (s) ? "s" : "");
+            //rd, shifter_operand
+            strOperand = String.format("%s, %s", getRegName(rd),
+                    getAddrMode1Name(inst));
+            break;
+        case InstructionARM.OPCODE_S_CMN:
+        case InstructionARM.OPCODE_S_CMP:
+        case InstructionARM.OPCODE_S_TEQ:
+        case InstructionARM.OPCODE_S_TST:
+            //S bit is 1
+            strInst = String.format("%s%s", inst.getOpcodeFieldName(),
+                    inst.getCondFieldName());
+            //rn, shifter_operand
+            strOperand = String.format("%s, %s", getRegName(rn),
+                    getAddrMode1Name(inst));
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown opcode S-bit ID " +
+                    String.format("%d.", id));
+        }
+        showDisasm(inst, strInst, strOperand);
+    }
+
+    /**
      * 論理積命令。
      *
      * @param inst ARM 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUAnd(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         left = getReg(rn);
         right = opr;
@@ -1626,11 +1636,21 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUEor(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         left = getReg(rn);
         right = opr;
@@ -1655,11 +1675,21 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUSub(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         left = getReg(rn);
         right = opr;
@@ -1684,11 +1714,21 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALURsb(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         left = opr;
         right = getReg(rn);
@@ -1713,11 +1753,21 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUAdd(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         left = getReg(rn);
         right = opr;
@@ -1742,11 +1792,21 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUAdc(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, center, right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         left = getReg(rn);
         center = opr;
@@ -1776,11 +1836,21 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUSbc(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, center, right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         left = getReg(rn);
         center = opr;
@@ -1810,11 +1880,21 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALURsc(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, center, right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         left = opr;
         center = getReg(rn);
@@ -1844,6 +1924,7 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUTst(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
         int opr = getAddrMode1(inst);
@@ -1852,6 +1933,15 @@ public class ARMv5 extends CPU {
         if (sbz != 0x0) {
             SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("tst SBZ[15:12](0x%01x) != 0x0.", sbz));
+        }
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
         }
 
         left = getReg(rn);
@@ -1871,6 +1961,7 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUTeq(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
         int opr = getAddrMode1(inst);
@@ -1879,6 +1970,15 @@ public class ARMv5 extends CPU {
         if (sbz != 0x0) {
             SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("teq SBZ[15:12](0x%01x) != 0x0.", sbz));
+        }
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
         }
 
         left = getReg(rn);
@@ -1898,6 +1998,7 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUCmp(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
         int opr = getAddrMode1(inst);
@@ -1906,6 +2007,15 @@ public class ARMv5 extends CPU {
         if (sbz != 0x0) {
             SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("cmp SBZ[15:12](0x%01x) != 0x0.", sbz));
+        }
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
         }
 
         left = getReg(rn);
@@ -1925,6 +2035,7 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUCmn(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
         int opr = getAddrMode1(inst);
@@ -1933,6 +2044,15 @@ public class ARMv5 extends CPU {
         if (sbz != 0x0) {
             SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("cmp SBZ[15:12](0x%01x) != 0x0.", sbz));
+        }
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
         }
 
         left = getReg(rn);
@@ -1952,11 +2072,21 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUOrr(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         left = getReg(rn);
         right = opr;
@@ -1981,6 +2111,7 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUMov(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int sbz = inst.getField(16, 4);
         int rd = inst.getRdField();
@@ -1990,6 +2121,15 @@ public class ARMv5 extends CPU {
         if (sbz != 0x0) {
             SystemPane.out.println("Warning: Illegal instruction, " +
                     String.format("mov SBZ[19:16](0x%01x) != 0x0.", sbz));
+        }
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
         }
 
         right = opr;
@@ -2014,11 +2154,21 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUBic(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         left = getReg(rn);
         right = opr;
@@ -2043,10 +2193,20 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeALUMvn(InstructionARM inst, boolean exec) {
+        int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int right, dest;
+
+        if (!exec) {
+            showDisasmALU(inst, id);
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
 
         right = opr;
         dest = ~right;
