@@ -1,6 +1,6 @@
 package net.katsuster.ememu.arm;
 
-import net.katsuster.ememu.generic.Controller64Reg32;
+import net.katsuster.ememu.generic.*;
 
 /**
  * PS2 キーボード、マウスインタフェース
@@ -10,7 +10,10 @@ import net.katsuster.ememu.generic.Controller64Reg32;
  *
  * @author katsuhiro
  */
-public class KMI extends Controller64Reg32 {public static final int REG_KMICR     = 0x00;
+public class KMI implements BusSlave64 {
+    private KMISlave slave;
+
+    public static final int REG_KMICR     = 0x00;
     public static final int REG_KMISTAT      = 0x004;
     public static final int REG_KMIDATA      = 0x008;
     public static final int REG_KMICLKDIV    = 0x00c;
@@ -37,75 +40,87 @@ public class KMI extends Controller64Reg32 {public static final int REG_KMICR   
     public static final int REG_KMIPCellID3  = 0xffc;
 
     public KMI() {
-        //addReg(REG_KMICR, "KMICR", 0x00);
-        //addReg(REG_KMISTAT, "KMISTAT", 0x43);
-        //addReg(REG_KMIDATA, "KMIDATA", 0x00);
-        //addReg(REG_KMICLKDIV, "KMICLKDIV", 0x00);
-        //addReg(REG_KMIIR, "KMIIR", 0x00);
-
-        //0x40-0x7c: KMITCER
-
-        //addReg(REG_KMITCR, "KMITCR", 0x00);
-        //addReg(REG_KMITMR, "KMITMR", 0x00);
-        //addReg(REG_KMITISR, "KMITISR", 0x00);
-        //addReg(REG_KMITOCR, "KMITOCR", 0x03);
-        //addReg(REG_KMISTG1, "KMISTG1", 0x00);
-        //addReg(REG_KMISTG2, "KMISTG2", 0x00);
-        //addReg(REG_KMISTG3, "KMISTG3", 0x00);
-        //addReg(REG_KMISTATE, "KMISTATE", 0x06);
-
-        //TODO: 仕様には存在しないが、定義しないと動かない
-        addReg(REG_KMIPeriphID0, "KMIPeriphID0", 0x00);
-        addReg(REG_KMIPeriphID1, "KMIPeriphID1", 0x00);
-        addReg(REG_KMIPeriphID2, "KMIPeriphID2", 0x00);
-        addReg(REG_KMIPeriphID3, "KMIPeriphID3", 0x00);
-        addReg(REG_KMIPCellID0, "KMIPCellID0", 0x00);
-        addReg(REG_KMIPCellID1, "KMIPCellID1", 0x00);
-        addReg(REG_KMIPCellID2, "KMIPCellID2", 0x00);
-        addReg(REG_KMIPCellID3, "KMIPCellID3", 0x00);
+        slave = new KMISlave();
     }
 
     @Override
-    public int readWord(long addr) {
-        int regaddr;
-        int result;
+    public SlaveCore64 getSlaveCore() {
+        return slave;
+    }
 
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+    class KMISlave extends Controller64Reg32 {
+        public KMISlave() {
+            //addReg(REG_KMICR, "KMICR", 0x00);
+            //addReg(REG_KMISTAT, "KMISTAT", 0x43);
+            //addReg(REG_KMIDATA, "KMIDATA", 0x00);
+            //addReg(REG_KMICLKDIV, "KMICLKDIV", 0x00);
+            //addReg(REG_KMIIR, "KMIIR", 0x00);
 
-        switch (regaddr) {
-        default:
-            result = super.readWord(regaddr);
-            break;
+            //0x40-0x7c: KMITCER
+
+            //addReg(REG_KMITCR, "KMITCR", 0x00);
+            //addReg(REG_KMITMR, "KMITMR", 0x00);
+            //addReg(REG_KMITISR, "KMITISR", 0x00);
+            //addReg(REG_KMITOCR, "KMITOCR", 0x03);
+            //addReg(REG_KMISTG1, "KMISTG1", 0x00);
+            //addReg(REG_KMISTG2, "KMISTG2", 0x00);
+            //addReg(REG_KMISTG3, "KMISTG3", 0x00);
+            //addReg(REG_KMISTATE, "KMISTATE", 0x06);
+
+            //TODO: 仕様には存在しないが、定義しないと動かない
+            addReg(REG_KMIPeriphID0, "KMIPeriphID0", 0x00);
+            addReg(REG_KMIPeriphID1, "KMIPeriphID1", 0x00);
+            addReg(REG_KMIPeriphID2, "KMIPeriphID2", 0x00);
+            addReg(REG_KMIPeriphID3, "KMIPeriphID3", 0x00);
+            addReg(REG_KMIPCellID0, "KMIPCellID0", 0x00);
+            addReg(REG_KMIPCellID1, "KMIPCellID1", 0x00);
+            addReg(REG_KMIPCellID2, "KMIPCellID2", 0x00);
+            addReg(REG_KMIPCellID3, "KMIPCellID3", 0x00);
         }
 
-        return result;
-    }
+        @Override
+        public int readWord(long addr) {
+            int regaddr;
+            int result;
 
-    @Override
-    public void writeWord(long addr, int data) {
-        int regaddr;
+            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
-        regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
+            switch (regaddr) {
+                default:
+                    result = super.readWord(regaddr);
+                    break;
+            }
 
-        switch (regaddr) {
-        case REG_KMIPeriphID0:
-        case REG_KMIPeriphID1:
-        case REG_KMIPeriphID2:
-        case REG_KMIPeriphID3:
-        case REG_KMIPCellID0:
-        case REG_KMIPCellID1:
-        case REG_KMIPCellID2:
-        case REG_KMIPCellID3:
-            //read only, ignored
-            break;
-        default:
-            super.writeWord(regaddr, data);
-            break;
+            return result;
+        }
+
+        @Override
+        public void writeWord(long addr, int data) {
+            int regaddr;
+
+            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
+
+            switch (regaddr) {
+                case REG_KMIPeriphID0:
+                case REG_KMIPeriphID1:
+                case REG_KMIPeriphID2:
+                case REG_KMIPeriphID3:
+                case REG_KMIPCellID0:
+                case REG_KMIPCellID1:
+                case REG_KMIPCellID2:
+                case REG_KMIPCellID3:
+                    //read only, ignored
+                    break;
+                default:
+                    super.writeWord(regaddr, data);
+                    break;
+            }
+        }
+
+        @Override
+        public void run() {
+            //do nothing
         }
     }
 
-    @Override
-    public void run() {
-        //do nothing
-    }
 }

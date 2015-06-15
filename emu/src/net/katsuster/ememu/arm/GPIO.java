@@ -1,7 +1,7 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.generic.*;
 import net.katsuster.ememu.ui.SystemPane;
-import net.katsuster.ememu.generic.Controller64Reg32;
 
 /**
  * GPIO
@@ -11,18 +11,20 @@ import net.katsuster.ememu.generic.Controller64Reg32;
  *
  * @author katsuhiro
  */
-public class GPIO extends Controller64Reg32 {
+public class GPIO implements BusSlave64 {
+    private GPIOSlave slave;
+
     //0x000-0x3fc: REG_GPIODATA
 
-    public static final int REG_GPIODIR       = 0x400;
-    public static final int REG_GPIOIS        = 0x404;
-    public static final int REG_GPIOIBE       = 0x408;
-    public static final int REG_GPIOIEV       = 0x40c;
-    public static final int REG_GPIOIE        = 0x410;
-    public static final int REG_GPIORIS       = 0x414;
-    public static final int REG_GPIOMIS       = 0x418;
-    public static final int REG_GPIOIC        = 0x41c;
-    public static final int REG_GPIOAFSEL     = 0x420;
+    public static final int REG_GPIODIR = 0x400;
+    public static final int REG_GPIOIS = 0x404;
+    public static final int REG_GPIOIBE = 0x408;
+    public static final int REG_GPIOIEV = 0x40c;
+    public static final int REG_GPIOIE = 0x410;
+    public static final int REG_GPIORIS = 0x414;
+    public static final int REG_GPIOMIS = 0x418;
+    public static final int REG_GPIOIC = 0x41c;
+    public static final int REG_GPIOAFSEL = 0x420;
 
     //0x424-0xfcc: Reserved for future use and test purposes
     //0xfd0-0xfdc: Reserved for future ID
@@ -31,123 +33,135 @@ public class GPIO extends Controller64Reg32 {
     public static final int REG_GPIOPeriphID1 = 0xfe4;
     public static final int REG_GPIOPeriphID2 = 0xfe8;
     public static final int REG_GPIOPeriphID3 = 0xfec;
-    public static final int REG_GPIOPCellID0  = 0xff0;
-    public static final int REG_GPIOPCellID1  = 0xff4;
-    public static final int REG_GPIOPCellID2  = 0xff8;
-    public static final int REG_GPIOPCellID3  = 0xffc;
+    public static final int REG_GPIOPCellID0 = 0xff0;
+    public static final int REG_GPIOPCellID1 = 0xff4;
+    public static final int REG_GPIOPCellID2 = 0xff8;
+    public static final int REG_GPIOPCellID3 = 0xffc;
 
     public GPIO() {
-        //0x000-0x3fc: REG_GPIODATA
-
-        addReg(REG_GPIODIR, "GPIODIR", 0x00);
-        addReg(REG_GPIOIS, "GPIOIS", 0x00);
-        addReg(REG_GPIOIBE, "GPIOIBE", 0x00);
-        addReg(REG_GPIOIEV, "GPIOIEV", 0x00);
-        addReg(REG_GPIOIE, "GPIOIE", 0x00);
-        //addReg(REG_GPIORIS, "GPIORIS", 0x00);
-        //addReg(REG_GPIOMIS, "GPIOMIS", 0x00);
-        //addReg(REG_GPIOIC, "GPIOIC", 0x00);
-        //addReg(REG_GPIOAFSEL, "GPIOAFSEL", 0x00);
-
-        //0x424-0xfcc: Reserved for future use and test purposes
-        //0xfd0-0xfdc: Reserved for future ID
-
-        addReg(REG_GPIOPeriphID0, "GPIOPeriphID0", 0x61);
-        addReg(REG_GPIOPeriphID1, "GPIOPeriphID1", 0x10);
-        addReg(REG_GPIOPeriphID2, "GPIOPeriphID2", 0x04);
-        addReg(REG_GPIOPeriphID3, "GPIOPeriphID3", 0x00);
-        addReg(REG_GPIOPCellID0, "GPIOPCellID0", 0x0d);
-        addReg(REG_GPIOPCellID1, "GPIOPCellID1", 0xf0);
-        addReg(REG_GPIOPCellID2, "GPIOPCellID2", 0x05);
-        addReg(REG_GPIOPCellID3, "GPIOPCellID3", 0xb1);
+        slave = new GPIOSlave();
     }
 
     @Override
-    public int readWord(long addr) {
-        int regaddr;
-        int result;
+    public SlaveCore64 getSlaveCore() {
+        return slave;
+    }
 
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+    class GPIOSlave extends Controller64Reg32 {
+        public GPIOSlave() {
+            //0x000-0x3fc: REG_GPIODATA
 
-        switch (regaddr) {
-        case REG_GPIODIR:
-            //TODO: not implemented
-            SystemPane.out.printf("GPIODIR: read 0x%08x\n", 0);
-            result = 0;
-            break;
-        case REG_GPIOIS:
-            //TODO: not implemented
-            SystemPane.out.printf("GPIOIS: read 0x%08x\n", 0);
-            result = 0;
-            break;
-        case REG_GPIOIBE:
-            //TODO: not implemented
-            SystemPane.out.printf("GPIOIBE: read 0x%08x\n", 0);
-            result = 0;
-            break;
-        case REG_GPIOIEV:
-            //TODO: not implemented
-            SystemPane.out.printf("GPIOIEV: read 0x%08x\n", 0);
-            result = 0;
-            break;
-        case REG_GPIOIE:
-            //TODO: not implemented
-            SystemPane.out.printf("GPIOIE: read 0x%08x\n", 0);
-            result = 0;
-            break;
-        default:
-            result = super.readWord(regaddr);
-            break;
+            addReg(REG_GPIODIR, "GPIODIR", 0x00);
+            addReg(REG_GPIOIS, "GPIOIS", 0x00);
+            addReg(REG_GPIOIBE, "GPIOIBE", 0x00);
+            addReg(REG_GPIOIEV, "GPIOIEV", 0x00);
+            addReg(REG_GPIOIE, "GPIOIE", 0x00);
+            //addReg(REG_GPIORIS, "GPIORIS", 0x00);
+            //addReg(REG_GPIOMIS, "GPIOMIS", 0x00);
+            //addReg(REG_GPIOIC, "GPIOIC", 0x00);
+            //addReg(REG_GPIOAFSEL, "GPIOAFSEL", 0x00);
+
+            //0x424-0xfcc: Reserved for future use and test purposes
+            //0xfd0-0xfdc: Reserved for future ID
+
+            addReg(REG_GPIOPeriphID0, "GPIOPeriphID0", 0x61);
+            addReg(REG_GPIOPeriphID1, "GPIOPeriphID1", 0x10);
+            addReg(REG_GPIOPeriphID2, "GPIOPeriphID2", 0x04);
+            addReg(REG_GPIOPeriphID3, "GPIOPeriphID3", 0x00);
+            addReg(REG_GPIOPCellID0, "GPIOPCellID0", 0x0d);
+            addReg(REG_GPIOPCellID1, "GPIOPCellID1", 0xf0);
+            addReg(REG_GPIOPCellID2, "GPIOPCellID2", 0x05);
+            addReg(REG_GPIOPCellID3, "GPIOPCellID3", 0xb1);
         }
 
-        return result;
-    }
+        @Override
+        public int readWord(long addr) {
+            int regaddr;
+            int result;
 
-    @Override
-    public void writeWord(long addr, int data) {
-        int regaddr;
+            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
-        regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
+            switch (regaddr) {
+                case REG_GPIODIR:
+                    //TODO: not implemented
+                    SystemPane.out.printf("GPIODIR: read 0x%08x\n", 0);
+                    result = 0;
+                    break;
+                case REG_GPIOIS:
+                    //TODO: not implemented
+                    SystemPane.out.printf("GPIOIS: read 0x%08x\n", 0);
+                    result = 0;
+                    break;
+                case REG_GPIOIBE:
+                    //TODO: not implemented
+                    SystemPane.out.printf("GPIOIBE: read 0x%08x\n", 0);
+                    result = 0;
+                    break;
+                case REG_GPIOIEV:
+                    //TODO: not implemented
+                    SystemPane.out.printf("GPIOIEV: read 0x%08x\n", 0);
+                    result = 0;
+                    break;
+                case REG_GPIOIE:
+                    //TODO: not implemented
+                    SystemPane.out.printf("GPIOIE: read 0x%08x\n", 0);
+                    result = 0;
+                    break;
+                default:
+                    result = super.readWord(regaddr);
+                    break;
+            }
 
-        switch (regaddr) {
-        case REG_GPIODIR:
-            //TODO: not implemented
-            SystemPane.out.printf("GPIODIR: 0x%08x\n", data);
-            break;
-        case REG_GPIOIS:
-            //TODO: not implemented
-            SystemPane.out.printf("GPIOIS: 0x%08x\n", data);
-            break;
-        case REG_GPIOIBE:
-            //TODO: not implemented
-            SystemPane.out.printf("GPIOIBE: 0x%08x\n", data);
-            break;
-        case REG_GPIOIEV:
-            //TODO: not implemented
-            SystemPane.out.printf("GPIOIEV: 0x%08x\n", data);
-            break;
-        case REG_GPIOIE:
-            //TODO: not implemented
-            SystemPane.out.printf("GPIOIE: 0x%08x\n", data);
-            break;
-        case REG_GPIOPeriphID0:
-        case REG_GPIOPeriphID1:
-        case REG_GPIOPeriphID2:
-        case REG_GPIOPeriphID3:
-        case REG_GPIOPCellID0:
-        case REG_GPIOPCellID1:
-        case REG_GPIOPCellID2:
-        case REG_GPIOPCellID3:
-            //read only, ignored
-            break;
-        default:
-            super.writeWord(regaddr, data);
-            break;
+            return result;
+        }
+
+        @Override
+        public void writeWord(long addr, int data) {
+            int regaddr;
+
+            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
+
+            switch (regaddr) {
+                case REG_GPIODIR:
+                    //TODO: not implemented
+                    SystemPane.out.printf("GPIODIR: 0x%08x\n", data);
+                    break;
+                case REG_GPIOIS:
+                    //TODO: not implemented
+                    SystemPane.out.printf("GPIOIS: 0x%08x\n", data);
+                    break;
+                case REG_GPIOIBE:
+                    //TODO: not implemented
+                    SystemPane.out.printf("GPIOIBE: 0x%08x\n", data);
+                    break;
+                case REG_GPIOIEV:
+                    //TODO: not implemented
+                    SystemPane.out.printf("GPIOIEV: 0x%08x\n", data);
+                    break;
+                case REG_GPIOIE:
+                    //TODO: not implemented
+                    SystemPane.out.printf("GPIOIE: 0x%08x\n", data);
+                    break;
+                case REG_GPIOPeriphID0:
+                case REG_GPIOPeriphID1:
+                case REG_GPIOPeriphID2:
+                case REG_GPIOPeriphID3:
+                case REG_GPIOPCellID0:
+                case REG_GPIOPCellID1:
+                case REG_GPIOPCellID2:
+                case REG_GPIOPCellID3:
+                    //read only, ignored
+                    break;
+                default:
+                    super.writeWord(regaddr, data);
+                    break;
+            }
+        }
+
+        @Override
+        public void run() {
+            //do nothing
         }
     }
 
-    @Override
-    public void run() {
-        //do nothing
-    }
 }
