@@ -1,6 +1,6 @@
 package net.katsuster.ememu.arm;
 
-import net.katsuster.ememu.generic.Controller64Reg32;
+import net.katsuster.ememu.generic.*;
 
 /**
  * システムコントローラ
@@ -10,7 +10,9 @@ import net.katsuster.ememu.generic.Controller64Reg32;
  *
  * @author katsuhiro
  */
-public class SysController extends Controller64Reg32 {
+public class SysController implements BusSlave64 {
+    private SysControllerSlave slave;
+
     public static final int REG_SCCTRL      = 0x000;
     public static final int REG_SCSYSSTAT   = 0x004;
     public static final int REG_SCIMCTRL    = 0x008;
@@ -45,87 +47,99 @@ public class SysController extends Controller64Reg32 {
     public static final int REG_SCPCellID3  = 0xffc;
 
     public SysController() {
-        addReg(REG_SCCTRL, "SCCTRL", 0x00000009);
-        //addReg(REG_SCSYSSTAT, "SCSYSSTAT", -);
-        //addReg(REG_SCIMCTRL, "SCIMCTRL", 0x00);
-        //addReg(REG_SCIMSTAT, "SCIMSTAT", 0x0);
-        //addReg(REG_SCXTALCTRL, "SCXTALCTRL", 0x00000);
-        //addReg(REG_SCPLLCTRL, "SCPLLCTRL", 0x0000000);
-        //addReg(REG_SCPLLFCTRL, "SCPLLFCTRL", 0x00000000);
-        //addReg(REG_SCPERCTRL0, "SCPERCTRL0", 0x00000000);
-        //addReg(REG_SCPERCTRL1, "SCPERCTRL1", 0x00000000);
-        //addReg(REG_SCPEREN, "SCPEREN", -);
-        //addReg(REG_SCPERDIS, "SCPERDIS", -);
-        //addReg(REG_SCPERCLKEN, "SCPERCLKEN", 0xffffffff);
-        //addReg(REG_SCPERSTAT, "SCPERSTAT", -);
-
-        //addReg(REG_SCSysID0, "SCSysID0", -);
-        //addReg(REG_SCSysID1, "SCSysID1", -);
-        //addReg(REG_SCSysID2, "SCSysID2", -);
-        //addReg(REG_SCSysID3, "SCSysID3", -);
-
-        //addReg(REG_SCITCR, "SCITCR", 0x0);
-        //addReg(REG_SCITIR0, "SCITIR0", 0x0000);
-        //addReg(REG_SCITIR1, "SCITIR1", 0x00000000);
-        //addReg(REG_SCITOR, "SCITOR", 0x0000);
-        //addReg(REG_SCCNTCTRL, "SCCNTCTRL", 0x0);
-        //addReg(REG_SCCNTDATA, "SCCNTDATA", 0x00000000);
-        //addReg(REG_SCCNTSTEP, "SCCNTSTEP", -);
-
-        addReg(REG_SCPeriphID0, "SCPeriphID0", 0x10);
-        addReg(REG_SCPeriphID1, "SCPeriphID1", 0x18);
-        addReg(REG_SCPeriphID2, "SCPeriphID2", 0x04);
-        addReg(REG_SCPeriphID3, "SCPeriphID3", 0x00);
-        addReg(REG_SCPCellID0, "SCPCellID0", 0x0d);
-        addReg(REG_SCPCellID1, "SCPCellID1", 0xf0);
-        addReg(REG_SCPCellID2, "SCPCellID2", 0x05);
-        addReg(REG_SCPCellID3, "SCPCellID3", 0xb1);
+        slave = new SysControllerSlave();
     }
 
     @Override
-    public int readWord(long addr) {
-        int regaddr;
-        int result;
+    public SlaveCore64 getSlaveCore() {
+        return slave;
+    }
 
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+    class SysControllerSlave extends Controller64Reg32 {
+        public SysControllerSlave() {
+            addReg(REG_SCCTRL, "SCCTRL", 0x00000009);
+            //addReg(REG_SCSYSSTAT, "SCSYSSTAT", -);
+            //addReg(REG_SCIMCTRL, "SCIMCTRL", 0x00);
+            //addReg(REG_SCIMSTAT, "SCIMSTAT", 0x0);
+            //addReg(REG_SCXTALCTRL, "SCXTALCTRL", 0x00000);
+            //addReg(REG_SCPLLCTRL, "SCPLLCTRL", 0x0000000);
+            //addReg(REG_SCPLLFCTRL, "SCPLLFCTRL", 0x00000000);
+            //addReg(REG_SCPERCTRL0, "SCPERCTRL0", 0x00000000);
+            //addReg(REG_SCPERCTRL1, "SCPERCTRL1", 0x00000000);
+            //addReg(REG_SCPEREN, "SCPEREN", -);
+            //addReg(REG_SCPERDIS, "SCPERDIS", -);
+            //addReg(REG_SCPERCLKEN, "SCPERCLKEN", 0xffffffff);
+            //addReg(REG_SCPERSTAT, "SCPERSTAT", -);
 
-        switch (regaddr) {
-        default:
-            result = super.readWord(regaddr);
-            break;
+            //addReg(REG_SCSysID0, "SCSysID0", -);
+            //addReg(REG_SCSysID1, "SCSysID1", -);
+            //addReg(REG_SCSysID2, "SCSysID2", -);
+            //addReg(REG_SCSysID3, "SCSysID3", -);
+
+            //addReg(REG_SCITCR, "SCITCR", 0x0);
+            //addReg(REG_SCITIR0, "SCITIR0", 0x0000);
+            //addReg(REG_SCITIR1, "SCITIR1", 0x00000000);
+            //addReg(REG_SCITOR, "SCITOR", 0x0000);
+            //addReg(REG_SCCNTCTRL, "SCCNTCTRL", 0x0);
+            //addReg(REG_SCCNTDATA, "SCCNTDATA", 0x00000000);
+            //addReg(REG_SCCNTSTEP, "SCCNTSTEP", -);
+
+            addReg(REG_SCPeriphID0, "SCPeriphID0", 0x10);
+            addReg(REG_SCPeriphID1, "SCPeriphID1", 0x18);
+            addReg(REG_SCPeriphID2, "SCPeriphID2", 0x04);
+            addReg(REG_SCPeriphID3, "SCPeriphID3", 0x00);
+            addReg(REG_SCPCellID0, "SCPCellID0", 0x0d);
+            addReg(REG_SCPCellID1, "SCPCellID1", 0xf0);
+            addReg(REG_SCPCellID2, "SCPCellID2", 0x05);
+            addReg(REG_SCPCellID3, "SCPCellID3", 0xb1);
         }
 
-        return result;
-    }
+        @Override
+        public int readWord(long addr) {
+            int regaddr;
+            int result;
 
-    @Override
-    public void writeWord(long addr, int data) {
-        int regaddr;
+            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+            switch (regaddr) {
+            default:
+                result = super.readWord(regaddr);
+                break;
+            }
 
-        switch (regaddr) {
-        case REG_SCCTRL:
+            return result;
+        }
+
+        @Override
+        public void writeWord(long addr, int data) {
+            int regaddr;
+
+            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
+
+            switch (regaddr) {
+            case REG_SCCTRL:
+                //do nothing
+                break;
+            case REG_SCPeriphID0:
+            case REG_SCPeriphID1:
+            case REG_SCPeriphID2:
+            case REG_SCPeriphID3:
+            case REG_SCPCellID0:
+            case REG_SCPCellID1:
+            case REG_SCPCellID2:
+            case REG_SCPCellID3:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
+                break;
+            }
+        }
+
+        @Override
+        public void run() {
             //do nothing
-            break;
-        case REG_SCPeriphID0:
-        case REG_SCPeriphID1:
-        case REG_SCPeriphID2:
-        case REG_SCPeriphID3:
-        case REG_SCPCellID0:
-        case REG_SCPCellID1:
-        case REG_SCPCellID2:
-        case REG_SCPCellID3:
-            //read only, ignored
-            break;
-        default:
-            super.writeWord(regaddr, data);
-            break;
         }
     }
 
-    @Override
-    public void run() {
-        //do nothing
-    }
 }

@@ -1,7 +1,7 @@
 package net.katsuster.ememu.arm;
 
+import net.katsuster.ememu.generic.*;
 import net.katsuster.ememu.ui.SystemPane;
-import net.katsuster.ememu.generic.Controller64Reg32;
 
 /**
  * システムレジスタ
@@ -11,7 +11,9 @@ import net.katsuster.ememu.generic.Controller64Reg32;
  *
  * @author katsuhiro
  */
-public class SysBaseboard extends Controller64Reg32 {
+public class SysBaseboard implements BusSlave64 {
+    private SysBaseboardSlave slave;
+
     private long start24MHz;
 
     public static final int REG_SYS_ID         = 0x000;
@@ -53,125 +55,138 @@ public class SysBaseboard extends Controller64Reg32 {
     public static final int REG_SYS_TEST_OSC3  = 0x0cc;
     public static final int REG_SYS_TEST_OSC4  = 0x0d0;
 
+
     public SysBaseboard() {
         start24MHz = System.nanoTime();
 
-        //addReg(REG_SYS_ID, "SYS_ID", 0x00000000);
-        //addReg(REG_SYS_SW, "SYS_SW", 0x00000000);
-        addReg(REG_SYS_LED, "SYS_LED", 0x00000000);
-        //addReg(REG_SYS_OSC0, "SYS_OSC0", 0x00000000);
-        //addReg(REG_SYS_OSC1, "SYS_OSC1", 0x00000000);
-        //addReg(REG_SYS_OSC2, "SYS_OSC2", 0x00000000);
-        //addReg(REG_SYS_OSC3, "SYS_OSC3", 0x00000000);
-        addReg(REG_SYS_OSC4, "SYS_OSC4", 0x00000000);
-        addReg(REG_SYS_LOCK, "SYS_LOCK", 0x00000000);
-        //addReg(REG_SYS_100HZ, "SYS_100HZ", 0x00000000);
-        //addReg(REG_SYS_CFGDATA1, "SYS_CFGDATA1", 0x00000000);
-        //addReg(REG_SYS_CFGDATA2, "SYS_CFGDATA2", 0x00000000);
-        //addReg(REG_SYS_FLAGS, "SYS_FLAGS", 0x00000000);
-        //addReg(REG_SYS_FLAGSSET, "SYS_FLAGSSET", 0x00000000);
-        //addReg(REG_SYS_FLAGSCLR, "SYS_FLAGSCLR", 0x00000000);
-        //addReg(REG_SYS_NVFLAGS, "SYS_NVFLAGS", 0x00000000);
-        //addReg(REG_SYS_NVFLAGSSET, "SYS_NVFLAGSSET", 0x00000000);
-        //addReg(REG_SYS_NVFLAGSCLR, "SYS_NVFLAGSCLR", 0x00000000);
-        //addReg(REG_SYS_RESETCTL, "SYS_RESETCTL", 0x00000000);
-        //addReg(REG_SYS_PCICTL, "SYS_PCICTL", 0x00000000);
-        //addReg(REG_SYS_MCI, "SYS_MCI", 0x00000000);
-        //addReg(REG_SYS_FLASH, "SYS_FLASH", 0x00000000);
-        addReg(REG_SYS_CLCD, "SYS_CLCD", 0x00000000);
-
-        addReg(REG_SYS_24MHz, "SYS_24MHz", 0x00000000);
-        //addReg(REG_SYS_MISC, "SYS_MISC", 0x00000000);
-        //addReg(REG_SYS_DMAPSR0, "SYS_DMAPSR0", 0x00000000);
-        //addReg(REG_SYS_DMAPSR1, "SYS_DMAPSR1", 0x00000000);
-        //addReg(REG_SYS_DMAPSR2, "SYS_DMAPSR2", 0x00000000);
-        //addReg(REG_SYS_OSCRESET0, "SYS_OSCRESET0", 0x00000000);
-        //addReg(REG_SYS_OSCRESET1, "SYS_OSCRESET1", 0x00000000);
-        //addReg(REG_SYS_OSCRESET2, "SYS_OSCRESET2", 0x00000000);
-        //addReg(REG_SYS_OSCRESET3, "SYS_OSCRESET3", 0x00000000);
-        //addReg(REG_SYS_OSCRESET4, "SYS_OSCRESET4", 0x00000000);
-        //addReg(REG_SYS_TEST_OSC0, "SYS_TEST_OSC0", 0x00000000);
-        //addReg(REG_SYS_TEST_OSC1, "SYS_TEST_OSC1", 0x00000000);
-        //addReg(REG_SYS_TEST_OSC2, "SYS_TEST_OSC2", 0x00000000);
-        //addReg(REG_SYS_TEST_OSC3, "SYS_TEST_OSC3", 0x00000000);
-        //addReg(REG_SYS_TEST_OSC4, "SYS_TEST_OSC4", 0x00000000);
+        slave = new SysBaseboardSlave();
     }
 
     @Override
-    public int readWord(long addr) {
-        int regaddr;
-        int result;
+    public SlaveCore64 getSlaveCore() {
+        return slave;
+    }
 
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+    class SysBaseboardSlave extends Controller64Reg32 {
+        public SysBaseboardSlave() {
+            //addReg(REG_SYS_ID, "SYS_ID", 0x00000000);
+            //addReg(REG_SYS_SW, "SYS_SW", 0x00000000);
+            addReg(REG_SYS_LED, "SYS_LED", 0x00000000);
+            //addReg(REG_SYS_OSC0, "SYS_OSC0", 0x00000000);
+            //addReg(REG_SYS_OSC1, "SYS_OSC1", 0x00000000);
+            //addReg(REG_SYS_OSC2, "SYS_OSC2", 0x00000000);
+            //addReg(REG_SYS_OSC3, "SYS_OSC3", 0x00000000);
+            addReg(REG_SYS_OSC4, "SYS_OSC4", 0x00000000);
+            addReg(REG_SYS_LOCK, "SYS_LOCK", 0x00000000);
+            //addReg(REG_SYS_100HZ, "SYS_100HZ", 0x00000000);
+            //addReg(REG_SYS_CFGDATA1, "SYS_CFGDATA1", 0x00000000);
+            //addReg(REG_SYS_CFGDATA2, "SYS_CFGDATA2", 0x00000000);
+            //addReg(REG_SYS_FLAGS, "SYS_FLAGS", 0x00000000);
+            //addReg(REG_SYS_FLAGSSET, "SYS_FLAGSSET", 0x00000000);
+            //addReg(REG_SYS_FLAGSCLR, "SYS_FLAGSCLR", 0x00000000);
+            //addReg(REG_SYS_NVFLAGS, "SYS_NVFLAGS", 0x00000000);
+            //addReg(REG_SYS_NVFLAGSSET, "SYS_NVFLAGSSET", 0x00000000);
+            //addReg(REG_SYS_NVFLAGSCLR, "SYS_NVFLAGSCLR", 0x00000000);
+            //addReg(REG_SYS_RESETCTL, "SYS_RESETCTL", 0x00000000);
+            //addReg(REG_SYS_PCICTL, "SYS_PCICTL", 0x00000000);
+            //addReg(REG_SYS_MCI, "SYS_MCI", 0x00000000);
+            //addReg(REG_SYS_FLASH, "SYS_FLASH", 0x00000000);
+            addReg(REG_SYS_CLCD, "SYS_CLCD", 0x00000000);
 
-        switch (regaddr) {
-        case REG_SYS_LED:
-            //TODO: not implemented
-            result = super.readWord(regaddr);
-            //SystemPane.out.printf("SYS_LED: read 0x%08x\n", result);
-            break;
-        case REG_SYS_OSC4:
-            //TODO: not implemented
-            result = 0;
-            SystemPane.out.printf("SYS_OSC4: read 0x%08x\n", result);
-            break;
-        case REG_SYS_LOCK:
-            //TODO: not implemented
-            result = 0;
-            SystemPane.out.printf("SYS_LOCK: read 0x%08x\n", result);
-            break;
-        case REG_SYS_CLCD:
-            //TODO: not implemented
-            result = 0x1f00;
-            SystemPane.out.printf("SYS_CLCD: read 0x%08x\n", result);
-            break;
-        case REG_SYS_24MHz:
-            //TODO: 桁あふれ問題が未解決のまま
-            result = (int)((System.nanoTime() - start24MHz) / 1000 * 24);
-            break;
-        default:
-            result = super.readWord(regaddr);
-            break;
+            addReg(REG_SYS_24MHz, "SYS_24MHz", 0x00000000);
+            //addReg(REG_SYS_MISC, "SYS_MISC", 0x00000000);
+            //addReg(REG_SYS_DMAPSR0, "SYS_DMAPSR0", 0x00000000);
+            //addReg(REG_SYS_DMAPSR1, "SYS_DMAPSR1", 0x00000000);
+            //addReg(REG_SYS_DMAPSR2, "SYS_DMAPSR2", 0x00000000);
+            //addReg(REG_SYS_OSCRESET0, "SYS_OSCRESET0", 0x00000000);
+            //addReg(REG_SYS_OSCRESET1, "SYS_OSCRESET1", 0x00000000);
+            //addReg(REG_SYS_OSCRESET2, "SYS_OSCRESET2", 0x00000000);
+            //addReg(REG_SYS_OSCRESET3, "SYS_OSCRESET3", 0x00000000);
+            //addReg(REG_SYS_OSCRESET4, "SYS_OSCRESET4", 0x00000000);
+            //addReg(REG_SYS_TEST_OSC0, "SYS_TEST_OSC0", 0x00000000);
+            //addReg(REG_SYS_TEST_OSC1, "SYS_TEST_OSC1", 0x00000000);
+            //addReg(REG_SYS_TEST_OSC2, "SYS_TEST_OSC2", 0x00000000);
+            //addReg(REG_SYS_TEST_OSC3, "SYS_TEST_OSC3", 0x00000000);
+            //addReg(REG_SYS_TEST_OSC4, "SYS_TEST_OSC4", 0x00000000);
         }
 
-        return result;
-    }
+        @Override
+        public int readWord(long addr) {
+            int regaddr;
+            int result;
 
-    @Override
-    public void writeWord(long addr, int data) {
-        int regaddr;
+            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+            switch (regaddr) {
+            case REG_SYS_LED:
+                //TODO: not implemented
+                result = super.readWord(regaddr);
+                //SystemPane.out.printf("SYS_LED: read 0x%08x\n", result);
+                break;
+            case REG_SYS_OSC4:
+                //TODO: not implemented
+                result = 0;
+                SystemPane.out.printf("SYS_OSC4: read 0x%08x\n", result);
+                break;
+            case REG_SYS_LOCK:
+                //TODO: not implemented
+                result = 0;
+                SystemPane.out.printf("SYS_LOCK: read 0x%08x\n", result);
+                break;
+            case REG_SYS_CLCD:
+                //TODO: not implemented
+                result = 0x1f00;
+                SystemPane.out.printf("SYS_CLCD: read 0x%08x\n", result);
+                break;
+            case REG_SYS_24MHz:
+                //TODO: 桁あふれ問題が未解決のまま
+                result = (int) ((System.nanoTime() - start24MHz) / 1000 * 24);
+                break;
+            default:
+                result = super.readWord(regaddr);
+                break;
+            }
 
-        switch (regaddr) {
-        case REG_SYS_LED:
-            //TODO: not implemented
-            //SystemPane.out.printf("SYS_LED: 0x%08x\n", data);
-            super.writeWord(regaddr, data);
-            break;
-        case REG_SYS_OSC4:
-            //TODO: not implemented
-            SystemPane.out.printf("SYS_OSC4: 0x%08x\n", data);
-            break;
-        case REG_SYS_LOCK:
-            //TODO: not implemented
-            SystemPane.out.printf("SYS_LOCK: 0x%08x\n", data);
-            break;
-        case REG_SYS_CLCD:
-            //TODO: not implemented
-            SystemPane.out.printf("SYS_CLCD: 0x%08x\n", data);
-            break;
-        case REG_SYS_24MHz:
-            //read only, ignored
-            break;
-        default:
-            super.writeWord(regaddr, data);
-            break;
+            return result;
+        }
+
+        @Override
+        public void writeWord(long addr, int data) {
+            int regaddr;
+
+            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
+
+            switch (regaddr) {
+            case REG_SYS_LED:
+                //TODO: not implemented
+                //SystemPane.out.printf("SYS_LED: 0x%08x\n", data);
+                super.writeWord(regaddr, data);
+                break;
+            case REG_SYS_OSC4:
+                //TODO: not implemented
+                SystemPane.out.printf("SYS_OSC4: 0x%08x\n", data);
+                break;
+            case REG_SYS_LOCK:
+                //TODO: not implemented
+                SystemPane.out.printf("SYS_LOCK: 0x%08x\n", data);
+                break;
+            case REG_SYS_CLCD:
+                //TODO: not implemented
+                SystemPane.out.printf("SYS_CLCD: 0x%08x\n", data);
+                break;
+            case REG_SYS_24MHz:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
+                break;
+            }
+        }
+
+        @Override
+        public void run() {
+            //do nothing
         }
     }
 
-    @Override
-    public void run() {
-        //do nothing
-    }
 }

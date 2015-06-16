@@ -143,7 +143,7 @@ public class ARMVersatile {
         bus.addSlaveCore(mpmc_c0_1, 0x04000000L, 0x07ffffffL);
         bus.addSlaveCore(mpmc_c1, 0x08000000L, 0x0fffffffL);
 
-        bus.addSlaveCore(sysBoard, 0x10000000L, 0x10000fffL);
+        bus.addSlaveCore(sysBoard.getSlaveCore(), 0x10000000L, 0x10000fffL);
         bus.addSlaveCore(pci_conf, 0x10001000L, 0x10001fffL);
         bus.addSlaveCore(serial_bus, 0x10002000L, 0x10002fffL);
         bus.addSlaveCore(intc2nd, 0x10003000L, 0x10003fffL);
@@ -157,13 +157,13 @@ public class ARMVersatile {
         bus.addSlaveCore(ether, 0x10010000L, 0x1001ffffL);
         bus.addSlaveCore(usb, 0x10020000L, 0x1002ffffL);
 
-        bus.addSlaveCore(ssmc, 0x10100000L, 0x1010ffffL);
+        bus.addSlaveCore(ssmc.getSlaveCore(), 0x10100000L, 0x1010ffffL);
         bus.addSlaveCore(mpmc.getSlaveCore(), 0x10110000L, 0x1011ffffL);
         bus.addSlaveCore(clcdc.getSlaveCore(), 0x10120000L, 0x1012ffffL);
         bus.addSlaveCore(dmac.getSlaveCore(), 0x10130000L, 0x1013ffffL);
         bus.addSlaveCore(intc1st, 0x10140000L, 0x1014ffffL);
-        bus.addSlaveCore(sysCtrl, 0x101e0000L, 0x101e0fffL);
-        bus.addSlaveCore(watchdog, 0x101e1000L, 0x101e1fffL);
+        bus.addSlaveCore(sysCtrl.getSlaveCore(), 0x101e0000L, 0x101e0fffL);
+        bus.addSlaveCore(watchdog.getSlaveCore(), 0x101e1000L, 0x101e1fffL);
         bus.addSlaveCore(timer0_1.getSlaveCore(), 0x101e2000L, 0x101e2fffL);
         bus.addSlaveCore(timer2_3.getSlaveCore(), 0x101e3000L, 0x101e3fffL);
         bus.addSlaveCore(gpio0.getSlaveCore(), 0x101e4000L, 0x101e4fffL);
@@ -175,7 +175,7 @@ public class ARMVersatile {
         bus.addSlaveCore(uart0.getSlaveCore(), 0x101f1000L, 0x101f1fffL);
         bus.addSlaveCore(uart1.getSlaveCore(), 0x101f2000L, 0x101f2fffL);
         bus.addSlaveCore(uart2.getSlaveCore(), 0x101f3000L, 0x101f3fffL);
-        bus.addSlaveCore(ssp, 0x101f4000L, 0x101f4fffL);
+        bus.addSlaveCore(ssp.getSlaveCore(), 0x101f4000L, 0x101f4fffL);
 
         bus.addSlaveCore(ssmc_c4_7, 0x20000000L, 0x2fffffffL);
         bus.addSlaveCore(ssmc_c0, 0x30000000L, 0x33ffffffL);
