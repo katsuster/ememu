@@ -357,7 +357,7 @@ class VTInnerPane extends JComponent
         if (advance == -1) {
             advance = ascent / 2;
         }
-        boxChar.setWidth(advance / 2);
+        boxChar.setWidth(advance * 20 / 45);
         boxChar.setHeight(ascent);
 
         //一画面に表示できる行数の設定を更新する
