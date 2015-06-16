@@ -272,7 +272,13 @@ public class ARMv5 extends CPU {
     public void nextPC() {
         if (isJumped()) {
             setJumped(false);
+            return;
+        }
+        if (getCPSR().getTBit()) {
+            //Thumb モード
+            setRegRaw(15, getRegRaw(15) + 2);
         } else {
+            //ARM モード
             setRegRaw(15, getRegRaw(15) + 4);
         }
     }
@@ -4229,10 +4235,9 @@ public class ARMv5 extends CPU {
     /**
      * 命令を取得します。
      *
-     * @return inst ARM 命令
+     * @return 命令
      */
-    public InstructionARM fetch() {
-        InstructionARM inst;
+    public Instruction fetch() {
         int v, vaddr, paddr;
 
         //現在の PC の指すアドレスから命令を取得します
@@ -4240,10 +4245,27 @@ public class ARMv5 extends CPU {
 
         if (getCPSR().getTBit()) {
             //Thumb モード
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
+            InstructionThumb inst;
+
+            paddr = getMMU().translate(vaddr, 2, true, getCPSR().isPrivMode(), true);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return null;
+            }
+
+            if (!tryRead_a32(paddr, 2)) {
+                raiseException(EXCEPT_ABT_INST,
+                        String.format("exec [%08x]", paddr));
+                return null;
+            }
+            v = read16_a32(paddr);
+            inst = new InstructionThumb(v);
+
+            return inst;
         } else {
             //ARM モード
+            InstructionARM inst;
+
             paddr = getMMU().translate(vaddr, 4, true, getCPSR().isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
@@ -4265,37 +4287,38 @@ public class ARMv5 extends CPU {
     /**
      * 命令を逆アセンブルします。
      *
-     * @param inst ARM 命令
+     * @param instgen 命令
      */
-    public void disasm(InstructionARM inst) {
-        executeInst(inst, false);
+    public void disasm(Instruction instgen) {
+        executeInst(instgen, false);
     }
 
     /**
      * 命令を実行します。
      *
-     * @param inst ARM 命令
+     * @param instgen 命令
      */
-    public void execute(InstructionARM inst) {
-        executeInst(inst, true);
+    public void execute(Instruction instgen) {
+        executeInst(instgen, true);
     }
 
     /**
      * 命令をデコード、逆アセンブル、実行します。
      *
-     * @param inst ARM 命令
+     * @param instgen 命令
      * @param exec デコード、逆アセンブルと実行なら true、
      *             デコード、逆アセンブルのみなら false
      */
-    public void executeInst(InstructionARM inst, boolean exec) {
-        //int cond = inst.getCondField();
-        int subcode = inst.getSubCodeField();
-
+    public void executeInst(Instruction instgen, boolean exec) {
         if (getCPSR().getTBit()) {
             //Thumb モード
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
         } else {
+            InstructionARM inst = (InstructionARM)instgen;
+            //int cond = inst.getCondField();
+            int subcode = inst.getSubCodeField();
+
             //ARM モード
             switch (subcode) {
             case InstructionARM.SUBCODE_USEALU:
@@ -5072,7 +5095,13 @@ public class ARMv5 extends CPU {
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
-        pcOrg = getPC() - 4;
+        if (getCPSR().getTBit()) {
+            //Thumb モード
+            pcOrg = getRegRaw(15) + 2;
+        } else {
+            //ARM モード
+            pcOrg = getRegRaw(15) + 4;
+        }
         cpsrOrg = getCPSR().getValue();
 
         //未定義モード、ARM 状態、割り込み禁止、
@@ -5112,7 +5141,13 @@ public class ARMv5 extends CPU {
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
-        pcOrg = getPC() - 4;
+        if (getCPSR().getTBit()) {
+            //Thumb モード
+            pcOrg = getRegRaw(15) + 2;
+        } else {
+            //ARM モード
+            pcOrg = getRegRaw(15) + 4;
+        }
         cpsrOrg = getCPSR().getValue();
 
         //スーパバイザモード、ARM 状態、割り込み禁止、
@@ -5148,7 +5183,8 @@ public class ARMv5 extends CPU {
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
-        pcOrg = getPC() - 4;
+        //Thumb, ARM モード
+        pcOrg = getRegRaw(15) + 4;
         cpsrOrg = getCPSR().getValue();
 
         //アボートモード、ARM 状態、割り込み禁止、
@@ -5184,7 +5220,8 @@ public class ARMv5 extends CPU {
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
-        pcOrg = getPC();
+        //Thumb, ARM モード
+        pcOrg = getRegRaw(15) + 8;
         cpsrOrg = getCPSR().getValue();
 
         //アボートモード、ARM 状態、割り込み禁止、
@@ -5220,7 +5257,8 @@ public class ARMv5 extends CPU {
         //        dbgmsg);
 
         //pc, cpsr の値を取っておく
-        pcOrg = getPC() - 4;
+        //Thumb, ARM モード
+        pcOrg = getRegRaw(15) + 4;
         cpsrOrg = getCPSR().getValue();
 
         //IRQ モード、ARM 状態、割り込み禁止、
@@ -5256,7 +5294,8 @@ public class ARMv5 extends CPU {
                 dbgmsg);
 
         //pc, cpsr の値を取っておく
-        pcOrg = getPC() - 4;
+        //Thumb, ARM モード
+        pcOrg = getRegRaw(15) + 4;
         cpsrOrg = getCPSR().getValue();
 
         //FIQ モード、ARM 状態、高速割り込み禁止、割り込み禁止、
@@ -5416,7 +5455,7 @@ public class ARMv5 extends CPU {
 
     @Override
     public void step() {
-        InstructionARM inst;
+        Instruction inst;
 
         //for debug
         int target_address1 = 0x0;//0xc036aee8; //<versatile_init_irq>
