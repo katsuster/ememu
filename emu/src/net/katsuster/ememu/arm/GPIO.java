@@ -82,34 +82,34 @@ public class GPIO implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                case REG_GPIODIR:
-                    //TODO: not implemented
-                    SystemPane.out.printf("GPIODIR: read 0x%08x\n", 0);
-                    result = 0;
-                    break;
-                case REG_GPIOIS:
-                    //TODO: not implemented
-                    SystemPane.out.printf("GPIOIS: read 0x%08x\n", 0);
-                    result = 0;
-                    break;
-                case REG_GPIOIBE:
-                    //TODO: not implemented
-                    SystemPane.out.printf("GPIOIBE: read 0x%08x\n", 0);
-                    result = 0;
-                    break;
-                case REG_GPIOIEV:
-                    //TODO: not implemented
-                    SystemPane.out.printf("GPIOIEV: read 0x%08x\n", 0);
-                    result = 0;
-                    break;
-                case REG_GPIOIE:
-                    //TODO: not implemented
-                    SystemPane.out.printf("GPIOIE: read 0x%08x\n", 0);
-                    result = 0;
-                    break;
-                default:
-                    result = super.readWord(regaddr);
-                    break;
+            case REG_GPIODIR:
+                //TODO: not implemented
+                SystemPane.out.printf("GPIODIR: read 0x%08x\n", 0);
+                result = 0;
+                break;
+            case REG_GPIOIS:
+                //TODO: not implemented
+                SystemPane.out.printf("GPIOIS: read 0x%08x\n", 0);
+                result = 0;
+                break;
+            case REG_GPIOIBE:
+                //TODO: not implemented
+                SystemPane.out.printf("GPIOIBE: read 0x%08x\n", 0);
+                result = 0;
+                break;
+            case REG_GPIOIEV:
+                //TODO: not implemented
+                SystemPane.out.printf("GPIOIEV: read 0x%08x\n", 0);
+                result = 0;
+                break;
+            case REG_GPIOIE:
+                //TODO: not implemented
+                SystemPane.out.printf("GPIOIE: read 0x%08x\n", 0);
+                result = 0;
+                break;
+            default:
+                result = super.readWord(regaddr);
+                break;
             }
 
             return result;
@@ -122,39 +122,39 @@ public class GPIO implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                case REG_GPIODIR:
-                    //TODO: not implemented
-                    SystemPane.out.printf("GPIODIR: 0x%08x\n", data);
-                    break;
-                case REG_GPIOIS:
-                    //TODO: not implemented
-                    SystemPane.out.printf("GPIOIS: 0x%08x\n", data);
-                    break;
-                case REG_GPIOIBE:
-                    //TODO: not implemented
-                    SystemPane.out.printf("GPIOIBE: 0x%08x\n", data);
-                    break;
-                case REG_GPIOIEV:
-                    //TODO: not implemented
-                    SystemPane.out.printf("GPIOIEV: 0x%08x\n", data);
-                    break;
-                case REG_GPIOIE:
-                    //TODO: not implemented
-                    SystemPane.out.printf("GPIOIE: 0x%08x\n", data);
-                    break;
-                case REG_GPIOPeriphID0:
-                case REG_GPIOPeriphID1:
-                case REG_GPIOPeriphID2:
-                case REG_GPIOPeriphID3:
-                case REG_GPIOPCellID0:
-                case REG_GPIOPCellID1:
-                case REG_GPIOPCellID2:
-                case REG_GPIOPCellID3:
-                    //read only, ignored
-                    break;
-                default:
-                    super.writeWord(regaddr, data);
-                    break;
+            case REG_GPIODIR:
+                //TODO: not implemented
+                SystemPane.out.printf("GPIODIR: 0x%08x\n", data);
+                break;
+            case REG_GPIOIS:
+                //TODO: not implemented
+                SystemPane.out.printf("GPIOIS: 0x%08x\n", data);
+                break;
+            case REG_GPIOIBE:
+                //TODO: not implemented
+                SystemPane.out.printf("GPIOIBE: 0x%08x\n", data);
+                break;
+            case REG_GPIOIEV:
+                //TODO: not implemented
+                SystemPane.out.printf("GPIOIEV: 0x%08x\n", data);
+                break;
+            case REG_GPIOIE:
+                //TODO: not implemented
+                SystemPane.out.printf("GPIOIE: 0x%08x\n", data);
+                break;
+            case REG_GPIOPeriphID0:
+            case REG_GPIOPeriphID1:
+            case REG_GPIOPeriphID2:
+            case REG_GPIOPeriphID3:
+            case REG_GPIOPCellID0:
+            case REG_GPIOPCellID1:
+            case REG_GPIOPCellID2:
+            case REG_GPIOPCellID3:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
+                break;
             }
         }
 

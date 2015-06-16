@@ -69,9 +69,9 @@ public class RTC implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                default:
-                    result = super.readWord(regaddr);
-                    break;
+            default:
+                result = super.readWord(regaddr);
+                break;
             }
 
             return result;
@@ -84,19 +84,19 @@ public class RTC implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                case REG_RTCPeriphID0:
-                case REG_RTCPeriphID1:
-                case REG_RTCPeriphID2:
-                case REG_RTCPeriphID3:
-                case REG_RTCPCellID0:
-                case REG_RTCPCellID1:
-                case REG_RTCPCellID2:
-                case REG_RTCPCellID3:
-                    //read only, ignored
-                    break;
-                default:
-                    super.writeWord(regaddr, data);
-                    break;
+            case REG_RTCPeriphID0:
+            case REG_RTCPeriphID1:
+            case REG_RTCPeriphID2:
+            case REG_RTCPeriphID3:
+            case REG_RTCPCellID0:
+            case REG_RTCPCellID1:
+            case REG_RTCPCellID2:
+            case REG_RTCPCellID3:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
+                break;
             }
         }
 

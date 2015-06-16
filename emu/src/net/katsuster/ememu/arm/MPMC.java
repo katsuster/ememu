@@ -204,9 +204,9 @@ public class MPMC implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                default:
-                    result = super.readWord(regaddr);
-                    break;
+            default:
+                result = super.readWord(regaddr);
+                break;
             }
 
             return result;
@@ -219,23 +219,23 @@ public class MPMC implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                case REG_MPMCPeriphID4:
-                case REG_MPMCPeriphID5:
-                case REG_MPMCPeriphID6:
-                case REG_MPMCPeriphID7:
-                case REG_MPMCPeriphID0:
-                case REG_MPMCPeriphID1:
-                case REG_MPMCPeriphID2:
-                case REG_MPMCPeriphID3:
-                case REG_MPMCPCellID0:
-                case REG_MPMCPCellID1:
-                case REG_MPMCPCellID2:
-                case REG_MPMCPCellID3:
-                    //read only, ignored
-                    break;
-                default:
-                    super.writeWord(regaddr, data);
-                    break;
+            case REG_MPMCPeriphID4:
+            case REG_MPMCPeriphID5:
+            case REG_MPMCPeriphID6:
+            case REG_MPMCPeriphID7:
+            case REG_MPMCPeriphID0:
+            case REG_MPMCPeriphID1:
+            case REG_MPMCPeriphID2:
+            case REG_MPMCPeriphID3:
+            case REG_MPMCPCellID0:
+            case REG_MPMCPCellID1:
+            case REG_MPMCPCellID2:
+            case REG_MPMCPCellID3:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
+                break;
             }
         }
 

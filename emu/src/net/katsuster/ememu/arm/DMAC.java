@@ -168,9 +168,9 @@ public class DMAC implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                default:
-                    result = super.readWord(regaddr);
-                    break;
+            default:
+                result = super.readWord(regaddr);
+                break;
             }
 
             return result;
@@ -183,19 +183,19 @@ public class DMAC implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                case REG_DMACPeriphID0:
-                case REG_DMACPeriphID1:
-                case REG_DMACPeriphID2:
-                case REG_DMACPeriphID3:
-                case REG_DMACPCellID0:
-                case REG_DMACPCellID1:
-                case REG_DMACPCellID2:
-                case REG_DMACPCellID3:
-                    //read only, ignored
-                    break;
-                default:
-                    super.writeWord(regaddr, data);
-                    break;
+            case REG_DMACPeriphID0:
+            case REG_DMACPeriphID1:
+            case REG_DMACPeriphID2:
+            case REG_DMACPeriphID3:
+            case REG_DMACPCellID0:
+            case REG_DMACPCellID1:
+            case REG_DMACPCellID2:
+            case REG_DMACPCellID3:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
+                break;
             }
         }
 

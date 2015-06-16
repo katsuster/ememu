@@ -86,9 +86,9 @@ public class KMI implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                default:
-                    result = super.readWord(regaddr);
-                    break;
+            default:
+                result = super.readWord(regaddr);
+                break;
             }
 
             return result;
@@ -101,19 +101,19 @@ public class KMI implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                case REG_KMIPeriphID0:
-                case REG_KMIPeriphID1:
-                case REG_KMIPeriphID2:
-                case REG_KMIPeriphID3:
-                case REG_KMIPCellID0:
-                case REG_KMIPCellID1:
-                case REG_KMIPCellID2:
-                case REG_KMIPCellID3:
-                    //read only, ignored
-                    break;
-                default:
-                    super.writeWord(regaddr, data);
-                    break;
+            case REG_KMIPeriphID0:
+            case REG_KMIPeriphID1:
+            case REG_KMIPeriphID2:
+            case REG_KMIPeriphID3:
+            case REG_KMIPCellID0:
+            case REG_KMIPCellID1:
+            case REG_KMIPCellID2:
+            case REG_KMIPCellID3:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
+                break;
             }
         }
 

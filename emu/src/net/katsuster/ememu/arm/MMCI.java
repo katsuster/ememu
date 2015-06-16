@@ -95,9 +95,9 @@ public class MMCI implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                default:
-                    result = super.readWord(regaddr);
-                    break;
+            default:
+                result = super.readWord(regaddr);
+                break;
             }
 
             return result;
@@ -110,19 +110,19 @@ public class MMCI implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                case REG_MCIPeriphID0:
-                case REG_MCIPeriphID1:
-                case REG_MCIPeriphID2:
-                case REG_MCIPeriphID3:
-                case REG_MCIPCellID0:
-                case REG_MCIPCellID1:
-                case REG_MCIPCellID2:
-                case REG_MCIPCellID3:
-                    //read only, ignored
-                    break;
-                default:
-                    super.writeWord(regaddr, data);
-                    break;
+            case REG_MCIPeriphID0:
+            case REG_MCIPeriphID1:
+            case REG_MCIPeriphID2:
+            case REG_MCIPeriphID3:
+            case REG_MCIPCellID0:
+            case REG_MCIPCellID1:
+            case REG_MCIPCellID2:
+            case REG_MCIPCellID3:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
+                break;
             }
         }
 

@@ -133,9 +133,9 @@ public class AACI implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                default:
-                    result = super.readWord(regaddr);
-                    break;
+            default:
+                result = super.readWord(regaddr);
+                break;
             }
 
             return result;
@@ -148,19 +148,19 @@ public class AACI implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                case REG_AACIPERIPHID0:
-                case REG_AACIPERIPHID1:
-                case REG_AACIPERIPHID2:
-                case REG_AACIPERIPHID3:
-                case REG_AACIPCELLID0:
-                case REG_AACIPCELLID1:
-                case REG_AACIPCELLID2:
-                case REG_AACIPCELLID3:
-                    //read only, ignored
-                    break;
-                default:
-                    super.writeWord(regaddr, data);
-                    break;
+            case REG_AACIPERIPHID0:
+            case REG_AACIPERIPHID1:
+            case REG_AACIPERIPHID2:
+            case REG_AACIPERIPHID3:
+            case REG_AACIPCELLID0:
+            case REG_AACIPCELLID1:
+            case REG_AACIPCELLID2:
+            case REG_AACIPCELLID3:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
+                break;
             }
         }
 

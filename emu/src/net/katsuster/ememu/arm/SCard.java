@@ -120,9 +120,9 @@ public class SCard implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                default:
-                    result = super.readWord(regaddr);
-                    break;
+            default:
+                result = super.readWord(regaddr);
+                break;
             }
 
             return result;
@@ -135,19 +135,19 @@ public class SCard implements BusSlave64 {
             regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-                case REG_SCIPeriphID0:
-                case REG_SCIPeriphID1:
-                case REG_SCIPeriphID2:
-                case REG_SCIPeriphID3:
-                case REG_SCIPCellID0:
-                case REG_SCIPCellID1:
-                case REG_SCIPCellID2:
-                case REG_SCIPCellID3:
-                    //read only, ignored
-                    break;
-                default:
-                    super.writeWord(regaddr, data);
-                    break;
+            case REG_SCIPeriphID0:
+            case REG_SCIPeriphID1:
+            case REG_SCIPeriphID2:
+            case REG_SCIPeriphID3:
+            case REG_SCIPCellID0:
+            case REG_SCIPCellID1:
+            case REG_SCIPCellID2:
+            case REG_SCIPCellID3:
+                //read only, ignored
+                break;
+            default:
+                super.writeWord(regaddr, data);
+                break;
             }
         }
 
