@@ -13,36 +13,36 @@ import net.katsuster.ememu.generic.*;
 public class MMCI implements BusSlave64 {
     private MMCISlave slave;
 
-    public static final int REG_MCIPower = 0x000;
-    public static final int REG_MCIClock = 0x004;
-    public static final int REG_MCIArgument = 0x008;
-    public static final int REG_MMCCommand = 0x00c;
-    public static final int REG_MCIRepCmd = 0x010;
-    public static final int REG_MCIResponse0 = 0x014;
-    public static final int REG_MCIResponse1 = 0x018;
-    public static final int REG_MCIResponse2 = 0x01c;
-    public static final int REG_MCIResponse3 = 0x020;
-    public static final int REG_MCIDataTimer = 0x024;
+    public static final int REG_MCIPower      = 0x000;
+    public static final int REG_MCIClock      = 0x004;
+    public static final int REG_MCIArgument   = 0x008;
+    public static final int REG_MMCCommand    = 0x00c;
+    public static final int REG_MCIRepCmd     = 0x010;
+    public static final int REG_MCIResponse0  = 0x014;
+    public static final int REG_MCIResponse1  = 0x018;
+    public static final int REG_MCIResponse2  = 0x01c;
+    public static final int REG_MCIResponse3  = 0x020;
+    public static final int REG_MCIDataTimer  = 0x024;
     public static final int REG_MCIDataLength = 0x028;
-    public static final int REG_MCIDataCtrl = 0x02c;
-    public static final int REG_MCIDataCnt = 0x030;
-    public static final int REG_MCIStatus = 0x034;
-    public static final int REG_MCIClear = 0x038;
-    public static final int REG_MCIMask0 = 0x03c;
-    public static final int REG_MCIMask1 = 0x040;
-    public static final int REG_MCISelect = 0x044;
-    public static final int REG_MCIFifoCnt = 0x048;
+    public static final int REG_MCIDataCtrl   = 0x02c;
+    public static final int REG_MCIDataCnt    = 0x030;
+    public static final int REG_MCIStatus     = 0x034;
+    public static final int REG_MCIClear      = 0x038;
+    public static final int REG_MCIMask0      = 0x03c;
+    public static final int REG_MCIMask1      = 0x040;
+    public static final int REG_MCISelect     = 0x044;
+    public static final int REG_MCIFifoCnt    = 0x048;
 
 //0x080-0x0bc: MCIFIFO
 
-    public static final int REG_MCIPeriphID0 = 0xfe0;
-    public static final int REG_MCIPeriphID1 = 0xfe4;
-    public static final int REG_MCIPeriphID2 = 0xfe8;
-    public static final int REG_MCIPeriphID3 = 0xfec;
-    public static final int REG_MCIPCellID0 = 0xff0;
-    public static final int REG_MCIPCellID1 = 0xff4;
-    public static final int REG_MCIPCellID2 = 0xff8;
-    public static final int REG_MCIPCellID3 = 0xffc;
+    public static final int REG_MCIPeriphID0  = 0xfe0;
+    public static final int REG_MCIPeriphID1  = 0xfe4;
+    public static final int REG_MCIPeriphID2  = 0xfe8;
+    public static final int REG_MCIPeriphID3  = 0xfec;
+    public static final int REG_MCIPCellID0   = 0xff0;
+    public static final int REG_MCIPCellID1   = 0xff4;
+    public static final int REG_MCIPCellID2   = 0xff8;
+    public static final int REG_MCIPCellID3   = 0xffc;
 
     public MMCI() {
         slave = new MMCISlave();

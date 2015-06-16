@@ -13,7 +13,7 @@ import net.katsuster.ememu.generic.*;
 public class KMI implements BusSlave64 {
     private KMISlave slave;
 
-    public static final int REG_KMICR     = 0x00;
+    public static final int REG_KMICR        = 0x000;
     public static final int REG_KMISTAT      = 0x004;
     public static final int REG_KMIDATA      = 0x008;
     public static final int REG_KMICLKDIV    = 0x00c;

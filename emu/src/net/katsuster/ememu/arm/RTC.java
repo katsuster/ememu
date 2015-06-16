@@ -13,23 +13,23 @@ import net.katsuster.ememu.generic.*;
 public class RTC implements BusSlave64 {
     private RTCSlave slave;
 
-    public static final int REG_RTCDR = 0x000;
-    public static final int REG_RTCMR = 0x004;
-    public static final int REG_RTCLR = 0x008;
-    public static final int REG_RTCCR = 0x00c;
-    public static final int REG_RTCIMSC = 0x010;
-    public static final int REG_RTCRIS = 0x014;
-    public static final int REG_RTCMIS = 0x018;
-    public static final int REG_RTCICR = 0x01c;
+    public static final int REG_RTCDR        = 0x000;
+    public static final int REG_RTCMR        = 0x004;
+    public static final int REG_RTCLR        = 0x008;
+    public static final int REG_RTCCR        = 0x00c;
+    public static final int REG_RTCIMSC      = 0x010;
+    public static final int REG_RTCRIS       = 0x014;
+    public static final int REG_RTCMIS       = 0x018;
+    public static final int REG_RTCICR       = 0x01c;
 
     public static final int REG_RTCPeriphID0 = 0xfe0;
     public static final int REG_RTCPeriphID1 = 0xfe4;
     public static final int REG_RTCPeriphID2 = 0xfe8;
     public static final int REG_RTCPeriphID3 = 0xfec;
-    public static final int REG_RTCPCellID0 = 0xff0;
-    public static final int REG_RTCPCellID1 = 0xff4;
-    public static final int REG_RTCPCellID2 = 0xff8;
-    public static final int REG_RTCPCellID3 = 0xffc;
+    public static final int REG_RTCPCellID0  = 0xff0;
+    public static final int REG_RTCPCellID1  = 0xff4;
+    public static final int REG_RTCPCellID2  = 0xff8;
+    public static final int REG_RTCPCellID3  = 0xffc;
 
     public RTC() {
         slave = new RTCSlave();

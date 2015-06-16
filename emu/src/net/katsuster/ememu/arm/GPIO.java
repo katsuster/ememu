@@ -16,15 +16,15 @@ public class GPIO implements BusSlave64 {
 
     //0x000-0x3fc: REG_GPIODATA
 
-    public static final int REG_GPIODIR = 0x400;
-    public static final int REG_GPIOIS = 0x404;
-    public static final int REG_GPIOIBE = 0x408;
-    public static final int REG_GPIOIEV = 0x40c;
-    public static final int REG_GPIOIE = 0x410;
-    public static final int REG_GPIORIS = 0x414;
-    public static final int REG_GPIOMIS = 0x418;
-    public static final int REG_GPIOIC = 0x41c;
-    public static final int REG_GPIOAFSEL = 0x420;
+    public static final int REG_GPIODIR       = 0x400;
+    public static final int REG_GPIOIS        = 0x404;
+    public static final int REG_GPIOIBE       = 0x408;
+    public static final int REG_GPIOIEV       = 0x40c;
+    public static final int REG_GPIOIE        = 0x410;
+    public static final int REG_GPIORIS       = 0x414;
+    public static final int REG_GPIOMIS       = 0x418;
+    public static final int REG_GPIOIC        = 0x41c;
+    public static final int REG_GPIOAFSEL     = 0x420;
 
     //0x424-0xfcc: Reserved for future use and test purposes
     //0xfd0-0xfdc: Reserved for future ID
@@ -33,10 +33,10 @@ public class GPIO implements BusSlave64 {
     public static final int REG_GPIOPeriphID1 = 0xfe4;
     public static final int REG_GPIOPeriphID2 = 0xfe8;
     public static final int REG_GPIOPeriphID3 = 0xfec;
-    public static final int REG_GPIOPCellID0 = 0xff0;
-    public static final int REG_GPIOPCellID1 = 0xff4;
-    public static final int REG_GPIOPCellID2 = 0xff8;
-    public static final int REG_GPIOPCellID3 = 0xffc;
+    public static final int REG_GPIOPCellID0  = 0xff0;
+    public static final int REG_GPIOPCellID1  = 0xff4;
+    public static final int REG_GPIOPCellID2  = 0xff8;
+    public static final int REG_GPIOPCellID3  = 0xffc;
 
     public GPIO() {
         slave = new GPIOSlave();

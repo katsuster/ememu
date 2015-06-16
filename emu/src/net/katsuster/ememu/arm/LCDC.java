@@ -17,29 +17,29 @@ import net.katsuster.ememu.ui.SystemPane;
 public class LCDC implements BusSlave64 {
     private LCDCSlave slave;
 
-    public static final int REG_LCDTiming0 = 0x000;
-    public static final int REG_LCDTiming1 = 0x004;
-    public static final int REG_LCDTiming2 = 0x008;
-    public static final int REG_LCDTiming3 = 0x00c;
-    public static final int REG_LCDUPBASE = 0x010;
-    public static final int REG_LCDLPBASE = 0x014;
-    public static final int REG_LCDINTRENABLE = 0x018;
-    public static final int REG_LCDControl = 0x01c;
-    public static final int REG_LCDStatus = 0x020;
-    public static final int REG_LCDInterrupt = 0x024;
-    public static final int REG_LCDUPCURR = 0x028;
-    public static final int REG_LCDLPCURR = 0x02c;
+    public static final int REG_LCDTiming0       = 0x000;
+    public static final int REG_LCDTiming1       = 0x004;
+    public static final int REG_LCDTiming2       = 0x008;
+    public static final int REG_LCDTiming3       = 0x00c;
+    public static final int REG_LCDUPBASE        = 0x010;
+    public static final int REG_LCDLPBASE        = 0x014;
+    public static final int REG_LCDINTRENABLE    = 0x018;
+    public static final int REG_LCDControl       = 0x01c;
+    public static final int REG_LCDStatus        = 0x020;
+    public static final int REG_LCDInterrupt     = 0x024;
+    public static final int REG_LCDUPCURR        = 0x028;
+    public static final int REG_LCDLPCURR        = 0x02c;
 
     //0x200-0x3FC: LCDPalette
 
-    public static final int REG_CLCDPERIPHID0 = 0xfe0;
-    public static final int REG_CLCDPERIPHID1 = 0xfe4;
-    public static final int REG_CLCDPERIPHID2 = 0xfe8;
-    public static final int REG_CLCDPERIPHID3 = 0xfec;
-    public static final int REG_CLCDPCELLID0 = 0xff0;
-    public static final int REG_CLCDPCELLID1 = 0xff4;
-    public static final int REG_CLCDPCELLID2 = 0xff8;
-    public static final int REG_CLCDPCELLID3 = 0xffc;
+    public static final int REG_CLCDPERIPHID0    = 0xfe0;
+    public static final int REG_CLCDPERIPHID1    = 0xfe4;
+    public static final int REG_CLCDPERIPHID2    = 0xfe8;
+    public static final int REG_CLCDPERIPHID3    = 0xfec;
+    public static final int REG_CLCDPCELLID0     = 0xff0;
+    public static final int REG_CLCDPCELLID1     = 0xff4;
+    public static final int REG_CLCDPCELLID2     = 0xff8;
+    public static final int REG_CLCDPCELLID3     = 0xffc;
 
     public LCDC() {
         slave = new LCDCSlave();
