@@ -7,8 +7,7 @@ import java.util.*;
  *
  * @author katsuhiro
  */
-public class Bus64
-        implements RWCore64 {
+public class Bus64 implements RWCore64 {
     private List<MasterCore64> masterList;
     //32bit アドレス内のスレーブコアに高速にアクセスするためのテーブル
     private SlaveCoreAddress[] slaves;
