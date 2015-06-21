@@ -1,7 +1,6 @@
 package net.katsuster.ememu.arm.core;
 
-import net.katsuster.ememu.generic.BitOp;
-import net.katsuster.ememu.generic.Reg32;
+import net.katsuster.ememu.generic.*;
 
 /**
  * PSR（プログラムステートレジスタ）。
@@ -38,6 +37,15 @@ public class PSR extends Reg32 {
      */
     public PSR(String name, int val) {
         super(name, val);
+    }
+
+    /**
+     * 別の PSR から値を設定します。
+     *
+     * @param psr 別の PSR
+     */
+    public void setValue(PSR psr) {
+        setValue(psr.getValue());
     }
 
     /**
@@ -376,6 +384,15 @@ public class PSR extends Reg32 {
      */
     public boolean isPrivMode() {
         return getMode() != MODE_USR;
+    }
+
+    /**
+     * この PSR から APSR（アプリケーションプログラムステートレジスタ）を作成します。
+     *
+     * @return APSR
+     */
+    public APSR getAPSR() {
+        return new APSR("apsr", this);
     }
 
     @Override
