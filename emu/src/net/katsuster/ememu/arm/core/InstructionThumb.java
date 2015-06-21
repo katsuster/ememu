@@ -25,6 +25,7 @@ public class InstructionThumb extends Instruction {
     /**
      * Thumb 命令の Rm フィールド（ビット [5:3]）を取得します。
      *
+     * @param inst Thumb 命令
      * @return Rm フィールド
      */
     public static int getRmField(int inst) {
