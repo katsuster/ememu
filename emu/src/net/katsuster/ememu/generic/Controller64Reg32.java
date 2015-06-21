@@ -1,8 +1,5 @@
 package net.katsuster.ememu.generic;
 
-import net.katsuster.ememu.generic.Reg32;
-import net.katsuster.ememu.generic.SlaveCore64;
-
 import java.util.*;
 
 /**
