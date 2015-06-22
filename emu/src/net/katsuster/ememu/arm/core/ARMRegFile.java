@@ -18,12 +18,6 @@ public class ARMRegFile implements Reg32File {
     private Reg32[] regs_irq;
     private Reg32[] regs_fiq;
     private PSR cpsr;
-    private SPSR spsr_usr;
-    private SPSR spsr_svc;
-    private SPSR spsr_abt;
-    private SPSR spsr_und;
-    private SPSR spsr_irq;
-    private SPSR spsr_fiq;
 
     //前回レジスタを参照したときの動作モードです
     private int prevMode;
