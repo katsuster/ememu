@@ -4,13 +4,18 @@
 <project name="armemu" default="dist">
     <property name="src.dir"      location="../emu/src"/>
     <property name="lib.dir"      location="../lib"/>
+    <property name="doc.dir"      location="../doc/"/>
+    <property name="package.dir"  location="${doc.dir}/package-list/"/>
     <property name="ant.dir"      location="ant"/>
     <property name="build.dir"    location="${ant.dir}/build"/>
     <property name="dist.dir"     location="${ant.dir}/dist"/>
+    <property name="javadoc.dir"  location="javadoc"/>
 
-    <property name="manifest.mainclass.armemu" value="net.katsuster.ememu.ui.Main"/>
-    <property name="manifest.mainclass.armemu_applet" value="net.katsuster.ememu.ui.MainApplet"/>
-    <property name="manifest.mainclass.junit" value="net.katsuster.ememu.test.AllTest"/>
+    <property name="mainpackage" value="net.katsuster.ememu"/>
+
+    <property name="manifest.mainclass.armemu" value="${mainpackage}.ui.Main"/>
+    <property name="manifest.mainclass.armemu_applet" value="${mainpackage}.ui.MainApplet"/>
+    <property name="manifest.mainclass.junit" value="${mainpackage}.test.AllTest"/>
     <property name="manifest.classpath" value="/"/>
     <property name="manifest.title"     value="armemu"/>
     <property name="manifest.version"   value="0.1"/>
@@ -22,6 +27,8 @@
     <property name="lib.hamcrest.path" value="${lib.dir}/hamcrest-core-1.3.jar"/>
     <property name="lib.junit.path" value="${lib.dir}/junit-4.11.jar"/>
 
+    <property name="javadoc.window" value="ememu"/>
+    <property name="javadoc.doctitle" value="Javadoc of ememu"/>
 
     <!-- libraries for target 'build' -->
     <path id="build.classpath">
@@ -120,8 +127,46 @@
         </jar>
     </target>
 
+    <target name="javadoc">
+        <delete dir="${javadoc.dir}" />
+
+        <javadoc destdir="${javadoc.dir}"
+                 access="protected"
+                 verbose="false"
+                 locale="ja_JP"
+                 encoding="UTF-8"
+                 version="true"
+                 use="true"
+                 author="true"
+                 splitindex="true"
+                 windowtitle="${javadoc.window}"
+                 doctitle="${javadoc.doctitle}"
+                 nodeprecated="false"
+                 nodeprecatedlist="false"
+                 notree="false"
+                 noindex="false"
+                 nohelp="false"
+                 nonavbar="false"
+                 charset="UTF-8"
+                 docencoding="UTF-8"
+                 source="1.7"
+                 excludepackagenames="no"
+                 defaultexcludes="yes">
+            <!-- overview="hoge.html" -->
+
+            <link href="http://docs.oracle.com/javase/7/docs/api/"
+                  packagelistloc="${package.dir}/7/"
+                  offline="true" />
+            <sourcepath path="${src.dir}" />
+            <classpath refid="build.classpath" />
+            <package name="${mainpackage}.*" />
+            <group title="group_title_" packages="*" />
+        </javadoc>
+    </target>
+
     <target name="clean">
         <echo message="----- clean in ${ant.project.name} -----"/>
         <delete dir="${ant.dir}"/>
+        <delete dir="${javadoc.dir}"/>
     </target>
 </project>
