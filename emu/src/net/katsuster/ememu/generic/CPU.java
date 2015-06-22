@@ -222,11 +222,6 @@ public abstract class CPU extends MasterCore64
     public abstract void printDisasm(Instruction inst, String operation, String operand);
 
     /**
-     * 現在のプログラムカウンタ（PC）を表示します。
-     */
-    public abstract void printPC();
-
-    /**
      * 現在のレジスタを表示します。
      */
     public abstract void printRegs();
@@ -243,11 +238,9 @@ public abstract class CPU extends MasterCore64
                 step();
             }
         } catch (IllegalArgumentException e) {
-            e.printStackTrace(System.err);
-            printPC();
+            setPrintRegs(true);
             printRegs();
-
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 }

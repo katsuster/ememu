@@ -65,7 +65,7 @@ public class VirtualTerminal extends JPanel
             outPout = new PipedOutputStream(outPin);
         } catch (IOException e) {
             e.printStackTrace(System.err);
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
 
         //端末への表示を行うスレッドを作成する

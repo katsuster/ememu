@@ -41,12 +41,9 @@ public class InnerBootloader {
             } catch (EOFException e) {
                 //end
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace(System.err);
-            throw new RuntimeException(e);
         } catch (IOException e) {
             e.printStackTrace(System.err);
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
 
         SystemPane.out.printf("loadURL: '%s' done, %dbytes.\n",

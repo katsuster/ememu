@@ -69,11 +69,6 @@ public class ARMv5 extends CPU {
     }
 
     @Override
-    public void printPC() {
-        SystemPane.out.printf("pc: %08x\n", getRegRaw(15));
-    }
-
-    @Override
     public void printRegs() {
         if (!isPrintRegs()) {
             return;
