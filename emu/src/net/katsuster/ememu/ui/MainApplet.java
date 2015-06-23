@@ -20,6 +20,7 @@ public class MainApplet extends JApplet {
     private static final SystemPane spane = new SystemPane();
 
     private JTabbedPane tabPane;
+    private JTextField txtImage, txtInitram, txtCmdline;
     private Emulator emu;
     private VirtualTerminal[] vttyAMA;
 
@@ -91,21 +92,31 @@ public class MainApplet extends JApplet {
         tabPane.transferFocus();
 
         //stdout
-        JPanel panel = new JPanel(new BorderLayout(), true);
+        JSplitPane panel = new JSplitPane();
 
-        JPanel panelEast = new JPanel(new FlowLayout(), true);
+        JPanel panelRight = new JPanel(new GridLayout(5, 2, 5, 5), true);
         JButton btnReset = new JButton("Reset");
         JButton btnClear = new JButton("Clear");
+        txtImage = new JTextField(opts.getKernelImage().toString());
+        txtInitram = new JTextField(opts.getInitramfsImage().toString());
+        txtCmdline = new JTextField(opts.getCommandLine());
 
         btnReset.addActionListener(listenButton);
         btnReset.setActionCommand("reset");
         btnClear.addActionListener(listenButton);
         btnClear.setActionCommand("clear");
-        panelEast.add(btnReset);
-        panelEast.add(btnClear);
+        panelRight.add(btnReset);
+        panelRight.add(btnClear);
+        panelRight.add(new JLabel("Kernel Image", SwingConstants.RIGHT));
+        panelRight.add(txtImage);
+        panelRight.add(new JLabel("InitramFS Image", SwingConstants.RIGHT));
+        panelRight.add(txtInitram);
+        panelRight.add(new JLabel("Command line", SwingConstants.RIGHT));
+        panelRight.add(txtCmdline);
+        panelRight.setPreferredSize(new Dimension(200, 400));
 
-        panel.add("Center", spane);
-        panel.add("East", panelEast);
+        panel.setLeftComponent(spane);
+        panel.setRightComponent(panelRight);
 
         tabPane.addTab("stdout", panel);
 
@@ -118,6 +129,15 @@ public class MainApplet extends JApplet {
         SystemPane.out.println("start");
 
         super.start();
+
+        //options
+        try {
+            opts.setKernelImage(new URI(txtImage.getText()));
+            opts.setInitramfsImage(new URI(txtInitram.getText()));
+            opts.setCommandLine(txtCmdline.getText());
+        } catch (URISyntaxException e) {
+            //ignored
+        }
 
         spane.clear();
 
