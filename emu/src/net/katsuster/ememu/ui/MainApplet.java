@@ -162,7 +162,6 @@ public class MainApplet extends JApplet {
 
         emu = new Emulator();
         emu.setOption(opts);
-        //board.setUARTInputStream(0, System.in);
         for (int i = 0; i < vttyAMA.length; i++) {
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());
             emu.getBoard().setUARTOutputStream(i, vttyAMA[i].getOutputStream());
@@ -177,8 +176,10 @@ public class MainApplet extends JApplet {
         super.stop();
 
         try {
-            emu.halt();
-            emu.join();
+            if (emu != null) {
+                emu.halt();
+                emu.join();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace(System.err);
             //ignored
