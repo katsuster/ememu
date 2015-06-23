@@ -69,12 +69,12 @@ public class SecondaryINTC extends Controller64Reg32
         switch (regaddr) {
         case REG_SIC_ENCLR:
             //TODO: not implemented
-            SystemPane.out.printf("SIC_ENCLR: read 0x%08x\n", 0);
+            System.out.printf("SIC_ENCLR: read 0x%08x\n", 0);
             result = 0x0;
             break;
         case REG_SIC_PICENSET:
             //TODO: not implemented
-            SystemPane.out.printf("SIC_PICENSET: read 0x%08x\n", 0);
+            System.out.printf("SIC_PICENSET: read 0x%08x\n", 0);
             result = 0x0;
             break;
         default:
@@ -94,11 +94,11 @@ public class SecondaryINTC extends Controller64Reg32
         switch (regaddr) {
         case REG_SIC_ENCLR:
             //TODO: not implemented
-            SystemPane.out.printf("SIC_ENCLR: 0x%08x\n", data);
+            System.out.printf("SIC_ENCLR: 0x%08x\n", data);
             break;
         case REG_SIC_PICENSET:
             //TODO: not implemented
-            SystemPane.out.printf("SIC_PICENSET: 0x%08x\n", data);
+            System.out.printf("SIC_PICENSET: 0x%08x\n", data);
             break;
         default:
             super.writeWord(regaddr, data);

@@ -84,27 +84,27 @@ public class GPIO implements BusSlave64 {
             switch (regaddr) {
             case REG_GPIODIR:
                 //TODO: not implemented
-                SystemPane.out.printf("GPIODIR: read 0x%08x\n", 0);
+                System.out.printf("GPIODIR: read 0x%08x\n", 0);
                 result = 0;
                 break;
             case REG_GPIOIS:
                 //TODO: not implemented
-                SystemPane.out.printf("GPIOIS: read 0x%08x\n", 0);
+                System.out.printf("GPIOIS: read 0x%08x\n", 0);
                 result = 0;
                 break;
             case REG_GPIOIBE:
                 //TODO: not implemented
-                SystemPane.out.printf("GPIOIBE: read 0x%08x\n", 0);
+                System.out.printf("GPIOIBE: read 0x%08x\n", 0);
                 result = 0;
                 break;
             case REG_GPIOIEV:
                 //TODO: not implemented
-                SystemPane.out.printf("GPIOIEV: read 0x%08x\n", 0);
+                System.out.printf("GPIOIEV: read 0x%08x\n", 0);
                 result = 0;
                 break;
             case REG_GPIOIE:
                 //TODO: not implemented
-                SystemPane.out.printf("GPIOIE: read 0x%08x\n", 0);
+                System.out.printf("GPIOIE: read 0x%08x\n", 0);
                 result = 0;
                 break;
             default:
@@ -124,23 +124,23 @@ public class GPIO implements BusSlave64 {
             switch (regaddr) {
             case REG_GPIODIR:
                 //TODO: not implemented
-                SystemPane.out.printf("GPIODIR: 0x%08x\n", data);
+                System.out.printf("GPIODIR: 0x%08x\n", data);
                 break;
             case REG_GPIOIS:
                 //TODO: not implemented
-                SystemPane.out.printf("GPIOIS: 0x%08x\n", data);
+                System.out.printf("GPIOIS: 0x%08x\n", data);
                 break;
             case REG_GPIOIBE:
                 //TODO: not implemented
-                SystemPane.out.printf("GPIOIBE: 0x%08x\n", data);
+                System.out.printf("GPIOIBE: 0x%08x\n", data);
                 break;
             case REG_GPIOIEV:
                 //TODO: not implemented
-                SystemPane.out.printf("GPIOIEV: 0x%08x\n", data);
+                System.out.printf("GPIOIEV: 0x%08x\n", data);
                 break;
             case REG_GPIOIE:
                 //TODO: not implemented
-                SystemPane.out.printf("GPIOIE: 0x%08x\n", data);
+                System.out.printf("GPIOIE: 0x%08x\n", data);
                 break;
             case REG_GPIOPeriphID0:
             case REG_GPIOPeriphID1:

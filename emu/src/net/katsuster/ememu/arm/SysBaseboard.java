@@ -121,22 +121,22 @@ public class SysBaseboard implements BusSlave64 {
             case REG_SYS_LED:
                 //TODO: not implemented
                 result = super.readWord(regaddr);
-                //SystemPane.out.printf("SYS_LED: read 0x%08x\n", result);
+                //System.out.printf("SYS_LED: read 0x%08x\n", result);
                 break;
             case REG_SYS_OSC4:
                 //TODO: not implemented
                 result = 0;
-                SystemPane.out.printf("SYS_OSC4: read 0x%08x\n", result);
+                System.out.printf("SYS_OSC4: read 0x%08x\n", result);
                 break;
             case REG_SYS_LOCK:
                 //TODO: not implemented
                 result = 0;
-                SystemPane.out.printf("SYS_LOCK: read 0x%08x\n", result);
+                System.out.printf("SYS_LOCK: read 0x%08x\n", result);
                 break;
             case REG_SYS_CLCD:
                 //TODO: not implemented
                 result = 0x1f00;
-                SystemPane.out.printf("SYS_CLCD: read 0x%08x\n", result);
+                System.out.printf("SYS_CLCD: read 0x%08x\n", result);
                 break;
             case REG_SYS_24MHz:
                 //TODO: 桁あふれ問題が未解決のまま
@@ -159,20 +159,20 @@ public class SysBaseboard implements BusSlave64 {
             switch (regaddr) {
             case REG_SYS_LED:
                 //TODO: not implemented
-                //SystemPane.out.printf("SYS_LED: 0x%08x\n", data);
+                //System.out.printf("SYS_LED: 0x%08x\n", data);
                 super.writeWord(regaddr, data);
                 break;
             case REG_SYS_OSC4:
                 //TODO: not implemented
-                SystemPane.out.printf("SYS_OSC4: 0x%08x\n", data);
+                System.out.printf("SYS_OSC4: 0x%08x\n", data);
                 break;
             case REG_SYS_LOCK:
                 //TODO: not implemented
-                SystemPane.out.printf("SYS_LOCK: 0x%08x\n", data);
+                System.out.printf("SYS_LOCK: 0x%08x\n", data);
                 break;
             case REG_SYS_CLCD:
                 //TODO: not implemented
-                SystemPane.out.printf("SYS_CLCD: 0x%08x\n", data);
+                System.out.printf("SYS_CLCD: 0x%08x\n", data);
                 break;
             case REG_SYS_24MHz:
                 //read only, ignored

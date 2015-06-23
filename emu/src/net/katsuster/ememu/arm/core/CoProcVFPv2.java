@@ -42,11 +42,11 @@ public class CoProcVFPv2 extends CoProc {
             break;
         case OP_FMR_FPSCR:
             //TODO: not implemented
-            SystemPane.out.printf("FMR_FPSCR: 0x%08x\n", val);
+            System.out.printf("FMR_FPSCR: 0x%08x\n", val);
             break;
         case OP_FMR_FPEXC:
             //TODO: not implemented
-            SystemPane.out.printf("FMR_FPEXC: 0x%08x\n", val);
+            System.out.printf("FMR_FPEXC: 0x%08x\n", val);
             break;
         default:
             super.setCReg(cn, val);

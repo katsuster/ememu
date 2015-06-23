@@ -202,11 +202,11 @@ public class UART implements INTSource, BusSlave64 {
                 break;
             case REG_UARTLCR_H:
                 result = super.readWord(regaddr);
-                //SystemPane.out.printf("UARTLCR_H: read 0x%08x\n", result);
+                //System.out.printf("UARTLCR_H: read 0x%08x\n", result);
                 break;
             case REG_UARTCR:
                 result = super.readWord(regaddr);
-                //SystemPane.out.printf("UARTCR: read 0x%08x\n", result);
+                //System.out.printf("UARTCR: read 0x%08x\n", result);
                 break;
             case REG_UARTIMSC:
                 result = maskInt;
@@ -254,25 +254,25 @@ public class UART implements INTSource, BusSlave64 {
                 break;
             case REG_UARTIBRD:
                 //TODO: Not implemented
-                SystemPane.out.printf("UARTIBRD: 0x%08x\n", data);
+                System.out.printf("UARTIBRD: 0x%08x\n", data);
                 break;
             case REG_UARTFBRD:
                 //TODO: Not implemented
-                SystemPane.out.printf("UARTFBRD: 0x%08x\n", data);
+                System.out.printf("UARTFBRD: 0x%08x\n", data);
                 break;
             case REG_UARTLCR_H:
                 //TODO: Not implemented
-                SystemPane.out.printf("UARTLCR_H: 0x%08x\n", data);
+                System.out.printf("UARTLCR_H: 0x%08x\n", data);
                 super.writeWord(regaddr, data);
                 break;
             case REG_UARTCR:
                 //TODO: Not implemented
-                //SystemPane.out.printf("UARTCR: 0x%08x\n", data);
+                //System.out.printf("UARTCR: 0x%08x\n", data);
                 super.writeWord(regaddr, data);
                 break;
             case REG_UARTIFLS:
                 //TODO: Not implemented
-                SystemPane.out.printf("UARTIFLS: 0x%08x\n", data);
+                System.out.printf("UARTIFLS: 0x%08x\n", data);
                 break;
             case REG_UARTIMSC:
                 maskInt = data;

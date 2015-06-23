@@ -197,12 +197,12 @@ public class SSMC implements BusSlave64 {
             case REG_SMBIDCYR0:
                 //TODO: Not implemented
                 result = super.readWord(regaddr);
-                SystemPane.out.printf("SMBIDCYR0: read 0x%08x\n", result);
+                System.out.printf("SMBIDCYR0: read 0x%08x\n", result);
                 break;
             case REG_SMBWSTOENR0:
                 //TODO: Not implemented
                 result = super.readWord(regaddr);
-                SystemPane.out.printf("SMBWSTOENR0: read 0x%08x\n", result);
+                System.out.printf("SMBWSTOENR0: read 0x%08x\n", result);
                 break;
             default:
                 result = super.readWord(regaddr);
@@ -221,11 +221,11 @@ public class SSMC implements BusSlave64 {
             switch (regaddr) {
             case REG_SMBIDCYR0:
                 //TODO: Not implemented
-                SystemPane.out.printf("SMBIDCYR0: 0x%08x\n", data);
+                System.out.printf("SMBIDCYR0: 0x%08x\n", data);
                 break;
             case REG_SMBWSTOENR0:
                 //TODO: Not implemented
-                SystemPane.out.printf("SMBWSTOENR0: 0x%08x\n", data);
+                System.out.printf("SMBWSTOENR0: 0x%08x\n", data);
                 break;
             case REG_SSMCPeriphID0:
             case REG_SSMCPeriphID1:

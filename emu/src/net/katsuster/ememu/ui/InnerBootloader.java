@@ -26,7 +26,7 @@ public class InnerBootloader {
     public static int loadURIResource(URI uri, CPU cpu, int addr) {
         int i;
 
-        SystemPane.out.println("loadURL: " + uri.toString());
+        System.out.println("loadURL: " + uri.toString());
 
         try {
             DataInputStream s = new DataInputStream(
@@ -46,7 +46,7 @@ public class InnerBootloader {
             throw new IllegalArgumentException(e);
         }
 
-        SystemPane.out.printf("loadURL: '%s' done, %dbytes.\n",
+        System.out.printf("loadURL: '%s' done, %dbytes.\n",
                 uri.toString(), i);
 
         return i;
@@ -81,7 +81,7 @@ public class InnerBootloader {
         }
 
         //report address mapping
-        SystemPane.out.printf("Address mapping:\n" +
+        System.out.printf("Address mapping:\n" +
                         "  RAM      : 0x%08x\n" +
                         "  Kernel   : 0x%08x - 0x%08x\n" +
                         "  Initramfs: 0x%08x - 0x%08x\n" +

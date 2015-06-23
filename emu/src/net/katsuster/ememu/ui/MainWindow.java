@@ -78,7 +78,7 @@ public class MainWindow {
     }
 
     public void start() {
-        SystemPane.out.println("start");
+        System.out.println("start");
 
         //options
         try {
@@ -114,7 +114,7 @@ public class MainWindow {
     }
 
     public void stop() {
-        SystemPane.out.println("stop");
+        System.out.println("stop");
 
         try {
             if (emu != null) {

@@ -264,49 +264,49 @@ public class CoProcStdv5 extends CoProc {
             waitInt(val);
             break;
         case CR07_UCH_INVALL:
-            //SystemPane.out.printf("I&D-cache: all invalidated.\n");
+            //System.out.printf("I&D-cache: all invalidated.\n");
             break;
         case CR07_UCH_INVV:
-            SystemPane.out.printf("I&D-cache: invalidated 0x%08x.\n", val);
+            System.out.printf("I&D-cache: invalidated 0x%08x.\n", val);
             break;
         case CR07_ICH_INVALL:
-            //SystemPane.out.printf("I-cache  : all invalidated.\n");
+            //System.out.printf("I-cache  : all invalidated.\n");
             break;
         case CR07_ICH_INVV:
-            //SystemPane.out.printf("I-cache  : invalidated 0x%08x.\n", val);
+            //System.out.printf("I-cache  : invalidated 0x%08x.\n", val);
             break;
         case CR07_DCH_INVALL:
-            //SystemPane.out.printf("D-cache  : all invalidated.\n");
+            //System.out.printf("D-cache  : all invalidated.\n");
             break;
         case CR07_DCH_INVV:
-            //SystemPane.out.printf("D-cache  : invalidated 0x%08x.\n", val);
+            //System.out.printf("D-cache  : invalidated 0x%08x.\n", val);
             break;
         case CR07_DCH_TSTCLN:
-            SystemPane.out.printf("D-cache  : test & clean.\n");
+            System.out.printf("D-cache  : test & clean.\n");
             break;
         case CR07_DCH_TSTCLNINV:
-            SystemPane.out.printf("D-cache  : test & clean & invalidated.\n");
+            System.out.printf("D-cache  : test & clean & invalidated.\n");
             break;
         case CR07_WB_PUR:
-            //SystemPane.out.printf("W-buffer : all purged.\n");
+            //System.out.printf("W-buffer : all purged.\n");
             break;
         case CR08_UTLB_INVALL:
-            //SystemPane.out.printf("I&D-TLB  : all invalidated.\n");
+            //System.out.printf("I&D-TLB  : all invalidated.\n");
             break;
         case CR08_UTLB_INVV:
-            SystemPane.out.printf("i&D-TLB  : invalidated 0x%08x.\n", val);
+            System.out.printf("i&D-TLB  : invalidated 0x%08x.\n", val);
             break;
         case CR08_ITLB_INVALL:
-            //SystemPane.out.printf("I-TLB    : all invalidated.\n");
+            //System.out.printf("I-TLB    : all invalidated.\n");
             break;
         case CR08_ITLB_INVV:
-            //SystemPane.out.printf("I-TLB    : invalidated 0x%08x.\n", val);
+            //System.out.printf("I-TLB    : invalidated 0x%08x.\n", val);
             break;
         case CR08_DTLB_INVALL:
-            //SystemPane.out.printf("D-TLB    : all invalidated.\n");
+            //System.out.printf("D-TLB    : all invalidated.\n");
             break;
         case CR08_DTLB_INVV:
-            //SystemPane.out.printf("D-TLB    : invalidated 0x%08x.\n", val);
+            //System.out.printf("D-TLB    : invalidated 0x%08x.\n", val);
             break;
         default:
             super.setCReg(cn, val);
@@ -326,12 +326,12 @@ public class CoProcStdv5 extends CoProc {
         boolean a = BitOp.getBit32(val, 1);
         boolean m = BitOp.getBit32(val, 0);
 
-        //SystemPane.out.printf("SCTLR    : 0x%x.\n", val);
-        //SystemPane.out.printf("  V      : %b.\n", v);
-        //SystemPane.out.printf("  R      : %b.\n", r);
-        //SystemPane.out.printf("  S      : %b.\n", s);
-        //SystemPane.out.printf("  A      : %b.\n", a);
-        //SystemPane.out.printf("  M      : %b.\n", m);
+        //System.out.printf("SCTLR    : 0x%x.\n", val);
+        //System.out.printf("  V      : %b.\n", v);
+        //System.out.printf("  R      : %b.\n", r);
+        //System.out.printf("  S      : %b.\n", s);
+        //System.out.printf("  A      : %b.\n", a);
+        //System.out.printf("  M      : %b.\n", m);
 
         //v: ハイベクタ、0: 無効、1: 有効
         getCPU().setHighVector(v);
@@ -355,8 +355,8 @@ public class CoProcStdv5 extends CoProc {
     public void setTTBR0(int val) {
         //int base = (val >> 14) & 0x3ffff;
 
-        //SystemPane.out.printf("TTBR0    : 0x%x.\n", val);
-        //SystemPane.out.printf("  base   : 0x%x.\n", base);
+        //System.out.printf("TTBR0    : 0x%x.\n", val);
+        //System.out.printf("  base   : 0x%x.\n", base);
 
         //MMU の状態を更新する
         getCPU().getMMU().setTableBase(val);

@@ -26,7 +26,7 @@ public class SystemPane extends JPanel {
     private static final JScrollPane outScr = new JScrollPane(outText);
 
     //標準出力の代わりに用いる出力用ストリームです
-    public static final PrintStream out = new ForkedPrintStream(outInner, System.out);
+    public static final PrintStream out = new ForkedPrintStream(System.out, outInner);
 
     public SystemPane() {
         super(new BorderLayout(), true);

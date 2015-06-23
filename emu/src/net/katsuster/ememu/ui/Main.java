@@ -17,7 +17,7 @@ public class Main {
         opts.setCommandLine("console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1");
 
         if (args.length <= 0) {
-            SystemPane.out.println("usage:\n" +
+            System.out.println("usage:\n" +
                     "  ememu image initramfs [cmdline]\n");
             return;
         }
@@ -47,7 +47,7 @@ public class Main {
 
         emu.setOption(opts);
         emu.getBoard().setUARTInputStream(0, System.in);
-        emu.getBoard().setUARTOutputStream(0, SystemPane.out);
+        emu.getBoard().setUARTOutputStream(0, System.out);
         emu.start();
 
         //wait CPU halted

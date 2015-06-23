@@ -37,7 +37,7 @@ public class MainApplet extends JApplet {
         String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/ememu/initramfs.gz";
         String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1";
 
-        SystemPane.out.println("init");
+        System.out.println("init");
 
         super.init();
 
@@ -47,28 +47,28 @@ public class MainApplet extends JApplet {
             System.setProperty("proxyHost", getParameter(PARAM_PROXY_HOST));
             System.setProperty("proxyPort", getParameter(PARAM_PROXY_PORT));
         } else {
-            SystemPane.out.printf("Parameter '%s', '%s' not found, " +
+            System.out.printf("Parameter '%s', '%s' not found, " +
                             "use no proxy.\n",
                     PARAM_PROXY_HOST, PARAM_PROXY_PORT);
         }
         if (getParameter(PARAM_KERNEL_IMAGE) != null) {
             kimage = getParameter(PARAM_KERNEL_IMAGE);
         } else {
-            SystemPane.out.printf("Parameter '%s' not found, " +
+            System.out.printf("Parameter '%s' not found, " +
                             "use default kernel image.\n",
                     PARAM_KERNEL_IMAGE);
         }
         if (getParameter(PARAM_INITRAMFS_IMAGE) != null) {
             initram = getParameter(PARAM_INITRAMFS_IMAGE);
         } else {
-            SystemPane.out.printf("Parameter '%s' not found, " +
+            System.out.printf("Parameter '%s' not found, " +
                             "use default initramfs image.\n",
                     PARAM_INITRAMFS_IMAGE);
         }
         if (getParameter(PARAM_COMMAND_LINE) != null) {
             cmdline = getParameter(PARAM_COMMAND_LINE);
         } else {
-            SystemPane.out.printf("Parameter '%s' not found, " +
+            System.out.printf("Parameter '%s' not found, " +
                             "use default command line.\n",
                     PARAM_COMMAND_LINE);
         }
@@ -126,7 +126,7 @@ public class MainApplet extends JApplet {
 
     @Override
     public void start() {
-        SystemPane.out.println("start");
+        System.out.println("start");
 
         super.start();
 
@@ -165,7 +165,7 @@ public class MainApplet extends JApplet {
 
     @Override
     public void stop() {
-        SystemPane.out.println("stop");
+        System.out.println("stop");
 
         super.stop();
 
@@ -180,7 +180,7 @@ public class MainApplet extends JApplet {
 
     @Override
     public void destroy() {
-        SystemPane.out.println("destroy");
+        System.out.println("destroy");
 
         super.destroy();
     }
