@@ -1,7 +1,5 @@
 package net.katsuster.ememu.arm.core;
 
-import net.katsuster.ememu.ui.SystemPane;
-
 /**
  * ARM コプロセッサ 10: ベクタ浮動小数点プロセッサ（VFP）
  *

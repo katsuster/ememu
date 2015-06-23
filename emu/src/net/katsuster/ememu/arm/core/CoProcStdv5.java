@@ -1,6 +1,5 @@
 package net.katsuster.ememu.arm.core;
 
-import net.katsuster.ememu.ui.SystemPane;
 import net.katsuster.ememu.generic.BitOp;
 
 /**

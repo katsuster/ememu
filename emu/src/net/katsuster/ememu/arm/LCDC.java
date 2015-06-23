@@ -1,7 +1,6 @@
 package net.katsuster.ememu.arm;
 
 import net.katsuster.ememu.generic.*;
-import net.katsuster.ememu.ui.SystemPane;
 
 /**
  * カラー LCD コントローラ
