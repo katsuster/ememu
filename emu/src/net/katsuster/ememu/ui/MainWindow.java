@@ -2,8 +2,8 @@ package net.katsuster.ememu.ui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.*;
+import java.net.*;
 import javax.swing.*;
 
 /**
@@ -12,8 +12,10 @@ import javax.swing.*;
  * @author katsuhiro
  */
 public class MainWindow {
-    private static final SystemPane spane = new SystemPane();
+    private static final PrintStream systemOut = System.out;
 
+    private JSplitPane panel;
+    private SystemPane spane;
     private JTabbedPane tabPane;
     private JTextField txtImage, txtInitram, txtCmdline;
     private Emulator emu;
@@ -41,7 +43,10 @@ public class MainWindow {
         tabPane.transferFocus();
 
         //stdout
-        JSplitPane panel = new JSplitPane();
+        panel = new JSplitPane();
+        spane = new SystemPane(systemOut);
+        System.setOut(spane.getOutputStream());
+        panel.setLeftComponent(spane);
 
         JPanel panelRight = new JPanel(new GridLayout(5, 2, 5, 5), true);
         JButton btnReset = new JButton("Reset");
@@ -63,8 +68,6 @@ public class MainWindow {
         panelRight.add(new JLabel("Command line", SwingConstants.RIGHT));
         panelRight.add(txtCmdline);
         panelRight.setPreferredSize(new Dimension(200, 400));
-
-        panel.setLeftComponent(spane);
         panel.setRightComponent(panelRight);
 
         tabPane.addTab("stdout", panel);
@@ -89,7 +92,10 @@ public class MainWindow {
             //ignored
         }
 
-        spane.clear();
+        //stdout
+        spane = new SystemPane(systemOut);
+        System.setOut(spane.getOutputStream());
+        panel.setLeftComponent(spane);
 
         //terminal
         for (int i = 0; i < vttyAMA.length; i++) {

@@ -1,5 +1,6 @@
 package net.katsuster.ememu.ui;
 
+import java.io.*;
 import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,8 +18,10 @@ public class MainApplet extends JApplet {
     public static final String PARAM_INITRAMFS_IMAGE = "initramfsImage";
     public static final String PARAM_COMMAND_LINE = "commandLine";
 
-    private static final SystemPane spane = new SystemPane();
+    private static final PrintStream systemOut = System.out;
 
+    private JSplitPane panel;
+    private SystemPane spane;
     private JTabbedPane tabPane;
     private JTextField txtImage, txtInitram, txtCmdline;
     private Emulator emu;
@@ -92,7 +95,10 @@ public class MainApplet extends JApplet {
         tabPane.transferFocus();
 
         //stdout
-        JSplitPane panel = new JSplitPane();
+        panel = new JSplitPane();
+        spane = new SystemPane(systemOut);
+        System.setOut(spane.getOutputStream());
+        panel.setLeftComponent(spane);
 
         JPanel panelRight = new JPanel(new GridLayout(5, 2, 5, 5), true);
         JButton btnReset = new JButton("Reset");
@@ -114,8 +120,6 @@ public class MainApplet extends JApplet {
         panelRight.add(new JLabel("Command line", SwingConstants.RIGHT));
         panelRight.add(txtCmdline);
         panelRight.setPreferredSize(new Dimension(200, 400));
-
-        panel.setLeftComponent(spane);
         panel.setRightComponent(panelRight);
 
         tabPane.addTab("stdout", panel);
@@ -139,7 +143,10 @@ public class MainApplet extends JApplet {
             //ignored
         }
 
-        spane.clear();
+        //stdout
+        spane = new SystemPane(systemOut);
+        System.setOut(spane.getOutputStream());
+        panel.setLeftComponent(spane);
 
         //terminal
         for (int i = 0; i < vttyAMA.length; i++) {
