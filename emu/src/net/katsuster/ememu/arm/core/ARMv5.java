@@ -4143,9 +4143,43 @@ public class ARMv5 extends CPU {
      */
     public void executeInst(Instruction instgen, boolean exec) {
         if (getCPSR().getTBit()) {
+            InstructionThumb inst = (InstructionThumb)instgen;
+            //int cond = inst.getCondField();
+            int subcode = inst.getSubCodeField();
+
             //Thumb モード
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
+            switch (subcode) {
+            case InstructionThumb.SUBCODE_ADDSUB:
+                decodeAddSub(inst, exec);
+                return;
+            case InstructionThumb.SUBCODE_ALUIMM:
+                decodeALUImm(inst, exec);
+                return;
+            case InstructionThumb.SUBCODE_ALUREG:
+                decodeALUReg(inst, exec);
+                return;
+            case InstructionThumb.SUBCODE_LDWORD:
+                decodeLdWord(inst, exec);
+                return;
+            case InstructionThumb.SUBCODE_LDHALF:
+                decodeLdHalf(inst, exec);
+                return;
+            case InstructionThumb.SUBCODE_OTHERS:
+                decodeOthers(inst, exec);
+                return;
+            case InstructionThumb.SUBCODE_LDMULT:
+                decodeLdmult(inst, exec);
+                return;
+            case InstructionThumb.SUBCODE_BL_BLX:
+                decodeBlBlx(inst, exec);
+                return;
+            default:
+                //do nothing
+                break;
+            }
+
+            throw new IllegalArgumentException("Unknown Subcode" +
+                    String.format("(%d).", subcode));
         } else {
             InstructionARM inst = (InstructionARM)instgen;
             //int cond = inst.getCondField();
@@ -4172,6 +4206,128 @@ public class ARMv5 extends CPU {
 
             throw new IllegalArgumentException("Unknown Subcode" +
                     String.format("(%d).", subcode));
+        }
+    }
+
+    /**
+     * レジスタ加算、減算命令をデコードします。
+     *
+     * subcode = 0b000
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeAddSub(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * イミディエート加算、減算命令をデコードします。
+     *
+     * subcode = 0b001
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeALUImm(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * レジスタへのデータ処理命令をデコードします。
+     *
+     * subcode = 0b010
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeALUReg(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * ワード、バイトのロード、ストア命令をデコードします。
+     *
+     * subcode = 0b011
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeLdWord(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * ハーフワードのロード、ストア命令、スタックのロード、ストア命令をデコードします。
+     *
+     * subcode = 0b100
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeLdHalf(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * SP, PC 加算命令、その他の命令をデコードします。
+     *
+     * subcode = 0b101
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeOthers(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * ロード、ストアマルチプル命令、条件付き分岐命令をデコードします。
+     *
+     * subcode = 0b110
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeLdmult(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 分岐命令をデコードします。
+     *
+     * subcode = 0b111
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeBlBlx(InstructionThumb inst, boolean exec) {
+        int h = inst.getField(11, 2);
+
+        switch (h) {
+        case 0x0:
+            //B(無条件分岐)命令
+            break;
+        case 0x1:
+            //BLX, 未定義命令
+            break;
+        case 0x2:
+            //BL/BLX 命令
+            break;
+        case 0x3:
+            //BL 命令
+            break;
+        default:
+            //異常な値
+            throw new IllegalArgumentException("Illegal h bits " +
+                    String.format("h:0x%02x.", h));
         }
     }
 

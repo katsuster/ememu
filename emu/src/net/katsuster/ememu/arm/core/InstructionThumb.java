@@ -13,6 +13,40 @@ public class InstructionThumb extends Instruction {
         super(inst & 0x0000ffff);
     }
 
+    public static final int SUBCODE_ADDSUB = 0;
+    public static final int SUBCODE_ALUIMM = 1;
+    public static final int SUBCODE_ALUREG = 2;
+    public static final int SUBCODE_LDWORD = 3;
+    public static final int SUBCODE_LDHALF = 4;
+    public static final int SUBCODE_OTHERS = 5;
+    public static final int SUBCODE_LDMULT = 6;
+    public static final int SUBCODE_BL_BLX = 7;
+
+    /**
+     * Thumb 命令セットのサブコードフィールド（ビット [15:13]）を取得します。
+     *
+     * 注: ARM の仕様書にはサブコードのフィールドという定義はありません。
+     * このアプリケーション独自の定義です。
+     *
+     * @return サブコード
+     */
+    public int getSubCodeField() {
+        return getSubCodeField(getInst());
+    }
+
+    /**
+     * Thumb 命令セットのサブコードフィールド（ビット [15:13]）を取得します。
+     *
+     * 注: ARM の仕様書にはサブコードのフィールドという定義はありません。
+     * このアプリケーション独自の定義です。
+     *
+     * @param inst Thumb 命令
+     * @return サブコード
+     */
+    public static int getSubCodeField(int inst) {
+        return BitOp.getField32(inst, 13, 3);
+    }
+
     /**
      * Thumb 命令の Rm フィールド（ビット [5:3]）を取得します。
      *
