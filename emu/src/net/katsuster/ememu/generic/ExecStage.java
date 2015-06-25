@@ -1,6 +1,4 @@
-package net.katsuster.ememu.arm.core;
-
-import net.katsuster.ememu.generic.*;
+package net.katsuster.ememu.generic;
 
 /**
  * 命令の実行ステージ。

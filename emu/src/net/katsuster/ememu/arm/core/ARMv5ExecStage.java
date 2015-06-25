@@ -148,7 +148,7 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public int getAddrMode1Imm(InstructionARM inst) {
         int rotR = inst.getField(8, 4);
-        int imm8=inst.getField(0, 8);
+        int imm8 = inst.getField(0, 8);
 
         return Integer.rotateRight(imm8, rotR * 2);
     }
@@ -316,7 +316,7 @@ public class ARMv5ExecStage extends ExecStage {
     public boolean getAddrMode1Carry(InstructionARM inst) {
         boolean i = inst.getIBit();
         boolean b7 = inst.getBit(7);
-        boolean b4= inst.getBit(4);
+        boolean b4 = inst.getBit(4);
 
         if (i) {
             //32bits イミディエート
@@ -510,7 +510,7 @@ public class ARMv5ExecStage extends ExecStage {
      * @return イミディエートの文字列表現
      */
     public String getAddrMode1ImmName(InstructionARM inst) {
-        int imm32 =getAddrMode1Imm(inst);
+        int imm32 = getAddrMode1Imm(inst);
 
         return String.format("#%d    ; 0x%x", imm32, imm32);
     }
@@ -648,15 +648,15 @@ public class ARMv5ExecStage extends ExecStage {
     public int getAddrMode2(InstructionARM inst) {
         boolean i = inst.getIBit();
         boolean u = inst.getBit(23);
-        int rn =inst.getRnField();
-        int shift_imm=inst.getField(7, 5);
-        int shift=inst.getField(5, 2);
+        int rn = inst.getRnField();
+        int shift_imm = inst.getField(7, 5);
+        int shift = inst.getField(5, 2);
         int offset;
 
         if (!i) {
             //12bits イミディエートオフセット
             //I ビットの意味がデータ処理命令と逆なので注意！
-            offset =getAddrMode2Imm(inst);
+            offset = getAddrMode2Imm(inst);
         } else if (shift_imm == 0 && shift == 0) {
             //レジスタオフセット/インデクス
             offset = getAddrMode2Reg(inst);
@@ -725,11 +725,11 @@ public class ARMv5ExecStage extends ExecStage {
      * @return アドレスの文字列表記
      */
     public String getAddrMode2Name(InstructionARM inst) {
-        boolean i= inst.getIBit();
+        boolean i = inst.getIBit();
         boolean p = inst.getBit(24);
         boolean u = inst.getBit(23);
         //boolean b = inst.getBit(22);
-        boolean w= inst.getBit(21);
+        boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int shift_imm = inst.getField(7, 5);
         int shift = inst.getField(5, 2);
@@ -787,7 +787,7 @@ public class ARMv5ExecStage extends ExecStage {
         //boolean b = inst.getBit(22);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
-        int offset12=inst.getField(0, 12);
+        int offset12 = inst.getField(0, 12);
 
         if (p && !w) {
             //イミディエートオフセット
@@ -847,8 +847,8 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public int getAddrMode3(InstructionARM inst) {
         boolean u = inst.getBit(23);
-        boolean b= inst.getBit(22);
-        int rn =inst.getRnField();
+        boolean b = inst.getBit(22);
+        int rn = inst.getRnField();
         int offset;
 
         if (b) {
@@ -901,7 +901,7 @@ public class ARMv5ExecStage extends ExecStage {
      * @return アドレスの文字列表記
      */
     public String getAddrMode3Name(InstructionARM inst) {
-        boolean b= inst.getBit(22);
+        boolean b = inst.getBit(22);
 
         if (b) {
             //イミディエートオフセット/インデクス
@@ -920,11 +920,11 @@ public class ARMv5ExecStage extends ExecStage {
      * @return アドレスの文字列表記
      */
     public String getAddrMode3ImmName(InstructionARM inst) {
-        boolean p= inst.getBit(24);
-        boolean u= inst.getBit(23);
-        boolean w= inst.getBit(21);
-        int rn =inst.getRnField();
-        int imm8 =getAddrMode3Imm(inst);
+        boolean p = inst.getBit(24);
+        boolean u = inst.getBit(23);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int imm8 = getAddrMode3Imm(inst);
 
         if (p && !w) {
             //オフセット
@@ -955,11 +955,11 @@ public class ARMv5ExecStage extends ExecStage {
      * @return アドレスの文字列表記
      */
     public String getAddrMode3RegName(InstructionARM inst) {
-        boolean p= inst.getBit(24);
-        boolean u= inst.getBit(23);
-        boolean w= inst.getBit(21);
-        int rn =inst.getRnField();
-        int rm =inst.getRmField();
+        boolean p = inst.getBit(24);
+        boolean u = inst.getBit(23);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
+        int rm = inst.getRmField();
 
         if (p && !w) {
             //オフセット
@@ -1042,9 +1042,9 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeMrs(InstructionARM inst, boolean exec) {
-        boolean r= inst.getBit(22);
-        int sbo=inst.getField(16, 4);
-        int rd =inst.getRdField();
+        boolean r = inst.getBit(22);
+        int sbo = inst.getField(16, 4);
+        int rd = inst.getRdField();
         int dest;
 
         if (!exec) {
@@ -1081,10 +1081,10 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeMsr(InstructionARM inst, boolean exec) {
         //boolean i = inst.getIBit();
-        boolean r= inst.getBit(22);
-        boolean mask_f= inst.getBit(19);
-        boolean mask_s= inst.getBit(18);
-        boolean mask_x= inst.getBit(17);
+        boolean r = inst.getBit(22);
+        boolean mask_f = inst.getBit(19);
+        boolean mask_s = inst.getBit(18);
+        boolean mask_x = inst.getBit(17);
         boolean mask_c = inst.getBit(16);
         int sbo = inst.getField(12, 4);
         int opr = getAddrMode1(inst);
@@ -1215,10 +1215,10 @@ public class ARMv5ExecStage extends ExecStage {
      * @param inst ARM 命令
      * @param id   オペコードフィールドと S ビットが示す演算の ID
      */
-    public void showDisasmALU(InstructionARM inst, int id) {
-        boolean s= inst.getSBit();
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
+    public void printALUDisasm(InstructionARM inst, int id) {
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
         String strInst, strOperand;
 
         switch (id) {
@@ -1276,14 +1276,14 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUAnd(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        boolean s= inst.getSBit();
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1315,14 +1315,14 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUEor(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        boolean s= inst.getSBit();
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1354,14 +1354,14 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUSub(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        boolean s= inst.getSBit();
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1393,14 +1393,14 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALURsb(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        boolean s= inst.getSBit();
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1439,7 +1439,7 @@ public class ARMv5ExecStage extends ExecStage {
         int left, right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1472,13 +1472,13 @@ public class ARMv5ExecStage extends ExecStage {
     public void executeALUAdc(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
-        int rn =inst.getRnField();
+        int rn = inst.getRnField();
         int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, center, right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1522,7 +1522,7 @@ public class ARMv5ExecStage extends ExecStage {
         int left, center, right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1560,13 +1560,13 @@ public class ARMv5ExecStage extends ExecStage {
     public void executeALURsc(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
         boolean s = inst.getSBit();
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
         int opr = getAddrMode1(inst);
         int left, center, right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1603,9 +1603,9 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUTst(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        int rn =inst.getRnField();
+        int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
-        int opr=getAddrMode1(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (sbz != 0x0) {
@@ -1614,7 +1614,7 @@ public class ARMv5ExecStage extends ExecStage {
         }
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1640,9 +1640,9 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUTeq(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        int rn =inst.getRnField();
+        int rn = inst.getRnField();
         int sbz = inst.getField(12, 4);
-        int opr=getAddrMode1(inst);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (sbz != 0x0) {
@@ -1651,7 +1651,7 @@ public class ARMv5ExecStage extends ExecStage {
         }
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1677,9 +1677,9 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUCmp(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        int rn =inst.getRnField();
-        int sbz=inst.getField(12, 4);
-        int opr=getAddrMode1(inst);
+        int rn = inst.getRnField();
+        int sbz = inst.getField(12, 4);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (sbz != 0x0) {
@@ -1688,7 +1688,7 @@ public class ARMv5ExecStage extends ExecStage {
         }
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1714,9 +1714,9 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUCmn(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        int rn =inst.getRnField();
-        int sbz=inst.getField(12, 4);
-        int opr=getAddrMode1(inst);
+        int rn = inst.getRnField();
+        int sbz = inst.getField(12, 4);
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (sbz != 0x0) {
@@ -1725,7 +1725,7 @@ public class ARMv5ExecStage extends ExecStage {
         }
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1751,14 +1751,14 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUOrr(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        boolean s= inst.getSBit();
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
-        int opr=getAddrMode1(inst);
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1790,10 +1790,10 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUMov(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        boolean s= inst.getSBit();
-        int sbz=inst.getField(16, 4);
-        int rd =inst.getRdField();
-        int opr=getAddrMode1(inst);
+        boolean s = inst.getSBit();
+        int sbz = inst.getField(16, 4);
+        int rd = inst.getRdField();
+        int opr = getAddrMode1(inst);
         int right, dest;
 
         if (sbz != 0x0) {
@@ -1802,7 +1802,7 @@ public class ARMv5ExecStage extends ExecStage {
         }
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1833,14 +1833,14 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUBic(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        boolean s= inst.getSBit();
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
-        int opr=getAddrMode1(inst);
+        boolean s = inst.getSBit();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int opr = getAddrMode1(inst);
         int left, right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1872,13 +1872,13 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeALUMvn(InstructionARM inst, boolean exec) {
         int id = inst.getOpcodeSBitShiftID();
-        boolean s= inst.getSBit();
-        int rd =inst.getRdField();
-        int opr=getAddrMode1(inst);
+        boolean s = inst.getSBit();
+        int rd = inst.getRdField();
+        int opr = getAddrMode1(inst);
         int right, dest;
 
         if (!exec) {
-            showDisasmALU(inst, id);
+            printALUDisasm(inst, id);
             return;
         }
 
@@ -1908,10 +1908,10 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeMla(InstructionARM inst, boolean exec) {
-        boolean s= inst.getSBit();
-        int rd=inst.getField(16, 4);
+        boolean s = inst.getSBit();
+        int rd = inst.getField(16, 4);
         int rn = inst.getField(12, 4);
-        int rs=inst.getField(8, 4);
+        int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
         int left, center, right, dest;
 
@@ -1951,10 +1951,10 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeMul(InstructionARM inst, boolean exec) {
-        boolean s= inst.getSBit();
+        boolean s = inst.getSBit();
         int rd = inst.getField(16, 4);
-        int rs=inst.getField(8, 4);
-        int rm =inst.getRmField();
+        int rs = inst.getField(8, 4);
+        int rm = inst.getRmField();
         int left, right, dest;
 
         if (!exec) {
@@ -1992,10 +1992,10 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSmlal(InstructionARM inst, boolean exec) {
-        boolean s= inst.getSBit();
+        boolean s = inst.getSBit();
         int rdhi = inst.getField(16, 4);
-        int rdlo =inst.getRdField();
-        int rs=inst.getField(8, 4);
+        int rdlo = inst.getRdField();
+        int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
         int left, right, desthi, destlo;
         long dest;
@@ -2039,9 +2039,9 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSmull(InstructionARM inst, boolean exec) {
-        boolean s= inst.getSBit();
-        int rdhi=inst.getField(16, 4);
-        int rdlo =inst.getRdField();
+        boolean s = inst.getSBit();
+        int rdhi = inst.getField(16, 4);
+        int rdlo = inst.getRdField();
         int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
         int left, right, desthi, destlo;
@@ -2085,9 +2085,9 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeUmlal(InstructionARM inst, boolean exec) {
-        boolean s= inst.getSBit();
-        int rdhi=inst.getField(16, 4);
-        int rdlo =inst.getRdField();
+        boolean s = inst.getSBit();
+        int rdhi = inst.getField(16, 4);
+        int rdlo = inst.getRdField();
         int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
         int left, right, desthi, destlo;
@@ -2132,9 +2132,9 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeUmull(InstructionARM inst, boolean exec) {
-        boolean s= inst.getSBit();
-        int rdhi=inst.getField(16, 4);
-        int rdlo =inst.getRdField();
+        boolean s = inst.getSBit();
+        int rdhi = inst.getField(16, 4);
+        int rdlo = inst.getRdField();
         int rs = inst.getField(8, 4);
         int rm = inst.getRmField();
         int left, right, desthi, destlo;
@@ -2180,11 +2180,11 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSmlalxy(InstructionARM inst, boolean exec) {
-        int rdhi=inst.getField(16, 4);
-        int rdlo =inst.getRdField();
-        int rs=inst.getField(8, 4);
-        boolean y= inst.getBit(6);
-        boolean x= inst.getBit(5);
+        int rdhi = inst.getField(16, 4);
+        int rdlo = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        boolean y = inst.getBit(6);
+        boolean x = inst.getBit(5);
         int rm = inst.getRmField();
 
         if (!exec) {
@@ -2215,11 +2215,11 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSmlaxy(InstructionARM inst, boolean exec) {
-        int rd=inst.getField(16, 4);
-        int rn =inst.getRdField();
-        int rs=inst.getField(8, 4);
-        boolean y= inst.getBit(6);
-        boolean x= inst.getBit(5);
+        int rd = inst.getField(16, 4);
+        int rn = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        boolean y = inst.getBit(6);
+        boolean x = inst.getBit(5);
         int rm = inst.getRmField();
 
         if (!exec) {
@@ -2250,11 +2250,11 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSmlawy(InstructionARM inst, boolean exec) {
-        int rd=inst.getField(16, 4);
-        int rn =inst.getRdField();
-        int rs=inst.getField(8, 4);
-        boolean y= inst.getBit(6);
-        int rm =inst.getRmField();
+        int rd = inst.getField(16, 4);
+        int rn = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        boolean y = inst.getBit(6);
+        int rm = inst.getRmField();
 
         if (!exec) {
             printDisasm(inst,
@@ -2284,11 +2284,11 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSmulxy(InstructionARM inst, boolean exec) {
-        int rd =inst.getRdField();
-        int rs=inst.getField(8, 4);
-        boolean y= inst.getBit(6);
-        boolean x= inst.getBit(5);
-        int rm =inst.getRmField();
+        int rd = inst.getRdField();
+        int rs = inst.getField(8, 4);
+        boolean y = inst.getBit(6);
+        boolean x = inst.getBit(5);
+        int rm = inst.getRmField();
 
         if (!exec) {
             printDisasm(inst,
@@ -2318,10 +2318,10 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSmulwy(InstructionARM inst, boolean exec) {
-        int rd=inst.getField(16, 4);
-        int rs=inst.getField(8, 4);
-        boolean y= inst.getBit(6);
-        int rm =inst.getRmField();
+        int rd = inst.getField(16, 4);
+        int rs = inst.getField(8, 4);
+        boolean y = inst.getBit(6);
+        int rm = inst.getRmField();
 
         if (!exec) {
             printDisasm(inst,
@@ -2349,9 +2349,9 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSwp(InstructionARM inst, boolean exec) {
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
-        int rm =inst.getRmField();
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int rm = inst.getRmField();
         int left, right, rot;
         int vaddr, paddr;
 
@@ -2532,9 +2532,9 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeLdrb(InstructionARM inst, boolean exec) {
-        boolean p= inst.getBit(24);
-        boolean w= inst.getBit(21);
-        int rn =inst.getRnField();
+        boolean p = inst.getBit(24);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getAddrMode2(inst);
         int vaddr, paddr, value;
@@ -2675,7 +2675,7 @@ public class ARMv5ExecStage extends ExecStage {
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
-        int offset=getAddrMode3(inst);
+        int offset = getAddrMode3(inst);
         int vaddr, paddr, value;
 
         if (!exec) {
@@ -2843,8 +2843,8 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeLdrd(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
-        boolean w= inst.getBit(21);
-        int rn =inst.getRnField();
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getAddrMode3(inst);
         int vaddr, paddr, value1, value2;
@@ -2895,7 +2895,7 @@ public class ARMv5ExecStage extends ExecStage {
     }
 
     public void executePld(InstructionARM inst, boolean exec) {
-        boolean r= inst.getBit(22);
+        boolean r = inst.getBit(22);
 
         if (!exec) {
             printDisasm(inst,
@@ -2916,9 +2916,9 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeStrt(InstructionARM inst, boolean exec) {
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
-        int offset=getAddrMode2(inst);
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getAddrMode2(inst);
         int vaddr, paddr;
 
         if (!exec) {
@@ -2960,9 +2960,9 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeStrbt(InstructionARM inst, boolean exec) {
-        int rn =inst.getRnField();
-        int rd =inst.getRdField();
-        int offset=getAddrMode2(inst);
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int offset = getAddrMode2(inst);
         int vaddr, paddr;
 
         if (!exec) {
@@ -3004,9 +3004,9 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeStrb(InstructionARM inst, boolean exec) {
-        boolean p= inst.getBit(24);
-        boolean w= inst.getBit(21);
-        int rn =inst.getRnField();
+        boolean p = inst.getBit(24);
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getAddrMode2(inst);
         int vaddr, paddr;
@@ -3060,7 +3060,7 @@ public class ARMv5ExecStage extends ExecStage {
      */
     public void executeStr(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
-        boolean w= inst.getBit(21);
+        boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getAddrMode2(inst);
@@ -3116,7 +3116,7 @@ public class ARMv5ExecStage extends ExecStage {
     public void executeStrh(InstructionARM inst, boolean exec) {
         boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
-        int rn =inst.getRnField();
+        int rn = inst.getRnField();
         int rd = inst.getRdField();
         int offset = getAddrMode3(inst);
         int vaddr, paddr;
@@ -3169,7 +3169,7 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeStrd(InstructionARM inst, boolean exec) {
-        boolean p= inst.getBit(24);
+        boolean p = inst.getBit(24);
         boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rd = inst.getRdField();
@@ -3225,7 +3225,7 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeLdm1(InstructionARM inst, boolean exec) {
-        boolean w= inst.getBit(21);
+        boolean w = inst.getBit(21);
         int rn = inst.getRnField();
         int rlist = inst.getRegListField();
         int vaddr, paddr, len;
@@ -3304,7 +3304,7 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeLdm2(InstructionARM inst, boolean exec) {
-        int rn =inst.getRnField();
+        int rn = inst.getRnField();
         int rlist = inst.getRegListField();
         int vaddr, paddr, v, mod;
 
@@ -3362,8 +3362,8 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeLdm3(InstructionARM inst, boolean exec) {
-        boolean w= inst.getBit(21);
-        int rn =inst.getRnField();
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
         int rlist = inst.getRegListField();
         int vaddr, paddr, len, v;
 
@@ -3441,9 +3441,9 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeStm1(InstructionARM inst, boolean exec) {
-        int pu =inst.getPUField();
-        boolean w= inst.getBit(21);
-        int rn =inst.getRnField();
+        int pu = inst.getPUField();
+        boolean w = inst.getBit(21);
+        int rn = inst.getRnField();
         int rlist = inst.getRegListField();
         int vaddr, paddr, len;
 
@@ -3498,8 +3498,8 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeStm2(InstructionARM inst, boolean exec) {
-        int pu =inst.getPUField();
-        int rn =inst.getRnField();
+        int pu = inst.getPUField();
+        int rn = inst.getRnField();
         int rlist = inst.getRegListField();
         int vaddr, paddr, v, mod;
 
@@ -3553,7 +3553,7 @@ public class ARMv5ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeBl(InstructionARM inst, boolean exec) {
-        boolean l= inst.getBit(24);
+        boolean l = inst.getBit(24);
         int imm24 = inst.getField(0, 24);
         int simm24 = (int) BitOp.signExt64(imm24, 24) << 2;
 

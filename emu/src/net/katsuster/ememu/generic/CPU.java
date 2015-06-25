@@ -13,7 +13,7 @@ public abstract class CPU extends MasterCore64
     private boolean raisedInterrupt;
 
     public CPU() {
-        fEnabledDisasm= false;
+        fEnabledDisasm = false;
         fPrintInstruction = false;
         fPrintRegs = false;
         raisedInterrupt = false;
@@ -24,7 +24,7 @@ public abstract class CPU extends MasterCore64
     }
 
     public void setEnabledDisasm(boolean b) {
-        fEnabledDisasm= b;
+        fEnabledDisasm = b;
     }
 
     public boolean isPrintInstruction() {
