@@ -196,8 +196,8 @@ public class ARMVersatile {
         intc1st.connectINTSource(14, uart2);
 
         //reset CPU
-        cpu.setDisasmMode(false);
-        cpu.setPrintDisasm(false);
+        cpu.setEnabledDisasm(false);
+        cpu.setPrintInstruction(false);
         cpu.setPrintRegs(false);
         cpu.doExceptionReset("Init.");
     }

@@ -1,61 +1,31 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.arm.core;
+
+import net.katsuster.ememu.generic.*;
 
 /**
- * CPU の基本クラス
+ * 命令の実行ステージ。
  *
  * @author katsuhiro
  */
-public abstract class CPU extends MasterCore64
-        implements INTDestination {
-    private boolean fEnabledDisasm;
-    private boolean fPrintInstruction;
-    private boolean fPrintRegs;
-    private boolean raisedInterrupt;
+public class ExecStage {
+    private CPU core;
 
-    public CPU() {
-        fEnabledDisasm= false;
-        fPrintInstruction = false;
-        fPrintRegs = false;
-        raisedInterrupt = false;
+    /**
+     * CPU コアの実行ステージを生成します。
+     *
+     * @param c 実行ステージを使う CPU コア
+     */
+    public ExecStage(CPU c) {
+        core = c;
     }
 
-    public boolean isEnabledDisasm() {
-        return fEnabledDisasm;
-    }
-
-    public void setEnabledDisasm(boolean b) {
-        fEnabledDisasm= b;
-    }
-
-    public boolean isPrintInstruction() {
-        return fPrintInstruction;
-    }
-
-    public void setPrintInstruction(boolean b) {
-        fPrintInstruction = b;
-    }
-
-    public boolean isPrintRegs() {
-        return fPrintRegs;
-    }
-
-    public void setPrintRegs(boolean b) {
-        fPrintRegs = b;
-    }
-
-    @Override
-    public boolean isRaisedInterrupt() {
-        return raisedInterrupt;
-    }
-
-    @Override
-    public void setRaisedInterrupt(boolean m) {
-        synchronized(this) {
-            raisedInterrupt = m;
-            if (m) {
-                notifyAll();
-            }
-        }
+    /**
+     * 実行ステージを使う CPU コアを取得します。
+     *
+     * @return 実行ステージを使う CPU コア
+     */
+    public CPU getCore() {
+        return core;
     }
 
     /**
@@ -69,8 +39,7 @@ public abstract class CPU extends MasterCore64
      * @return 読み出しが可能ならば true、不可能ならば false
      */
     public boolean tryRead_a32(int addr, int len) {
-        long addrl = addr & 0xffffffffL;
-        return tryRead(addrl, len);
+        return getCore().tryRead_a32(addr, len);
     }
 
     /**
@@ -83,8 +52,7 @@ public abstract class CPU extends MasterCore64
      * @return 指定したアドレスにあるデータ
      */
     public byte read8_a32(int addr) {
-        long addrl = addr & 0xffffffffL;
-        return read8(addrl);
+        return getCore().read8_a32(addr);
     }
 
     /**
@@ -97,8 +65,7 @@ public abstract class CPU extends MasterCore64
      * @return 指定したアドレスにあるデータ
      */
     public short read16_a32(int addr) {
-        long addrl = addr & 0xffffffffL;
-        return read16(addrl);
+        return getCore().read16_a32(addr);
     }
 
     /**
@@ -111,8 +78,7 @@ public abstract class CPU extends MasterCore64
      * @return 指定したアドレスにあるデータ
      */
     public int read32_a32(int addr) {
-        long addrl = addr & 0xffffffffL;
-        return read32(addrl);
+        return getCore().read32_a32(addr);
     }
 
     /**
@@ -125,8 +91,7 @@ public abstract class CPU extends MasterCore64
      * @return 指定したアドレスにあるデータ
      */
     public long read64_a32(int addr) {
-        long addrl = addr & 0xffffffffL;
-        return read64(addrl);
+        return getCore().read64_a32(addr);
     }
 
     /**
@@ -140,8 +105,7 @@ public abstract class CPU extends MasterCore64
      * @return 書き込みが可能ならば true、不可能ならば false
      */
     public boolean tryWrite_a32(int addr, int len) {
-        long addrl = addr & 0xffffffffL;
-        return tryWrite(addrl, len);
+        return getCore().tryWrite_a32(addr, len);
     }
 
     /**
@@ -154,8 +118,7 @@ public abstract class CPU extends MasterCore64
      * @param data 書き込むデータ
      */
     public void write8_a32(int addr, byte data) {
-        long addrl = addr & 0xffffffffL;
-        write8(addrl, data);
+        getCore().write8_a32(addr, data);
     }
 
     /**
@@ -168,8 +131,7 @@ public abstract class CPU extends MasterCore64
      * @param data 書き込むデータ
      */
     public void write16_a32(int addr, short data) {
-        long addrl = addr & 0xffffffffL;
-        write16(addrl, data);
+        getCore().write16_a32(addr, data);
     }
 
     /**
@@ -182,8 +144,7 @@ public abstract class CPU extends MasterCore64
      * @param data 書き込むデータ
      */
     public void write32_a32(int addr, int data) {
-        long addrl = addr & 0xffffffffL;
-        write32(addrl, data);
+        getCore().write32_a32(addr, data);
     }
 
     /**
@@ -196,8 +157,7 @@ public abstract class CPU extends MasterCore64
      * @param data 書き込むデータ
      */
     public void write64_a32(int addr, long data) {
-        long addrl = addr & 0xffffffffL;
-        write64(addrl, data);
+        getCore().write64_a32(addr, data);
     }
 
     /**
@@ -208,122 +168,85 @@ public abstract class CPU extends MasterCore64
      * @param operand   オペランドの文字列表記
      */
     public void printDisasm(Instruction inst, String operation, String operand) {
-        printInstruction(inst, operation, operand);
-        printRegs();
+        getCore().printDisasm(inst, operation, operand);
     }
-
-    /**
-     * 命令を逆アセンブルした結果を表示します。
-     *
-     * @param inst      命令
-     * @param operation 命令を表す文字列
-     * @param operand   オペランドを表す文字列
-     */
-    public void printInstruction(Instruction inst, String operation, String operand) {
-        if (!isPrintInstruction()) {
-            return;
-        }
-
-        System.out.print(instructionToString(inst, operation, operand));
-    }
-
-    /**
-     * 現在のレジスタを表示します。
-     */
-    public void printRegs() {
-        if (!isPrintRegs()) {
-            return;
-        }
-
-        System.out.print(regsToString());
-    }
-
-    /**
-     * 命令を逆アセンブルした結果の文字列表記を取得します。
-     *
-     * @param inst      命令
-     * @param operation 命令を表す文字列
-     * @param operand   オペランドを表す文字列
-     */
-    public abstract String instructionToString(Instruction inst, String operation, String operand);
-
-    /**
-     * 現在のレジスタの文字列表記を取得します。
-     */
-    public abstract String regsToString();
 
     /**
      * PC（プログラムカウンタ）の値を取得します。
      *
      * @return PC の値
      */
-    public abstract int getPC();
+    public int getPC() {
+        return getCore().getPC();
+    }
 
     /**
      * PC（プログラムカウンタ）の値を設定します。
      *
      * @param val 新しい PC の値
      */
-    public abstract void setPC(int val);
+    public void setPC(int val) {
+        getCore().setPC(val);
+    }
 
     /**
-     * PC（プログラムカウンタ）を次の命令に移します。
+     * PC を次の命令に移します。
      */
-    public abstract void nextPC();
+    public void nextPC() {
+        getCore().nextPC();
+    }
 
     /**
      * 指定したアドレス分だけ相対ジャンプします。
      *
      * PC + 相対アドレス を、
-     * 新たな PC（プログラムカウンタ）として設定します。
+     * 新たな PC として設定します。
      *
      * @param val 次に実行する命令の相対アドレス
      */
-    public abstract void jumpRel(int val);
+    public void jumpRel(int val) {
+        getCore().jumpRel(val);
+    }
 
     /**
-     * 命令から見えるレジスタ Rn の値を取得します。
-     *
-     * アーキテクチャによっては、
-     * レジスタそのものの値と、命令から見えるレジスタの値は異なる場合があります。
+     * レジスタ Rn の値を取得します。
      *
      * @param n レジスタ番号
      * @return レジスタの値
      */
-    public abstract int getReg(int n);
+    public int getReg(int n) {
+        return getCore().getReg(n);
+    }
 
     /**
-     * 命令から見えるレジスタ Rn の値を設定します。
-     *
-     * アーキテクチャによっては、
-     * レジスタそのものの値と、命令から見えるレジスタの値は異なる場合があります。
+     * レジスタ Rn の値を設定します。
      *
      * @param n   レジスタ番号
      * @param val 新しいレジスタの値
      */
-    public abstract void setReg(int n, int val);
+    public void setReg(int n, int val) {
+        getCore().setReg(n, val);
+    }
 
     /**
      * レジスタ Rn そのものの値を取得します。
      *
-     * アーキテクチャによっては、
-     * レジスタそのものの値と、命令から見えるレジスタの値は異なる場合があります。
-     *
      * @param n レジスタ番号
      * @return レジスタの値
      */
-    public abstract int getRegRaw(int n);
+    public int getRegRaw(int n) {
+        return getCore().getRegRaw(n);
+    }
 
     /**
      * レジスタ Rn そのもの値を設定します。
      *
-     * アーキテクチャによっては、
-     * レジスタそのものの値と、命令から見えるレジスタの値は異なる場合があります。
-     *
      * @param n   レジスタ番号
      * @param val 新しいレジスタの値
      */
-    public abstract void setRegRaw(int n, int val);
+    public void setRegRaw(int n, int val) {
+        getCore().setRegRaw(n, val);
+    }
 
     /**
      * レジスタ Rn の名前を取得します。
@@ -331,23 +254,7 @@ public abstract class CPU extends MasterCore64
      * @param n レジスタ番号
      * @return レジスタの名前
      */
-    public abstract String getRegName(int n);
-
-    /**
-     * 現在位置から 1命令だけ実行します。
-     */
-    public abstract void step();
-
-    @Override
-    public void run() {
-        try {
-            while (!shouldHalt()) {
-                step();
-            }
-        } catch (IllegalArgumentException e) {
-            setPrintRegs(true);
-            printRegs();
-            throw e;
-        }
+    public String getRegName(int n) {
+        return getCore().getRegName(n);
     }
 }
