@@ -656,7 +656,8 @@ public class ARMv5 extends CPU {
         default:
             //未定義
             //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
+            armExec.executeUnd(inst, exec);
+            break;
         }
     }
 
@@ -713,13 +714,13 @@ public class ARMv5 extends CPU {
                 break;
             case 1:
                 //swpb
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
-                //break;
+                armExec.executeSwpb(inst, exec);
+                break;
             default:
                 //未定義
                 //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                armExec.executeUnd(inst, exec);
+                break;
             }
         } else if (op == 1) {
             if (l) {
@@ -748,7 +749,7 @@ public class ARMv5 extends CPU {
         } else {
             //未定義
             //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
+            armExec.executeUnd(inst, exec);
         }
     }
 
@@ -853,27 +854,22 @@ public class ARMv5 extends CPU {
         case 0x5:
             if (!b22 && !b21) {
                 //qdsub
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                armExec.executeQdsub(inst, exec);
             } else if (!b22 && b21) {
                 //qdadd
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                armExec.executeQdadd(inst, exec);
             } else if (b22 && !b21) {
                 //qsub
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                armExec.executeQsub(inst, exec);
             } else {
                 //qadd
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                armExec.executeQadd(inst, exec);
             }
-            //break;
+            break;
         case 0x7:
             if (cond == InstructionARM.COND_AL && !b22 && b21) {
                 //bkpt
-                //TODO: Not implemented
-                throw new IllegalArgumentException("Sorry, not implemented.");
+                armExec.executeBkpt(inst, exec);
             } else {
                 //未定義
                 armExec.executeUnd(inst, exec);
@@ -913,10 +909,9 @@ public class ARMv5 extends CPU {
             break;
         default:
             //未定義
-            //armExec.executeUnd(inst, exec);
-            //break;
             //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
+            armExec.executeUnd(inst, exec);
+            break;
         }
     }
 
@@ -958,6 +953,7 @@ public class ARMv5 extends CPU {
 
         if (i && b4) {
             //未定義命令
+            //TODO: Not implemented
             armExec.executeUnd(inst, exec);
         } else if (l) {
             if (!p && !b && w) {
@@ -1021,6 +1017,7 @@ public class ARMv5 extends CPU {
             //ロードマルチプル、ストアマルチプル
             if (cond == InstructionARM.COND_NV) {
                 //未定義
+                //TODO: Not implemented
                 armExec.executeUnd(inst, exec);
             } else {
                 if (l) {

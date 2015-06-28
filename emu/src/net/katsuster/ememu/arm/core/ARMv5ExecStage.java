@@ -2343,6 +2343,139 @@ public class ARMv5ExecStage extends ExecStage {
     }
 
     /**
+     * 飽和減算命令（第2オペランドを2倍する）。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeQdsub(InstructionARM inst, boolean exec) {
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int rm = inst.getRmField();
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("qdsub%s", inst.getCondFieldName()),
+                    String.format("%s, %s, %s",
+                            getRegName(rd), getRegName(rm), getRegName(rn)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 飽和加算命令（第2オペランドを2倍する）。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeQdadd(InstructionARM inst, boolean exec) {
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int rm = inst.getRmField();
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("qdadd%s", inst.getCondFieldName()),
+                    String.format("%s, %s, %s",
+                            getRegName(rd), getRegName(rm), getRegName(rn)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 飽和減算命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeQsub(InstructionARM inst, boolean exec) {
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int rm = inst.getRmField();
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("qsub%s", inst.getCondFieldName()),
+                    String.format("%s, %s, %s",
+                            getRegName(rd), getRegName(rm), getRegName(rn)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 飽和加算命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeQadd(InstructionARM inst, boolean exec) {
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int rm = inst.getRmField();
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("qadd%s", inst.getCondFieldName()),
+                    String.format("%s, %s, %s",
+                            getRegName(rd), getRegName(rm), getRegName(rn)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * ブレークポイント命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBkpt(InstructionARM inst, boolean exec) {
+        int immh = inst.getField(8, 12);
+        int imml = inst.getField(0, 4);
+        int imm16 = (immh << 4) | imml;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("bkpt "),
+                    String.format("0x%04x", imm16));
+            return;
+        }
+
+        //raiseException(ARMv5.EXCEPT_ABT_INST, "bkpt instruction " +
+        //        String.format("imm:0x%08x.", imm));
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
      * スワップ命令。
      *
      * @param inst ARM 命令
@@ -2405,6 +2538,35 @@ public class ARMv5ExecStage extends ExecStage {
 
         write32_a32(paddr, left);
         setReg(rd, right);
+    }
+
+    /**
+     * バイトスワップ命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSwpb(InstructionARM inst, boolean exec) {
+        int rn = inst.getRnField();
+        int rd = inst.getRdField();
+        int rm = inst.getRmField();
+        int left, right, rot;
+        int vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst,
+                    String.format("swpb%s", inst.getCondFieldName()),
+                    String.format("%s, %s, [%s]",
+                            getRegName(rd), getRegName(rm), getRegName(rn)));
+            return;
+        }
+
+        if (!inst.satisfiesCond(getCPSR())) {
+            return;
+        }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     /**
@@ -3902,5 +4064,8 @@ public class ARMv5ExecStage extends ExecStage {
 
         raiseException(ARMv5.EXCEPT_ABT_INST, "Warning: Undefined instruction " +
                 String.format("inst:0x%08x.", inst.getInst()));
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 }
