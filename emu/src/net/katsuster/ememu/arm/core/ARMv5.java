@@ -23,6 +23,7 @@ public class ARMv5 extends CPU {
     public static final int INTSRC_FIQ = 1;
 
     private ARMv5ExecStage armExec;
+    private Thumbv2ExecStage thumbExec;
 
     private ARMRegFile regfile;
     private CoProc[] coProcs;
@@ -44,6 +45,7 @@ public class ARMv5 extends CPU {
         cpStd = new CoProcStdv5(15, this);
 
         armExec = new ARMv5ExecStage(this);
+        thumbExec = new Thumbv2ExecStage(this);
 
         regfile = new ARMRegFile();
         coProcs = new CoProc[16];
@@ -479,8 +481,51 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeOthers(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        boolean b12 = inst.getBit(12);
+
+        if (!b12) {
+            //PC, SP への add
+            boolean sp = inst.getBit(11);
+
+            if (!sp) {
+                //add(5), PC への加算
+                thumbExec.executeAdd5(inst, exec);
+            } else {
+                //add(6), SP への加算
+                thumbExec.executeAdd6(inst, exec);
+            }
+        } else {
+            //その他の命令
+            int op = inst.getField(8, 4);
+            boolean b7 = inst.getBit(7);
+
+            switch (op) {
+            case 0x0:
+                //スタックポインタの加減算
+                if (!b7) {
+                    //add(7)
+                    thumbExec.executeAdd7(inst, exec);
+                } else {
+                    //sub(7)
+                    thumbExec.executeSub4(inst, exec);
+                }
+                break;
+            case 0x4: //0b0100
+            case 0x5: //0b0101
+                //push
+                thumbExec.executePush(inst, exec);
+                break;
+            case 0xc: //0b1100
+            case 0xd: //0b1101
+                //pop
+                thumbExec.executePop(inst, exec);
+                break;
+            case 0xe:
+                //bkpt
+                thumbExec.executeBkpt(inst, exec);
+                break;
+            }
+        }
     }
 
     /**
@@ -492,6 +537,39 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeLdmult(InstructionThumb inst, boolean exec) {
+        boolean b12 = inst.getBit(12);
+
+        if (!b12) {
+            //ロードストアマルチプル
+            boolean l = inst.getBit(11);
+
+            if (l) {
+                //ldmia
+                //thumbExec.executeLdmia(inst, exec);
+            } else {
+                //stmia
+                //thumbExec.executeStmia(inst, exec);
+            }
+        } else {
+            //分岐命令
+            int cond = inst.getField(8, 4);
+
+            switch (cond) {
+            case InstructionARM.COND_AL:
+                //未定義命令
+                //thumbExec.executeUnd(inst, exec);
+                break;
+            case InstructionARM.COND_NV:
+                //swi
+                //thumbExec.executeSwi(inst, exec);
+                break;
+            default:
+                //b
+                //thumbExec.executeB(inst, exec);
+                break;
+            }
+        }
+
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
@@ -509,16 +587,16 @@ public class ARMv5 extends CPU {
 
         switch (h) {
         case 0x0:
-            //B(無条件分岐)命令
+            //b(無条件分岐)命令
             break;
         case 0x1:
-            //BLX, 未定義命令
+            //blx, 未定義命令
             break;
         case 0x2:
-            //BL/BLX 命令
+            //bl/blx 命令
             break;
         case 0x3:
-            //BL 命令
+            //bl 命令
             break;
         default:
             //異常な値
@@ -1671,6 +1749,11 @@ public class ARMv5 extends CPU {
 
         //逆アセンブルします
         if (isEnabledDisasm()) {
+            disasm(inst);
+        }
+
+        //FIXME: Thumb モードの時は必ず逆アセンブルします
+        if (getCPSR().getTBit()) {
             disasm(inst);
         }
 
