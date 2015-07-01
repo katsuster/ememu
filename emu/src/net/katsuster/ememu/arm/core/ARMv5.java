@@ -665,7 +665,7 @@ public class ARMv5 extends CPU {
             decodeALUOther(inst, exec);
             break;
         default:
-            armExec.executeALU(inst, exec, id);
+            decodeALUCommon(inst, exec, id);
             break;
         }
     }
@@ -685,7 +685,7 @@ public class ARMv5 extends CPU {
             decodeALUOther(inst, exec);
             break;
         default:
-            armExec.executeALU(inst, exec, id);
+            decodeALUCommon(inst, exec, id);
             break;
         }
     }
@@ -852,7 +852,7 @@ public class ARMv5 extends CPU {
             armExec.executeUnd(inst, exec);
             break;
         default:
-            armExec.executeALU(inst, exec, id);
+            decodeALUCommon(inst, exec, id);
             break;
         }
     }
@@ -990,6 +990,76 @@ public class ARMv5 extends CPU {
             //TODO: Not implemented
             armExec.executeUnd(inst, exec);
             break;
+        }
+    }
+
+    /**
+     * イミディエートシフトオペランド、レジスタシフトオペランド、
+     * イミディエートを取るデータ処理命令に共通する命令をデコードします。
+     *
+     * 下記の種類の命令を扱います。
+     * and, eor, sub, rsb,
+     * add, adc, sbc, rsc,
+     * tst, teq, cmp, cmn,
+     * orr, mov, bic, mvn,
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     * @param id   オペコードフィールドと S ビットが示す演算の ID
+     */
+    public void decodeALUCommon(InstructionARM inst, boolean exec, int id) {
+        switch (id) {
+        case InstructionARM.OPCODE_S_AND:
+            armExec.executeALUAnd(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_EOR:
+            armExec.executeALUEor(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_SUB:
+            armExec.executeALUSub(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_RSB:
+            armExec.executeALURsb(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_ADD:
+            armExec.executeALUAdd(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_ADC:
+            armExec.executeALUAdc(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_SBC:
+            armExec.executeALUSbc(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_RSC:
+            armExec.executeALURsc(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_TST:
+            armExec.executeALUTst(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_TEQ:
+            armExec.executeALUTeq(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_CMP:
+            armExec.executeALUCmp(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_CMN:
+            armExec.executeALUCmn(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_ORR:
+            armExec.executeALUOrr(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_MOV:
+            armExec.executeALUMov(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_BIC:
+            armExec.executeALUBic(inst, exec);
+            break;
+        case InstructionARM.OPCODE_S_MVN:
+            armExec.executeALUMvn(inst, exec);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown opcode S-bit ID " +
+                    String.format("%d.", id));
         }
     }
 

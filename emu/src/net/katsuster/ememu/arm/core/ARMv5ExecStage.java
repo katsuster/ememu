@@ -417,6 +417,24 @@ public class ARMv5ExecStage extends ExecStage {
                         inst.getInst(), shift));
     }
 
+    /**
+     * アドレシングモード 1 - データ処理オペランド、
+     * レジスタシフトのキャリーアウトを取得します。
+     *
+     * 条件:
+     * I ビット（ビット[25]）: 0
+     * ビット[4]: 1
+     *
+     * 該当するオペランド:
+     * 数値はビット[6:4] の値を示す。
+     * 0b001: データ処理オペランド - レジスタ論理左シフト
+     * 0b011: データ処理オペランド - レジスタ論理右シフト
+     * 0b101: データ処理オペランド - レジスタ算術右シフト
+     * 0b111: データ処理オペランド - レジスタ右ローテート
+     *
+     * @param inst ARM 命令
+     * @return キャリーアウトする場合は true、そうでなければ false
+     */
     public boolean getAddrMode1CarryRegShift(InstructionARM inst) {
         int shift = inst.getField(5, 2);
         int rs = inst.getField(8, 4);
@@ -1137,75 +1155,6 @@ public class ARMv5ExecStage extends ExecStage {
             getCPSR().setValue(dest);
         } else {
             getSPSR().setValue(dest);
-        }
-    }
-
-    /**
-     * データ処理命令を実行します。
-     *
-     * 下記の種類の命令を扱います。
-     * and, eor, sub, rsb,
-     * add, adc, sbc, rsc,
-     * tst, teq, cmp, cmn,
-     * orr, mov, bic, mvn,
-     *
-     * @param inst ARM 命令
-     * @param exec デコードと実行なら true、デコードのみなら false
-     * @param id   オペコードフィールドと S ビットが示す演算の ID
-     */
-    public void executeALU(InstructionARM inst, boolean exec, int id) {
-        switch (id) {
-        case InstructionARM.OPCODE_S_AND:
-            executeALUAnd(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_EOR:
-            executeALUEor(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_SUB:
-            executeALUSub(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_RSB:
-            executeALURsb(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_ADD:
-            executeALUAdd(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_ADC:
-            executeALUAdc(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_SBC:
-            executeALUSbc(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_RSC:
-            executeALURsc(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_TST:
-            executeALUTst(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_TEQ:
-            executeALUTeq(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_CMP:
-            executeALUCmp(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_CMN:
-            executeALUCmn(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_ORR:
-            executeALUOrr(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_MOV:
-            executeALUMov(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_BIC:
-            executeALUBic(inst, exec);
-            break;
-        case InstructionARM.OPCODE_S_MVN:
-            executeALUMvn(inst, exec);
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown opcode S-bit ID " +
-                    String.format("%d.", id));
         }
     }
 
@@ -3056,6 +3005,12 @@ public class ARMv5ExecStage extends ExecStage {
         }
     }
 
+    /**
+     * データのプリロード命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executePld(InstructionARM inst, boolean exec) {
         boolean r = inst.getBit(22);
 
@@ -4030,6 +3985,12 @@ public class ARMv5ExecStage extends ExecStage {
         }
     }
 
+    /**
+     * ソフトウェア割り込み命令。
+     *
+     * @param inst ARM 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
     public void executeSwi(InstructionARM inst, boolean exec) {
         int imm24 = inst.getField(0, 24);
 
