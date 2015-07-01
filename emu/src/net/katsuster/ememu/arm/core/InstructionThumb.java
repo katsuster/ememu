@@ -96,4 +96,69 @@ public class InstructionThumb extends Instruction {
     public static int getRdField(int inst) {
         return BitOp.getField32(inst, 0, 3);
     }
+
+    /**
+     * Thumb 命令のレジスタリストフィールド（ビット [7:0]）を取得します。
+     *
+     * ロードマルチプル、ストアマルチプル命令に存在し、
+     * ロード、ストア対象となるレジスタの一覧を示します。
+     *
+     * @return レジスタリストフィールド
+     */
+    public int getRegListField() {
+        return getRegListField(getInst());
+    }
+
+    /**
+     * Thumb 命令のレジスタリストフィールド（ビット [7:0]）を取得します。
+     *
+     * ロードマルチプル、ストアマルチプル命令に存在し、
+     * ロード、ストア対象となるレジスタの一覧を示します。
+     *
+     * @param inst Thumb 命令
+     * @return レジスタリストフィールド
+     */
+    public static int getRegListField(int inst) {
+        return BitOp.getField32(inst, 0, 8);
+    }
+
+    /**
+     * Thumb 命令のレジスタリストフィールドの名前を取得します。
+     *
+     * ロードマルチプル、ストアマルチプル命令に存在し、
+     * ロード、ストア対象となるレジスタの一覧を示します。
+     *
+     * @return レジスタリストに含まれるレジスタの名前一覧
+     */
+    public String getRegListFieldName() {
+        return getRegListFieldName(getRegListField(), 8);
+    }
+
+    /**
+     * 命令のレジスタリストフィールドの名前を取得します。
+     *
+     * このフィールドは、
+     * ロードマルチプル、ストアマルチプル命令にのみ存在します。
+     *
+     * @param rlist レジスタリストフィールド
+     * @param len   レジスタリストフィールドのビット長
+     * @return レジスタリストに含まれるレジスタの名前一覧
+     */
+    public static String getRegListFieldName(int rlist, int len) {
+        StringBuilder sb = new StringBuilder();
+        int i, cnt;
+
+        cnt = 0;
+        for (i = 0; i < len; i++) {
+            if (BitOp.getBit32(rlist, i)) {
+                if (cnt != 0) {
+                    sb.append(", ");
+                }
+                sb.append(String.format("r%d", i));
+                cnt += 1;
+            }
+        }
+
+        return sb.toString();
+    }
 }

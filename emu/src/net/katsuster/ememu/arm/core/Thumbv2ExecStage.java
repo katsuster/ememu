@@ -3,7 +3,7 @@ package net.katsuster.ememu.arm.core;
 import net.katsuster.ememu.generic.*;
 
 /**
- * ARMv5 の Thumb v2 命令の実行ステージ。
+ * Thumb v2 命令の実行ステージ。
  *
  * 参考: ARM アーキテクチャリファレンスマニュアル Second Edition
  * ARM DDI0100DJ
@@ -102,6 +102,60 @@ public class Thumbv2ExecStage extends ExecStage {
     }
 
     /**
+     * 小さいイミディエート加算命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAdd1(InstructionThumb inst, boolean exec) {
+        int imm3 = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "adds",
+                    String.format("%s, %s, %s",
+                            getRegName(rd), getRegName(rn),
+                            String.format("#%d    ; 0x%x", imm3, imm3)));
+            return;
+        }
+
+        left = getReg(rn);
+        right = imm3;
+        dest = left + right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(IntegerExt.carryFrom(left, right));
+        getCPSR().setVBit(IntegerExt.overflowFrom(left, right, true));
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * イミディエート加算命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAdd2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * レジスタ加算命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAdd3(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
      * PC への加算命令。
      *
      * @param inst Thumb 命令
@@ -135,6 +189,39 @@ public class Thumbv2ExecStage extends ExecStage {
     }
 
     /**
+     * 小さいイミディエート減算命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSub1(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * イミディエート減算命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSub2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * レジスタ減算命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSub3(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
      * SP への減算（7ビットイミディエート）命令。
      *
      * @param inst Thumb 命令
@@ -146,14 +233,141 @@ public class Thumbv2ExecStage extends ExecStage {
     }
 
     /**
+     * イミディエートとの比較命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeCmp1(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * イミディエートの移動命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeMov1(InstructionThumb inst, boolean exec) {
+        int rd = inst.getField(8, 3);
+        int imm8 = inst.getField(0, 8);
+        int right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "movs",
+                    String.format("%s, %s",
+                            getRegName(rd),
+                            String.format("#%d    ; 0x%x", imm8, imm8)));
+            return;
+        }
+
+        right = imm8;
+        dest = right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        //C flag is unaffected
+        //V flag is unaffected
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * イミディエート論理左シフト命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLsl1(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * イミディエート論理右シフト命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLsr1(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * イミディエート算術右シフト命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAsr1(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
      * プッシュ命令。
      *
      * @param inst Thumb 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executePush(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        boolean br = inst.getBit(8);
+        int rlist = inst.getRegListField();
+        int vaddr, paddr, len;
+
+        if (!exec) {
+            printDisasm(inst, "push",
+                    String.format("{%s%s%s}",
+                            inst.getRegListFieldName(),
+                            (inst.getRegListField() != 0 && br) ? ", " : "",
+                            (br) ? "lr" : ""));
+            return;
+        }
+
+        vaddr = getReg(13) - (Integer.bitCount(rlist) * 4);
+        len = -(Integer.bitCount(rlist) * 4);
+        if (br) {
+            vaddr -= 4;
+            len -= 4;
+        }
+        for (int i = 0; i < 8; i++) {
+            if ((rlist & (1 << i)) == 0) {
+                continue;
+            }
+
+            paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), false);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return;
+            }
+
+            if (!tryWrite_a32(paddr, 4)) {
+                raiseException(ARMv5.EXCEPT_ABT_DATA,
+                        String.format("push [%08x]", paddr));
+                return;
+            }
+            write32_a32(paddr, getReg(i));
+            vaddr += 4;
+        }
+        if (br) {
+            paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), false);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return;
+            }
+
+            if (!tryWrite_a32(paddr, 4)) {
+                raiseException(ARMv5.EXCEPT_ABT_DATA,
+                        String.format("push [%08x]", paddr));
+                return;
+            }
+            write32_a32(paddr, getReg(14));
+            vaddr += 4;
+        }
+
+        setReg(13, getReg(13) + len);
     }
 
     /**

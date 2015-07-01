@@ -416,8 +416,50 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeAddSub(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int op = inst.getField(11, 2);
+        int opc = inst.getField(9, 2);
+
+        switch (op) {
+        case 0x0:
+            //lsl(1)
+            thumbExec.executeLsl1(inst, exec);
+            break;
+        case 0x1:
+            //lsr(1)
+            thumbExec.executeLsr1(inst, exec);
+            break;
+        case 0x2:
+            //asr(1)
+            thumbExec.executeAsr1(inst, exec);
+            break;
+        case 0x3:
+            //レジスタ、イミディエート加算、減算
+            switch (opc) {
+            case 0x0:
+                //add(3), レジスタ加算
+                thumbExec.executeAdd3(inst, exec);
+                break;
+            case 0x1:
+                //sub(3), レジスタ減算
+                thumbExec.executeSub3(inst, exec);
+                break;
+            case 0x2:
+                //add(1), 小さいイミディエート加算
+                thumbExec.executeAdd1(inst, exec);
+                break;
+            case 0x3:
+                //sub(1), 小さいイミディエート減算
+                thumbExec.executeSub1(inst, exec);
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal opc(AddSub) bits " +
+                        String.format("opc:0x%02x.", opc));
+            }
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal op(AddSub) bits " +
+                    String.format("op:0x%02x.", op));
+        }
     }
 
     /**
@@ -429,8 +471,29 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeALUImm(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int op = inst.getField(11, 2);
+
+        switch (op) {
+        case 0x0:
+            //mov(1)
+            thumbExec.executeMov1(inst, exec);
+            break;
+        case 0x1:
+            //cmp(1)
+            thumbExec.executeCmp1(inst, exec);
+            break;
+        case 0x2:
+            //add(2)
+            thumbExec.executeAdd2(inst, exec);
+            break;
+        case 0x3:
+            //sub(2)
+            thumbExec.executeSub2(inst, exec);
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal op(ALLUImm) bits " +
+                    String.format("op:0x%02x.", op));
+        }
     }
 
     /**
@@ -1824,6 +1887,8 @@ public class ARMv5 extends CPU {
 
         //FIXME: Thumb モードの時は必ず逆アセンブルします
         if (getCPSR().getTBit()) {
+            setPrintInstruction(true);
+            setPrintRegs(true);
             disasm(inst);
         }
 

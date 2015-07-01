@@ -630,24 +630,25 @@ public class InstructionARM extends Instruction {
      * @return レジスタリストに含まれるレジスタの名前一覧
      */
     public String getRegListFieldName() {
-        return getRegListFieldName(getRegListField());
+        return getRegListFieldName(getRegListField(), 16);
     }
 
     /**
-     * ARM 命令のレジスタリストフィールドの名前を取得します。
+     * 命令のレジスタリストフィールドの名前を取得します。
      *
      * このフィールドは、
      * ロードマルチプル、ストアマルチプル命令にのみ存在します。
      *
      * @param rlist レジスタリストフィールド
+     * @param len   レジスタリストフィールドのビット長
      * @return レジスタリストに含まれるレジスタの名前一覧
      */
-    public static String getRegListFieldName(int rlist) {
+    public static String getRegListFieldName(int rlist, int len) {
         StringBuilder sb = new StringBuilder();
         int i, cnt;
 
         cnt = 0;
-        for (i = 0; i < 16; i++) {
+        for (i = 0; i < len; i++) {
             if (BitOp.getBit32(rlist, i)) {
                 if (cnt != 0) {
                     sb.append(", ");
