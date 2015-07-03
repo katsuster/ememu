@@ -25,6 +25,7 @@ export CROSS_COMPILE=/home/username/gcc-linaro-arm-linux-gnueabihf-4.9-2014.07_l
 cd linux
 make KBUILD_DEFCONFIG=versatile_defconfig defconfig
 make -j4
-
+make modules
+make modules_install INSTALL_MOD_PATH=/path/to/initramfs
 
 以上です。
