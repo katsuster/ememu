@@ -30,9 +30,7 @@ public class ARMVersatile {
 
     public void setup(ARMv5 cpu, Bus64 bus, RAM ramMain) {
         //TODO: implement MPMC controller...
-        RAM mpmc_c0_0 = ramMain;
-        RAM mpmc_c0_1 = new RAM(4 * 1024);
-        RAM mpmc_c1 = new RAM(4 * 1024);
+        RAM mpmc_c0_c1 = ramMain;
 
         SysBaseboard sysBoard = new SysBaseboard();
 
@@ -79,6 +77,7 @@ public class ARMVersatile {
         RAM ssmc_c0 = new RAM(4 * 1024);
         RAM ssmc_c1 = new RAM(256 * 1024);
         RAM ssmc_c2 = new RAM(4 * 1024);
+        RAM ssmc_c3 = new RAM(4 * 1024);
         RAM pci_area = new RAM(4 * 1024);
         //TODO: implement MBX Graphics controller...
         RAM mbx = new RAM(4 * 1024);
@@ -90,10 +89,13 @@ public class ARMVersatile {
         bus.addMasterCore(cpu);
 
         //Memory map of versatile
-        //  0x00000000 - 0x03ffffff: MPMC Chip Select0, bottom of SDRAM
-        //  0x04000000 - 0x07ffffff: MPMC Chip Select0, top of SDRAM
-        //  0x08000000 - 0x0fffffff: MPMC Chip Select1
-        //  0x10000000 - 0x13ffffff: CS5
+        //  0x00000000 - 0x0fffffff: MPMC Chip Select0-1, SDRAM
+        //    (tentative main RAM map)
+        //    0x00000100 - 0x000010ff: ATAG_XXX -> pagetable
+        //    0x00000000 - 0x00007fff: Linux pagetable
+        //    0x00008000 - 0x007fffff: Linux Image
+        //    0x00800000 - 0x00ffffff: Linux initramfs
+        //  0x10000000 - 0x13ffffff: Registers
         //    0x10000000 - 0x10000fff: System Registers
         //    0x10001000 - 0x10001fff: PCI configuration registers
         //    0x10002000 - 0x10002fff: Serial Bus Interface(for Real Time Clock, DS1338)
@@ -130,18 +132,12 @@ public class ARMVersatile {
         //  0x30000000 - 0x33ffffff: SSMC Chip Select0(disk on chip)
         //  0x34000000 - 0x37ffffff: SSMC Chip Select1(NOR flash)
         //  0x38000000 - 0x3bffffff: SSMC Chip Select2(SRAM)
+        //  0x3c000000 - 0x3fffffff: SSMC Chip Select3(SRAM)
         //  0x40000000 - 0x40ffffff: MBX Graphics Accelerator Interface
         //  0x41000000 - 0x6fffffff: PCI interface
         //  0x70000000 - 0x7fffffff: MPMC Chip Select2-3(dynamic memory)
-        //    (tentative main RAM map)
-        //    0x70000000 - 0x70007fff: Linux pagetable
-        //    0x70008000 - 0x707fffff: Linux Image
-        //    0x70800000 - 0x70ffffff: Linux initramfs
-        //    0x71fff000 - 0x71ffffff: ATAG_XXX
         //  0x80000000 - 0xffffffff: Reserved for Logic Tile Expansion
-        bus.addSlaveCore(mpmc_c0_0, 0x00000000L, 0x03ffffffL);
-        bus.addSlaveCore(mpmc_c0_1, 0x04000000L, 0x07ffffffL);
-        bus.addSlaveCore(mpmc_c1, 0x08000000L, 0x0fffffffL);
+        bus.addSlaveCore(mpmc_c0_c1, 0x00000000L, 0x0fffffffL);
 
         bus.addSlaveCore(sysBoard.getSlaveCore(), 0x10000000L, 0x10000fffL);
         bus.addSlaveCore(pci_conf, 0x10001000L, 0x10001fffL);
@@ -181,6 +177,7 @@ public class ARMVersatile {
         bus.addSlaveCore(ssmc_c0, 0x30000000L, 0x33ffffffL);
         bus.addSlaveCore(ssmc_c1, 0x34000000L, 0x37ffffffL);
         bus.addSlaveCore(ssmc_c2, 0x38000000L, 0x3bffffffL);
+        bus.addSlaveCore(ssmc_c3, 0x3c000000L, 0x3fffffffL);
         bus.addSlaveCore(mbx, 0x40000000L, 0x40ffffffL);
         bus.addSlaveCore(pci_area, 0x41000000L, 0x6fffffffL);
         //main RAM
