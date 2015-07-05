@@ -26,6 +26,6 @@ export CROSS_COMPILE=/home/username/arm-2013.11/bin/arm-none-linux-gnueabi-
 cd busybox-1.22.1
 make defconfig
 make -j4
-
+make install CONFIG_PREFIX=/path/to/initramfs
 
 以上です。
