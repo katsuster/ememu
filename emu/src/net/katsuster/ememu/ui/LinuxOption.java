@@ -4,16 +4,16 @@ import java.io.*;
 import java.net.*;
 
 /**
- * エミュレータ起動時に渡すオプション。
+ * Linux 起動時に渡すオプション。
  *
  * @author katsuhiro
  */
-public class EmulatorOption {
+public class LinuxOption {
     private URI kimage;
     private URI initram;
     private String cmdline;
 
-    public EmulatorOption() {
+    public LinuxOption() {
         try {
             kimage = new URI("");
             initram = new URI("");

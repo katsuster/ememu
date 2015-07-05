@@ -23,19 +23,17 @@ public class MainApplet extends JApplet {
     private JSplitPane panel;
     private SystemPane spane;
     private JTabbedPane tabPane;
-    private JTextField txtImage, txtInitram, txtCmdline;
+    private LinuxOptionPanel optsPanel;
     private Emulator emu;
     private VirtualTerminal[] vttyAMA;
 
-    private EmulatorOption opts;
-
     public MainApplet() {
         vttyAMA = new VirtualTerminal[3];
-        opts = new EmulatorOption();
     }
 
     @Override
     public void init() {
+        LinuxOption opts = new LinuxOption();
         String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/ememu/Image-3.18.14";
         String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/ememu/initramfs.gz";
         String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1";
@@ -44,6 +42,7 @@ public class MainApplet extends JApplet {
 
         super.init();
 
+        //options of applet
         if (getParameter(PARAM_PROXY_HOST) != null &&
                 getParameter(PARAM_PROXY_PORT) != null) {
             System.setProperty("proxySet", "true");
@@ -76,6 +75,7 @@ public class MainApplet extends JApplet {
                     PARAM_COMMAND_LINE);
         }
 
+        //options
         try {
             opts.setKernelImage(new URI(kimage));
             opts.setInitramfsImage(new URI(initram));
@@ -96,29 +96,24 @@ public class MainApplet extends JApplet {
 
         //stdout
         panel = new JSplitPane();
+        panel.setDividerSize(4);
+
         spane = new SystemPane(systemOut);
         System.setOut(spane.getOutputStream());
         panel.setLeftComponent(spane);
 
-        JPanel panelRight = new JPanel(new GridLayout(5, 2, 5, 5), true);
+        JPanel panelRight = new JPanel(new GridLayout(3, 1, 5, 5), true);
+        optsPanel = new LinuxOptionPanel(opts);
         JButton btnReset = new JButton("Reset");
         JButton btnClear = new JButton("Clear");
-        txtImage = new JTextField(opts.getKernelImage().toString());
-        txtInitram = new JTextField(opts.getInitramfsImage().toString());
-        txtCmdline = new JTextField(opts.getCommandLine());
 
+        panelRight.add(optsPanel);
         btnReset.addActionListener(listenButton);
         btnReset.setActionCommand("reset");
+        panelRight.add(btnReset);
         btnClear.addActionListener(listenButton);
         btnClear.setActionCommand("clear");
-        panelRight.add(btnReset);
         panelRight.add(btnClear);
-        panelRight.add(new JLabel("Kernel Image", SwingConstants.RIGHT));
-        panelRight.add(txtImage);
-        panelRight.add(new JLabel("InitramFS Image", SwingConstants.RIGHT));
-        panelRight.add(txtInitram);
-        panelRight.add(new JLabel("Command line", SwingConstants.RIGHT));
-        panelRight.add(txtCmdline);
         panelRight.setPreferredSize(new Dimension(200, 400));
         panel.setRightComponent(panelRight);
 
@@ -133,15 +128,6 @@ public class MainApplet extends JApplet {
         System.out.println("start");
 
         super.start();
-
-        //options
-        try {
-            opts.setKernelImage(new URI(txtImage.getText()));
-            opts.setInitramfsImage(new URI(txtInitram.getText()));
-            opts.setCommandLine(txtCmdline.getText());
-        } catch (URISyntaxException e) {
-            //ignored
-        }
 
         //stdout
         spane = new SystemPane(systemOut);
@@ -161,7 +147,7 @@ public class MainApplet extends JApplet {
         tabPane.setSelectedIndex(1);
 
         emu = new Emulator();
-        emu.setOption(opts);
+        emu.setOption(optsPanel.getOption());
         for (int i = 0; i < vttyAMA.length; i++) {
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());
             emu.getBoard().setUARTOutputStream(i, vttyAMA[i].getOutputStream());

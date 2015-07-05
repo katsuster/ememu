@@ -15,14 +15,14 @@ class Emulator extends Thread {
     private RAM ram;
     private ARMVersatile board;
 
-    private EmulatorOption opts;
+    private LinuxOption opts;
 
     public Emulator() {
         cpu = new ARMv5();
         bus = new Bus64();
         ram = new RAM(64 * 1024 * 1024);
         board = new ARMVersatile();
-        opts = new EmulatorOption();
+        opts = new LinuxOption();
     }
 
     /**
@@ -68,7 +68,7 @@ class Emulator extends Thread {
      *
      * @return エミュレータに渡すオプション
      */
-    public EmulatorOption getOption() {
+    public LinuxOption getOption() {
         return opts;
     }
 
@@ -77,7 +77,7 @@ class Emulator extends Thread {
      *
      * @param op エミュレータに渡すオプション
      */
-    public void setOption(EmulatorOption op) {
+    public void setOption(LinuxOption op) {
         opts = op;
     }
 
@@ -92,7 +92,7 @@ class Emulator extends Thread {
         kimage = opts.getKernelImage().toString();
         initram = opts.getInitramfsImage().toString();
         cmdline = opts.getCommandLine();
-        InnerBootloader.bootFromURI(cpu, ram, kimage, initram, cmdline);
+        ARMLinuxLoader.bootFromURI(cpu, ram, kimage, initram, cmdline);
 
         //start cores
         bus.startAllSlaveCores();

@@ -11,7 +11,7 @@ import net.katsuster.ememu.arm.core.ARMv5;
  *
  * @author katsuhiro
  */
-public class InnerBootloader {
+public class ARMLinuxLoader {
     public static final int ATAG_NONE      = 0x00000000;
     public static final int ATAG_CORE      = 0x54410001;
     public static final int ATAG_MEM       = 0x54410002;

@@ -17,16 +17,12 @@ public class MainWindow {
     private JSplitPane panel;
     private SystemPane spane;
     private JTabbedPane tabPane;
-    private JTextField txtImage, txtInitram, txtCmdline;
+    private LinuxOptionPanel optsPanel;
     private Emulator emu;
     private VirtualTerminal[] vttyAMA;
 
-    private EmulatorOption opts;
-
-    public MainWindow(EmulatorOption op) {
+    public MainWindow(LinuxOption opts) {
         vttyAMA = new VirtualTerminal[3];
-
-        opts = op;
 
         //window
         JFrame win = new JFrame("ememu");
@@ -44,29 +40,24 @@ public class MainWindow {
 
         //stdout
         panel = new JSplitPane();
+        panel.setDividerSize(4);
+
         spane = new SystemPane(systemOut);
         System.setOut(spane.getOutputStream());
         panel.setLeftComponent(spane);
 
-        JPanel panelRight = new JPanel(new GridLayout(5, 2, 5, 5), true);
+        JPanel panelRight = new JPanel(new GridLayout(3, 1, 5, 5), true);
+        optsPanel = new LinuxOptionPanel(opts);
         JButton btnReset = new JButton("Reset");
         JButton btnClear = new JButton("Clear");
-        txtImage = new JTextField(opts.getKernelImage().toString());
-        txtInitram = new JTextField(opts.getInitramfsImage().toString());
-        txtCmdline = new JTextField(opts.getCommandLine());
 
+        panelRight.add(optsPanel);
         btnReset.addActionListener(listenButton);
         btnReset.setActionCommand("reset");
+        panelRight.add(btnReset);
         btnClear.addActionListener(listenButton);
         btnClear.setActionCommand("clear");
-        panelRight.add(btnReset);
         panelRight.add(btnClear);
-        panelRight.add(new JLabel("Kernel Image", SwingConstants.RIGHT));
-        panelRight.add(txtImage);
-        panelRight.add(new JLabel("InitramFS Image", SwingConstants.RIGHT));
-        panelRight.add(txtInitram);
-        panelRight.add(new JLabel("Command line", SwingConstants.RIGHT));
-        panelRight.add(txtCmdline);
         panelRight.setPreferredSize(new Dimension(200, 400));
         panel.setRightComponent(panelRight);
 
@@ -82,15 +73,6 @@ public class MainWindow {
 
     public void start() {
         System.out.println("start");
-
-        //options
-        try {
-            opts.setKernelImage(new URI(txtImage.getText()));
-            opts.setInitramfsImage(new URI(txtInitram.getText()));
-            opts.setCommandLine(txtCmdline.getText());
-        } catch (URISyntaxException e) {
-            //ignored
-        }
 
         //stdout
         spane = new SystemPane(systemOut);
@@ -110,7 +92,7 @@ public class MainWindow {
         tabPane.setSelectedIndex(1);
 
         emu = new Emulator();
-        emu.setOption(opts);
+        emu.setOption(optsPanel.getOption());
         for (int i = 0; i < vttyAMA.length; i++) {
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());
             emu.getBoard().setUARTOutputStream(i, vttyAMA[i].getOutputStream());

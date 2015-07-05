@@ -10,7 +10,7 @@ import java.awt.*;
  */
 public class Main {
     public static void main(String[] args) {
-        EmulatorOption opts = new EmulatorOption();
+        LinuxOption opts = new LinuxOption();
 
         opts.setKernelImage(new File("Image"));
         opts.setInitramfsImage(new File("initramfs.gz"));
@@ -42,7 +42,7 @@ public class Main {
         }
     }
 
-    public static void mainConsole(EmulatorOption opts) {
+    public static void mainConsole(LinuxOption opts) {
         Emulator emu = new Emulator();
 
         emu.setOption(opts);
