@@ -499,6 +499,123 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeALUReg(InstructionThumb inst, boolean exec) {
+        int op = inst.getField(10, 3);
+
+        switch (op) {
+        case 0x0:
+            //データ処理レジスタ命令
+            decodeALURegData(inst, exec);
+            break;
+        case 0x1:
+            //特殊データ処理、分岐、交換命令
+            decodeALURegSpecial(inst, exec);
+            break;
+        case 0x2:
+        case 0x3:
+            //リテラルプールからのロード命令
+            thumbExec.executeLdr3(inst, exec);
+            break;
+        case 0x4:
+        case 0x5:
+        case 0x6:
+        case 0x7:
+            //ロード、ストアレジスタオフセット命令
+            decodeALURegOffset(inst, exec);
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal op(ALUReg) bits " +
+                    String.format("op:0x%02x.", op));
+        }
+    }
+
+    /**
+     * レジスタへのデータ処理命令をデコードします。
+     *
+     * subcode = 0b010
+     * op[12:10] = 0b000
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeALURegData(InstructionThumb inst, boolean exec) {
+        int op = inst.getOpcode5Field();
+
+        switch (op) {
+        case InstructionThumb.OPCODE5_AND:
+            thumbExec.executeAnd(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_EOR:
+            thumbExec.executeEor(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_LSL:
+            thumbExec.executeLsl2(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_LSR:
+            thumbExec.executeLsr2(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_ASR:
+            thumbExec.executeAsr2(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_ADC:
+            thumbExec.executeAdc(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_SBC:
+            thumbExec.executeSbc(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_ROR:
+            thumbExec.executeRor(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_TST:
+            thumbExec.executeTst(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_NEG:
+            thumbExec.executeNeg(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_CMP:
+            thumbExec.executeCmp2(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_CMN:
+            thumbExec.executeCmn(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_ORR:
+            thumbExec.executeOrr(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_MUL:
+            thumbExec.executeMul(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_BIC:
+            thumbExec.executeBic(inst, exec);
+            break;
+        case InstructionThumb.OPCODE5_MVN:
+            thumbExec.executeMvn(inst, exec);
+            break;
+        }
+    }
+
+    /**
+     * 特殊データ処理、分岐、交換命令をデコードします。
+     *
+     * subcode = 0b010
+     * op[12:10] = 0b001
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeALURegSpecial(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * ロード、ストアレジスタオフセット命令をデコードします。
+     *
+     * subcode = 0b010
+     * op[12:10] = 0b1xx
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeALURegOffset(InstructionThumb inst, boolean exec) {
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
@@ -581,6 +698,9 @@ public class ARMv5 extends CPU {
                 //bkpt
                 thumbExec.executeBkpt(inst, exec);
                 break;
+            default:
+                throw new IllegalArgumentException("Illegal op(Others) bits " +
+                        String.format("op:0x%02x.", op));
             }
         }
     }
@@ -602,10 +722,10 @@ public class ARMv5 extends CPU {
 
             if (l) {
                 //ldmia
-                //thumbExec.executeLdmia(inst, exec);
+                thumbExec.executeLdmia(inst, exec);
             } else {
                 //stmia
-                //thumbExec.executeStmia(inst, exec);
+                thumbExec.executeStmia(inst, exec);
             }
         } else {
             //分岐命令
@@ -614,21 +734,18 @@ public class ARMv5 extends CPU {
             switch (cond) {
             case InstructionARM.COND_AL:
                 //未定義命令
-                //thumbExec.executeUnd(inst, exec);
+                thumbExec.executeUnd(inst, exec);
                 break;
             case InstructionARM.COND_NV:
                 //swi
-                //thumbExec.executeSwi(inst, exec);
+                thumbExec.executeSwi(inst, exec);
                 break;
             default:
                 //b
-                //thumbExec.executeB(inst, exec);
+                thumbExec.executeB1(inst, exec);
                 break;
             }
         }
-
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     /**

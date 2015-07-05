@@ -47,6 +47,83 @@ public class InstructionThumb extends Instruction {
         return BitOp.getField32(inst, 13, 3);
     }
 
+    public static final int OPCODE5_AND = 0;
+    public static final int OPCODE5_EOR = 1;
+    public static final int OPCODE5_LSL = 2;
+    public static final int OPCODE5_LSR = 3;
+    public static final int OPCODE5_ASR = 4;
+    public static final int OPCODE5_ADC = 5;
+    public static final int OPCODE5_SBC = 6;
+    public static final int OPCODE5_ROR = 7;
+    public static final int OPCODE5_TST = 8;
+    public static final int OPCODE5_NEG = 9;
+    public static final int OPCODE5_CMP = 10;
+    public static final int OPCODE5_CMN = 11;
+    public static final int OPCODE5_ORR = 12;
+    public static final int OPCODE5_MUL = 13;
+    public static final int OPCODE5_BIC = 14;
+    public static final int OPCODE5_MVN = 15;
+
+    /**
+     * Thumb 命令セットのデータ処理命令の op_5フィールド（ビット [9:6]）を取得します。
+     *
+     * データ処理命令に存在し、命令が行う演算の内容を示します。
+     *
+     * @return オペコード
+     */
+    public int getOpcode5Field() {
+        return getOpcode5Field(getInst());
+    }
+
+    /**
+     * Thumb 命令セットのデータ処理命令の op_5 フィールド（ビット [9:6]）を取得します。
+     *
+     * データ処理命令に存在し、命令が行う演算の内容を示します。
+     *
+     * @param inst Thumb 命令
+     * @return オペコード
+     */
+    public static int getOpcode5Field(int inst) {
+        return BitOp.getField32(inst, 6, 4);
+    }
+
+    /**
+     * Thumb 命令セットのデータ処理命令の op_5 フィールド（ビット [9:6]）が示す、
+     * 演算の名前を取得します。
+     *
+     * データ処理命令に存在し、命令が行う演算の内容を示します。
+     *
+     * @return opcode フィールドが示す演算の名前
+     */
+    public String getOpcode5FieldName() {
+        return getOpcode5FieldName(getOpcode5Field());
+    }
+
+    /**
+     * Thumb 命令セットのデータ処理命令の op_5 フィールド（ビット [9:6]）が示す、
+     * 演算の名前を取得します。
+     *
+     * データ処理命令に存在し、命令が行う演算の内容を示します。
+     *
+     * @param opcode Thumb 命令のデータ処理命令の op_5 フィールド
+     * @return opcode フィールドが示す演算の名前
+     */
+    public static String getOpcode5FieldName(int opcode) {
+        final String[] names = {
+                "and", "eor", "lsl", "lsr",
+                "asr", "adc", "sbc", "ror",
+                "tst", "neg", "cmp", "cmn",
+                "orr", "mul", "bic", "mvn",
+        };
+
+        if (0 <= opcode && opcode <= 15) {
+            return names[opcode];
+        } else {
+            throw new IllegalArgumentException("Invalid opcode " +
+                    opcode + ".");
+        }
+    }
+
     /**
      * Thumb 命令の Rm フィールド（ビット [5:3]）を取得します。
      *

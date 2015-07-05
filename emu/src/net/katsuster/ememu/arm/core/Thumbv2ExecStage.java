@@ -102,6 +102,201 @@ public class Thumbv2ExecStage extends ExecStage {
     }
 
     /**
+     * 論理積命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAnd(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 排他的論理和命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeEor(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * レジスタ論理左シフト命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLsl2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * レジスタ論理右シフト命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLsr2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * レジスタ算術右シフト命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAsr2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * キャリー付き加算命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAdc(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * キャリー付き減算命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSbc(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * レジスタ右ローテート命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeRor(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * テスト命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeTst(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 2 の補数命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeNeg(InstructionThumb inst, boolean exec) {
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "negs",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        left = 0;
+        right = -getReg(rm);
+        dest = left - right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(!IntegerExt.borrowFrom(left, right));
+        getCPSR().setVBit(IntegerExt.overflowFrom(left, right, false));
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * レジスタ比較命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeCmp2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 2 の補数比較命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeCmn(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 論理和命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeOrr(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 乗算命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeMul(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * ビットクリア命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBic(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 移動否定命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeMvn(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
      * 小さいイミディエート加算命令。
      *
      * @param inst Thumb 命令
@@ -334,6 +529,17 @@ public class Thumbv2ExecStage extends ExecStage {
     }
 
     /**
+     * リテラルプールのロード命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdr3(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
      * プッシュ命令。
      *
      * @param inst Thumb 命令
@@ -409,12 +615,67 @@ public class Thumbv2ExecStage extends ExecStage {
     }
 
     /**
+     * ロードマルチプル命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdmia(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * ストアマルチプル命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeStmia(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
      * ブレークポイント命令。
      *
      * @param inst Thumb 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeBkpt(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 未定義命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeUnd(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * ソフトウェア割り込み命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSwi(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 条件付き分岐命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeB1(InstructionThumb inst, boolean exec) {
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
