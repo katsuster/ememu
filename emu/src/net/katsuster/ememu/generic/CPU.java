@@ -269,7 +269,7 @@ public abstract class CPU extends MasterCore64
     /**
      * PC（プログラムカウンタ）を次の命令に移します。
      */
-    public abstract void nextPC();
+    public abstract void nextPC(Instruction inst);
 
     /**
      * 指定したアドレス分だけ相対ジャンプします。

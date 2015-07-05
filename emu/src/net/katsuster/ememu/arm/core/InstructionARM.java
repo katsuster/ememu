@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.Instruction;
  */
 public class InstructionARM extends Instruction {
     public InstructionARM(int inst) {
-        super(inst);
+        super(inst, 4);
     }
 
     public static final int COND_EQ = 0;
@@ -659,5 +659,15 @@ public class InstructionARM extends Instruction {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * 命令の 16進数表記を取得します。
+     *
+     * @return 命令の 16進数表記
+     */
+    @Override
+    public String toHex() {
+        return String.format("%08x", getInst());
     }
 }

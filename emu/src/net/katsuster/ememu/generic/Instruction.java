@@ -5,11 +5,13 @@ package net.katsuster.ememu.generic;
  *
  * @author katsuhiro
  */
-public class Instruction {
+public abstract class Instruction {
     private int rawInst;
+    private int lengthInst;
 
-    public Instruction(int inst) {
+    public Instruction(int inst, int len) {
         this.rawInst = inst;
+        this.lengthInst = len;
     }
 
     /**
@@ -41,4 +43,20 @@ public class Instruction {
     public int getField(int pos, int len) {
         return BitOp.getField32(rawInst, pos, len);
     }
+
+    /**
+     * 命令長をバイト単位で取得します。
+     *
+     * @return 命令長（バイト単位）
+     */
+    public int getLength() {
+        return lengthInst;
+    }
+
+    /**
+     * 命令の 16進数表記を取得します。
+     *
+     * @return 命令の 16進数表記
+     */
+    public abstract String toHex();
 }

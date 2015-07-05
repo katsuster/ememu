@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.Instruction;
  */
 public class InstructionThumb extends Instruction {
     public InstructionThumb(int inst) {
-        super(inst & 0x0000ffff);
+        super(inst & 0x0000ffff, 2);
     }
 
     public static final int SUBCODE_ADDSUB = 0;
@@ -160,5 +160,15 @@ public class InstructionThumb extends Instruction {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * 命令の 16進数表記を取得します。
+     *
+     * @return 命令の 16進数表記
+     */
+    @Override
+    public String toHex() {
+        return String.format("%04x", getInst());
     }
 }

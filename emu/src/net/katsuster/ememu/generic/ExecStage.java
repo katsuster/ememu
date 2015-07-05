@@ -190,8 +190,8 @@ public class ExecStage {
     /**
      * PC を次の命令に移します。
      */
-    public void nextPC() {
-        getCore().nextPC();
+    public void nextPC(Instruction inst) {
+        getCore().nextPC(inst);
     }
 
     /**

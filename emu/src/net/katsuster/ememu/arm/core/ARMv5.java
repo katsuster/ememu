@@ -65,8 +65,8 @@ public class ARMv5 extends CPU {
 
     @Override
     public String instructionToString(Instruction inst, String operation, String operand) {
-        return String.format("%08x:    %08x    %-7s %s\n",
-                getRegRaw(15), inst.getInst(), operation, operand);
+        return String.format("%08x:    %-12s    %-7s %s\n",
+                getRegRaw(15), inst.toHex(), operation, operand);
     }
 
     @Override
@@ -106,18 +106,12 @@ public class ARMv5 extends CPU {
      * ただし、ブランチ命令の後は PC を変更しません。
      */
     @Override
-    public void nextPC() {
+    public void nextPC(Instruction inst) {
         if (isJumped()) {
             setJumped(false);
             return;
         }
-        if (getCPSR().getTBit()) {
-            //Thumb モード
-            setRegRaw(15, getRegRaw(15) + 2);
-        } else {
-            //ARM モード
-            setRegRaw(15, getRegRaw(15) + 4);
-        }
+        setRegRaw(15, getRegRaw(15) + inst.getLength());
     }
 
     /**
@@ -666,6 +660,9 @@ public class ARMv5 extends CPU {
             throw new IllegalArgumentException("Illegal h bits " +
                     String.format("h:0x%02x.", h));
         }
+
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     /**
@@ -1898,6 +1895,6 @@ public class ARMv5 extends CPU {
             setRaisedException(false);
             return;
         }
-        nextPC();
+        nextPC(inst);
     }
 }
