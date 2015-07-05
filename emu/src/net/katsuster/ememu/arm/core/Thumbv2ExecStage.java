@@ -280,8 +280,35 @@ public class Thumbv2ExecStage extends ExecStage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeLsl1(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int imm5 = inst.getField(6, 5);
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, dest;
+        boolean cbit;
+
+        if (!exec) {
+            printDisasm(inst, "lsls",
+                    String.format("%s, %s, %s",
+                            getRegName(rd), getRegName(rm),
+                            String.format("#%d    ; 0x%x", imm5, imm5)));
+            return;
+        }
+
+        left = getReg(rm);
+        if (imm5 == 0) {
+            cbit = getCPSR().getCBit();
+            dest = left;
+        } else {
+            cbit = BitOp.getBit32(left, 32 - imm5);
+            dest = left << imm5;
+        }
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(cbit);
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
