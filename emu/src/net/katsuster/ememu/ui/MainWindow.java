@@ -26,7 +26,7 @@ public class MainWindow {
 
         //window
         JFrame win = new JFrame("ememu");
-        win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //menu
         ButtonListener listenButton = new ButtonListener();
@@ -38,30 +38,37 @@ public class MainWindow {
         tabPane.setFocusable(false);
         tabPane.transferFocus();
 
-        //stdout
+        //stdout Tab
         panel = new JSplitPane();
         panel.setDividerSize(4);
 
+        //stdout Tab - Left - stdout
         spane = new SystemPane(systemOut);
         System.setOut(spane.getOutputStream());
-        panel.setLeftComponent(spane);
 
-        optsPanel = new LinuxOptionPanel(opts);
-
-        JButton btnReset = new JButton("Reset");
-        btnReset.addActionListener(listenButton);
-        btnReset.setActionCommand("reset");
+        JPanel panelStdout = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnClear = new JButton("Clear");
         btnClear.addActionListener(listenButton);
         btnClear.setActionCommand("clear");
+        panelStdout.add(btnClear);
 
-        JPanel panelButtons = new JPanel(new FlowLayout());
-        panelButtons.add(btnReset);
-        panelButtons.add(btnClear);
+        JPanel panelLeft = new JPanel(new BorderLayout(), true);
+        panelLeft.add(spane, BorderLayout.CENTER);
+        panelLeft.add(panelStdout, BorderLayout.SOUTH);
+        panel.setLeftComponent(panelLeft);
+
+        //stdout Tab - Right - Settings, Navigator
+        optsPanel = new LinuxOptionPanel(opts);
+
+        JPanel panelNavigator = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnReset = new JButton("Reset");
+        btnReset.addActionListener(listenButton);
+        btnReset.setActionCommand("reset");
+        panelNavigator.add(btnReset);
 
         JPanel panelRight = new JPanel(new BorderLayout(), true);
         panelRight.add(optsPanel, BorderLayout.CENTER);
-        panelRight.add(panelButtons, BorderLayout.SOUTH);
+        panelRight.add(panelNavigator, BorderLayout.SOUTH);
         panelRight.setPreferredSize(new Dimension(180, 180));
         panelRight.setMinimumSize(panelRight.getPreferredSize());
         panel.setRightComponent(panelRight);

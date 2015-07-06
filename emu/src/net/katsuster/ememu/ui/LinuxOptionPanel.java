@@ -1,9 +1,9 @@
 package net.katsuster.ememu.ui;
 
+import java.net.*;
 import java.awt.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import javax.swing.*;
+import javax.swing.border.*;
 
 /**
  * Linux 起動時に渡すオプションを設定するパネル。
@@ -32,11 +32,12 @@ public class LinuxOptionPanel extends JPanel {
     public LinuxOptionPanel(LinuxOption options) {
         super(true);
 
+        opts = options;
+
         //Get prefered size(40 chars)
         JTextField tmpTxt = new JTextField(String.format("%040x", 0));
         Dimension dim = tmpTxt.getPreferredSize();
 
-        opts = options;
         txtImage = new JTextField(opts.getKernelImage().toString());
         txtImage.setPreferredSize(dim);
         txtImage.setMinimumSize(dim);
@@ -50,12 +51,20 @@ public class LinuxOptionPanel extends JPanel {
         GridBagLayout layout = new GridBagLayout();
         setLayout(layout);
 
-        GridBagLayoutHelper.add(this, layout, new JLabel("Kernel Image", SwingConstants.RIGHT), 0, 0, 1, 1);
-        GridBagLayoutHelper.add(this, layout, txtImage, 1, 0, GridBagConstraints.RELATIVE, 1);
-        GridBagLayoutHelper.add(this, layout, new JLabel("InitramFS Image", SwingConstants.RIGHT), 0, 1, 1, 1);
-        GridBagLayoutHelper.add(this, layout, txtInitram, 1, 1, GridBagConstraints.RELATIVE, 1);
-        GridBagLayoutHelper.add(this, layout, new JLabel("Command line", SwingConstants.RIGHT), 0, 2, 1, 1);
-        GridBagLayoutHelper.add(this, layout, txtCmdline, 1, 2, GridBagConstraints.RELATIVE, 1);
+        GridBagLayoutHelper.add(this, layout, new JLabel("Kernel Image", SwingConstants.RIGHT),
+                0, 0, 1, 1);
+        GridBagLayoutHelper.add(this, layout, txtImage,
+                1, 0, GridBagConstraints.RELATIVE, 1);
+        GridBagLayoutHelper.add(this, layout, new JLabel("InitramFS Image", SwingConstants.RIGHT),
+                0, 1, 1, 1);
+        GridBagLayoutHelper.add(this, layout, txtInitram,
+                1, 1, GridBagConstraints.RELATIVE, 1);
+        GridBagLayoutHelper.add(this, layout, new JLabel("Command line", SwingConstants.RIGHT),
+                0, 2, 1, 1);
+        GridBagLayoutHelper.add(this, layout, txtCmdline,
+                1, 2, GridBagConstraints.RELATIVE, 1);
+
+        setBorder(BorderFactory.createTitledBorder("Linux Boot Options"));
     }
 
     /**
