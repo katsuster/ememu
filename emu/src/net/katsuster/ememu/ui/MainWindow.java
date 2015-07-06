@@ -46,19 +46,24 @@ public class MainWindow {
         System.setOut(spane.getOutputStream());
         panel.setLeftComponent(spane);
 
-        JPanel panelRight = new JPanel(new GridLayout(3, 1, 5, 5), true);
         optsPanel = new LinuxOptionPanel(opts);
-        JButton btnReset = new JButton("Reset");
-        JButton btnClear = new JButton("Clear");
 
-        panelRight.add(optsPanel);
+        JButton btnReset = new JButton("Reset");
         btnReset.addActionListener(listenButton);
         btnReset.setActionCommand("reset");
-        panelRight.add(btnReset);
+        JButton btnClear = new JButton("Clear");
         btnClear.addActionListener(listenButton);
         btnClear.setActionCommand("clear");
-        panelRight.add(btnClear);
-        panelRight.setPreferredSize(new Dimension(200, 400));
+
+        JPanel panelButtons = new JPanel(new FlowLayout());
+        panelButtons.add(btnReset);
+        panelButtons.add(btnClear);
+
+        JPanel panelRight = new JPanel(new BorderLayout(), true);
+        panelRight.add(optsPanel, BorderLayout.CENTER);
+        panelRight.add(panelButtons, BorderLayout.SOUTH);
+        panelRight.setPreferredSize(new Dimension(180, 180));
+        panelRight.setMinimumSize(panelRight.getPreferredSize());
         panel.setRightComponent(panelRight);
 
         tabPane.addTab("stdout", panel);
