@@ -3,7 +3,6 @@ package net.katsuster.ememu.ui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 import javax.swing.*;
 
 /**
@@ -15,13 +14,16 @@ public class MainWindow {
     private static final PrintStream systemOut = System.out;
 
     private JSplitPane panel;
+    private JPanel panelLeft, panelRight;
     private SystemPane spane;
+    private JPanel panelStdout, panelNavigator;
     private JTabbedPane tabPane;
-    private LinuxOptionPanel optsPanel;
+    private LinuxOptionPanel linuxOptPanel;
+    private ProxyOptionPanel proxyOptPanel;
     private Emulator emu;
     private VirtualTerminal[] vttyAMA;
 
-    public MainWindow(LinuxOption opts) {
+    public MainWindow(LinuxOption linuxOpts) {
         vttyAMA = new VirtualTerminal[3];
 
         //window
@@ -46,30 +48,32 @@ public class MainWindow {
         spane = new SystemPane(systemOut);
         System.setOut(spane.getOutputStream());
 
-        JPanel panelStdout = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelStdout = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnClear = new JButton("Clear");
         btnClear.addActionListener(listenButton);
         btnClear.setActionCommand("clear");
         panelStdout.add(btnClear);
 
-        JPanel panelLeft = new JPanel(new BorderLayout(), true);
+        panelLeft = new JPanel(new BorderLayout(), true);
         panelLeft.add(spane, BorderLayout.CENTER);
         panelLeft.add(panelStdout, BorderLayout.SOUTH);
         panel.setLeftComponent(panelLeft);
 
         //stdout Tab - Right - Settings, Navigator
-        optsPanel = new LinuxOptionPanel(opts);
+        linuxOptPanel = new LinuxOptionPanel(linuxOpts);
+        proxyOptPanel = new ProxyOptionPanel();
 
-        JPanel panelNavigator = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelNavigator = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnReset = new JButton("Reset");
         btnReset.addActionListener(listenButton);
         btnReset.setActionCommand("reset");
         panelNavigator.add(btnReset);
 
-        JPanel panelRight = new JPanel(new BorderLayout(), true);
-        panelRight.add(optsPanel, BorderLayout.CENTER);
-        panelRight.add(panelNavigator, BorderLayout.SOUTH);
-        panelRight.setPreferredSize(new Dimension(180, 180));
+        panelRight = new JPanel(new GridLayout(3, 1, 5, 5), true);
+        panelRight.add(linuxOptPanel);
+        panelRight.add(proxyOptPanel);
+        panelRight.add(panelNavigator);
+        panelRight.setPreferredSize(new Dimension(100, 100));
         panelRight.setMinimumSize(panelRight.getPreferredSize());
         panel.setRightComponent(panelRight);
 
@@ -86,10 +90,19 @@ public class MainWindow {
     public void start() {
         System.out.println("start");
 
+        //proxy
+        ProxyOption optProxy = proxyOptPanel.getOption();
+        System.setProperty("proxyHost", optProxy.getProxyHost().toString());
+        System.setProperty("proxyPort", Integer.toString(optProxy.getProxyPort()));
+
         //stdout
         spane = new SystemPane(systemOut);
         System.setOut(spane.getOutputStream());
-        panel.setLeftComponent(spane);
+
+        panelLeft = new JPanel(new BorderLayout(), true);
+        panelLeft.add(spane, BorderLayout.CENTER);
+        panelLeft.add(panelStdout, BorderLayout.SOUTH);
+        panel.setLeftComponent(panelLeft);
 
         //terminal
         for (int i = 0; i < vttyAMA.length; i++) {
@@ -103,8 +116,9 @@ public class MainWindow {
         }
         tabPane.setSelectedIndex(1);
 
+        //Run the emulator
         emu = new Emulator();
-        emu.setOption(optsPanel.getOption());
+        emu.setOption(linuxOptPanel.getOption());
         for (int i = 0; i < vttyAMA.length; i++) {
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());
             emu.getBoard().setUARTOutputStream(i, vttyAMA[i].getOutputStream());

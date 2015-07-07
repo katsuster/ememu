@@ -51,15 +51,15 @@ public class LinuxOptionPanel extends JPanel {
         GridBagLayout layout = new GridBagLayout();
         setLayout(layout);
 
-        GridBagLayoutHelper.add(this, layout, new JLabel("Kernel Image", SwingConstants.RIGHT),
+        GridBagLayoutHelper.add(this, layout, new JLabel("Kernel Image:", SwingConstants.RIGHT),
                 0, 0, 1, 1);
         GridBagLayoutHelper.add(this, layout, txtImage,
                 1, 0, GridBagConstraints.RELATIVE, 1);
-        GridBagLayoutHelper.add(this, layout, new JLabel("InitramFS Image", SwingConstants.RIGHT),
+        GridBagLayoutHelper.add(this, layout, new JLabel("InitramFS Image:", SwingConstants.RIGHT),
                 0, 1, 1, 1);
         GridBagLayoutHelper.add(this, layout, txtInitram,
                 1, 1, GridBagConstraints.RELATIVE, 1);
-        GridBagLayoutHelper.add(this, layout, new JLabel("Command line", SwingConstants.RIGHT),
+        GridBagLayoutHelper.add(this, layout, new JLabel("Command line:", SwingConstants.RIGHT),
                 0, 2, 1, 1);
         GridBagLayoutHelper.add(this, layout, txtCmdline,
                 1, 2, GridBagConstraints.RELATIVE, 1);

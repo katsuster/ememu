@@ -94,4 +94,21 @@ public class LinuxOption {
     public void setCommandLine(String str) {
         cmdline = str;
     }
+
+    /**
+     * オプションの概要を文字列で取得します。
+     *
+     * @return オプションの概要
+     */
+    @Override
+    public String toString() {
+        return String.format("%s: \n" +
+                        "  Kernel      : '%s'\n" +
+                        "  InitramFS   : '%s'\n" +
+                        "  Command Line: '%s'",
+                getClass().getSimpleName(),
+                getKernelImage().toString(),
+                getInitramfsImage().toString(),
+                getCommandLine());
+    }
 }
