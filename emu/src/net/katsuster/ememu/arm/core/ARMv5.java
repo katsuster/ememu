@@ -287,7 +287,25 @@ public class ARMv5 extends CPU {
                 return null;
             }
             v = read16_a32(paddr);
-            instT32.reuse(v, 2);
+            instT32.reuse(v & 0xffff, 2);
+
+            if (instT32.getSubCodeField() == InstructionThumb.SUBCODE_BL_BLX && instT32.getField(11, 2) != 0) {
+                //Thumb-2 命令
+                vaddr += 2;
+                paddr = getMMU().translate(vaddr, 2, true, getCPSR().isPrivMode(), true);
+                if (getMMU().isFault()) {
+                    getMMU().clearFault();
+                    return null;
+                }
+
+                if (!tryRead_a32(paddr, 2)) {
+                    raiseException(EXCEPT_ABT_INST,
+                            String.format("exec [%08x]", paddr));
+                    return null;
+                }
+                v = read16_a32(paddr);
+                instT32.reuse((instT32.getInst() << 16) | (v & 0xffff), 4);
+            }
 
             return instT32;
         } else {
@@ -338,45 +356,17 @@ public class ARMv5 extends CPU {
     public void executeInst(Instruction instgen, boolean exec) {
         if (getCPSR().getTBit()) {
             InstructionThumb inst = (InstructionThumb)instgen;
-            //int cond = inst.getCondField();
-            int subcode = inst.getSubCodeField();
 
             //Thumb モード
-            switch (subcode) {
-            case InstructionThumb.SUBCODE_ADDSUB:
-                decodeAddSub(inst, exec);
-                return;
-            case InstructionThumb.SUBCODE_ALUIMM:
-                decodeALUImm(inst, exec);
-                return;
-            case InstructionThumb.SUBCODE_ALUREG:
-                decodeALUReg(inst, exec);
-                return;
-            case InstructionThumb.SUBCODE_LDWORD:
-                decodeLdWord(inst, exec);
-                return;
-            case InstructionThumb.SUBCODE_LDHALF:
-                decodeLdHalf(inst, exec);
-                return;
-            case InstructionThumb.SUBCODE_OTHERS:
-                decodeOthers(inst, exec);
-                return;
-            case InstructionThumb.SUBCODE_LDMULT:
-                decodeLdmult(inst, exec);
-                return;
-            case InstructionThumb.SUBCODE_BL_BLX:
-                decodeBlBlx(inst, exec);
-                return;
-            default:
-                //do nothing
-                break;
+            if (inst.getLength() == 4) {
+                //Thumb-2 命令
+                decodeThumb2(inst, exec);
+            } else {
+                //Thumb 命令
+                decodeThumb(inst, exec);
             }
-
-            throw new IllegalArgumentException("Unknown Subcode" +
-                    String.format("(%d).", subcode));
         } else {
             InstructionARM inst = (InstructionARM)instgen;
-            //int cond = inst.getCondField();
             int subcode = inst.getSubCodeField();
 
             //ARM モード
@@ -398,6 +388,57 @@ public class ARMv5 extends CPU {
                 break;
             }
 
+            throw new IllegalArgumentException("Unknown Subcode" +
+                    String.format("(%d).", subcode));
+        }
+    }
+
+    /**
+     * Thumb-2 命令をデコードします。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeThumb2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * Thumbv1, v2, v3 命令をデコードします。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeThumb(InstructionThumb inst, boolean exec) {
+        int subcode = inst.getSubCodeField();
+
+        switch (subcode) {
+        case InstructionThumb.SUBCODE_ADDSUB:
+            decodeAddSub(inst, exec);
+            return;
+        case InstructionThumb.SUBCODE_ALUIMM:
+            decodeALUImm(inst, exec);
+            return;
+        case InstructionThumb.SUBCODE_ALUREG:
+            decodeALUReg(inst, exec);
+            return;
+        case InstructionThumb.SUBCODE_LDWORD:
+            decodeLdWord(inst, exec);
+            return;
+        case InstructionThumb.SUBCODE_LDHALF:
+            decodeLdHalf(inst, exec);
+            return;
+        case InstructionThumb.SUBCODE_OTHERS:
+            decodeOthers(inst, exec);
+            return;
+        case InstructionThumb.SUBCODE_LDMULT:
+            decodeLdmult(inst, exec);
+            return;
+        case InstructionThumb.SUBCODE_BL_BLX:
+            decodeBlBlx(inst, exec);
+            return;
+        default:
             throw new IllegalArgumentException("Unknown Subcode" +
                     String.format("(%d).", subcode));
         }
