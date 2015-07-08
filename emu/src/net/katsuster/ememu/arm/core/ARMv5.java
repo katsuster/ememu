@@ -37,6 +37,9 @@ public class ARMv5 extends CPU {
     private boolean jumped;
     private boolean highVector;
 
+    private InstructionARM instA32;
+    private InstructionThumb instT32;
+
     public ARMv5() {
         CoProcVFPv2 cpVfps;
         CoProcStdv5 cpStd;
@@ -61,6 +64,9 @@ public class ARMv5 extends CPU {
         raisedException = false;
         jumped = false;
         highVector = false;
+
+        instA32 = new InstructionARM(0);
+        instT32 = new InstructionThumb(0);
     }
 
     @Override
@@ -269,8 +275,6 @@ public class ARMv5 extends CPU {
 
         if (getCPSR().getTBit()) {
             //Thumb モード
-            InstructionThumb inst;
-
             paddr = getMMU().translate(vaddr, 2, true, getCPSR().isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
@@ -283,13 +287,11 @@ public class ARMv5 extends CPU {
                 return null;
             }
             v = read16_a32(paddr);
-            inst = new InstructionThumb(v);
+            instT32.reuse(v, 2);
 
-            return inst;
+            return instT32;
         } else {
             //ARM モード
-            InstructionARM inst;
-
             paddr = getMMU().translate(vaddr, 4, true, getCPSR().isPrivMode(), true);
             if (getMMU().isFault()) {
                 getMMU().clearFault();
@@ -302,9 +304,9 @@ public class ARMv5 extends CPU {
                 return null;
             }
             v = read32_a32(paddr);
-            inst = new InstructionARM(v);
+            instA32.reuse(v, 4);
 
-            return inst;
+            return instA32;
         }
     }
 

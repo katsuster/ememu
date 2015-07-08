@@ -1,7 +1,6 @@
 package net.katsuster.ememu.arm.core;
 
-import net.katsuster.ememu.generic.BitOp;
-import net.katsuster.ememu.generic.Instruction;
+import net.katsuster.ememu.generic.*;
 
 /**
  * Thumb 命令。
@@ -9,6 +8,11 @@ import net.katsuster.ememu.generic.Instruction;
  * @author katsuhiro
  */
 public class InstructionThumb extends Instruction {
+    /**
+     * 指定されたバイナリ値の Thumb 命令を作成します。
+     *
+     * @param inst Thumb 命令のバイナリ値
+     */
     public InstructionThumb(int inst) {
         super(inst & 0x0000ffff, 2);
     }
