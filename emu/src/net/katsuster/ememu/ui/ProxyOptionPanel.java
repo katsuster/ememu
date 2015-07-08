@@ -87,9 +87,11 @@ public class ProxyOptionPanel extends JPanel {
                 opts.setProxyHost(new URI(""));
                 opts.setProxyPort(0);
             }
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | NumberFormatException e) {
             //ignored
         }
+        txtHost.setText(opts.getProxyHost().toString());
+        txtPort.setText(Integer.toString(opts.getProxyPort()));
     }
 
     /**
