@@ -31,7 +31,7 @@ public class APSR extends PSR {
      * @param back APSR の値を保持するバックレジスタ
      */
     public APSR(String name, PSR back) {
-        super(name, 0);
+        super(name, 0, null);
         br = back;
     }
 

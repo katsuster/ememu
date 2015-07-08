@@ -19,9 +19,7 @@ public class ARMRegFile implements Reg32File {
     private Reg32[] regs_fiq;
     private PSR cpsr;
 
-    //前回レジスタを参照したときの動作モードです
-    private int prevMode;
-    //前回の動作モードで選択されているレジスタセットです
+    //現在選択されているレジスタセットです
     private Reg32[] regs;
 
     public ARMRegFile() {
@@ -80,7 +78,7 @@ public class ARMRegFile implements Reg32File {
             regs_irq[i] = new Reg32(name_irq[i], 0);
             regs_fiq[i] = new Reg32(name_fiq[i], 0);
         }
-        cpsr = new PSR("cpsr", 0);
+        cpsr = new PSR("cpsr", 0, this);
         regs_usr[ARM_REG_SPSR] = new SPSR(regs_usr[ARM_REG_SPSR]);
         regs_svc[ARM_REG_SPSR] = new SPSR(regs_svc[ARM_REG_SPSR]);
         regs_abt[ARM_REG_SPSR] = new SPSR(regs_abt[ARM_REG_SPSR]);
@@ -88,17 +86,11 @@ public class ARMRegFile implements Reg32File {
         regs_irq[ARM_REG_SPSR] = new SPSR(regs_irq[ARM_REG_SPSR]);
         regs_fiq[ARM_REG_SPSR] = new SPSR(regs_fiq[ARM_REG_SPSR]);
 
-        prevMode = PSR.MODE_USR;
         regs = regs_usr;
     }
 
     @Override
     public Reg32 getReg(int n) {
-        if (prevMode != getCPSR().getMode()) {
-            regs = getRegSet(getCPSR().getMode());
-            prevMode = getCPSR().getMode();
-        }
-
         return regs[n];
     }
 
@@ -130,6 +122,19 @@ public class ARMRegFile implements Reg32File {
 
         throw new IllegalArgumentException("Illegal mode " +
                 String.format("mode:0x%x.", mode));
+    }
+
+    /**
+     * PSR の値が変化したことを通知します。
+     * PSR オブジェクトからコールバックされることを想定しています。
+     *
+     * このメソッドを呼び出すと、
+     * PSR のモードに合ったレジスタセットが選択されます。
+     *
+     * @see PSR#setValue(int)
+     */
+    public void notifyChangedPSR() {
+        regs = getRegSet(getCPSR().getMode());
     }
 
     /**

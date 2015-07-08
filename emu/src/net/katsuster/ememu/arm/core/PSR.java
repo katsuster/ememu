@@ -22,6 +22,9 @@ public class PSR extends Reg32 {
     public static final int MODE_UND = 0x1b;
     public static final int MODE_SYS = 0x1f;
 
+    //PSR の変化を通知するレジスタファイル
+    ARMRegFile regfile;
+
     /**
      * 値 0 を持つ PSR（プログラムステートレジスタ）を作成します。
      */
@@ -34,9 +37,26 @@ public class PSR extends Reg32 {
      *
      * @param name レジスタ名
      * @param val  レジスタの初期値
+     * @param rf   PSR が変化したとき通知するレジスタファイル、通知が不要なら null
      */
-    public PSR(String name, int val) {
+    public PSR(String name, int val, ARMRegFile rf) {
         super(name, val);
+        regfile = rf;
+    }
+
+    /**
+     * PSR の値を設定します。
+     *
+     * PSR の値が変化したことをレジスタファイルに通知します。
+     *
+     * @param v 新しい PSR の値
+     */
+    @Override
+    public void setValue(int v) {
+        super.setValue(v);
+        if (regfile != null) {
+            regfile.notifyChangedPSR();
+        }
     }
 
     /**

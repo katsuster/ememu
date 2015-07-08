@@ -28,7 +28,7 @@ public class SPSR extends PSR {
      * @param back SPSR の値を保持するバックレジスタ
      */
     public SPSR(String name, Reg32 back) {
-        super(name, 0);
+        super(name, 0, null);
         br = back;
     }
 
