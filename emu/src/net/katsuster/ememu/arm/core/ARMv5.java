@@ -22,8 +22,8 @@ public class ARMv5 extends CPU {
     public static final int INTSRC_IRQ = 0;
     public static final int INTSRC_FIQ = 1;
 
-    private ARMv5ExecStage armExec;
-    private Thumbv2ExecStage thumbExec;
+    private ExecStageARMv5 armExec;
+    private ExecStageThumbv2 thumbExec;
 
     private ARMRegFile regfile;
     private CoProc[] coProcs;
@@ -47,8 +47,8 @@ public class ARMv5 extends CPU {
         cpVfps = new CoProcVFPv2(10, this);
         cpStd = new CoProcStdv5(15, this);
 
-        armExec = new ARMv5ExecStage(this);
-        thumbExec = new Thumbv2ExecStage(this);
+        armExec = new ExecStageARMv5(this);
+        thumbExec = new ExecStageThumbv2(this);
 
         regfile = new ARMRegFile();
         coProcs = new CoProc[16];
