@@ -15,7 +15,7 @@ public class MainApplet extends JApplet {
     public static final String PARAM_PROXY_HOST = "proxyHost";
     public static final String PARAM_PROXY_PORT = "proxyPort";
     public static final String PARAM_KERNEL_IMAGE = "kernelImage";
-    public static final String PARAM_INITRAMFS_IMAGE = "initramfsImage";
+    public static final String PARAM_INITRD_IMAGE= "initramfsImage";
     public static final String PARAM_COMMAND_LINE = "commandLine";
 
     private static final PrintStream systemOut = System.out;
@@ -39,7 +39,7 @@ public class MainApplet extends JApplet {
         LinuxOption linuxOpts = new LinuxOption();
         ProxyOption proxyOpts = new ProxyOption();
         String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/ememu/Image-3.18.14";
-        String initram = "http://www2.katsuster.net/~katsuhiro/contents/java/ememu/initramfs.gz";
+        String initrd = "http://www2.katsuster.net/~katsuhiro/contents/java/ememu/initramfs.gz";
         String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1";
         String proxyhost = "";
         String proxyport = "0";
@@ -56,12 +56,12 @@ public class MainApplet extends JApplet {
                             "use default kernel image.\n",
                     PARAM_KERNEL_IMAGE);
         }
-        if (getParameter(PARAM_INITRAMFS_IMAGE) != null) {
-            initram = getParameter(PARAM_INITRAMFS_IMAGE);
+        if (getParameter(PARAM_INITRD_IMAGE) != null) {
+            initrd = getParameter(PARAM_INITRD_IMAGE);
         } else {
             System.out.printf("Parameter '%s' not found, " +
-                            "use default initramfs image.\n",
-                    PARAM_INITRAMFS_IMAGE);
+                            "use default Initrd/InitramFS image.\n",
+                    PARAM_INITRD_IMAGE);
         }
         if (getParameter(PARAM_COMMAND_LINE) != null) {
             cmdline = getParameter(PARAM_COMMAND_LINE);
@@ -83,7 +83,7 @@ public class MainApplet extends JApplet {
         //options
         try {
             linuxOpts.setKernelImage(new URI(kimage));
-            linuxOpts.setInitramfsImage(new URI(initram));
+            linuxOpts.setInitrdImage(new URI(initrd));
             linuxOpts.setCommandLine(cmdline);
             //FIXME: for debug
             System.out.println(linuxOpts);

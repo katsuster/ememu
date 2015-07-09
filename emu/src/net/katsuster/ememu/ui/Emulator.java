@@ -83,16 +83,16 @@ class Emulator extends Thread {
 
     @Override
     public void run() {
-        String kimage, initram, cmdline;
+        String kimage, initrd, cmdline;
 
         setName(getClass().getName());
 
         board.setup(cpu, bus, ram);
 
         kimage = opts.getKernelImage().toString();
-        initram = opts.getInitramfsImage().toString();
+        initrd = opts.getInitrdImage().toString();
         cmdline = opts.getCommandLine();
-        ARMLinuxLoader.bootFromURI(cpu, ram, kimage, initram, cmdline);
+        ARMLinuxLoader.bootFromURI(cpu, ram, kimage, initrd, cmdline);
 
         //start cores
         bus.startAllSlaveCores();

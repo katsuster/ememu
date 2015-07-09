@@ -13,20 +13,20 @@ public class Main {
         LinuxOption opts = new LinuxOption();
 
         opts.setKernelImage(new File("Image"));
-        opts.setInitramfsImage(new File("initramfs.gz"));
+        opts.setInitrdImage(new File("initramfs.gz"));
         opts.setCommandLine("console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1");
 
         if (args.length <= 0) {
             System.out.println("usage:\n" +
-                    "  ememu image initramfs [cmdline]\n");
+                    "  ememu image initrd/initramfs [cmdline]\n");
             return;
         }
         if (args.length >= 1) {
             opts.setKernelImage(new File(args[0]));
-            opts.setInitramfsImage(new File(""));
+            opts.setInitrdImage(new File(""));
         }
         if (args.length >= 2) {
-            opts.setInitramfsImage(new File(args[1]));
+            opts.setInitrdImage(new File(args[1]));
         }
         if (args.length >= 3) {
             opts.setCommandLine(args[2]);

@@ -10,13 +10,13 @@ import java.net.*;
  */
 public class LinuxOption {
     private URI kimage;
-    private URI initram;
+    private URI initrd;
     private String cmdline;
 
     public LinuxOption() {
         try {
             kimage = new URI("");
-            initram = new URI("");
+            initrd = new URI("");
         } catch (URISyntaxException ex) {
             //ignore
         }
@@ -51,30 +51,30 @@ public class LinuxOption {
     }
 
     /**
-     * ブート時にカーネルに渡す initramfs イメージファイルの位置を取得します。
+     * ブート時にカーネルに渡す Initrd/InitramFS イメージファイルの位置を取得します。
      *
-     * @return initramfs イメージファイルの URI
+     * @return Initrd/InitramFS イメージファイルの URI
      */
-    public URI getInitramfsImage() {
-        return initram;
+    public URI getInitrdImage() {
+        return initrd;
     }
 
     /**
-     * ブート時にカーネルに渡す initramfs イメージファイルの位置を設定します。
+     * ブート時にカーネルに渡す Initrd/InitramFS イメージファイルの位置を設定します。
      *
-     * @param file initramfs イメージファイルパス
+     * @param file Initrd/InitramFS イメージファイルパス
      */
-    public void setInitramfsImage(File file) {
-        initram = file.toURI();
+    public void setInitrdImage(File file) {
+        initrd = file.toURI();
     }
 
     /**
-     * ブート時にカーネルに渡す initramfs イメージファイルの位置を設定します。
+     * ブート時にカーネルに渡す Initrd/InitramFS イメージファイルの位置を設定します。
      *
-     * @param uri initramfs イメージファイルの URI
+     * @param uri Initrd/InitramFS イメージファイルの URI
      */
-    public void setInitramfsImage(URI uri) {
-        initram = uri;
+    public void setInitrdImage(URI uri) {
+        initrd = uri;
     }
 
     /**
@@ -104,11 +104,11 @@ public class LinuxOption {
     public String toString() {
         return String.format("%s: \n" +
                         "  Kernel      : '%s'\n" +
-                        "  InitramFS   : '%s'\n" +
+                        "  Initrd      : '%s'\n" +
                         "  Command Line: '%s'",
                 getClass().getSimpleName(),
                 getKernelImage().toString(),
-                getInitramfsImage().toString(),
+                getInitrdImage().toString(),
                 getCommandLine());
     }
 }

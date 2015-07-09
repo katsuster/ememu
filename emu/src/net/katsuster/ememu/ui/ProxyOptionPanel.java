@@ -34,19 +34,23 @@ public class ProxyOptionPanel extends JPanel {
 
         opts = options;
 
+        //コンポーネントを作成
         chkSet = new JCheckBox("Enable proxy configuration");
         if (opts.getProxyHost().toString().equals("")) {
             chkSet.setSelected(false);
         } else {
             chkSet.setSelected(true);
         }
+
         txtHost = new JTextField(opts.getProxyHost().toString());
         txtHost.setPreferredSize(calcPreferredSize(30));
         txtHost.setMinimumSize(calcPreferredSize(30));
+
         txtPort = new JTextField(Integer.toString(opts.getProxyPort()));
         txtPort.setPreferredSize(calcPreferredSize(10));
         txtPort.setMinimumSize(calcPreferredSize(10));
 
+        //コンポーネントを配置
         GridBagLayout layout = new GridBagLayout();
         setLayout(layout);
 
@@ -77,6 +81,10 @@ public class ProxyOptionPanel extends JPanel {
 
     /**
      * パネル内の各コンポーネントの設定値をオプションオブジェクトに反映させます。
+     *
+     * 設定値が URI として（ホスト名の場合）解釈できない、
+     * または数値として（ポート番号の場合）解釈できない場合は、
+     * オプションオブジェクトの値は変更されません。
      */
     protected void updateOption() {
         try {

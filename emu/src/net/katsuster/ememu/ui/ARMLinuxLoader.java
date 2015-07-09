@@ -52,7 +52,7 @@ public class ARMLinuxLoader {
         return i;
     }
 
-    public static void bootFromURI(ARMv5 cpu, RAM ramMain, String kimage, String initram, String cmdline) {
+    public static void bootFromURI(ARMv5 cpu, RAM ramMain, String kimage, String initrd, String cmdline) {
         byte[] cmdlb = cmdline.getBytes();
         //+1: need null char at the end of line
         byte[] cmdalign = new byte[(cmdlb.length + 1 + 3) & ~0x3];
@@ -63,17 +63,17 @@ public class ARMLinuxLoader {
         int addrAtags = addrAtagsStart;
         final int addrImage = addrRAM + 0x00008000;
         int sizeImage = 0;
-        final int addrInitram = addrRAM + 0x00800000;
-        int sizeInitram = 0;
-        boolean initramExist = !initram.equals("");
+        final int addrInitrd = addrRAM + 0x00800000;
+        int sizeInitrd = 0;
+        boolean initrdExist = !initrd.equals("");
 
         //tentative boot loader for ARM Linux
         try {
             //load Image file
             sizeImage = loadURIResource(new URI(kimage), cpu, addrImage);
-            //load initramfs file
-            if (initramExist) {
-                sizeInitram = loadURIResource(new URI(initram), cpu, addrInitram);
+            //load Initrd/InitramFS file
+            if (initrdExist) {
+                sizeInitrd = loadURIResource(new URI(initrd), cpu, addrInitrd);
             }
         } catch (URISyntaxException e) {
             e.printStackTrace(System.err);
@@ -82,12 +82,12 @@ public class ARMLinuxLoader {
 
         //report address mapping
         System.out.printf("Address mapping:\n" +
-                        "  RAM      : 0x%08x\n" +
-                        "  Kernel   : 0x%08x - 0x%08x\n" +
-                        "  Initramfs: 0x%08x - 0x%08x\n" +
-                        "  ATAGS    : 0x%08x - 0x%08x\n",
+                        "  RAM   : 0x%08x\n" +
+                        "  Kernel: 0x%08x - 0x%08x\n" +
+                        "  Initrd: 0x%08x - 0x%08x\n" +
+                        "  ATAGS : 0x%08x - 0x%08x\n",
                 addrRAM, addrImage, addrImage + sizeImage - 1,
-                addrInitram, addrInitram + sizeInitram - 1,
+                addrInitrd, addrInitrd + sizeInitrd - 1,
                 addrAtags, addrAtags + 4096 - 1);
 
         //r0: 0
@@ -119,11 +119,11 @@ public class ARMLinuxLoader {
             addrAtags += 0x10;
 
             //ATAG_INITRD2, size, tag, size, start
-            if (initramExist) {
+            if (initrdExist) {
                 cpu.write32_a32(addrAtags + 0x00, 0x00000004);
                 cpu.write32_a32(addrAtags + 0x04, ATAG_INITRD2);
-                cpu.write32_a32(addrAtags + 0x08, addrInitram);
-                cpu.write32_a32(addrAtags + 0x0c, sizeInitram);
+                cpu.write32_a32(addrAtags + 0x08, addrInitrd);
+                cpu.write32_a32(addrAtags + 0x0c, sizeInitrd);
                 addrAtags += 0x10;
             }
 
