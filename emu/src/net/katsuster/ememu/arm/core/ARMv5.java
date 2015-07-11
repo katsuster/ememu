@@ -23,7 +23,7 @@ public class ARMv5 extends CPU {
     public static final int INTSRC_FIQ = 1;
 
     private ExecStageARMv5 armExec;
-    private ExecStageThumbv2 thumbExec;
+    private ExecStageThumb thumbExec;
 
     private ARMRegFile regfile;
     private CoProc[] coProcs;
@@ -48,7 +48,7 @@ public class ARMv5 extends CPU {
         cpStd = new CoProcStdv5(15, this);
 
         armExec = new ExecStageARMv5(this);
-        thumbExec = new ExecStageThumbv2(this);
+        thumbExec = new ExecStageThumb(this);
 
         regfile = new ARMRegFile();
         coProcs = new CoProc[16];
@@ -396,10 +396,136 @@ public class ARMv5 extends CPU {
     /**
      * Thumb-2 命令をデコードします。
      *
-     * @param inst Thumb 命令
+     * @param inst Thumb-2 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeThumb2(InstructionThumb inst, boolean exec) {
+        int op1 = inst.getField(11 + 16, 2);
+        int op2 = inst.getField(4 + 16, 7);
+
+        switch (op1) {
+        case 0x1:
+            if ((op2 & 0b1100100) == 0b0000000) {
+                //0b00xx0xx, ロード、ストアマルチプル命令
+                decodeLdmStmT2(inst, exec);
+            } else if ((op2 & 0b1100100) == 0b0000100) {
+                //0b00xx1xx, デュアルロード、ストア、排他ロード、ストア命令
+                decodeDualLdSt(inst, exec);
+            } else if ((op2 & 0b1100000) == 0b0100000) {
+                //0b01xxxxx, データ処理（シフトしたレジスタ）
+                decodeALUShiftRegT2(inst, exec);
+            } else if ((op2 & 0b1000000) == 0b1000000) {
+                //0b1000000, コプロセッサ命令
+                decodeCoproc(inst, exec);
+            } else {
+                throw new IllegalArgumentException("Unknown op2 of Thumb-2" +
+                        String.format("(%d, %d).", op1, op2));
+            }
+            break;
+        case 0x2:
+            //データ処理修正イミディエート、データ処理イミディエート、分岐命令
+            boolean op = inst.getBit(15);
+
+            if (!op) {
+                if ((op2 & 0b0100000) == 0b0000000) {
+                    //0bx0xxxxx, データ処理（修飾イミディエート）
+                    decodeALUModimmT2(inst, exec);
+                } else if ((op2 & 0b0100000) == 0b0100000) {
+                    //0bx1xxxxx, データ処理（イミディエート）
+                    decodeALUImmT2(inst, exec);
+                } else {
+                    throw new IllegalArgumentException("Unknown op2 of Thumb-2" +
+                            String.format("(%d, %d).", op1, op2));
+                }
+            } else {
+                //分岐およびその他
+                decodeBlBlxT2(inst, exec);
+            }
+            break;
+        case 0x3:
+            //ロードストア、データ処理レジスタ、乗算、飽和演算
+            break;
+        case 0x0:
+            //16bit 命令、ここに来るのはおかしい
+        default:
+            throw new IllegalArgumentException("Unknown op1 of Thumb-2" +
+                    String.format("(%d).", op1));
+        }
+    }
+
+    /**
+     * ロード、ストアマルチプル命令をデコードします。
+     *
+     * @param inst Thumb-2 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeLdmStmT2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * デュアルロード、ストア命令をデコードします。
+     *
+     * @param inst Thumb-2 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeDualLdSt(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * デュアルロード、ストア命令をデコードします。
+     *
+     * @param inst Thumb-2 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeALUShiftRegT2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * コプロセッサ命令をデコードします。
+     *
+     * @param inst Thumb-2 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeCoproc(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * データ処理（修飾イミディエート）命令をデコードします。
+     *
+     * @param inst Thumb-2 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeALUModimmT2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * データ処理（イミディエート）命令をデコードします。
+     *
+     * @param inst Thumb-2 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeALUImmT2(InstructionThumb inst, boolean exec) {
+        //TODO: Not implemented
+        throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 分岐およびその他の命令をデコードします。
+     *
+     * @param inst Thumb-2 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeBlBlxT2(InstructionThumb inst, boolean exec) {
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
     }

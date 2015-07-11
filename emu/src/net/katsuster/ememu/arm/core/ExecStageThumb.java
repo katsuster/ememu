@@ -3,7 +3,7 @@ package net.katsuster.ememu.arm.core;
 import net.katsuster.ememu.generic.*;
 
 /**
- * Thumb v2 命令の実行ステージ。
+ * Thumb 命令（Thumb v1, v2, v3）の実行ステージ。
  *
  * 参考: ARM アーキテクチャリファレンスマニュアル Second Edition
  * ARM DDI0100DJ
@@ -12,13 +12,13 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class ExecStageThumbv2 extends ExecStage {
+public class ExecStageThumb extends Stage {
     /**
      * ARMv5 CPU コア c の実行ステージを生成します。
      *
      * @param c 実行ステージの持ち主となる ARMv5 CPU コア
      */
-    public ExecStageThumbv2(ARMv5 c) {
+    public ExecStageThumb(ARMv5 c) {
         super(c);
     }
 

@@ -12,7 +12,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class ExecStageARMv5 extends ExecStage {
+public class ExecStageARMv5 extends Stage {
     /**
      * ARMv5 CPU コア c の実行ステージを生成します。
      *

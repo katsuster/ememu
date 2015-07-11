@@ -13,11 +13,14 @@ import javax.swing.*;
 public class MainWindow {
     private static final PrintStream systemOut = System.out;
 
+
     private JSplitPane panel;
     private JPanel panelLeft, panelRight;
     private SystemPane spane;
     private JPanel panelStdout, panelNavigator;
+
     private JTabbedPane tabPane;
+    private StdoutPanel stdoutPanel;
     private LinuxOptionPanel linuxOptPanel;
     private ProxyOptionPanel proxyOptPanel;
     private Emulator emu;

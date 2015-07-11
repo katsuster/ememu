@@ -1,19 +1,22 @@
 package net.katsuster.ememu.generic;
 
 /**
- * 命令の実行ステージ。
+ * CPU のパイプラインのステージ。
+ *
+ * ステージは CPU が命令を解釈、実行するため、各々が独立して実行できる工程を指します。
+ * 例えばフェッチ、デコード、実行ステージに分けることができます。
  *
  * @author katsuhiro
  */
-public class ExecStage {
+public class Stage {
     private CPU core;
 
     /**
-     * CPU コアの実行ステージを生成します。
+     * CPU コアのステージを生成します。
      *
-     * @param c 実行ステージを使う CPU コア
+     * @param c ステージを使う CPU コア
      */
-    public ExecStage(CPU c) {
+    public Stage(CPU c) {
         core = c;
     }
 
