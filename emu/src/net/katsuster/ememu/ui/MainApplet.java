@@ -20,11 +20,10 @@ public class MainApplet extends JApplet {
 
     private static final PrintStream systemOut = System.out;
 
-    private JSplitPane panel;
-    private JPanel panelLeft, panelRight;
-    private SystemPane spane;
-    private JPanel panelStdout, panelNavigator;
+    private ButtonListener listenButton;
     private JTabbedPane tabPane;
+    private JSplitPane panel;
+    private StdoutPanel stdoutPanel;
     private LinuxOptionPanel linuxOptPanel;
     private ProxyOptionPanel proxyOptPanel;
     private Emulator emu;
@@ -96,7 +95,7 @@ public class MainApplet extends JApplet {
         System.out.println(proxyOpts);
 
         //menu
-        ButtonListener listenButton = new ButtonListener();
+        listenButton = new ButtonListener();
         setJMenuBar(new MainMenuBar(listenButton));
 
         //tabs
@@ -110,31 +109,20 @@ public class MainApplet extends JApplet {
         panel.setDividerSize(4);
 
         //stdout Tab - Left - stdout
-        spane = new SystemPane(systemOut);
-        System.setOut(spane.getOutputStream());
-
-        panelStdout = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton btnClear = new JButton("Clear");
-        btnClear.addActionListener(listenButton);
-        btnClear.setActionCommand("clear");
-        panelStdout.add(btnClear);
-
-        panelLeft = new JPanel(new BorderLayout(), true);
-        panelLeft.add(spane, BorderLayout.CENTER);
-        panelLeft.add(panelStdout, BorderLayout.SOUTH);
-        panel.setLeftComponent(panelLeft);
+        stdoutPanel = new StdoutPanel(listenButton);
+        panel.setLeftComponent(stdoutPanel);
 
         //stdout Tab - Right - Settings, Navigator
         linuxOptPanel = new LinuxOptionPanel(linuxOpts);
         proxyOptPanel = new ProxyOptionPanel(proxyOpts);
 
-        panelNavigator = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel panelNavigator = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnReset = new JButton("Reset");
         btnReset.addActionListener(listenButton);
         btnReset.setActionCommand("reset");
         panelNavigator.add(btnReset);
 
-        panelRight = new JPanel(new GridLayout(3, 1, 5, 5), true);
+        JPanel panelRight = new JPanel(new GridLayout(3, 1, 5, 5), true);
         panelRight.add(linuxOptPanel);
         panelRight.add(proxyOptPanel);
         panelRight.add(panelNavigator);
@@ -159,14 +147,9 @@ public class MainApplet extends JApplet {
         System.setProperty("proxyHost", optProxy.getProxyHost().toString());
         System.setProperty("proxyPort", Integer.toString(optProxy.getProxyPort()));
 
-        //stdout
-        spane = new SystemPane(systemOut);
-        System.setOut(spane.getOutputStream());
-
-        panelLeft = new JPanel(new BorderLayout(), true);
-        panelLeft.add(spane, BorderLayout.CENTER);
-        panelLeft.add(panelStdout, BorderLayout.SOUTH);
-        panel.setLeftComponent(panelLeft);
+        //stdout Tab - Left - stdout
+        stdoutPanel = new StdoutPanel(listenButton);
+        panel.setLeftComponent(stdoutPanel);
 
         //terminal
         for (int i = 0; i < vttyAMA.length; i++) {
@@ -226,7 +209,7 @@ public class MainApplet extends JApplet {
                 start();
             }
             if (e.getActionCommand().equals("clear")) {
-                spane.clear();
+                stdoutPanel.clear();
             }
         }
     }
