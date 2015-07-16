@@ -2079,9 +2079,7 @@ public class ARMv5 extends CPU {
      * @param m CPU が例外を要求した場合 true、要求していない場合 false
      */
     public void setRaisedException(boolean m) {
-        synchronized(this) {
-            raisedException = m;
-        }
+        raisedException = m;
     }
 
     /**
@@ -2099,9 +2097,7 @@ public class ARMv5 extends CPU {
      * @param b ジャンプが行われたならば true、そうでなければ false
      */
     public void setJumped(boolean b) {
-        synchronized(this) {
-            jumped = b;
-        }
+        jumped = b;
     }
 
     /**
@@ -2123,9 +2119,7 @@ public class ARMv5 extends CPU {
      *          正規ベクタの場合は false
      */
     public void setHighVector(boolean m) {
-        synchronized(this) {
-            highVector = m;
-        }
+        highVector = m;
     }
 
     @Override
