@@ -17,7 +17,7 @@
 #### Live DEMO
 You can run the ememu (applet version) on my WEB site.
 
-http://www2.katsuster.net/~katsuhiro/contents/java/ememu/ememu_applet.html
+http://www.katsuster.net/contents/java/ememu/ememu_applet.html
 
 
 ## How to use
