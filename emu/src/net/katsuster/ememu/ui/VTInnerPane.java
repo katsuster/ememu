@@ -38,6 +38,8 @@ class VTInnerPane extends JComponent
     private int cursorY;
     //画面上の文字の位置
     private char[][] layoutBox;
+    //自動改行が必要かどうか
+    private boolean needWrap;
 
     public VTInnerPane(VirtualTerminal p) {
         super();
@@ -57,6 +59,7 @@ class VTInnerPane extends JComponent
         cursorX = 0;
         cursorY = 0;
         layoutBox = new char[getColumns()][getMaxLines()];
+        needWrap = false;
 
         setFocusable(false);
         addComponentListener(this);
@@ -289,20 +292,34 @@ class VTInnerPane extends JComponent
             c = buf.charAt(0);
             buf.deleteCharAt(0);
 
-            layoutBox[getCursorX()][getCursorY()] = c;
+            switch (c) {
+            case 0x0a:
+                //LF
+                nextLine();
+                break;
+            case 0x0d:
+                //CR
+                setCursorX(0);
+                break;
+            //case 0x1b:
+                //ESC
+                //break;
+            default:
+                //Other characters
+                if (getCursorX() == getColumns() - 1 && needWrap) {
+                    nextLine();
+                }
+
+                layoutBox[getCursorX()][getCursorY()] = c;
+                //NOTE: Need wrap the line at next char if we are in end of line
+                needWrap = (getCursorX() == getColumns() - 1);
+                setCursorX(getCursorX() + 1);
+            }
+
             if (getCurrentLine() < getCursorY()) {
                 setCurrentLine(getCursorY());
             }
-
-            if (c == 10) {
-                nextLine();
-            }
-
-            if (getCursorX() == getColumns() - 1) {
-                nextLine();
-            } else {
-                setCursorX(getCursorX() + 1);
-            }
+            System.out.printf("%02x\n", (int)c);
         }
     }
 
