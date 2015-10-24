@@ -24,6 +24,7 @@ public class ARMv5 extends CPU {
 
     private ExecStageARMv5 armExec;
     private ExecStageThumb thumbExec;
+    private ExecStageThumb2 thumb2Exec;
 
     private ARMRegFile regfile;
     private CoProc[] coProcs;
@@ -49,6 +50,7 @@ public class ARMv5 extends CPU {
 
         armExec = new ExecStageARMv5(this);
         thumbExec = new ExecStageThumb(this);
+        thumb2Exec = new ExecStageThumb2(this);
 
         regfile = new ARMRegFile();
         coProcs = new CoProc[16];
@@ -134,7 +136,6 @@ public class ARMv5 extends CPU {
     @Override
     public void jumpRel(int val) {
         setPC(getPC() + val);
-        setJumped(true);
     }
 
     /**
@@ -522,10 +523,102 @@ public class ARMv5 extends CPU {
     /**
      * 分岐およびその他の命令をデコードします。
      *
+     * 上位ワード
+     * [15:11] = 0b111_10
+     *
+     * 下位ワード
+     * [15] = 0b1
+     *
      * @param inst Thumb-2 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeBlBlxT2(InstructionThumb inst, boolean exec) {
+        int op1 = inst.getField(12, 3);
+
+        switch (op1) {
+        case 0:
+        case 2:
+            //0b0x0
+            decodeBlBlxMsrT2(inst, exec);
+            break;
+        case 1:
+        case 3:
+            //0b0x1, 分岐命令
+            thumb2Exec.executeB(inst, exec);
+            break;
+        case 4:
+        case 6:
+            //0b1x0, リンク付き分岐と状態遷移命令
+            thumb2Exec.executeBlx(inst, exec);
+            break;
+        case 5:
+        case 7:
+            //0b1x1, リンク付き分岐命令
+            thumb2Exec.executeBl(inst, exec);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown op1 of Thumb-2 BlBlxT2" +
+                    String.format("(%d).", op1));
+        }
+
+        //TODO: Not implemented
+        //throw new IllegalArgumentException("Sorry, not implemented.");
+    }
+
+    /**
+     * 条件付き分岐、特殊レジスタへの移動命令をデコードします。
+     *
+     * 上位ワード
+     * [15:11] = 0b111_10
+     *
+     * 下位ワード
+     * [15:12] = 0b1_0x0
+     *
+     * @param inst Thumb-2 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void decodeBlBlxMsrT2(InstructionThumb inst, boolean exec) {
+        int op = inst.getField(4 + 16, 7);
+        int op1 = inst.getField(12, 3);
+        int op2 = inst.getField(8, 4);
+
+        if (op1 == 0 && op == 0b1111111) {
+            //セキュアモニタコール
+            thumb2Exec.executeSmc(inst, exec);
+        } else if (op1 == 2 && op == 0b1111111) {
+            //恒久的に未定義
+            thumb2Exec.executeUnd(inst, exec);
+        }
+
+        if ((op & 0b0111000) == 0b0111000) {
+            //0bx111xxx, 条件付き分岐
+        }
+
+        switch (op) {
+        case 0b0111000:
+
+            break;
+        case 0b0111001:
+            //特殊レジスタへの移動
+            break;
+        case 0b0111010:
+            //プロセッサ状態の変更とヒント
+            break;
+        case 0b0111011:
+            //その他の制御命令
+            break;
+        case 0b0111100:
+            //分岐と Jazelle 状態への遷移命令
+            break;
+        case 0b0111101:
+            //例外からの復帰
+            break;
+        case 0b0111110:
+        case 0b0111111:
+            //0b011111x, 特殊レジスタからの移動
+            break;
+        }
+
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
