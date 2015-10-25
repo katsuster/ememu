@@ -82,6 +82,18 @@ public class SystemPane extends JPanel {
     }
 
     /**
+     * ストリームを閉じ、リソースを解放します。
+     */
+    public void close() {
+        try {
+            outPin.close();
+            outPout.close();
+        } catch (IOException e) {
+            //ignore
+        }
+    }
+
+    /**
      * out に出力された文字を、テキスト領域に表示するためのクラスです。
      *
      * Swing は複数スレッドからのアクセスを想定していないため、

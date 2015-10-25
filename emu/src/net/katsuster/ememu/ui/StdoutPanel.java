@@ -31,7 +31,17 @@ public class StdoutPanel extends JPanel {
         add(editPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * 表示済みの文字列を消去します。
+     */
     public void clear() {
         spane.clear();
+    }
+
+    /**
+     * ストリームを閉じ、リソースを解放します。
+     */
+    public void close() {
+        spane.close();
     }
 }

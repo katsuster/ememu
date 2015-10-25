@@ -110,10 +110,28 @@ public class VirtualTerminal extends JPanel
     }
 
     /**
-     * 今すぐスレッドを停止すべきであることを通知します。
+     * 今すぐスレッドを停止すべきかどうかを設定します。
+     *
+     * @param b 今すぐスレッドを停止すべきなら true、
+     *          そうでなければ false
      */
-    public void halt() {
-        halted = true;
+    public void setHalt(boolean b) {
+        halted = b;
+    }
+
+    /**
+     * ストリームを閉じ、リソースを解放します。
+     */
+    public void close() {
+        try {
+            setHalt(true);
+            inPin.close();
+            inPout.close();
+            outPin.close();
+            outPout.close();
+        } catch (IOException e) {
+            //ignore
+        }
     }
 
     /**

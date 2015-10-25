@@ -20,8 +20,16 @@ public class ARMVersatile {
         //do nothing
     }
 
+    public InputStream getUARTInputStream(int index) {
+        return uartIn[index];
+    }
+
     public void setUARTInputStream(int index, InputStream is) {
         uartIn[index] = is;
+    }
+
+    public OutputStream getUARTOutputStream(int index) {
+        return uartOut[index];
     }
 
     public void setUARTOutputStream(int index, OutputStream os) {

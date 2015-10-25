@@ -11,8 +11,6 @@ import javax.swing.*;
  * @author katsuhiro
  */
 public class MainWindow {
-    private static final PrintStream systemOut = System.out;
-
     private ButtonListener listenButton;
     private JTabbedPane tabPane;
     private JSplitPane panel;
@@ -115,7 +113,13 @@ public class MainWindow {
         System.out.println("stop");
 
         try {
+            stdoutPanel.close();
+
             if (emu != null) {
+                for (VirtualTerminal vta : vttyAMA) {
+                    vta.close();
+                }
+
                 emu.halt();
                 emu.join();
             }
