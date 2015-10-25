@@ -24,8 +24,9 @@ public class VirtualTerminal extends JPanel
     private PipedOutputStream inPout;
 
     //端末への出力を表示領域へ渡すためのストリーム
-    //(other class) -> outPout -> outPin -> (virtual terminal)
-    private PipedInputStream outPin;
+    //(other class) -> outPout -> outPinRaw -> outPin -> (virtual terminal)
+    private PipedInputStream outPinRaw;
+    private BufferedInputStream outPin;
     private PipedOutputStream outPout;
 
     //端末への表示を行うスレッド
@@ -61,8 +62,9 @@ public class VirtualTerminal extends JPanel
             inPin = new PipedInputStream();
             inPout = new PipedOutputStream(inPin);
 
-            outPin = new PipedInputStream();
-            outPout = new PipedOutputStream(outPin);
+            outPinRaw = new PipedInputStream();
+            outPin = new BufferedInputStream(outPinRaw);
+            outPout = new PipedOutputStream(outPinRaw);
         } catch (IOException e) {
             e.printStackTrace(System.err);
             throw new IllegalStateException(e);
@@ -220,23 +222,12 @@ public class VirtualTerminal extends JPanel
         @Override
         public void run() {
             try {
-                StringBuffer b = new StringBuffer();
-
-                output:
+                int i = 0;
                 while (!shouldHalt()) {
-                    b.setLength(0);
-                    do {
-                        int ch = outPin.read();
-                        if (ch == -1) {
-                            //EOF
-                            break output;
-                        }
-
-                        b.append((char) ch);
-                    } while (outPin.available() != 0);
+                    vt.layoutChars(outPin);
 
                     try {
-                        SwingUtilities.invokeAndWait(new StringAppender(b.toString()));
+                        SwingUtilities.invokeAndWait(new Painter(vt));
                     } catch (InterruptedException e) {
                         e.printStackTrace(System.err);
                     } catch (InvocationTargetException e) {
@@ -248,17 +239,16 @@ public class VirtualTerminal extends JPanel
             }
         }
 
-        private class StringAppender implements Runnable {
-            private String s;
+        private class Painter implements Runnable {
+            VTInnerPane pane;
 
-            public StringAppender(String str) {
-                s = str;
+            public Painter(VTInnerPane p) {
+                pane = p;
             }
 
             @Override
             public void run() {
-                vt.append(s);
-                //outText.append(s);
+                pane.repaint();
             }
         }
     }

@@ -2,6 +2,7 @@ package net.katsuster.ememu.ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -17,13 +18,13 @@ class VTInnerPane extends JComponent
     //親コンポーネント
     private VirtualTerminal parent;
 
-    //端末への出力データ
-    private StringBuffer buf;
-
     //端末画面の描画領域
     ContentBox boxScreen;
     //1文字の描画領域（ただし x, y は無視されます）
     ContentBox boxChar;
+
+    //入力された文字列を戻すためのバッファ
+    private StringBuilder strPushback;
 
     //1行の桁数
     private int columns;
@@ -51,7 +52,7 @@ class VTInnerPane extends JComponent
         boxChar = new ContentBox();
         boxChar.setMargin(0, 2, 0, 2);
 
-        buf = new StringBuffer();
+        strPushback = new StringBuilder();
         columns = 80;
         lines = 0;
         maxLines = 1000;
@@ -63,42 +64,6 @@ class VTInnerPane extends JComponent
 
         setFocusable(false);
         addComponentListener(this);
-    }
-
-    /**
-     * 端末への出力データを追加します。
-     *
-     * @param str 追加する端末への出力データ
-     */
-    public void append(String str) {
-        buf.append(str);
-
-        layoutChars();
-        repaint();
-    }
-
-    /**
-     * 端末への出力データを取得します。
-     *
-     * @return 端末への出力データ
-     */
-    public String getText() {
-        return buf.toString();
-    }
-
-    /**
-     * 端末への出力データを設定します。
-     *
-     * 古いデータは全て削除されます。
-     *
-     * @param t 端末への出力データ
-     */
-    public void setText(String t) {
-        buf.delete(0, buf.length());
-        buf.append(t);
-
-        layoutChars();
-        repaint();
     }
 
     /**
@@ -285,14 +250,223 @@ class VTInnerPane extends JComponent
         }
     }
 
-    protected void layoutChars() {
-        char c;
+    /**
+     * 入力された文字を取得します。
+     *
+     * 戻した文字列があればそちらから 1文字を返し、
+     * 戻した文字列がなければ入力ストリームから 1文字を返します。
+     *
+     * @param ins 文字列が入力されるストリーム
+     * @return 次の文字
+     * @throws IOException
+     */
+    protected char getNextChar(InputStream ins) throws IOException {
+        if (strPushback.length() != 0) {
+            char c = strPushback.charAt(0);
+            strPushback.deleteCharAt(0);
 
-        while (buf.length() > 0) {
-            c = buf.charAt(0);
-            buf.deleteCharAt(0);
+            return c;
+        }
+
+        int i = ins.read();
+        if (i == -1) {
+            //EOF
+            throw new IOException("Reached EOF");
+        }
+
+        //System.out.printf("%02x\n", i);
+
+        return (char)i;
+    }
+
+    /**
+     * 文字を戻します。
+     *
+     * 戻された文字は記憶され、次の getNextChar() で返されます。
+     * 複数の文字を戻した場合は、最後に戻した文字が先に返されます（LIFO）。
+     *
+     * @param c 戻す文字
+     */
+    protected void pushbackChar(char c) {
+        strPushback.insert(0, c);
+    }
+
+    /**
+     * エスケープシーケンスの数値パラメータを取得します。
+     *
+     * 数値（'0' から '9' までの文字）以外が出現した場合、解析を終了します。
+     * 1文字も数字が出現しなかった場合、デフォルト値を返します。
+     *
+     * @param ins 文字列を入力するストリーム
+     * @param def デフォルト値
+     * @return 数値パラメータ、一文字もなければデフォルト値を返します。
+     * @throws IOException
+     */
+    protected int getNumberChar(InputStream ins, int def) throws IOException {
+        char c;
+        int result = 0;
+        boolean isDefault = true;
+
+        output:
+        while (true) {
+            c = getNextChar(ins);
+            switch (c) {
+            case '0': case '1': case '2': case '3': case '4':
+            case '5': case '6': case '7': case '8': case '9':
+                result *= 10;
+                result += c - '0';
+                isDefault = false;
+                break;
+            default:
+                pushbackChar(c);
+                break output;
+            }
+        }
+
+        if (isDefault) {
+            return def;
+        } else {
+            return result;
+        }
+    }
+
+    /**
+     * CSI（ESC [）を処理します。
+     *
+     * @param ins 文字列を入力するストリーム
+     */
+    protected boolean layoutEscapeCSI(InputStream ins) throws IOException {
+        int defNum = -1;
+        int numN = getNumberChar(ins, defNum);
+        int numM = 0;
+        char csrChar;
+        boolean processed = false;
+
+        while (!processed) {
+            csrChar = getNextChar(ins);
+            switch (csrChar) {
+            case 'H':
+                //CUP - Cursor Position
+                if (numN == defNum) {
+                    numN = 1;
+                }
+                if (numM == defNum) {
+                    numN = 1;
+                }
+
+                //NOTE: ASCII Escape sequence cursor position is 1-origin
+                setCursorX(numM - 1);
+                setCursorY(parent.getStartLine() + numN - 1);
+
+                processed = true;
+                break;
+            case 'J':
+                //ED - Erase Display
+                int yEnd = Math.min(parent.getStartLine() + getLines(), getMaxLines());
+
+                if (numN == defNum) {
+                    numN = 0;
+                }
+
+                switch (numN) {
+                case 0:
+                    //0: Clear from cursor to end of screen
+                    for (int x = getCursorX(); x < getColumns(); x++) {
+                        layoutBox[x][getCursorY()] = 0;
+                    }
+                    for (int y = getCursorY() + 1; y < yEnd; y++) {
+                        for (int x = 0; x < getColumns(); x++) {
+                            layoutBox[x][y] = 0;
+                        }
+                    }
+                    break;
+                case 1:
+                    //1: Clear from begging of screen to cursor
+                    //FIXME: not implemented yet
+                    System.out.println("CSI 1 J is not implemented, sorry.");
+                    break;
+                case 2:
+                    //2: Clear entire screen
+                    //FIXME: not implemented yet
+                    System.out.println("CSI 2 J is not implemented, sorry.");
+                    break;
+                default:
+                    //Unknown, do nothing
+                    break;
+                }
+
+                processed = true;
+                break;
+            case ';':
+                //Next number
+                numM = getNumberChar(ins, defNum);
+                break;
+            default:
+                //Unknown: Ignore it
+                processed = true;
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * ESC を処理します。
+     *
+     * @param ins 文字列を入力するストリーム
+     */
+    protected boolean layoutEscape(InputStream ins) throws IOException {
+        char c = getNextChar(ins);
+
+        switch (c) {
+        case 0x5b:
+            //CSI
+            layoutEscapeCSI(ins);
+            break;
+        default:
+            //ignore it
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 1文字を配置します。
+     *
+     * @param ins 文字列を入力するストリーム
+     */
+    protected void layoutNormalChar(InputStream ins) throws IOException {
+        char c = getNextChar(ins);
+
+        if (getCursorX() == getColumns() - 1 && needWrap) {
+            nextLine();
+        }
+
+        layoutBox[getCursorX()][getCursorY()] = c;
+        //NOTE: Need wrap the line at next char if we are in end of line
+        needWrap = (getCursorX() == getColumns() - 1);
+        setCursorX(getCursorX() + 1);
+    }
+
+    /**
+     * 文字を配置します。
+     *
+     * 入力ストリームに十分な文字列がない場合、
+     * 文字列が入力されるまでスレッドがブロックされます。
+     *
+     * @param ins 文字列を入力するストリーム
+     */
+    public void layoutChars(InputStream ins) throws IOException {
+        do {
+            char c = getNextChar(ins);
 
             switch (c) {
+            case 0x08:
+                //BS
+                setCursorX(getCursorX() - 1);
+                break;
             case 0x0a:
                 //LF
                 nextLine();
@@ -301,26 +475,25 @@ class VTInnerPane extends JComponent
                 //CR
                 setCursorX(0);
                 break;
-            //case 0x1b:
+            case 0x1b:
                 //ESC
-                //break;
+                boolean processed = layoutEscape(ins);
+                if (!processed) {
+                    pushbackChar(c);
+                    layoutNormalChar(ins);
+                }
+                break;
             default:
                 //Other characters
-                if (getCursorX() == getColumns() - 1 && needWrap) {
-                    nextLine();
-                }
-
-                layoutBox[getCursorX()][getCursorY()] = c;
-                //NOTE: Need wrap the line at next char if we are in end of line
-                needWrap = (getCursorX() == getColumns() - 1);
-                setCursorX(getCursorX() + 1);
+                pushbackChar(c);
+                layoutNormalChar(ins);
             }
 
+            //Show last line
             if (getCurrentLine() < getCursorY()) {
                 setCurrentLine(getCursorY());
             }
-            System.out.printf("%02x\n", (int)c);
-        }
+        } while (ins.available() != 0);
     }
 
     protected void drawAll(Graphics2D g, int start) {
