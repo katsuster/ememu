@@ -161,49 +161,77 @@ public class VirtualTerminal extends JPanel
 
     @Override
     public void keyTyped(KeyEvent e) {
-        try {
-            inPout.write(e.getKeyChar());
-        } catch (IOException ex) {
-            //ignored
-        }
+        //do nothing
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int code = e.getKeyCode();
+        int keycode = e.getKeyCode();
+        char keychar = e.getKeyChar();
         int dat = 0;
-        int onmask, offmask;
         boolean shift = false, ctrl = false, alt = false;
+        boolean valid = true;
 
-        switch (code) {
+        switch (keycode) {
         case KeyEvent.VK_ALT:
         case KeyEvent.VK_CONTROL:
         case KeyEvent.VK_SHIFT:
             //ignore
             return;
         }
+        //System.out.printf("press:code:0x%02x, char:0x%02x\n", e.getKeyCode(), (int)e.getKeyChar());
 
-        onmask = KeyEvent.SHIFT_DOWN_MASK;
-        offmask = KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK;
-        if ((e.getModifiersEx() & (onmask | offmask)) == onmask) {
-            //Shift のみ
+        if ((e.getModifiersEx() & KeyEvent.SHIFT_DOWN_MASK) == KeyEvent.SHIFT_DOWN_MASK) {
             shift = true;
         }
-
-        if (KeyEvent.VK_A <= code && code <= KeyEvent.VK_Z) {
-            if (shift) {
-                dat = 'A';
-            } else {
-                dat = 'a';
-            }
-            dat += code - KeyEvent.VK_A;
+        if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+            ctrl = true;
+        }
+        if ((e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) == KeyEvent.ALT_DOWN_MASK) {
+            alt = true;
         }
 
-        /*try {
-            inPout.write(dat);
-        } catch (IOException ex) {
-            //ignored
-        }*/
+        if (!ctrl && !alt) {
+            dat = keychar;
+            if (keychar == 0xffff) {
+                valid = false;
+            }
+        } else if (!shift && ctrl && !alt) {
+            //Ctrl + @, A...Z, [, \, ], ^, _
+            if (KeyEvent.VK_A <= keycode && keycode <= KeyEvent.VK_Z) {
+                dat = 0x01 + keycode - KeyEvent.VK_A;
+            } else {
+                switch (keycode) {
+                case KeyEvent.VK_AT:
+                    dat = 0x00;
+                    break;
+                case KeyEvent.VK_OPEN_BRACKET:
+                case KeyEvent.VK_BACK_SLASH:
+                case KeyEvent.VK_CLOSE_BRACKET:
+                    dat = 0x1b + keycode - KeyEvent.VK_OPEN_BRACKET;
+                    break;
+                case KeyEvent.VK_CIRCUMFLEX:
+                    dat = 0x1e;
+                    break;
+                default:
+                    valid = false;
+                    break;
+                }
+            }
+        } else {
+            dat = keychar;
+            if (keychar == 0xffff) {
+                valid = false;
+            }
+        }
+
+        if (valid) {
+            try {
+                inPout.write(dat);
+            } catch (IOException ex) {
+                //ignored
+            }
+        }
     }
 
     @Override

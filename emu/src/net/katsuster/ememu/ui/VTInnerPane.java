@@ -143,7 +143,9 @@ class VTInnerPane extends JComponent
      * @param l 現在の行数
      */
     protected void setCurrentLine(int l) {
-        currentLine = l;
+        if (currentLine < l) {
+            currentLine = l;
+        }
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -345,6 +347,24 @@ class VTInnerPane extends JComponent
         while (!processed) {
             csrChar = getNextChar(ins);
             switch (csrChar) {
+            case 'C':
+                //CUF - Cursor Forward
+                if (numN == defNum) {
+                    numN = 1;
+                }
+                setCursorX(getCursorX() + numN);
+
+                processed = true;
+                break;
+            case 'D':
+                //CUB - Cursor Back
+                if (numN == defNum) {
+                    numN = 1;
+                }
+                setCursorX(getCursorX() - numN);
+
+                processed = true;
+                break;
             case 'H':
                 //CUP - Cursor Position
                 if (numN == defNum) {
@@ -356,13 +376,13 @@ class VTInnerPane extends JComponent
 
                 //NOTE: ASCII Escape sequence cursor position is 1-origin
                 setCursorX(numM - 1);
-                setCursorY(parent.getStartLine() + numN - 1);
+                setCursorY(getCurrentLine() + 1 - getLines() + numN - 1);
 
                 processed = true;
                 break;
             case 'J':
                 //ED - Erase Display
-                int yEnd = Math.min(parent.getStartLine() + getLines(), getMaxLines());
+                int yEnd = Math.min(getCurrentLine() + 1, getMaxLines());
 
                 if (numN == defNum) {
                     numN = 0;
@@ -403,6 +423,7 @@ class VTInnerPane extends JComponent
                 break;
             default:
                 //Unknown: Ignore it
+                //System.out.printf("Unknown CSR 0x%02x\n", (int)csrChar);
                 processed = true;
                 break;
             }
@@ -499,10 +520,11 @@ class VTInnerPane extends JComponent
     protected void drawAll(Graphics2D g, int start) {
         int yEnd = Math.min(start + getLines(), getMaxLines());
         Color before = g.getColor();
-        FontMetrics fm = g.getFontMetrics();
-        int ascent = fm.getMaxAscent();
         Rectangle rscr, r;
 
+        rscr = boxScreen.getContents();
+
+        //Draw whole screen
         g.setColor(getBackground());
         g.fill3DRect(0, 0, getWidth(), getHeight(), false);
         g.setColor(before);
@@ -512,13 +534,28 @@ class VTInnerPane extends JComponent
                     continue;
                 }
 
-                rscr = boxScreen.getContents();
                 boxChar.setX(rscr.x + x * boxChar.getWidth());
                 boxChar.setY(rscr.y + (y - start) * boxChar.getHeight());
                 r = boxChar.getContents();
                 g.drawString(String.valueOf(layoutBox[x][y]),
-                        r.x, r.y + ascent);
+                        r.x, r.y + r.height);
             }
+        }
+
+        //Draw cursor
+        int x = getCursorX();
+        int y = getCursorY();
+
+        boxChar.setX(rscr.x + x * boxChar.getWidth());
+        boxChar.setY(rscr.y + (y - start) * boxChar.getHeight());
+        r = boxChar.getBounds();
+        g.setColor(getForeground());
+        g.fillRect(r.x, r.y, r.width, r.height);
+        if (layoutBox[x][y] != 0) {
+            r = boxChar.getContents();
+            g.setColor(getBackground());
+            g.drawString(String.valueOf(layoutBox[x][y]),
+                    r.x, r.y + r.height);
         }
     }
 
