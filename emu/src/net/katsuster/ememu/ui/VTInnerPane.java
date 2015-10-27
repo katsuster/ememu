@@ -484,6 +484,10 @@ class VTInnerPane extends JComponent
             char c = getNextChar(ins);
 
             switch (c) {
+            case 0x07:
+                //BELL
+                //FIXME: ignored it
+                break;
             case 0x08:
                 //BS
                 setCursorX(getCursorX() - 1);

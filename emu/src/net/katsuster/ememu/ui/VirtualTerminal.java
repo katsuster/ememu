@@ -169,8 +169,9 @@ public class VirtualTerminal extends JPanel
         int keycode = e.getKeyCode();
         char keychar = e.getKeyChar();
         int dat = 0;
+        byte[] datArray = new byte[0];
         boolean shift = false, ctrl = false, alt = false;
-        boolean valid = true;
+        boolean valid = true, validMulti = false;
 
         switch (keycode) {
         case KeyEvent.VK_ALT:
@@ -192,9 +193,29 @@ public class VirtualTerminal extends JPanel
         }
 
         if (!ctrl && !alt) {
-            dat = keychar;
-            if (keychar == 0xffff) {
-                valid = false;
+            switch (keycode) {
+            case KeyEvent.VK_UP:
+                datArray = new byte[]{'\033', '[', 'A'};
+                validMulti = true;
+                break;
+            case KeyEvent.VK_DOWN:
+                datArray = new byte[]{'\033', '[', 'B'};
+                validMulti = true;
+                break;
+            case KeyEvent.VK_LEFT:
+                datArray = new byte[]{'\033', '[', 'D'};
+                validMulti = true;
+                break;
+            case KeyEvent.VK_RIGHT:
+                datArray = new byte[]{'\033', '[', 'C'};
+                validMulti = true;
+                break;
+            default:
+                dat = keychar;
+                if (keychar == 0xffff) {
+                    valid = false;
+                }
+                break;
             }
         } else if (!shift && ctrl && !alt) {
             //Ctrl + @, A...Z, [, \, ], ^, _
@@ -225,12 +246,14 @@ public class VirtualTerminal extends JPanel
             }
         }
 
-        if (valid) {
-            try {
+        try {
+            if (validMulti) {
+                inPout.write(datArray);
+            } else if (valid) {
                 inPout.write(dat);
-            } catch (IOException ex) {
-                //ignored
             }
+        } catch (IOException ex) {
+            //ignored
         }
     }
 
