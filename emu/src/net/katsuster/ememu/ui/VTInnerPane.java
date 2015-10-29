@@ -41,6 +41,8 @@ class VTInnerPane extends JComponent
     private char[][] layoutBox;
     //自動改行が必要かどうか
     private boolean needWrap;
+    //自動改行（後退時）が必要かどうか
+    private boolean needWrapBack;
 
     public VTInnerPane(VirtualTerminal p) {
         super();
@@ -61,6 +63,7 @@ class VTInnerPane extends JComponent
         cursorY = 0;
         layoutBox = new char[getColumns()][getMaxLines()];
         needWrap = false;
+        needWrapBack = false;
 
         setFocusable(false);
         addComponentListener(this);
@@ -170,6 +173,24 @@ class VTInnerPane extends JComponent
     }
 
     /**
+     * スクリーンの一番上の行を取得します。
+     *
+     * @return スクリーンの一番上の行
+     */
+    public int getScreenTopLine() {
+        return Math.max(0, getCurrentLine() + 1 - getLines());
+    }
+
+    /**
+     * スクリーンの一番下の行を取得します。
+     *
+     * @return スクリーンの一番上の行
+     */
+    public int getScreenBottomLine() {
+        return Math.min(getCurrentLine(), getMaxLines() - 1);
+    }
+
+    /**
      * 現在のカーソル位置の X 座標を取得します。
      *
      * @return カーソル位置の現在の X 座標
@@ -226,6 +247,14 @@ class VTInnerPane extends JComponent
     public void setCursorLocation(int x, int y) {
         setCursorX(x);
         setCursorY(y);
+    }
+
+    /**
+     * カーソルを前の行へ移動させます。
+     */
+    public void previousLine() {
+        setCursorX(getColumns() - 1);
+        setCursorY(getCursorY() - 1);
     }
 
     /**
@@ -333,6 +362,30 @@ class VTInnerPane extends JComponent
     }
 
     /**
+     * ESC を処理します。
+     *
+     * @param ins 文字列を入力するストリーム
+     */
+    protected boolean layoutEscape(InputStream ins) throws IOException {
+        char c = getNextChar(ins);
+
+        switch (c) {
+        case '[':
+            //CSI
+            layoutEscapeCSI(ins);
+            break;
+        default:
+            //ignore it
+            pushbackChar(c);
+            layoutNormalChar(ins);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * CSI（ESC [）を処理します。
      *
      * @param ins 文字列を入力するストリーム
@@ -340,13 +393,31 @@ class VTInnerPane extends JComponent
     protected boolean layoutEscapeCSI(InputStream ins) throws IOException {
         int defNum = -1;
         int numN = getNumberChar(ins, defNum);
-        int numM = 0;
+        int numM = defNum;
         char csrChar;
-        boolean processed = false;
+        boolean sequenceEnd = false;
 
-        while (!processed) {
+        while (!sequenceEnd) {
             csrChar = getNextChar(ins);
             switch (csrChar) {
+            case 'A':
+                //CUU - Cursor Up
+                if (numN == defNum) {
+                    numN = 1;
+                }
+                setCursorY(Math.max(getScreenTopLine(), getCursorY() - numN));
+
+                sequenceEnd = true;
+                break;
+            case 'B':
+                //CUD - Cursor Down
+                if (numN == defNum) {
+                    numN = 1;
+                }
+                setCursorY(getCursorY() + numN);
+
+                sequenceEnd = true;
+                break;
             case 'C':
                 //CUF - Cursor Forward
                 if (numN == defNum) {
@@ -354,7 +425,7 @@ class VTInnerPane extends JComponent
                 }
                 setCursorX(getCursorX() + numN);
 
-                processed = true;
+                sequenceEnd = true;
                 break;
             case 'D':
                 //CUB - Cursor Back
@@ -363,7 +434,7 @@ class VTInnerPane extends JComponent
                 }
                 setCursorX(getCursorX() - numN);
 
-                processed = true;
+                sequenceEnd = true;
                 break;
             case 'H':
                 //CUP - Cursor Position
@@ -373,17 +444,13 @@ class VTInnerPane extends JComponent
                 if (numM == defNum) {
                     numN = 1;
                 }
-
                 //NOTE: ASCII Escape sequence cursor position is 1-origin
-                setCursorX(numM - 1);
-                setCursorY(getCurrentLine() + 1 - getLines() + numN - 1);
+                setCursorLocation(numM - 1, getScreenTopLine() + numN - 1);
 
-                processed = true;
+                sequenceEnd = true;
                 break;
             case 'J':
                 //ED - Erase Display
-                int yEnd = Math.min(getCurrentLine() + 1, getMaxLines());
-
                 if (numN == defNum) {
                     numN = 0;
                 }
@@ -394,7 +461,7 @@ class VTInnerPane extends JComponent
                     for (int x = getCursorX(); x < getColumns(); x++) {
                         layoutBox[x][getCursorY()] = 0;
                     }
-                    for (int y = getCursorY() + 1; y < yEnd; y++) {
+                    for (int y = getCursorY() + 1; y < getScreenBottomLine() + 1; y++) {
                         for (int x = 0; x < getColumns(); x++) {
                             layoutBox[x][y] = 0;
                         }
@@ -403,28 +470,64 @@ class VTInnerPane extends JComponent
                 case 1:
                     //1: Clear from begging of screen to cursor
                     //FIXME: not implemented yet
-                    System.out.println("CSI 1 J is not implemented, sorry.");
-                    break;
+                    //break;
                 case 2:
                     //2: Clear entire screen
                     //FIXME: not implemented yet
-                    System.out.println("CSI 2 J is not implemented, sorry.");
-                    break;
+                    //break;
                 default:
                     //Unknown, do nothing
+                    System.out.printf("CSI %d J (Erase Display) is not implemented, sorry.\n", numN);
                     break;
                 }
 
-                processed = true;
+                sequenceEnd = true;
+                break;
+            case 'K':
+                //EL - Erase Line
+                if (numN == defNum) {
+                    numN = 0;
+                }
+
+                switch (numN) {
+                case 0:
+                    //0: Clear from cursor to the end of the line
+                    for (int x = getCursorX(); x < getColumns(); x++) {
+                        layoutBox[x][getCursorY()] = 0;
+                    }
+                    break;
+                case 1:
+                    //1: Clear from cursor to beginning of the line
+                    //FIXME: not implemented yet
+                    //break;
+                case 2:
+                    //2: Clear entire line
+                    //FIXME: not implemented yet
+                    //break;
+                default:
+                    //Unknown, do nothing
+                    System.out.printf("CSI %d K (Erase Line) is not implemented, sorry.\n", numN);
+                    break;
+                }
+
+                sequenceEnd = true;
                 break;
             case ';':
-                //Next number
+                //Get next parameter
                 numM = getNumberChar(ins, defNum);
+
+                sequenceEnd = false;
+                break;
+            case '?':
+                //DEC format
+                sequenceEnd = layoutEscapeCSIDEC(ins);
                 break;
             default:
                 //Unknown: Ignore it
-                //System.out.printf("Unknown CSR 0x%02x\n", (int)csrChar);
-                processed = true;
+                System.out.printf("Unknown CSR %d; %d; %c(0x%02x)\n", numN, numM, csrChar,
+                        (int)csrChar);
+
+                sequenceEnd = true;
                 break;
             }
         }
@@ -433,21 +536,34 @@ class VTInnerPane extends JComponent
     }
 
     /**
-     * ESC を処理します。
+     * CSI DEC format（ESC [ ?）を処理します。
      *
      * @param ins 文字列を入力するストリーム
      */
-    protected boolean layoutEscape(InputStream ins) throws IOException {
-        char c = getNextChar(ins);
+    protected boolean layoutEscapeCSIDEC(InputStream ins) throws IOException {
+        int defNum = -1;
+        int numN = getNumberChar(ins, defNum);
+        int numM = defNum;
+        char csrChar;
+        boolean sequenceEnd = false;
 
-        switch (c) {
-        case 0x5b:
-            //CSI
-            layoutEscapeCSI(ins);
-            break;
-        default:
-            //ignore it
-            return false;
+        while (!sequenceEnd) {
+            csrChar = getNextChar(ins);
+            switch (csrChar) {
+            case ';':
+                //Get next parameter
+                numM = getNumberChar(ins, defNum);
+
+                sequenceEnd = false;
+                break;
+            default:
+                //Unknown: Ignore it
+                System.out.printf("Unknown CSR ? %d; %d; %c(0x%02x)\n", numN, numM, csrChar,
+                        (int)csrChar);
+
+                sequenceEnd = true;
+                break;
+            }
         }
 
         return true;
@@ -490,7 +606,14 @@ class VTInnerPane extends JComponent
                 break;
             case 0x08:
                 //BS
+                if (getCursorX() == 0 && needWrapBack) {
+                    previousLine();
+                }
+
+                //NOTE: Need wrap the line at next char if we are in end of line
+                needWrapBack = (getCursorX() == 0);
                 setCursorX(getCursorX() - 1);
+
                 break;
             case 0x0a:
                 //LF
@@ -502,11 +625,7 @@ class VTInnerPane extends JComponent
                 break;
             case 0x1b:
                 //ESC
-                boolean processed = layoutEscape(ins);
-                if (!processed) {
-                    pushbackChar(c);
-                    layoutNormalChar(ins);
-                }
+                layoutEscape(ins);
                 break;
             default:
                 //Other characters
