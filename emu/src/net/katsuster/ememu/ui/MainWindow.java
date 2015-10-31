@@ -10,7 +10,7 @@ import javax.swing.*;
  *
  * @author katsuhiro
  */
-public class MainWindow {
+public class MainWindow extends JFrame {
     private ButtonListener listenButton;
     private JTabbedPane tabPane;
     private JSplitPane panel;
@@ -26,18 +26,17 @@ public class MainWindow {
         vttyAMA = new VirtualTerminal[3];
 
         //window
-        JFrame win = new JFrame("ememu");
-        win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setTitle("ememu");
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //menu
         listenButton = new ButtonListener();
-        win.setJMenuBar(new MainMenuBar(listenButton));
+        setJMenuBar(new MainMenuBar(listenButton));
 
         //tabs
         tabPane = new JTabbedPane();
-        tabPane.setTabPlacement(JTabbedPane.BOTTOM);
         tabPane.setFocusable(false);
-        tabPane.transferFocus();
+        tabPane.setTabPlacement(JTabbedPane.BOTTOM);
 
         //stdout Tab
         panel = new JSplitPane();
@@ -67,12 +66,12 @@ public class MainWindow {
 
         tabPane.addTab("stdout", panel);
 
-        win.setLayout(new BorderLayout());
-        win.add(tabPane);
+        setLayout(new BorderLayout());
+        add(tabPane);
 
         //show
-        win.setSize(800, 600);
-        win.setVisible(true);
+        setSize(800, 600);
+        setVisible(true);
     }
 
     public void start() {

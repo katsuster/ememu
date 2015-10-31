@@ -41,6 +41,7 @@ public class VirtualTerminal extends JPanel
         super(new BorderLayout(), true);
 
         setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
         addMouseWheelListener(this);
         addKeyListener(this);
 
