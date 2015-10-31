@@ -71,7 +71,6 @@ public class MainWindow extends JFrame {
 
         //show
         setSize(800, 600);
-        setVisible(true);
     }
 
     public void start() {
