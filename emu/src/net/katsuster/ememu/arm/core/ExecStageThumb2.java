@@ -23,6 +23,26 @@ public class ExecStageThumb2 extends Stage {
     }
 
     /**
+     * 実行ステージの持ち主となる ARMv5 CPU コアを取得します。
+     *
+     * @return 実行ステージの持ち主となる ARMv5 CPU コア
+     */
+    @Override
+    public ARMv5 getCore() {
+        //FIXME: ARMv5 は古い
+        return (ARMv5)super.getCore();
+    }
+
+    /**
+     * CPSR（カレントプログラムステートレジスタ）の値を取得します。
+     *
+     * @return CPSR
+     */
+    public PSR getCPSR() {
+        return getCore().getCPSR();
+    }
+
+    /**
      * 分岐命令。
      *
      * @param inst Thumb2 命令
@@ -61,18 +81,19 @@ public class ExecStageThumb2 extends Stage {
             return;
         }
 
-        //I1 = NOT(J1 EOR S); I2 = NOT(J2 EOR S); imm32 = SignExtend(S:I1:I2:imm10:imm11:’0’, 32);
-        //toARM = FALSE;
+        //FIXME: Not implemented IF-THEN
         //if InITBlock() && !LastInITBlock() then UNPREDICTABLE;
 
         // /if ConditionPassed() then
         //EncodingSpecificOperations();
+
         //if CurrentInstrSet == InstrSet_ARM then
         //        next_instr_addr = PC - 4;
         //LR = next_instr_addr;
         //else
         //next_instr_addr = PC;
         //LR = next_instr_addr<31:1> : ‘1’;
+
         //if toARM then
         //SelectInstrSet(InstrSet_ARM);
         //BranchWritePC(Align(PC,4) + imm32);
@@ -80,8 +101,15 @@ public class ExecStageThumb2 extends Stage {
         //SelectInstrSet(InstrSet_Thumb);
         //BranchWritePC(PC + imm32);
 
+        if (!getCPSR().getTBit()) {
+            setReg(14, getPC() - 4);
+        } else {
+            setReg(14, (getPC() & 0xfffffffe) | 1);
+        }
+        jumpRel(imm32);
+
         //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        //throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     /**

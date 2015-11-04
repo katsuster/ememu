@@ -864,8 +864,58 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeALURegSpecial(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int op = inst.getField(6, 4);
+
+        switch (op) {
+        case 0x0:
+            //下位レジスタの加算（ADD）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case 0x1:
+        case 0x2:
+        case 0x3:
+            //上位レジスタの加算（ADD）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case 0x4:
+            //（予測不能）
+            break;
+        case 0x5:
+        case 0x6:
+        case 0x7:
+            //上位レジスタの比較（CMP）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case 0x8:
+            //下位レジスタの移動（MOV）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case 0x9:
+        case 0xa:
+        case 0xb:
+            //上位レジスタの移動（MOV）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case 0xc:
+        case 0xd:
+            //分岐と状態遷移（BX）
+            thumbExec.executeBx(inst, exec);
+            break;
+        case 0xe:
+        case 0xf:
+            //リンク付き分岐と状態遷移（BLX）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        default:
+            throw new IllegalArgumentException("Illegal op(ALURegSpecial) bits " +
+                    String.format("op:0x%02x.", op));
+        }
     }
 
     /**
@@ -891,8 +941,30 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeLdWord(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int op = inst.getField(11, 2);
+
+        switch (op) {
+        case 0x0:
+            //レジスタストア（STR）
+            thumbExec.executeStr1(inst, exec);
+            break;
+        case 0x1:
+            //レジスタロード（LDR）
+            thumbExec.executeLdr1(inst, exec);
+            break;
+        case 0x2:
+            //レジスタストア バイト（STRB）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case 0x3:
+            //レジスタロード バイト（LDRB）
+            thumbExec.executeLdrb1(inst, exec);
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal op(LdWord) bits " +
+                    String.format("op:0x%02x.", op));
+        }
     }
 
     /**
@@ -904,8 +976,32 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeLdHalf(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int op = inst.getField(11, 2);
+
+        switch (op) {
+        case 0x0:
+            //ストア ハーフワード（STRH）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case 0x1:
+            //ロード ハーフワード（LDRH）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case 0x2:
+            //ストア SP 相対（STR）
+            thumbExec.executeStr3(inst, exec);
+            break;
+        case 0x3:
+            //ロード SP 相対（LDR）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        default:
+            throw new IllegalArgumentException("Illegal op(LdHalf) bits " +
+                    String.format("op:0x%02x.", op));
+        }
     }
 
     /**
@@ -1024,24 +1120,28 @@ public class ARMv5 extends CPU {
         switch (h) {
         case 0x0:
             //b(無条件分岐)命令
+            thumbExec.executeB2(inst, exec);
             break;
         case 0x1:
             //blx, 未定義命令
-            break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
         case 0x2:
             //bl/blx 命令
-            break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
         case 0x3:
             //bl 命令
-            break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
         default:
             //異常な値
             throw new IllegalArgumentException("Illegal h bits " +
                     String.format("h:0x%02x.", h));
         }
-
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 
     /**
