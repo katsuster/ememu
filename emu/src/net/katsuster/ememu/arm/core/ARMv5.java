@@ -876,9 +876,8 @@ public class ARMv5 extends CPU {
         case 0x2:
         case 0x3:
             //上位レジスタの加算（ADD）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            thumbExec.executeAdd4(inst, exec);
+            break;
         case 0x4:
             //（予測不能）
             break;
@@ -898,9 +897,8 @@ public class ARMv5 extends CPU {
         case 0xa:
         case 0xb:
             //上位レジスタの移動（MOV）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            thumbExec.executeMov3(inst, exec);
+            break;
         case 0xc:
         case 0xd:
             //分岐と状態遷移（BX）
@@ -909,9 +907,8 @@ public class ARMv5 extends CPU {
         case 0xe:
         case 0xf:
             //リンク付き分岐と状態遷移（BLX）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            thumbExec.executeBlx2(inst, exec);
+            break;
         default:
             throw new IllegalArgumentException("Illegal op(ALURegSpecial) bits " +
                     String.format("op:0x%02x.", op));
@@ -928,8 +925,46 @@ public class ARMv5 extends CPU {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void decodeALURegOffset(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int op = inst.getField(9, 3);
+
+        switch (op) {
+        case 0x0:
+            //レジスタストア（STR）
+            thumbExec.executeStr2(inst, exec);
+            break;
+        case 0x1:
+            //レジスタストア ハーフワード（STRH）
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        case 0x2:
+            //レジスタストア バイト（STRB）
+            thumbExec.executeStrb2(inst, exec);
+            break;
+        case 0x3:
+            //レジスタロード 符号付きバイト（LDRSB）
+            thumbExec.executeLdrsb(inst, exec);
+            break;
+        case 0x4:
+            //レジスタロード（LDR）
+            thumbExec.executeLdr2(inst, exec);
+            break;
+        case 0x5:
+            //レジスタロード ハーフワード（LDRH）
+            thumbExec.executeLdrh2(inst, exec);
+            break;
+        case 0x6:
+            //レジスタロード バイト（LDRB）
+            thumbExec.executeLdrb2(inst, exec);
+            break;
+        case 0x7:
+            //レジスタロード 符号付きハーフワード（LDRSH）
+            thumbExec.executeLdrsh(inst, exec);
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal op(RegOffset) bits " +
+                    String.format("op:0x%02x.", op));
+        }
     }
 
     /**
@@ -954,9 +989,8 @@ public class ARMv5 extends CPU {
             break;
         case 0x2:
             //レジスタストア バイト（STRB）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            thumbExec.executeStrb1(inst, exec);
+            break;
         case 0x3:
             //レジスタロード バイト（LDRB）
             thumbExec.executeLdrb1(inst, exec);
@@ -981,23 +1015,20 @@ public class ARMv5 extends CPU {
         switch (op) {
         case 0x0:
             //ストア ハーフワード（STRH）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            thumbExec.executeStrh1(inst, exec);
+            break;
         case 0x1:
             //ロード ハーフワード（LDRH）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            thumbExec.executeLdrh1(inst, exec);
+            break;
         case 0x2:
             //ストア SP 相対（STR）
             thumbExec.executeStr3(inst, exec);
             break;
         case 0x3:
             //ロード SP 相対（LDR）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            thumbExec.executeLdr4(inst, exec);
+            break;
         default:
             throw new IllegalArgumentException("Illegal op(LdHalf) bits " +
                     String.format("op:0x%02x.", op));
@@ -2358,7 +2389,7 @@ public class ARMv5 extends CPU {
         //FIXME: Thumb モードの時は必ず逆アセンブルします
         if (getCPSR().getTBit()) {
             setPrintInstruction(true);
-            setPrintRegs(true);
+            //setPrintRegs(true);
             disasm(inst);
         }
 

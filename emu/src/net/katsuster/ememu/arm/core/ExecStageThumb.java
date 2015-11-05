@@ -108,8 +108,27 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeAnd(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "and",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rd);
+        right = getReg(rm);
+        dest = left & right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        //C flag is unaffected
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -119,8 +138,27 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeEor(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "eor",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rd);
+        right = getReg(rm);
+        dest = left ^ right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        //C flag is unaffected
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -130,8 +168,40 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeLsl2(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rs = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int left, right, dest;
+        boolean cbit;
+
+        if (!exec) {
+            printDisasm(inst, "lsl",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rs)));
+            return;
+        }
+
+        left = getReg(rd);
+        right = getReg(rs) & 0xff;
+        if (right == 0) {
+            cbit = getCPSR().getCBit();
+            dest = left;
+        } else if (right < 32) {
+            cbit = BitOp.getBit32(left, 32 - right);
+            dest = left << right;
+        } else if (right == 32) {
+            cbit = BitOp.getBit32(left, 0);
+            dest = 0;
+        } else {
+            cbit = false;
+            dest = 0;
+        }
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(cbit);
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -141,8 +211,40 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeLsr2(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rs = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int left, right, dest;
+        boolean cbit;
+
+        if (!exec) {
+            printDisasm(inst, "lsr",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rs)));
+            return;
+        }
+
+        left = getReg(rd);
+        right = getReg(rs) & 0xff;
+        if (right == 0) {
+            cbit = getCPSR().getCBit();
+            dest = left;
+        } else if (right < 32) {
+            cbit = BitOp.getBit32(left, right - 1);
+            dest = left >>> right;
+        } else if (right == 32) {
+            cbit = BitOp.getBit32(left, 31);
+            dest = 0;
+        } else {
+            cbit = false;
+            dest = 0;
+        }
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(cbit);
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -152,8 +254,41 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeAsr2(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rs = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int left, right, dest;
+        boolean cbit;
+
+        if (!exec) {
+            printDisasm(inst, "asr",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rs)));
+            return;
+        }
+
+        left = getReg(rd);
+        right = getReg(rs) & 0xff;
+        if (right == 0) {
+            cbit = getCPSR().getCBit();
+            dest = left;
+        } else if (right < 32) {
+            cbit = BitOp.getBit32(left, right - 1);
+            dest = left >> right;
+        } else {
+            cbit = BitOp.getBit32(left, 31);
+            if (cbit) {
+                dest = 0xffffffff;
+            } else {
+                dest = 0;
+            }
+        }
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(cbit);
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -163,8 +298,32 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeAdc(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, center, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "adc",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rd);
+        center = getReg(rm);
+        right = BitOp.toInt(getCPSR().getCBit());
+        dest = left + center + right;
+
+        int lc = left + center;
+        boolean lc_c = IntegerExt.carryFrom(left, center);
+        boolean lc_v = IntegerExt.overflowFrom(left, center, true);
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(lc_c || IntegerExt.carryFrom(lc, right));
+        getCPSR().setVBit(lc_v || IntegerExt.overflowFrom(lc, right, true));
+
+        setReg(rd, dest);
     }
 
     /**
@@ -174,8 +333,32 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSbc(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, center, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "sbc",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rd);
+        center = getReg(rm);
+        right = BitOp.toInt(!getCPSR().getCBit());
+        dest = left - center - right;
+
+        int lc = left - center;
+        boolean lc_c = IntegerExt.borrowFrom(left, center);
+        boolean lc_v = IntegerExt.overflowFrom(left, center, false);
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(!(lc_c || IntegerExt.borrowFrom(lc, right)));
+        getCPSR().setVBit(lc_v || IntegerExt.overflowFrom(lc, right, false));
+
+        setReg(rd, dest);
     }
 
     /**
@@ -196,8 +379,25 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeTst(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getRmField();
+        int rn = inst.getField(0, 3);
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "tst",
+                    String.format("%s, %s",
+                            getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rn);
+        right = getReg(rm);
+        dest = left & right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        //C flag is unaffected
+        //V flag is unaffected
     }
 
     /**
@@ -212,14 +412,14 @@ public class ExecStageThumb extends Stage {
         int left, right, dest;
 
         if (!exec) {
-            printDisasm(inst, "negs",
+            printDisasm(inst, "neg",
                     String.format("%s, %s",
                             getRegName(rd), getRegName(rm)));
             return;
         }
 
         left = 0;
-        right = -getReg(rm);
+        right = getReg(rm);
         dest = left - right;
 
         getCPSR().setNBit(BitOp.getBit32(dest, 31));
@@ -237,8 +437,25 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeCmp2(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getRmField();
+        int rn = inst.getField(0, 3);
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "cmp",
+                    String.format("%s, %s",
+                            getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rn);
+        right = getReg(rm);
+        dest = left - right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(!IntegerExt.borrowFrom(left, right));
+        getCPSR().setVBit(IntegerExt.overflowFrom(left, right, false));
     }
 
     /**
@@ -259,8 +476,27 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeOrr(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "orr",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rd);
+        right = getReg(rm);
+        dest = left | right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        //C flag is unaffected
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -270,8 +506,27 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeMul(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "mul",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rd);
+        right = getReg(rm);
+        dest = left * right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        //C flag is unaffected
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -281,8 +536,27 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeBic(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "bic",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rd);
+        right = getReg(rm);
+        dest = left & ~right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        //C flag is unaffected
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -292,8 +566,26 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeMvn(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, dest;
+
+        if (!exec) {
+            printDisasm(inst, "mvn",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rm);
+        dest = ~left;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        //C flag is unaffected
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -309,7 +601,7 @@ public class ExecStageThumb extends Stage {
         int left, right, dest;
 
         if (!exec) {
-            printDisasm(inst, "adds",
+            printDisasm(inst, "add",
                     String.format("%s, %s, %s",
                             getRegName(rd), getRegName(rn),
                             String.format("#%d    ; 0x%x", imm3, imm3)));
@@ -366,8 +658,53 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeAdd3(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "add",
+                    String.format("%s, %s, %s",
+                            getRegName(rd), getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rn);
+        right = getReg(rm);
+        dest = left + right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(IntegerExt.carryFrom(left, right));
+        getCPSR().setVBit(IntegerExt.overflowFrom(left, right, true));
+
+        setReg(rd, dest);
+    }
+
+    /**
+     * 上位レジスタ加算命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAdd4(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(3, 4);
+        int rd = (inst.getField(7, 1) << 3) | inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "add",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rd);
+        right = getReg(rm);
+        dest = left + right;
+
+        setReg(rd, dest);
     }
 
     /**
@@ -388,8 +725,24 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeAdd6(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rd = inst.getField(8, 3);
+        int imm8_raw = inst.getField(0, 8);
+        int imm8 = imm8_raw << 2;
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "add",
+                    String.format("%s, sp, %s",
+                            getRegName(rd),
+                            String.format("#%d    ; 0x%x", imm8, imm8)));
+            return;
+        }
+
+        left = getReg(13);
+        right = imm8;
+        dest = left + right;
+
+        setReg(rd, dest);
     }
 
     /**
@@ -424,8 +777,29 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSub1(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int imm3 = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "sub",
+                    String.format("%s, %s, %s",
+                            getRegName(rd), getRegName(rn),
+                            String.format("#%d    ; 0x%x", imm3, imm3)));
+            return;
+        }
+
+        left = getReg(rn);
+        right = imm3;
+        dest = left - right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(!IntegerExt.borrowFrom(left, right));
+        getCPSR().setVBit(IntegerExt.overflowFrom(left, right, false));
+
+        setReg(rd, dest);
     }
 
     /**
@@ -466,8 +840,28 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeSub3(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rm = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "sub",
+                    String.format("%s, %s, %s",
+                            getRegName(rd), getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rn);
+        right = getReg(rm);
+        dest = left - right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(!IntegerExt.borrowFrom(left, right));
+        getCPSR().setVBit(IntegerExt.overflowFrom(left, right, false));
+
+        setReg(rd, dest);
     }
 
     /**
@@ -536,7 +930,7 @@ public class ExecStageThumb extends Stage {
         int right, dest;
 
         if (!exec) {
-            printDisasm(inst, "movs",
+            printDisasm(inst, "mov",
                     String.format("%s, %s",
                             getRegName(rd),
                             String.format("#%d    ; 0x%x", imm8, imm8)));
@@ -555,6 +949,30 @@ public class ExecStageThumb extends Stage {
     }
 
     /**
+     * 上位レジスタの移動命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeMov3(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(3, 4);
+        int rd = (inst.getField(7, 1) << 3) | inst.getRdField();
+        int right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "mov",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rm)));
+            return;
+        }
+
+        right = getReg(rm);
+        dest = right;
+
+        setReg(rd, dest);
+    }
+
+    /**
      * イミディエート論理左シフト命令。
      *
      * @param inst Thumb 命令
@@ -568,7 +986,7 @@ public class ExecStageThumb extends Stage {
         boolean cbit;
 
         if (!exec) {
-            printDisasm(inst, "lsls",
+            printDisasm(inst, "lsl",
                     String.format("%s, %s, %s",
                             getRegName(rd), getRegName(rm),
                             String.format("#%d    ; 0x%x", imm5, imm5)));
@@ -599,8 +1017,34 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeLsr1(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int imm5 = inst.getField(6, 5);
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, dest;
+        boolean cbit;
+
+        if (!exec) {
+            printDisasm(inst, "lsr",
+                    String.format("%s, %s, #%d",
+                            getRegName(rd), getRegName(rm), imm5));
+            return;
+        }
+
+        left = getReg(rm);
+        if (imm5 == 0) {
+            cbit = BitOp.getBit32(left, 31);
+            dest = 0;
+        } else {
+            cbit = BitOp.getBit32(left, imm5 - 1);
+            dest = left >>> imm5;
+        }
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(cbit);
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -610,8 +1054,38 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeAsr1(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int imm5 = inst.getField(6, 5);
+        int rm = inst.getRmField();
+        int rd = inst.getRdField();
+        int left, dest;
+        boolean cbit;
+
+        if (!exec) {
+            printDisasm(inst, "asr",
+                    String.format("%s, %s, #%d",
+                            getRegName(rd), getRegName(rm), imm5));
+            return;
+        }
+
+        left = getReg(rm);
+        if (imm5 == 0) {
+            cbit = BitOp.getBit32(left, 31);
+            if (cbit) {
+                dest = 0xffffffff;
+            } else {
+                dest = 0;
+            }
+        } else {
+            cbit = BitOp.getBit32(left, imm5 - 1);
+            dest = left >> imm5;
+        }
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(cbit);
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -652,6 +1126,43 @@ public class ExecStageThumb extends Stage {
     }
 
     /**
+     * ロード命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdr2(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst, "ldr",
+                    String.format("%s, [%s, %s]",
+                            getRegName(rd), getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        vaddr = getReg(rn) + getReg(rm);
+
+        paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), true);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryRead_a32(paddr, 4)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("ldr [%08x]", paddr));
+            return;
+        }
+        value = read32_a32(paddr);
+
+        setReg(rd, value);
+    }
+
+    /**
      * リテラルプールのロード命令。
      *
      * @param inst Thumb 命令
@@ -689,17 +1200,51 @@ public class ExecStageThumb extends Stage {
     }
 
     /**
+     * ロード SP 相対命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdr4(InstructionThumb inst, boolean exec) {
+        int rd = inst.getField(8, 3);
+        int imm8_raw = inst.getField(0, 8);
+        int imm8 = imm8_raw << 2;
+        int vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst, "ldr",
+                    String.format("%s, [sp, #%d]",
+                            getRegName(rd), imm8));
+            return;
+        }
+
+        vaddr = getReg(13) + imm8;
+
+        paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), true);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryRead_a32(paddr, 4)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("ldr [%08x]", paddr));
+            return;
+        }
+        setReg(rd, read32_a32(paddr));
+    }
+
+    /**
      * バイトロード命令。
      *
      * @param inst Thumb 命令
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeLdrb1(InstructionThumb inst, boolean exec) {
-        int imm5_raw = inst.getField(6, 5);
+        int imm5 = inst.getField(6, 5);
         int rn = inst.getField(3, 3);
         int rd = inst.getRdField();
-        int imm5 = imm5_raw << 2;
-        int vaddr, paddr;
+        int vaddr, paddr, value;
 
         if (!exec) {
             printDisasm(inst, "ldrb",
@@ -722,7 +1267,196 @@ public class ExecStageThumb extends Stage {
                     String.format("ldrb [%08x]", paddr));
             return;
         }
-        setReg(rd, read8_a32(paddr));
+        value = ((int) read8_a32(paddr)) & 0xff;
+
+        setReg(rd, value);
+    }
+
+    /**
+     * バイトロード命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdrb2(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst, "ldrb",
+                    String.format("%s, [%s, %s]",
+                            getRegName(rd), getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        vaddr = getReg(rn) + getReg(rm);
+
+        paddr = getMMU().translate(vaddr, 1, false, getCPSR().isPrivMode(), true);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryRead_a32(paddr, 1)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("ldrb [%08x]", paddr));
+            return;
+        }
+        value = ((int) read8_a32(paddr)) & 0xff;
+
+        setReg(rd, value);
+    }
+
+    /**
+     * ハーフワードロード命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdrh1(InstructionThumb inst, boolean exec) {
+        int imm5_raw = inst.getField(6, 5);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int imm5 = imm5_raw << 1;
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst, "ldrh",
+                    String.format("%s, [%s, #%d]",
+                            getRegName(rd),
+                            getRegName(rn), imm5));
+            return;
+        }
+
+        vaddr = getReg(rn) + imm5;
+
+        paddr = getMMU().translate(vaddr, 2, false, getCPSR().isPrivMode(), true);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryRead_a32(paddr, 2)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("ldrh [%08x]", paddr));
+            return;
+        }
+        value = ((int) read16_a32(paddr)) & 0xffff;
+
+        setReg(rd, value);
+    }
+
+    /**
+     * ハーフワード ロード命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdrh2(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst, "ldrh",
+                    String.format("%s, [%s, %s]",
+                            getRegName(rd), getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        vaddr = getReg(rn) + getReg(rm);
+
+        paddr = getMMU().translate(vaddr, 2, false, getCPSR().isPrivMode(), true);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryRead_a32(paddr, 2)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("ldrh [%08x]", paddr));
+            return;
+        }
+        value = ((int) read16_a32(paddr)) & 0xffff;
+
+        setReg(rd, value);
+    }
+
+    /**
+     * 符号付きバイトロード命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdrsb(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst, "ldrsb",
+                    String.format("%s, [%s, %s]",
+                            getRegName(rd), getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        vaddr = getReg(rn) + getReg(rm);
+
+        paddr = getMMU().translate(vaddr, 1, false, getCPSR().isPrivMode(), true);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryRead_a32(paddr, 1)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("ldrsb [%08x]", paddr));
+            return;
+        }
+        value = read8_a32(paddr);
+
+        setReg(rd, value);
+    }
+
+    /**
+     * 符号付きハーフワードロード命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdrsh(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst, "ldrsh",
+                    String.format("%s, [%s, %s]",
+                            getRegName(rd), getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        vaddr = getReg(rn) + getReg(rm);
+
+        paddr = getMMU().translate(vaddr, 2, false, getCPSR().isPrivMode(), true);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryRead_a32(paddr, 2)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("ldrsh [%08x]", paddr));
+            return;
+        }
+        value = read16_a32(paddr);
+
+        setReg(rd, value);
     }
 
     /**
@@ -747,6 +1481,41 @@ public class ExecStageThumb extends Stage {
         }
 
         vaddr = getReg(rn) + imm5;
+
+        paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), false);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryWrite_a32(paddr, 4)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("str [%08x]", paddr));
+            return;
+        }
+        write32_a32(paddr, getReg(rd));
+    }
+
+    /**
+     * ストア命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeStr2(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int vaddr, paddr, value;
+
+        if (!exec) {
+            printDisasm(inst, "str",
+                    String.format("%s, [%s, %s]",
+                            getRegName(rd), getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        vaddr = getReg(rn) + getReg(rm);
 
         paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), false);
         if (getMMU().isFault()) {
@@ -795,6 +1564,114 @@ public class ExecStageThumb extends Stage {
             return;
         }
         write32_a32(paddr, getReg(rd));
+    }
+
+    /**
+     * バイトストア命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeStrb1(InstructionThumb inst, boolean exec) {
+        int imm5 = inst.getField(6, 5);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst, "strb",
+                    String.format("%s, [%s, #%d]",
+                            getRegName(rd),
+                            getRegName(rn), imm5));
+            return;
+        }
+
+        vaddr = getReg(rn) + imm5;
+
+        paddr = getMMU().translate(vaddr, 1, false, getCPSR().isPrivMode(), false);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryWrite_a32(paddr, 1)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("strb [%08x]", paddr));
+            return;
+        }
+        write8_a32(paddr, (byte) getReg(rd));
+    }
+
+    /**
+     * バイトストア命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeStrb2(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst, "strb",
+                    String.format("%s, [%s, %s]",
+                            getRegName(rd), getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        vaddr = getReg(rn) + getReg(rm);
+
+        paddr = getMMU().translate(vaddr, 1, false, getCPSR().isPrivMode(), false);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryWrite_a32(paddr, 1)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("strb [%08x]", paddr));
+            return;
+        }
+        write8_a32(paddr, (byte) getReg(rd));
+    }
+
+    /**
+     * ハーフワードストア命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeStrh1(InstructionThumb inst, boolean exec) {
+        int imm5_raw = inst.getField(6, 5);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int imm5 = imm5_raw << 1;
+        int vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst, "strh",
+                    String.format("%s, [%s, #%d]",
+                            getRegName(rd),
+                            getRegName(rn), imm5));
+            return;
+        }
+
+        vaddr = getReg(rn) + imm5;
+
+        paddr = getMMU().translate(vaddr, 2, false, getCPSR().isPrivMode(), false);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryWrite_a32(paddr, 2)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("strh [%08x]", paddr));
+            return;
+        }
+        write16_a32(paddr, (short) getReg(rd));
     }
 
     /**
@@ -934,8 +1811,40 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeLdmia(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rn = inst.getField(8, 3);
+        int rlist = inst.getRegListField();
+        int vaddr, paddr, len;
+
+        if (!exec) {
+            printDisasm(inst, "ldmia",
+                    String.format("%s!, {%s}",
+                            getRegName(rn), inst.getRegListFieldName()));
+            return;
+        }
+
+        vaddr = getReg(rn);
+        len = Integer.bitCount(rlist) * 4;
+        for (int i = 0; i < 8; i++) {
+            if ((rlist & (1 << i)) == 0) {
+                continue;
+            }
+
+            paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), true);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return;
+            }
+
+            if (!tryRead_a32(paddr, 4)) {
+                raiseException(ARMv5.EXCEPT_ABT_DATA,
+                        String.format("ldmia [%08x]", paddr));
+                return;
+            }
+            setReg(i, read32_a32(paddr));
+            vaddr += 4;
+        }
+
+        setReg(rn, getReg(rn) + len);
     }
 
     /**
@@ -945,8 +1854,40 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeStmia(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rn = inst.getField(8, 3);
+        int rlist = inst.getRegListField();
+        int vaddr, paddr, v, len;
+
+        if (!exec) {
+            printDisasm(inst, "stmia",
+                    String.format("%s!, {%s}",
+                            getRegName(rn), inst.getRegListFieldName()));
+            return;
+        }
+
+        vaddr = getReg(rn);
+        len = Integer.bitCount(rlist) * 4;
+        for (int i = 0; i < 8; i++) {
+            if ((rlist & (1 << i)) == 0) {
+                continue;
+            }
+
+            paddr = getMMU().translate(vaddr, 4, false, getCPSR().isPrivMode(), false);
+            if (getMMU().isFault()) {
+                getMMU().clearFault();
+                return;
+            }
+
+            if (!tryWrite_a32(paddr, 4)) {
+                raiseException(ARMv5.EXCEPT_ABT_DATA,
+                        String.format("stmia [%08x]", paddr));
+                return;
+            }
+            write32_a32(paddr, getReg(i));
+            vaddr += 4;
+        }
+
+        setReg(rn, getReg(rn) + len);
     }
 
     /**
@@ -1025,6 +1966,35 @@ public class ExecStageThumb extends Stage {
         }
 
         jumpRel(simm11);
+    }
+
+    /**
+     * リンク付き分岐と状態遷移命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBlx2(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(3, 4);
+        int dest;
+
+        if (!exec) {
+            printDisasm(inst, "blx",
+                    String.format("%s", getRegName(rm)));
+            return;
+        }
+
+        dest = getReg(rm);
+
+        if (!getCPSR().getTBit()) {
+            setReg(14, getPC() - 4);
+        } else {
+            setReg(14, ((getPC() - 2) & 0xfffffffe) | 1);
+        }
+
+        //T ビットをセット
+        getCPSR().setTBit(BitOp.getBit32(dest, 0));
+        setPC(dest & 0xfffffffe);
     }
 
     /**
