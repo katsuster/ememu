@@ -4029,4 +4029,218 @@ public class ExecStageARMv5 extends Stage {
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
+
+    /**
+     * ARM 命令。
+     *
+     * @param decinst デコードされた命令
+     * @param exec    実行するなら true、実行しないなら false
+     */
+    public void execute(Opcode decinst, boolean exec) {
+        InstructionARM inst = (InstructionARM) decinst.getInstruction();
+
+        switch (decinst.getIndex()) {
+        case INS_ARM_MRS:
+            executeMrs(inst, exec);
+            break;
+        case INS_ARM_MSR:
+            executeMsr(inst, exec);
+            break;
+        case INS_ARM_ALUAND:
+            executeALUAnd(inst, exec);
+            break;
+        case INS_ARM_ALUEOR:
+            executeALUEor(inst, exec);
+            break;
+        case INS_ARM_ALUSUB:
+            executeALUSub(inst, exec);
+            break;
+        case INS_ARM_ALURSB:
+            executeALURsb(inst, exec);
+            break;
+        case INS_ARM_ALUADD:
+            executeALUAdd(inst, exec);
+            break;
+        case INS_ARM_ALUADC:
+            executeALUAdc(inst, exec);
+            break;
+        case INS_ARM_ALUSBC:
+            executeALUSbc(inst, exec);
+            break;
+        case INS_ARM_ALURSC:
+            executeALURsc(inst, exec);
+            break;
+        case INS_ARM_ALUTST:
+            executeALUTst(inst, exec);
+            break;
+        case INS_ARM_ALUTEQ:
+            executeALUTeq(inst, exec);
+            break;
+        case INS_ARM_ALUCMP:
+            executeALUCmp(inst, exec);
+            break;
+        case INS_ARM_ALUCMN:
+            executeALUCmn(inst, exec);
+            break;
+        case INS_ARM_ALUORR:
+            executeALUOrr(inst, exec);
+            break;
+        case INS_ARM_ALUMOV:
+            executeALUMov(inst, exec);
+            break;
+        case INS_ARM_ALUBIC:
+            executeALUBic(inst, exec);
+            break;
+        case INS_ARM_ALUMVN:
+            executeALUMvn(inst, exec);
+            break;
+        case INS_ARM_MLA:
+            executeMla(inst, exec);
+            break;
+        case INS_ARM_MUL:
+            executeMul(inst, exec);
+            break;
+        case INS_ARM_SMLAL:
+            executeSmlal(inst, exec);
+            break;
+        case INS_ARM_SMULL:
+            executeSmull(inst, exec);
+            break;
+        case INS_ARM_UMLAL:
+            executeUmlal(inst, exec);
+            break;
+        case INS_ARM_UMULL:
+            executeUmull(inst, exec);
+            break;
+        case INS_ARM_SMLALXY:
+            executeSmlalxy(inst, exec);
+            break;
+        case INS_ARM_SMLAXY:
+            executeSmlaxy(inst, exec);
+            break;
+        case INS_ARM_SMLAWY:
+            executeSmlawy(inst, exec);
+            break;
+        case INS_ARM_SMULXY:
+            executeSmulxy(inst, exec);
+            break;
+        case INS_ARM_SMULWY:
+            executeSmulwy(inst, exec);
+            break;
+        case INS_ARM_QDSUB:
+            executeQdsub(inst, exec);
+            break;
+        case INS_ARM_QDADD:
+            executeQdadd(inst, exec);
+            break;
+        case INS_ARM_QSUB:
+            executeQsub(inst, exec);
+            break;
+        case INS_ARM_QADD:
+            executeQadd(inst, exec);
+            break;
+        case INS_ARM_BKPT:
+            executeBkpt(inst, exec);
+            break;
+        case INS_ARM_SWP:
+            executeSwp(inst, exec);
+            break;
+        case INS_ARM_SWPB:
+            executeSwpb(inst, exec);
+            break;
+        case INS_ARM_LDRT:
+            executeLdrt(inst, exec);
+            break;
+        case INS_ARM_LDRBT:
+            executeLdrbt(inst, exec);
+            break;
+        case INS_ARM_LDRB:
+            executeLdrb(inst, exec);
+            break;
+        case INS_ARM_LDR:
+            executeLdr(inst, exec);
+            break;
+        case INS_ARM_LDRH:
+            executeLdrh(inst, exec);
+            break;
+        case INS_ARM_LDRSB:
+            executeLdrsb(inst, exec);
+            break;
+        case INS_ARM_LDRSH:
+            executeLdrsh(inst, exec);
+            break;
+        case INS_ARM_LDRD:
+            executeLdrd(inst, exec);
+            break;
+        case INS_ARM_PLD:
+            executePld(inst, exec);
+            break;
+        case INS_ARM_STRT:
+            executeStrt(inst, exec);
+            break;
+        case INS_ARM_STRBT:
+            executeStrbt(inst, exec);
+            break;
+        case INS_ARM_STRB:
+            executeStrb(inst, exec);
+            break;
+        case INS_ARM_STR:
+            executeStr(inst, exec);
+            break;
+        case INS_ARM_STRH:
+            executeStrh(inst, exec);
+            break;
+        case INS_ARM_STRD:
+            executeStrd(inst, exec);
+            break;
+        case INS_ARM_LDM1:
+            executeLdm1(inst, exec);
+            break;
+        case INS_ARM_LDM2:
+            executeLdm2(inst, exec);
+            break;
+        case INS_ARM_LDM3:
+            executeLdm3(inst, exec);
+            break;
+        case INS_ARM_STM1:
+            executeStm1(inst, exec);
+            break;
+        case INS_ARM_STM2:
+            executeStm2(inst, exec);
+            break;
+        case INS_ARM_BL:
+            executeBl(inst, exec);
+            break;
+        case INS_ARM_BLX1:
+            executeBlx1(inst, exec);
+            break;
+        case INS_ARM_BLX2:
+            executeBlx2(inst, exec);
+            break;
+        case INS_ARM_BX:
+            executeBx(inst, exec);
+            break;
+        case INS_ARM_CLZ:
+            executeClz(inst, exec);
+            break;
+        case INS_ARM_CDP:
+            executeCdp(inst, exec);
+            break;
+        case INS_ARM_MCR:
+            executeMcr(inst, exec);
+            break;
+        case INS_ARM_MRC:
+            executeMrc(inst, exec);
+            break;
+        case INS_ARM_SWI:
+            executeSwi(inst, exec);
+            break;
+        case INS_ARM_UND:
+            executeUnd(inst, exec);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown ARM instruction " +
+                    decinst.getIndex());
+        }
+    }
 }

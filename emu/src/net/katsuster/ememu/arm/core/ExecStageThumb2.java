@@ -144,4 +144,35 @@ public class ExecStageThumb2 extends Stage {
         //TODO: Not implemented
         throw new IllegalArgumentException("Sorry, not implemented.");
     }
+
+    /**
+     * Thumb2 命令。
+     *
+     * @param decinst デコードされた命令
+     * @param exec    実行するなら true、実行しないなら false
+     */
+    public void execute(Opcode decinst, boolean exec) {
+        InstructionThumb inst = (InstructionThumb) decinst.getInstruction();
+
+        switch (decinst.getIndex()) {
+        case INS_THUMB2_B:
+            executeB(inst, exec);
+            break;
+        case INS_THUMB2_BL:
+            executeBl(inst, exec);
+            break;
+        case INS_THUMB2_BLX:
+            executeBlx(inst, exec);
+            break;
+        case INS_THUMB2_SMC:
+            executeSmc(inst, exec);
+            break;
+        case INS_THUMB2_UND:
+            executeUnd(inst, exec);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown Thumb2 instruction " +
+                    decinst.getIndex());
+        }
+    }
 }

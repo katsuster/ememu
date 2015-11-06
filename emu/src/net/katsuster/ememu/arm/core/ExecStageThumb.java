@@ -368,8 +368,38 @@ public class ExecStageThumb extends Stage {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeRor(InstructionThumb inst, boolean exec) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
+        int rs = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int left, right8, right5, dest;
+        boolean cbit;
+
+        if (!exec) {
+            printDisasm(inst, "ror",
+                    String.format("%s, %s",
+                            getRegName(rd), getRegName(rs)));
+            return;
+        }
+
+        left = getReg(rd);
+        right8 = getReg(rs) & 0xff;
+        right5 = getReg(rs) & 0x1f;
+        if (right8 == 0) {
+            cbit = getCPSR().getCBit();
+            dest = left;
+        } else if (right5 == 32) {
+            cbit = BitOp.getBit32(left, 31);
+            dest = left;
+        } else {
+            cbit = BitOp.getBit32(left, right5 - 1);
+            dest = Integer.rotateRight(left, right5);
+        }
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(cbit);
+        //V flag is unaffected
+
+        setReg(rd, dest);
     }
 
     /**
@@ -2018,5 +2048,201 @@ public class ExecStageThumb extends Stage {
         //T ビットをセット
         getCPSR().setTBit(BitOp.getBit32(dest, 0));
         setPC(dest & 0xfffffffe);
+    }
+
+    /**
+     * Thumb 命令。
+     *
+     * @param decinst デコードされた命令
+     * @param exec    実行するなら true、実行しないなら false
+     */
+    public void execute(Opcode decinst, boolean exec) {
+        InstructionThumb inst = (InstructionThumb) decinst.getInstruction();
+
+        switch (decinst.getIndex()) {
+        case INS_THUMB_AND:
+            executeAnd(inst, exec);
+            break;
+        case INS_THUMB_EOR:
+            executeEor(inst, exec);
+            break;
+        case INS_THUMB_LSL2:
+            executeLsl2(inst, exec);
+            break;
+        case INS_THUMB_LSR2:
+            executeLsr2(inst, exec);
+            break;
+        case INS_THUMB_ASR2:
+            executeAsr2(inst, exec);
+            break;
+        case INS_THUMB_ADC:
+            executeAdc(inst, exec);
+            break;
+        case INS_THUMB_SBC:
+            executeSbc(inst, exec);
+            break;
+        case INS_THUMB_ROR:
+            executeRor(inst, exec);
+            break;
+        case INS_THUMB_TST:
+            executeTst(inst, exec);
+            break;
+        case INS_THUMB_NEG:
+            executeNeg(inst, exec);
+            break;
+        case INS_THUMB_CMP2:
+            executeCmp2(inst, exec);
+            break;
+        case INS_THUMB_CMN:
+            executeCmn(inst, exec);
+            break;
+        case INS_THUMB_ORR:
+            executeOrr(inst, exec);
+            break;
+        case INS_THUMB_MUL:
+            executeMul(inst, exec);
+            break;
+        case INS_THUMB_BIC:
+            executeBic(inst, exec);
+            break;
+        case INS_THUMB_MVN:
+            executeMvn(inst, exec);
+            break;
+        case INS_THUMB_ADD1:
+            executeAdd1(inst, exec);
+            break;
+        case INS_THUMB_ADD2:
+            executeAdd2(inst, exec);
+            break;
+        case INS_THUMB_ADD3:
+            executeAdd3(inst, exec);
+            break;
+        case INS_THUMB_ADD4:
+            executeAdd4(inst, exec);
+            break;
+        case INS_THUMB_ADD5:
+            executeAdd5(inst, exec);
+            break;
+        case INS_THUMB_ADD6:
+            executeAdd6(inst, exec);
+            break;
+        case INS_THUMB_ADD7:
+            executeAdd7(inst, exec);
+            break;
+        case INS_THUMB_SUB1:
+            executeSub1(inst, exec);
+            break;
+        case INS_THUMB_SUB2:
+            executeSub2(inst, exec);
+            break;
+        case INS_THUMB_SUB3:
+            executeSub3(inst, exec);
+            break;
+        case INS_THUMB_SUB4:
+            executeSub4(inst, exec);
+            break;
+        case INS_THUMB_CMP1:
+            executeCmp1(inst, exec);
+            break;
+        case INS_THUMB_MOV1:
+            executeMov1(inst, exec);
+            break;
+        case INS_THUMB_MOV3:
+            executeMov3(inst, exec);
+            break;
+        case INS_THUMB_LSL1:
+            executeLsl1(inst, exec);
+            break;
+        case INS_THUMB_LSR1:
+            executeLsr1(inst, exec);
+            break;
+        case INS_THUMB_ASR1:
+            executeAsr1(inst, exec);
+            break;
+        case INS_THUMB_LDR1:
+            executeLdr1(inst, exec);
+            break;
+        case INS_THUMB_LDR2:
+            executeLdr2(inst, exec);
+            break;
+        case INS_THUMB_LDR3:
+            executeLdr3(inst, exec);
+            break;
+        case INS_THUMB_LDR4:
+            executeLdr4(inst, exec);
+            break;
+        case INS_THUMB_LDRB1:
+            executeLdrb1(inst, exec);
+            break;
+        case INS_THUMB_LDRB2:
+            executeLdrb2(inst, exec);
+            break;
+        case INS_THUMB_LDRH1:
+            executeLdrh1(inst, exec);
+            break;
+        case INS_THUMB_LDRH2:
+            executeLdrh2(inst, exec);
+            break;
+        case INS_THUMB_LDRSB:
+            executeLdrsb(inst, exec);
+            break;
+        case INS_THUMB_LDRSH:
+            executeLdrsh(inst, exec);
+            break;
+        case INS_THUMB_STR1:
+            executeStr1(inst, exec);
+            break;
+        case INS_THUMB_STR2:
+            executeStr2(inst, exec);
+            break;
+        case INS_THUMB_STR3:
+            executeStr3(inst, exec);
+            break;
+        case INS_THUMB_STRB1:
+            executeStrb1(inst, exec);
+            break;
+        case INS_THUMB_STRB2:
+            executeStrb2(inst, exec);
+            break;
+        case INS_THUMB_STRH1:
+            executeStrh1(inst, exec);
+            break;
+        case INS_THUMB_PUSH:
+            executePush(inst, exec);
+            break;
+        case INS_THUMB_POP:
+            executePop(inst, exec);
+            break;
+        case INS_THUMB_LDMIA:
+            executeLdmia(inst, exec);
+            break;
+        case INS_THUMB_STMIA:
+            executeStmia(inst, exec);
+            break;
+        case INS_THUMB_BKPT:
+            executeBkpt(inst, exec);
+            break;
+        case INS_THUMB_UND:
+            executeUnd(inst, exec);
+            break;
+        case INS_THUMB_SWI:
+            executeSwi(inst, exec);
+            break;
+        case INS_THUMB_B1:
+            executeB1(inst, exec);
+            break;
+        case INS_THUMB_B2:
+            executeB2(inst, exec);
+            break;
+        case INS_THUMB_BLX2:
+            executeBlx2(inst, exec);
+            break;
+        case INS_THUMB_BX:
+            executeBx(inst, exec);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown Thumb instruction " +
+                    decinst.getIndex());
+        }
     }
 }
