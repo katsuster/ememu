@@ -70,6 +70,8 @@ public class DecodeStageThumb2 extends Stage {
             }
         case 0x3:
             //ロードストア、データ処理レジスタ、乗算、飽和演算
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
             //break;
         case 0x0:
             //16bit 命令、ここに来るのはおかしい
@@ -202,34 +204,50 @@ public class DecodeStageThumb2 extends Stage {
 
         if ((op & 0b0111000) == 0b0111000) {
             //0bx111xxx, 条件付き分岐
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
         }
 
         switch (op) {
         case 0b0111000:
-
-            break;
+            //
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
         case 0b0111001:
             //特殊レジスタへの移動
-            break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
         case 0b0111010:
             //プロセッサ状態の変更とヒント
-            break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
         case 0b0111011:
             //その他の制御命令
-            break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
         case 0b0111100:
             //分岐と Jazelle 状態への遷移命令
-            break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
         case 0b0111101:
             //例外からの復帰
-            break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
         case 0b0111110:
         case 0b0111111:
             //0b011111x, 特殊レジスタからの移動
-            break;
+            //TODO: Not implemented
+            throw new IllegalArgumentException("Sorry, not implemented.");
+            //break;
+        default:
+            throw new IllegalArgumentException("Unknown op1 of Thumb-2 BlBlxMsrT2" +
+                    String.format("(%d).", op));
         }
-
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 }
