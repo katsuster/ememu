@@ -8,20 +8,21 @@ import java.util.*;
  * @author katsuhiro
  */
 public class Bus64 implements RWCore64 {
+    //全マスターコアを管理するリスト
     private List<MasterCore64> masterList;
-    //32bit アドレス内のスレーブコアに高速にアクセスするためのテーブル
-    private SlaveCoreAddress[] slaves;
     //全スレーブコアを管理するリスト
     private List<SlaveCoreAddress> slaveList;
+    //32bit アドレス内のスレーブコアに高速にアクセスするためのテーブル
+    private SlaveCoreAddress[] slaves;
     //直前にアクセスしたスレーブコアのキャッシュ
     private SlaveCoreAddress cachedSlave;
 
     public Bus64() {
         this.masterList = new ArrayList<MasterCore64>();
+        this.slaveList = new ArrayList<SlaveCoreAddress>();
         //4KB ごとにスレーブコアを記録するため、
         //2^32 / 2^12 = 2^20 の要素が必要となる
         this.slaves = new SlaveCoreAddress[1024 * 1024];
-        this.slaveList = new ArrayList<SlaveCoreAddress>();
         this.cachedSlave = new InvalidSlaveCoreAddress();
     }
 
