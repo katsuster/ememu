@@ -405,7 +405,7 @@ public class ARMv5 extends CPU {
             thumbExec.execute(decinst, exec);
             break;
         case INS_TYPE_THUMB2:
-                thumb2Exec.execute(decinst, exec);
+            thumb2Exec.execute(decinst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown instruction type " +
@@ -933,6 +933,12 @@ public class ARMv5 extends CPU {
         if (isEnabledDisasm()) {
             disasm(decinst);
         }
+
+        //FIXME: for debug
+        //if (getCPSR().getTBit()) {
+        //    setPrintInstruction(true);
+        //    disasm(decinst);
+        //}
 
         //実行して、次の命令へ
         execute(decinst);
