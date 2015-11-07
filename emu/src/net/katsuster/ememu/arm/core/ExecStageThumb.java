@@ -1704,6 +1704,42 @@ public class ExecStageThumb extends Stage {
         write16_a32(paddr, (short) getReg(rd));
     }
 
+
+    /**
+     * ハーフワードストア命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeStrh2(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(6, 3);
+        int rn = inst.getField(3, 3);
+        int rd = inst.getRdField();
+        int vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst, "strh",
+                    String.format("%s, [%s, %s]",
+                            getRegName(rd), getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        vaddr = getReg(rn) + getReg(rm);
+
+        paddr = getMMU().translate(vaddr, 2, false, getCPSR().isPrivMode(), false);
+        if (getMMU().isFault()) {
+            getMMU().clearFault();
+            return;
+        }
+
+        if (!tryWrite_a32(paddr, 2)) {
+            raiseException(ARMv5.EXCEPT_ABT_DATA,
+                    String.format("strh [%08x]", paddr));
+            return;
+        }
+        write16_a32(paddr, (short) getReg(rd));
+    }
+
     /**
      * プッシュ命令。
      *
@@ -2206,6 +2242,9 @@ public class ExecStageThumb extends Stage {
             break;
         case INS_THUMB_STRH1:
             executeStrh1(inst, exec);
+            break;
+        case INS_THUMB_STRH2:
+            executeStrh2(inst, exec);
             break;
         case INS_THUMB_PUSH:
             executePush(inst, exec);

@@ -284,9 +284,7 @@ public class DecodeStageThumb extends Stage {
             return OpIndex.INS_THUMB_STR2;
         case 0x1:
             //レジスタストア ハーフワード（STRH）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            return OpIndex.INS_THUMB_STRH2;
         case 0x2:
             //レジスタストア バイト（STRB）
             return OpIndex.INS_THUMB_STRB2;
