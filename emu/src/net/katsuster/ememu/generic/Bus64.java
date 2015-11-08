@@ -16,6 +16,8 @@ public class Bus64 implements RWCore64 {
     private SlaveCoreAddress[] slaves;
     //直前にアクセスしたスレーブコアのキャッシュ
     private SlaveCoreAddress cachedSlave;
+    private long cacheHit;
+    private long cacheMiss;
 
     public Bus64() {
         this.masterList = new ArrayList<MasterCore64>();
@@ -340,8 +342,10 @@ public class Bus64 implements RWCore64 {
      */
     protected SlaveCoreAddress findSlaveCoreAddress(long start, long end) {
         if (cachedSlave.contains(start, end)) {
+            cacheHit++;
             return cachedSlave;
         }
+        cacheMiss++;
 
         //テーブルから探索する
         int ind = (int) (start >>> 12);
