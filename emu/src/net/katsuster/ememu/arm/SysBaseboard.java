@@ -86,7 +86,7 @@ public class SysBaseboard implements BusSlave64 {
             //addReg(REG_SYS_NVFLAGS, "SYS_NVFLAGS", 0x00000000);
             //addReg(REG_SYS_NVFLAGSSET, "SYS_NVFLAGSSET", 0x00000000);
             //addReg(REG_SYS_NVFLAGSCLR, "SYS_NVFLAGSCLR", 0x00000000);
-            //addReg(REG_SYS_RESETCTL, "SYS_RESETCTL", 0x00000000);
+            addReg(REG_SYS_RESETCTL, "SYS_RESETCTL", 0x00000000);
             //addReg(REG_SYS_PCICTL, "SYS_PCICTL", 0x00000000);
             //addReg(REG_SYS_MCI, "SYS_MCI", 0x00000000);
             //addReg(REG_SYS_FLASH, "SYS_FLASH", 0x00000000);
@@ -132,6 +132,11 @@ public class SysBaseboard implements BusSlave64 {
                 result = 0;
                 System.out.printf("SYS_LOCK: read 0x%08x\n", result);
                 break;
+            case REG_SYS_RESETCTL:
+                //TODO: not implemented
+                result = 0x0;
+                System.out.printf("SYS_RESETCTL: read 0x%08x\n", result);
+                break;
             case REG_SYS_CLCD:
                 //TODO: not implemented
                 result = 0x1f00;
@@ -168,6 +173,10 @@ public class SysBaseboard implements BusSlave64 {
             case REG_SYS_LOCK:
                 //TODO: not implemented
                 System.out.printf("SYS_LOCK: 0x%08x\n", data);
+                break;
+            case REG_SYS_RESETCTL:
+                //TODO: not implemented
+                System.out.printf("SYS_RESETCTL: 0x%08x\n", data);
                 break;
             case REG_SYS_CLCD:
                 //TODO: not implemented
