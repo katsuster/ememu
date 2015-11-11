@@ -45,15 +45,18 @@ public class ARMv5 extends CPU {
     private ExecStageThumb2 thumb2Exec;
 
     public ARMv5() {
-        CoProcVFPv2 cpVfps;
+        CoProcVFPv2 cpVfp;
+        CoProcDebugv1 cpDbg;
         CoProcStdv5 cpStd;
 
-        cpVfps = new CoProcVFPv2(10, this);
+        cpVfp = new CoProcVFPv2(10, this);
+        cpDbg = new CoProcDebugv1(14, this);
         cpStd = new CoProcStdv5(15, this);
 
         regfile = new ARMRegFile();
         coProcs = new CoProc[16];
-        coProcs[10] = cpVfps;
+        coProcs[10] = cpVfp;
+        coProcs[14] = cpDbg;
         coProcs[15] = cpStd;
         mmu = new MMUv5(this, cpStd);
         intc = new NormalINTC(MAX_INTSRCS);
