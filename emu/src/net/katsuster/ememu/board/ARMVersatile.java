@@ -3,9 +3,8 @@ package net.katsuster.ememu.board;
 import java.io.*;
 
 import net.katsuster.ememu.arm.*;
-import net.katsuster.ememu.arm.core.ARMv5;
-import net.katsuster.ememu.generic.Bus64;
-import net.katsuster.ememu.generic.RAM;
+import net.katsuster.ememu.arm.core.*;
+import net.katsuster.ememu.generic.*;
 
 /**
  * ARM Versatile Application Baseboards (AB) and Platform Baseboards (PB).
@@ -83,7 +82,9 @@ public class ARMVersatile {
         //TODO: implement SSMC controller...
         RAM ssmc_c4_7 = new RAM(4 * 1024);
         RAM ssmc_c0 = new RAM(4 * 1024);
-        RAM ssmc_c1 = new RAM(256 * 1024);
+        Flush16 ssmc_c1_0 = new Flush16(256 * 1024);
+        Flush16 ssmc_c1_1 = new Flush16(256 * 1024);
+        BankedFlush16_16 ssmc_c1 = new BankedFlush16_16(ssmc_c1_0, ssmc_c1_1);
         RAM ssmc_c2 = new RAM(4 * 1024);
         RAM ssmc_c3 = new RAM(4 * 1024);
         RAM pci_area = new RAM(4 * 1024);

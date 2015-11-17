@@ -89,7 +89,7 @@ public class SysBaseboard implements BusSlave64 {
             addReg(REG_SYS_RESETCTL, "SYS_RESETCTL", 0x00000000);
             //addReg(REG_SYS_PCICTL, "SYS_PCICTL", 0x00000000);
             //addReg(REG_SYS_MCI, "SYS_MCI", 0x00000000);
-            //addReg(REG_SYS_FLASH, "SYS_FLASH", 0x00000000);
+            addReg(REG_SYS_FLASH, "SYS_FLASH", 0x00000000);
             addReg(REG_SYS_CLCD, "SYS_CLCD", 0x00000000);
 
             addReg(REG_SYS_24MHz, "SYS_24MHz", 0x00000000);
@@ -177,6 +177,13 @@ public class SysBaseboard implements BusSlave64 {
             case REG_SYS_RESETCTL:
                 //TODO: not implemented
                 System.out.printf("SYS_RESETCTL: 0x%08x\n", data);
+                break;
+            case REG_SYS_FLASH:
+                //TODO: not implemented
+                boolean we = BitOp.getBit32(data, 0);
+
+                System.out.printf("SYS_FLASH: 0x%08x\n", data);
+                System.out.printf("WriteEnable: %b.\n", we);
                 break;
             case REG_SYS_CLCD:
                 //TODO: not implemented
