@@ -227,7 +227,6 @@ public class DecodeStageThumb extends Stage {
             //下位レジスタの加算（ADD）
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
         case 0x1:
         case 0x2:
         case 0x3:
@@ -235,19 +234,15 @@ public class DecodeStageThumb extends Stage {
             return OpIndex.INS_THUMB_ADD4;
         //case 0x4:
         //（予測不能）
-        //break;
         case 0x5:
         case 0x6:
         case 0x7:
             //上位レジスタの比較（CMP）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
+            return OpIndex.INS_THUMB_CMP3;
         case 0x8:
             //下位レジスタの移動（MOV）
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
         case 0x9:
         case 0xa:
         case 0xb:
@@ -478,17 +473,14 @@ public class DecodeStageThumb extends Stage {
             //blx, 未定義命令
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
         case 0x2:
             //bl/blx 命令
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
         case 0x3:
             //bl 命令
             //TODO: Not implemented
             throw new IllegalArgumentException("Sorry, not implemented.");
-            //break;
         default:
             //異常な値
             throw new IllegalArgumentException("Illegal h bits " +

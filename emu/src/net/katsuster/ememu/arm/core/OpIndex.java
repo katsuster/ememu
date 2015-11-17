@@ -101,6 +101,7 @@ public enum OpIndex {
     INS_THUMB_SUB3,
     INS_THUMB_SUB4,
     INS_THUMB_CMP1,
+    INS_THUMB_CMP3,
     INS_THUMB_MOV1,
     INS_THUMB_MOV3,
     INS_THUMB_LSL1,

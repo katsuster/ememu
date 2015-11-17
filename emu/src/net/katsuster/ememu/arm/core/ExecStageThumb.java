@@ -949,6 +949,34 @@ public class ExecStageThumb extends Stage {
     }
 
     /**
+     * 上位レジスタの比較命令。
+     *
+     * @param inst Thumb 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeCmp3(InstructionThumb inst, boolean exec) {
+        int rm = inst.getField(3, 4);
+        int rn = (inst.getField(7, 1) << 3) | inst.getField(0, 3);
+        int left, right, dest;
+
+        if (!exec) {
+            printDisasm(inst, "cmp",
+                    String.format("%s, %s",
+                            getRegName(rn), getRegName(rm)));
+            return;
+        }
+
+        left = getReg(rn);
+        right = getReg(rm);
+        dest = left - right;
+
+        getCPSR().setNBit(BitOp.getBit32(dest, 31));
+        getCPSR().setZBit(dest == 0);
+        getCPSR().setCBit(!IntegerExt.borrowFrom(left, right));
+        getCPSR().setVBit(IntegerExt.overflowFrom(left, right, false));
+    }
+
+    /**
      * イミディエートの移動命令。
      *
      * @param inst Thumb 命令
@@ -2179,6 +2207,9 @@ public class ExecStageThumb extends Stage {
             break;
         case INS_THUMB_CMP1:
             executeCmp1(inst, exec);
+            break;
+        case INS_THUMB_CMP3:
+            executeCmp3(inst, exec);
             break;
         case INS_THUMB_MOV1:
             executeMov1(inst, exec);
