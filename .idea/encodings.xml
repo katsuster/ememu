@@ -9,11 +9,10 @@
     <file url="file://$PROJECT_DIR$/emu/src/net/katsuster/ememu/generic/Reg32File.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/emu/src/net/katsuster/ememu/test/IntegerExtTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/emu/src/net/katsuster/ememu/ui/Emulator.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/emu/src/net/katsuster/ememu/ui/EmulatorOption.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/emu/src/net/katsuster/ememu/ui/InnerBootloader.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/emu/src/net/katsuster/ememu/ui/Main.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/emu/src/net/katsuster/ememu/ui/MainApplet.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/emu/src/net/katsuster/ememu/ui/MainMenuBar.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/emu/src/net/katsuster/ememu/ui/MainWindow.java" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
