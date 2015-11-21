@@ -244,11 +244,14 @@ public abstract class CPU extends MasterCore64
      * @param inst      命令
      * @param operation 命令を表す文字列
      * @param operand   オペランドを表す文字列
+     * @return 命令を逆アセンブルした文字列
      */
     public abstract String instructionToString(Instruction inst, String operation, String operand);
 
     /**
      * 現在のレジスタの文字列表記を取得します。
+     *
+     * @return レジスタ名を表す文字列
      */
     public abstract String regsToString();
 
@@ -268,6 +271,10 @@ public abstract class CPU extends MasterCore64
 
     /**
      * PC（プログラムカウンタ）を次の命令に移します。
+     *
+     * PC の増分は、現在実行している命令により異なります。
+     *
+     * @param inst 命令
      */
     public abstract void nextPC(Instruction inst);
 

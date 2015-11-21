@@ -192,6 +192,10 @@ public class Stage {
 
     /**
      * PC を次の命令に移します。
+     *
+     * PC の増分は、現在実行している命令により異なります。
+     *
+     * @param inst 命令
      */
     public void nextPC(Instruction inst) {
         getCore().nextPC(inst);

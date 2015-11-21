@@ -5,14 +5,18 @@ import net.katsuster.ememu.generic.*;
 /**
  * ARMv5TE CPU
  *
+ * <p>
  * 参考: ARM アーキテクチャリファレンスマニュアル Second Edition
  * ARM DDI0100DJ
- *
+ * </p>
+ * <p>
  * 最新版は、日本語版 ARM DDI0100HJ, 英語版 ARM DDI0100I
- *
+ * </p>
+ * <p>
  * T は Thumb 命令、
  * E はエンハンスド DSP 命令、
  * のことらしい。
+ * </p>
  *
  * @author katsuhiro
  */

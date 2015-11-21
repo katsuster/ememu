@@ -26,6 +26,7 @@ public class DecodeStageARMv5 extends Stage {
      * ARM 命令をデコードします。
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decode(InstructionARM inst) {
         int subcode = inst.getSubCodeField();
@@ -52,6 +53,7 @@ public class DecodeStageARMv5 extends Stage {
      * subcode = 0b00
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALU(InstructionARM inst) {
         boolean i = inst.getIBit();
@@ -95,6 +97,7 @@ public class DecodeStageARMv5 extends Stage {
      * または、その他の命令をデコードします。
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALUShiftImm(InstructionARM inst) {
         int id = inst.getOpcodeSBitShiftID();
@@ -112,6 +115,7 @@ public class DecodeStageARMv5 extends Stage {
      * その他の命令をデコードします。
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALUShiftReg(InstructionARM inst) {
         int id = inst.getOpcodeSBitShiftID();
@@ -133,6 +137,7 @@ public class DecodeStageARMv5 extends Stage {
      * bit[7:4] = 0b1001
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeExtALU(InstructionARM inst) {
         //U, B, W ビット[23:21]
@@ -200,6 +205,7 @@ public class DecodeStageARMv5 extends Stage {
      * これ以外のパターンは全て未定義命令です。
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeExtLdrStr(InstructionARM inst) {
         boolean p = inst.getBit(24);
@@ -261,6 +267,7 @@ public class DecodeStageARMv5 extends Stage {
      * の実行
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALUImm(InstructionARM inst) {
         int id = inst.getOpcodeSBitImmID();
@@ -308,6 +315,7 @@ public class DecodeStageARMv5 extends Stage {
      * これ以外のパターンは全て未定義命令です。
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALUOther(InstructionARM inst) {
         int cond = inst.getCondField();
@@ -414,6 +422,7 @@ public class DecodeStageARMv5 extends Stage {
      *
      * @param inst ARM 命令
      * @param id   オペコードフィールドと S ビットが示す演算の ID
+     * @return 命令の種類
      */
     public OpIndex decodeALUCommon(InstructionARM inst, int id) {
         switch (id) {
@@ -479,6 +488,7 @@ public class DecodeStageARMv5 extends Stage {
      * -------+-----+-----+-----+-----+-----+-----+
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeLdrStr(InstructionARM inst) {
         int cond = inst.getCondField();
@@ -545,6 +555,7 @@ public class DecodeStageARMv5 extends Stage {
      * subcode = 0b10
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeLdmStm(InstructionARM inst) {
         int cond = inst.getCondField();
@@ -584,6 +595,7 @@ public class DecodeStageARMv5 extends Stage {
      * subcode = 0b10
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeLdm(InstructionARM inst) {
         boolean s = inst.getBit(22);
@@ -609,6 +621,7 @@ public class DecodeStageARMv5 extends Stage {
      * subcode = 0b10
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeStm(InstructionARM inst) {
         boolean s = inst.getBit(22);
@@ -634,6 +647,7 @@ public class DecodeStageARMv5 extends Stage {
      * subcode = 0b11
      *
      * @param inst ARM 命令
+     * @return 命令の種類
      */
     public OpIndex decodeCopSwi(InstructionARM inst) {
         int cond = inst.getCondField();

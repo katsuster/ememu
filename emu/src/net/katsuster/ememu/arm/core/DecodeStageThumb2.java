@@ -26,6 +26,7 @@ public class DecodeStageThumb2 extends Stage {
      * Thumb-2 命令をデコードします。
      *
      * @param inst Thumb-2 命令
+     * @return 命令の種類
      */
     public OpIndex decode(InstructionThumb inst) {
         int op1 = inst.getField(11 + 16, 2);
@@ -85,6 +86,7 @@ public class DecodeStageThumb2 extends Stage {
      * ロード、ストアマルチプル命令をデコードします。
      *
      * @param inst Thumb-2 命令
+     * @return 命令の種類
      */
     public OpIndex decodeLdmStmT2(InstructionThumb inst) {
         //TODO: Not implemented
@@ -95,6 +97,7 @@ public class DecodeStageThumb2 extends Stage {
      * デュアルロード、ストア命令をデコードします。
      *
      * @param inst Thumb-2 命令
+     * @return 命令の種類
      */
     public OpIndex decodeDualLdSt(InstructionThumb inst) {
         //TODO: Not implemented
@@ -105,6 +108,7 @@ public class DecodeStageThumb2 extends Stage {
      * デュアルロード、ストア命令をデコードします。
      *
      * @param inst Thumb-2 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALUShiftRegT2(InstructionThumb inst) {
         //TODO: Not implemented
@@ -115,6 +119,7 @@ public class DecodeStageThumb2 extends Stage {
      * コプロセッサ命令をデコードします。
      *
      * @param inst Thumb-2 命令
+     * @return 命令の種類
      */
     public OpIndex decodeCoproc(InstructionThumb inst) {
         //TODO: Not implemented
@@ -125,6 +130,7 @@ public class DecodeStageThumb2 extends Stage {
      * データ処理（修飾イミディエート）命令をデコードします。
      *
      * @param inst Thumb-2 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALUModimmT2(InstructionThumb inst) {
         //TODO: Not implemented
@@ -135,6 +141,7 @@ public class DecodeStageThumb2 extends Stage {
      * データ処理（イミディエート）命令をデコードします。
      *
      * @param inst Thumb-2 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALUImmT2(InstructionThumb inst) {
         //TODO: Not implemented
@@ -151,6 +158,7 @@ public class DecodeStageThumb2 extends Stage {
      * [15] = 0b1
      *
      * @param inst Thumb-2 命令
+     * @return 命令の種類
      */
     public OpIndex decodeBlBlxT2(InstructionThumb inst) {
         int op1 = inst.getField(12, 3);
@@ -188,6 +196,7 @@ public class DecodeStageThumb2 extends Stage {
      * [15:12] = 0b1_0x0
      *
      * @param inst Thumb-2 命令
+     * @return 命令の種類
      */
     public OpIndex decodeBlBlxMsrT2(InstructionThumb inst) {
         int op = inst.getField(4 + 16, 7);

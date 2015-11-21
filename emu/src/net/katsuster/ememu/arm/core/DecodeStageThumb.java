@@ -26,6 +26,7 @@ public class DecodeStageThumb extends Stage {
      * Thumbv1, v2, v3 命令をデコードします。
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decode(InstructionThumb inst) {
         int subcode = inst.getSubCodeField();
@@ -59,6 +60,7 @@ public class DecodeStageThumb extends Stage {
      * subcode = 0b000
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeAddSub(InstructionThumb inst) {
         int op = inst.getField(11, 2);
@@ -105,6 +107,7 @@ public class DecodeStageThumb extends Stage {
      * subcode = 0b001
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALUImm(InstructionThumb inst) {
         int op = inst.getField(11, 2);
@@ -134,6 +137,7 @@ public class DecodeStageThumb extends Stage {
      * subcode = 0b010
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALUReg(InstructionThumb inst) {
         int op = inst.getField(10, 3);
@@ -168,6 +172,7 @@ public class DecodeStageThumb extends Stage {
      * op[12:10] = 0b000
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALURegData(InstructionThumb inst) {
         int op = inst.getOpcode5Field();
@@ -218,6 +223,7 @@ public class DecodeStageThumb extends Stage {
      * op[12:10] = 0b001
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALURegSpecial(InstructionThumb inst) {
         int op = inst.getField(6, 4);
@@ -269,6 +275,7 @@ public class DecodeStageThumb extends Stage {
      * op[12:10] = 0b1xx
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeALURegOffset(InstructionThumb inst) {
         int op = inst.getField(9, 3);
@@ -310,6 +317,7 @@ public class DecodeStageThumb extends Stage {
      * subcode = 0b011
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeLdWord(InstructionThumb inst) {
         int op = inst.getField(11, 2);
@@ -339,6 +347,7 @@ public class DecodeStageThumb extends Stage {
      * subcode = 0b100
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeLdHalf(InstructionThumb inst) {
         int op = inst.getField(11, 2);
@@ -368,6 +377,7 @@ public class DecodeStageThumb extends Stage {
      * subcode = 0b101
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeOthers(InstructionThumb inst) {
         boolean b12 = inst.getBit(12);
@@ -422,6 +432,7 @@ public class DecodeStageThumb extends Stage {
      * subcode = 0b110
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeLdmult(InstructionThumb inst) {
         boolean b12 = inst.getBit(12);
@@ -461,6 +472,7 @@ public class DecodeStageThumb extends Stage {
      * subcode = 0b111
      *
      * @param inst Thumb 命令
+     * @return 命令の種類
      */
     public OpIndex decodeBlBlx(InstructionThumb inst) {
         int h = inst.getField(11, 2);

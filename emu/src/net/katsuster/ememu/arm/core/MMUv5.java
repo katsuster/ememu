@@ -5,10 +5,13 @@ import net.katsuster.ememu.generic.BitOp;
 /**
  * ARMv5 VMSA
  *
+ * <p>
  * VMSA: 仮想メモリシステムアーキテクチャ
- *
+ * </p>
+ * <p>
  * 参考: ARM アーキテクチャリファレンスマニュアル Second Edition
  * ARM DDI0100DJ
+ * </p>
  *
  * @author katsuhiro
  */
