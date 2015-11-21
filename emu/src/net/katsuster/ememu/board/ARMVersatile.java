@@ -42,9 +42,9 @@ public class ARMVersatile {
         SysBaseboard sysBoard = new SysBaseboard();
 
         //TODO: implement PCI controller...
-        RAM pci_conf = new RAM(4 * 1024);
+        RAM pci_conf = new RAM64(4 * 1024);
         //TODO: implement Serial Bus controller...
-        RAM serial_bus = new RAM(4 * 1024);
+        RAM serial_bus = new RAM64(4 * 1024);
 
         SecondaryINTC intc2nd = new SecondaryINTC();
         AACI aaci = new AACI();
@@ -55,9 +55,9 @@ public class ARMVersatile {
         SCard scard1 = new SCard();
         MMCI mci1 = new MMCI();
         //TODO: implement Ethernet controller...
-        RAM ether = new RAM(4 * 1024);
+        RAM ether = new RAM64(4 * 1024);
         //TODO: implement USB controller...
-        RAM usb = new RAM(4 * 1024);
+        RAM usb = new RAM64(4 * 1024);
 
         SSMC ssmc = new SSMC();
         MPMC mpmc = new MPMC();
@@ -80,18 +80,18 @@ public class ARMVersatile {
         SSP ssp = new SSP();
 
         //TODO: implement SSMC controller...
-        RAM ssmc_c4_7 = new RAM(4 * 1024);
-        RAM ssmc_c0 = new RAM(4 * 1024);
+        RAM ssmc_c4_7 = new RAM64(4 * 1024);
+        RAM ssmc_c0 = new RAM64(4 * 1024);
         Flush16 ssmc_c1_0 = new Flush16(256 * 1024);
         Flush16 ssmc_c1_1 = new Flush16(256 * 1024);
         BankedFlush16_16 ssmc_c1 = new BankedFlush16_16(ssmc_c1_0, ssmc_c1_1);
-        RAM ssmc_c2 = new RAM(4 * 1024);
-        RAM ssmc_c3 = new RAM(4 * 1024);
-        RAM pci_area = new RAM(4 * 1024);
+        RAM ssmc_c2 = new RAM64(4 * 1024);
+        RAM ssmc_c3 = new RAM64(4 * 1024);
+        RAM pci_area = new RAM64(4 * 1024);
         //TODO: implement MBX Graphics controller...
-        RAM mbx = new RAM(4 * 1024);
+        RAM mbx = new RAM64(4 * 1024);
         //TODO: implement MPMC controller...
-        RAM mpmc_c2_3 = new RAM(4 * 1024);
+        RAM mpmc_c2_3 = new RAM64(4 * 1024);
 
         //Master core
         cpu.setSlaveBus(bus);

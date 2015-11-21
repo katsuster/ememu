@@ -20,7 +20,7 @@ class Emulator extends Thread {
     public Emulator() {
         cpu = new ARMv5();
         bus = new Bus64();
-        ram = new RAM(64 * 1024 * 1024);
+        ram = new RAM32(64 * 1024 * 1024);
         board = new ARMVersatile();
         opts = new LinuxOption();
     }
