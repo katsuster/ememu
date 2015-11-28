@@ -1564,7 +1564,7 @@ public class ExecStageThumb extends Stage {
         int rm = inst.getField(6, 3);
         int rn = inst.getField(3, 3);
         int rd = inst.getRdField();
-        int vaddr, paddr, value;
+        int vaddr, paddr;
 
         if (!exec) {
             printDisasm(inst, "str",
