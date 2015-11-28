@@ -230,9 +230,8 @@ public class DecodeStageThumb extends Stage {
 
         switch (op) {
         case 0x0:
-            //下位レジスタの加算（ADD）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
+            //下位レジスタの加算（ADD）、ARMv6T2 以降
+            return OpIndex.INS_THUMB_ADD4;
         case 0x1:
         case 0x2:
         case 0x3:
@@ -246,9 +245,8 @@ public class DecodeStageThumb extends Stage {
             //上位レジスタの比較（CMP）
             return OpIndex.INS_THUMB_CMP3;
         case 0x8:
-            //下位レジスタの移動（MOV）
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
+            //下位レジスタの移動（MOV）、ARMv6 以降
+            return OpIndex.INS_THUMB_MOV3;
         case 0x9:
         case 0xa:
         case 0xb:
@@ -380,49 +378,64 @@ public class DecodeStageThumb extends Stage {
      * @return 命令の種類
      */
     public OpIndex decodeOthers(InstructionThumb inst) {
-        boolean b12 = inst.getBit(12);
+        int op = inst.getField(11, 2);
 
-        if (!b12) {
-            //PC, SP への add
-            boolean sp = inst.getBit(11);
-
-            if (!sp) {
-                //add(5), PC への加算
-                return OpIndex.INS_THUMB_ADD5;
-            } else {
-                //add(6), SP への加算
-                return OpIndex.INS_THUMB_ADD6;
-            }
-        } else {
+        switch (op) {
+        case 0x0:
+            //PC への加算（ADD）
+            return OpIndex.INS_THUMB_ADD5;
+        case 0x1:
+            //SP への加算（ADD）
+            return OpIndex.INS_THUMB_ADD6;
+        case 0x2:
             //その他の命令
-            int op = inst.getField(8, 4);
-            boolean b7 = inst.getBit(7);
+            int op2 = inst.getField(5, 6);
 
-            switch (op) {
-            case 0x0:
-                //スタックポインタの加減算
-                if (!b7) {
-                    //add(7)
-                    return OpIndex.INS_THUMB_ADD7;
-                } else {
-                    //sub(7)
-                    return OpIndex.INS_THUMB_SUB4;
-                }
-            case 0x4: //0b0100
-            case 0x5: //0b0101
-                //push
+            switch (op2) {
+            case 0x00: //0b0000xx
+            case 0x01:
+            case 0x02:
+            case 0x03:
+                //スタックポインタの加算（ADD）
+                return OpIndex.INS_THUMB_ADD7;
+            case 0x04: //0b0001xx
+            case 0x05:
+            case 0x06:
+            case 0x07:
+                //スタックポインタの減算（SUB）
+                return OpIndex.INS_THUMB_SUB4;
+            case 0x20: case 0x21: case 0x22: case 0x23: //0b10xxxx
+            case 0x24: case 0x25: case 0x26: case 0x27:
+            case 0x28: case 0x29: case 0x2a: case 0x2b:
+            case 0x2c: case 0x2d: case 0x2e: case 0x2f:
+                //複数レジスタプッシュ（PUSH）
                 return OpIndex.INS_THUMB_PUSH;
-            case 0xc: //0b1100
-            case 0xd: //0b1101
-                //pop
+            default:
+                throw new IllegalArgumentException("Illegal op2(op=0b10, Others) bits " +
+                        String.format("op2:0x%02x.", op2));
+            }
+        case 0x3:
+            //その他の命令
+            int op3 = inst.getField(5, 6);
+
+            switch (op3) {
+            case 0x20: case 0x21: case 0x22: case 0x23: //0b10xxxx
+            case 0x24: case 0x25: case 0x26: case 0x27:
+            case 0x28: case 0x29: case 0x2a: case 0x2b:
+            case 0x2c: case 0x2d: case 0x2e: case 0x2f:
+                //複数レジスタポップ（POP）
                 return OpIndex.INS_THUMB_POP;
-            case 0xe:
-                //bkpt
+            case 0x30: case 0x31: case 0x32: case 0x33: //0b10xxxx
+            case 0x34: case 0x35: case 0x36: case 0x37:
+                //ブレークポイント（BKPT）
                 return OpIndex.INS_THUMB_BKPT;
             default:
-                throw new IllegalArgumentException("Illegal op(Others) bits " +
-                        String.format("op:0x%02x.", op));
+                throw new IllegalArgumentException("Illegal op2(op=0x11, Others) bits " +
+                        String.format("op3:0x%02x.", op3));
             }
+        default:
+            throw new IllegalArgumentException("Illegal op(Others) bits " +
+                    String.format("op:0x%02x.", op));
         }
     }
 
@@ -435,20 +448,17 @@ public class DecodeStageThumb extends Stage {
      * @return 命令の種類
      */
     public OpIndex decodeLdmult(InstructionThumb inst) {
-        boolean b12 = inst.getBit(12);
+        int op = inst.getField(11, 2);
 
-        if (!b12) {
-            //ロードストアマルチプル
-            boolean l = inst.getBit(11);
-
-            if (l) {
-                //ldmia
-                return OpIndex.INS_THUMB_LDMIA;
-            } else {
-                //stmia
-                return OpIndex.INS_THUMB_STMIA;
-            }
-        } else {
+        switch (op) {
+        case 0x0:
+            //ストアマルチプル（STMIA）
+            return OpIndex.INS_THUMB_STMIA;
+        case 0x1:
+            //ロードマルチプル（LDMIA）
+            return OpIndex.INS_THUMB_LDMIA;
+        case 0x2:
+        case 0x3:
             //分岐命令
             int cond = inst.getField(8, 4);
 
@@ -463,6 +473,9 @@ public class DecodeStageThumb extends Stage {
                 //b
                 return OpIndex.INS_THUMB_B1;
             }
+        default:
+            throw new IllegalArgumentException("Illegal op(Others) bits " +
+                    String.format("op:0x%02x.", op));
         }
     }
 
@@ -482,17 +495,10 @@ public class DecodeStageThumb extends Stage {
             //b(無条件分岐)命令
             return OpIndex.INS_THUMB_B2;
         case 0x1:
-            //blx, 未定義命令
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
         case 0x2:
-            //bl/blx 命令
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
         case 0x3:
-            //bl 命令
-            //TODO: Not implemented
-            throw new IllegalArgumentException("Sorry, not implemented.");
+            //Thumb-2 命令
+            throw new IllegalArgumentException("Thumb-2 instruction detected.");
         default:
             //異常な値
             throw new IllegalArgumentException("Illegal h bits " +

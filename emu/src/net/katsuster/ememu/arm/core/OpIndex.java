@@ -111,7 +111,7 @@ public enum OpIndex {
     INS_THUMB_LSR1,
     INS_THUMB_LSR2,
     INS_THUMB_MOV1,
-    INS_THUMB_MOV2,
+    //INS_THUMB_MOV2, = ADD1
     INS_THUMB_MOV3,
     INS_THUMB_MUL,
     INS_THUMB_MVN,
