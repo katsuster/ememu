@@ -7,7 +7,7 @@ package net.katsuster.ememu.generic;
  *
  * @author katsuhiro
  */
-public class BankedFlush16_16 extends SlaveCore64 {
+public class BankedFlush16_16 extends SlaveCore {
     //データ幅（バイト単位）
     public static final int LEN_WORD = 4;
     //データ幅（ビット単位）

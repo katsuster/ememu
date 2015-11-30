@@ -13,7 +13,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class LCDC implements BusSlave64 {
+public class LCDC implements BusSlave {
     private LCDCSlave slave;
 
     public static final int REG_LCDTiming0       = 0x000;
@@ -45,11 +45,11 @@ public class LCDC implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class LCDCSlave extends Controller64Reg32 {
+    class LCDCSlave extends Controller32 {
         public LCDCSlave() {
             addReg(REG_LCDTiming0, "LCDTiming0", 0x00000000);
             addReg(REG_LCDTiming1, "LCDTiming1", 0x00000000);

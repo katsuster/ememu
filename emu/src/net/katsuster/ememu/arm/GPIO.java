@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class GPIO implements BusSlave64 {
+public class GPIO implements BusSlave {
     private GPIOSlave slave;
 
     //0x000-0x3fc: REG_GPIODATA
@@ -42,11 +42,11 @@ public class GPIO implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class GPIOSlave extends Controller64Reg32 {
+    class GPIOSlave extends Controller32 {
         public GPIOSlave() {
             //0x000-0x3fc: REG_GPIODATA
 

@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class SSP implements BusSlave64 {
+public class SSP implements BusSlave {
     private SSPSlave slave;
 
     public static final int REG_SSPCR0       = 0x000;
@@ -38,11 +38,11 @@ public class SSP implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class SSPSlave extends Controller64Reg32 {
+    class SSPSlave extends Controller32 {
         public SSPSlave() {
             //addReg(REG_SSPCR0, "SSPCR0", 0x0000);
             //addReg(REG_SSPCR1, "SSPCR1", 0x0);

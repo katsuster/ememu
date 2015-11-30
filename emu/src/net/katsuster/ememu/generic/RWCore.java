@@ -10,7 +10,7 @@ package net.katsuster.ememu.generic;
  *
  * @author katsuhiro
  */
-public interface RWCore64 {
+public interface RWCore {
     /**
      * 指定されたアドレスからの読み取りが可能かどうかを判定します。
      *

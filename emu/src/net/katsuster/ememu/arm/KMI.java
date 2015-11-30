@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class KMI implements BusSlave64 {
+public class KMI implements BusSlave {
     private KMISlave slave;
 
     public static final int REG_KMICR        = 0x000;
@@ -44,11 +44,11 @@ public class KMI implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class KMISlave extends Controller64Reg32 {
+    class KMISlave extends Controller32 {
         public KMISlave() {
             //addReg(REG_KMICR, "KMICR", 0x00);
             //addReg(REG_KMISTAT, "KMISTAT", 0x43);

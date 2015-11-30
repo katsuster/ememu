@@ -12,7 +12,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class DualTimer implements INTSource, BusSlave64 {
+public class DualTimer implements INTSource, BusSlave {
     private INTDestination intDst = new NullINTDestination();
     private DualTimerSlave slave;
 
@@ -106,11 +106,11 @@ public class DualTimer implements INTSource, BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class DualTimerSlave extends Controller64Reg32 {
+    class DualTimerSlave extends Controller32 {
         public DualTimerSlave() {
             addReg(REG_Timer1Load, "Timer1Load", 0x00000000);
             addReg(REG_Timer1Value, "Timer1Value", 0xffffffff);

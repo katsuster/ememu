@@ -35,7 +35,7 @@ public class ARMVersatile {
         uartOut[index] = os;
     }
 
-    public void setup(ARMv5 cpu, Bus64 bus, RAM ramMain) {
+    public void setup(ARMv5 cpu, Bus bus, RAM ramMain) {
         //TODO: implement MPMC controller...
         RAM mpmc_c0_c1 = ramMain;
 

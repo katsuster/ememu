@@ -1,7 +1,7 @@
 package net.katsuster.ememu.generic;
 
 /**
- * 64 ビットアドレス、32ビットデータ RAM
+ * 64 ビットアドレス、32 ビットデータ RAM
  *
  * @author katsuhiro
  */

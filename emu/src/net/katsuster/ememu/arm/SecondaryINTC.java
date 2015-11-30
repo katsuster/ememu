@@ -12,7 +12,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class SecondaryINTC extends Controller64Reg32
+public class SecondaryINTC extends Controller32
         implements INTDestination {
     private NormalINTC intc;
 

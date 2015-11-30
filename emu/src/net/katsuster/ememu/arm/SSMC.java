@@ -1,7 +1,6 @@
 package net.katsuster.ememu.arm;
 
 import net.katsuster.ememu.generic.*;
-import net.katsuster.ememu.ui.*;
 
 /**
  * メモリコントローラ
@@ -11,7 +10,7 @@ import net.katsuster.ememu.ui.*;
  *
  * @author katsuhiro
  */
-public class SSMC implements BusSlave64 {
+public class SSMC implements BusSlave {
     private SSMCSlave slave;
 
     public static final int REG_SMBIDCYR0     = 0x000;
@@ -99,11 +98,11 @@ public class SSMC implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class SSMCSlave extends Controller64Reg32 {
+    class SSMCSlave extends Controller32 {
         public SSMCSlave() {
             addReg(REG_SMBIDCYR0, "SMBIDCYR0", 0xf);
             //addReg(REG_SMBWSTRDR0, "SMBWSTRDR0", 0x1f);

@@ -7,7 +7,7 @@ import java.util.*;
  *
  * @author katsuhiro
  */
-public abstract class Controller64Reg32 extends SlaveCore64 {
+public abstract class Controller32 extends SlaveCore {
     //データ幅（バイト単位）
     public static final int LEN_WORD = 4;
     //データ幅（ビット単位）
@@ -15,7 +15,7 @@ public abstract class Controller64Reg32 extends SlaveCore64 {
 
     private Map<Long, Reg32> regs;
 
-    public Controller64Reg32() {
+    public Controller32() {
         regs = Collections.synchronizedMap(
                 new HashMap<Long, Reg32>());
     }

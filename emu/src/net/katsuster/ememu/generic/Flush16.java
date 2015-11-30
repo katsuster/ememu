@@ -8,7 +8,7 @@ package net.katsuster.ememu.generic;
  *
  * @author katsuhiro
  */
-public class Flush16 extends SlaveCore64 {
+public class Flush16 extends SlaveCore {
     //データ幅（バイト単位）
     public static final int LEN_WORD = 2;
     //データ幅（ビット単位）

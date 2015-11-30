@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class MMCI implements BusSlave64 {
+public class MMCI implements BusSlave {
     private MMCISlave slave;
 
     public static final int REG_MCIPower      = 0x000;
@@ -49,11 +49,11 @@ public class MMCI implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class MMCISlave extends Controller64Reg32 {
+    class MMCISlave extends Controller32 {
         public MMCISlave() {
             //addReg(REG_MCIPower, "MCIPower", 0x00);
             //addReg(REG_MCIClock, "MCIClock", 0x000);

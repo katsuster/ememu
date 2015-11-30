@@ -15,8 +15,8 @@ package net.katsuster.ememu.generic;
  *
  * @author katsuhiro
  */
-public abstract class SlaveCore64 extends AbstractCore
-        implements RWCore64 {
+public abstract class SlaveCore extends AbstractCore
+        implements RWCore {
     final public static long ADDR_MASK_8 = ~0x0L;
     final public static long ADDR_MASK_16 = ~0x1L;
     final public static long ADDR_MASK_32 = ~0x3L;
@@ -26,14 +26,14 @@ public abstract class SlaveCore64 extends AbstractCore
     final public static long DATA_MASK_32 = 0xffffffffL;
     final public static long DATA_MASK_64 = 0xffffffffffffffffL;
 
-    private Bus64 masterBus;
+    private Bus masterBus;
 
     /**
      * このスレーブコアが接続されているバスを取得します。
      *
      * @return コアが接続されているバス
      */
-    public Bus64 getMasterBus() {
+    public Bus getMasterBus() {
         return masterBus;
     }
 
@@ -42,7 +42,7 @@ public abstract class SlaveCore64 extends AbstractCore
      *
      * @param bus コアを接続するバス
      */
-    public void setMasterBus(Bus64 bus) {
+    public void setMasterBus(Bus bus) {
         masterBus = bus;
     }
 

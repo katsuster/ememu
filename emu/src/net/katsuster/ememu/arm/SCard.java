@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class SCard implements BusSlave64 {
+public class SCard implements BusSlave {
     private SCardSlave slave;
 
     public static final int REG_SCIDATA        = 0x000;
@@ -61,11 +61,11 @@ public class SCard implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class SCardSlave extends Controller64Reg32 {
+    class SCardSlave extends Controller32 {
         public SCardSlave() {
             //addReg(REG_SCIDATA, "SCIDATA", 0x0);
             //addReg(REG_SCICR0, "SCICR0", 0x0);

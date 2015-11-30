@@ -17,7 +17,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class PrimaryINTC extends Controller64Reg32
+public class PrimaryINTC extends Controller32
         implements INTDestination {
     private NormalINTC intc;
     private INTSourceIRQ intSrcIrq;

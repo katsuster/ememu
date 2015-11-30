@@ -3,7 +3,6 @@ package net.katsuster.ememu.arm;
 import java.io.*;
 
 import net.katsuster.ememu.generic.*;
-import net.katsuster.ememu.ui.*;
 
 /**
  * UART
@@ -13,7 +12,7 @@ import net.katsuster.ememu.ui.*;
  *
  * @author katsuhiro
  */
-public class UART implements INTSource, BusSlave64 {
+public class UART implements INTSource, BusSlave {
     private INTDestination intDst = new NullINTDestination();
     private UARTSlave slave;
 
@@ -145,11 +144,11 @@ public class UART implements INTSource, BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class UARTSlave extends Controller64Reg32 {
+    class UARTSlave extends Controller32 {
         public UARTSlave() {
             addReg(REG_UARTDR, "UARTDR", 0x00000000);
             addReg(REG_UARTFR, "UARTFR", 0x00000000);

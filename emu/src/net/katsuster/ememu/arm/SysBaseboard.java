@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class SysBaseboard implements BusSlave64 {
+public class SysBaseboard implements BusSlave {
     private SysBaseboardSlave slave;
 
     private long start24MHz;
@@ -62,11 +62,11 @@ public class SysBaseboard implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class SysBaseboardSlave extends Controller64Reg32 {
+    class SysBaseboardSlave extends Controller32 {
         public SysBaseboardSlave() {
             //addReg(REG_SYS_ID, "SYS_ID", 0x00000000);
             //addReg(REG_SYS_SW, "SYS_SW", 0x00000000);

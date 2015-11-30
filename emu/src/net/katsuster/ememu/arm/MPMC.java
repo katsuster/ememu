@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class MPMC implements BusSlave64 {
+public class MPMC implements BusSlave {
     private MPMCSlave slave;
 
     public static final int REG_MPMCControl            = 0x000;
@@ -103,11 +103,11 @@ public class MPMC implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class MPMCSlave extends Controller64Reg32 {
+    class MPMCSlave extends Controller32 {
         public MPMCSlave() {
             //addReg(REG_MPMCControl, "MPMCControl", 0x1);
             //addReg(REG_MPMCStatus, "MPMCStatus", 0x5);

@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class AACI implements BusSlave64 {
+public class AACI implements BusSlave {
     private AACISlave slave;
 
     public static final int REG_AACIRXCR1     = 0x000;
@@ -68,11 +68,11 @@ public class AACI implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class AACISlave extends Controller64Reg32 {
+    class AACISlave extends Controller32 {
         public AACISlave() {
             //addReg(REG_AACIRXCR1, "AACIRXCR1", 0x00000000);
             //addReg(REG_AACITXCR1, "AACITXCR1", 0x00000);

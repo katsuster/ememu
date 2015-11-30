@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class SysController implements BusSlave64 {
+public class SysController implements BusSlave {
     private SysControllerSlave slave;
 
     public static final int REG_SCCTRL      = 0x000;
@@ -51,11 +51,11 @@ public class SysController implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class SysControllerSlave extends Controller64Reg32 {
+    class SysControllerSlave extends Controller32 {
         public SysControllerSlave() {
             addReg(REG_SCCTRL, "SCCTRL", 0x00000009);
             //addReg(REG_SCSYSSTAT, "SCSYSSTAT", -);

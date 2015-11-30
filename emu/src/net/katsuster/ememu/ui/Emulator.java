@@ -11,7 +11,7 @@ import net.katsuster.ememu.generic.*;
  */
 class Emulator extends Thread {
     private ARMv5 cpu;
-    private Bus64 bus;
+    private Bus bus;
     private RAM ram;
     private ARMVersatile board;
 
@@ -19,7 +19,7 @@ class Emulator extends Thread {
 
     public Emulator() {
         cpu = new ARMv5();
-        bus = new Bus64();
+        bus = new Bus();
         ram = new RAM32(64 * 1024 * 1024);
         board = new ARMVersatile();
         opts = new LinuxOption();
@@ -39,7 +39,7 @@ class Emulator extends Thread {
      *
      * @return メインバス
      */
-    public Bus64 getMainBus() {
+    public Bus getMainBus() {
         return bus;
     }
 

@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class DMAC implements BusSlave64 {
+public class DMAC implements BusSlave {
     private DMACSlave slave;
 
     public static final int REG_DMACIntStatus           = 0x000;
@@ -85,11 +85,11 @@ public class DMAC implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class DMACSlave extends Controller64Reg32 {
+    class DMACSlave extends Controller32 {
         public DMACSlave() {
             //addReg(REG_DMACIntStatus, "DMACIntStatus", 0x00);
             //addReg(REG_DMACIntTCStatus, "DMACIntTCStatus", 0x00);

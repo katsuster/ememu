@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class Watchdog implements BusSlave64 {
+public class Watchdog implements BusSlave {
     private WatchdogSlave slave;
 
     public static final int REG_WdogLoad      = 0x00;
@@ -39,11 +39,11 @@ public class Watchdog implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class WatchdogSlave extends Controller64Reg32 {
+    class WatchdogSlave extends Controller32 {
         public WatchdogSlave() {
             //addReg(REG_WdogLoad, "WdogLoad", 0xffffffff);
             //addReg(REG_WdogValue, "WdogValue", 0xffffffff);

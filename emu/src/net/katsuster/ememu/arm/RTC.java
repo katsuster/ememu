@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class RTC implements BusSlave64 {
+public class RTC implements BusSlave {
     private RTCSlave slave;
 
     public static final int REG_RTCDR        = 0x000;
@@ -36,11 +36,11 @@ public class RTC implements BusSlave64 {
     }
 
     @Override
-    public SlaveCore64 getSlaveCore() {
+    public SlaveCore getSlaveCore() {
         return slave;
     }
 
-    class RTCSlave extends Controller64Reg32 {
+    class RTCSlave extends Controller32 {
         public RTCSlave() {
             //addReg(REG_RTCDR, "RTCDR", 0x00000000);
             //addReg(REG_RTCMR, "RTCMR", 0x00000000);

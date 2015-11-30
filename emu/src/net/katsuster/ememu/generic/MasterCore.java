@@ -14,16 +14,16 @@ package net.katsuster.ememu.generic;
  *
  * @author katsuhiro
  */
-public abstract class MasterCore64 extends AbstractCore
-        implements RWCore64 {
-    private Bus64 slaveBus;
+public abstract class MasterCore extends AbstractCore
+        implements RWCore {
+    private Bus slaveBus;
 
     /**
      * コアが接続されているスレーブバスを取得します。
      *
      * @return スレーブバス
      */
-    public Bus64 getSlaveBus() {
+    public Bus getSlaveBus() {
         return slaveBus;
     }
 
@@ -32,7 +32,7 @@ public abstract class MasterCore64 extends AbstractCore
      *
      * @param bus スレーブバス
      */
-    public void setSlaveBus(Bus64 bus) {
+    public void setSlaveBus(Bus bus) {
         slaveBus = bus;
     }
 
