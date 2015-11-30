@@ -4,7 +4,9 @@ package net.katsuster.ememu.generic;
  * 64 ビットアドレス、16ビットデータ Flush ROM
  *
  * Refer: Intel Strata Flash Synchronous Memory
- *   28F256K18: 64K Word Block, 256Blocks (256Mbits)
+ *   28F256K18:
+ *     64K Word (128KB, 1Mbit) Block,
+ *     256Blocks (256Mbits)
  *
  * @author katsuhiro
  */
@@ -13,6 +15,8 @@ public class Flush16 extends SlaveCore {
     public static final int LEN_WORD = 2;
     //データ幅（ビット単位）
     public static final int LEN_WORD_BITS = LEN_WORD * 8;
+    //ブロックサイズ
+    public static final int LEN_BLOCK = 128 * 1024;
 
     private short[] words;
     private int size;
@@ -24,11 +28,28 @@ public class Flush16 extends SlaveCore {
     private int sizeID;
     private short[] wordsCFI;
     private int sizeCFI;
+    /**
+     * Status Register
+     *
+     * <ul>
+     * <li>7: RDY: 0:Busy, 1:Ready</li>
+     * <li>6: ES : 0:Not erase suspend, 1:Erase suspend</li>
+     * <li>5: EE : 0:Erase successful, 1:Erase error</li>
+     * <li>4: PE : 0:Program successful, 1:Program fail</li>
+     * <li>3: VE : 0:, 1:VPEN</li>
+     * <li>2: PS : 0:Not program suspend, 1:Program suspend</li>
+     * <li>1: LE : 0:Block not locked, 1:Block locked and operation aborted</li>
+     * <li>0: PS : 0:Buffered-EFP complete, 1:Buffered-EFP in progress</li>
+     * </ul>
+     */
+    private int statusReg;
 
     enum StateCFI {
         STATE_READ_ARRAY,
         STATE_READ_ID,
         STATE_READ_CFI,
+        STATE_READ_STATUS,
+        STATE_ERASE_BLOCK,
     }
 
     /**
@@ -43,8 +64,9 @@ public class Flush16 extends SlaveCore {
 
         setupID();
         setupCFI();
-        sizeArray = 256 * 1024 * 1024 / 8;
+        sizeArray = 256 * LEN_BLOCK;
         wordsArray = new short[sizeArray / LEN_WORD];
+        statusReg = 0x80;
 
         //Read array state after reset
         this.words = wordsArray;
@@ -158,15 +180,21 @@ public class Flush16 extends SlaveCore {
 
     public short readWord(long addr) {
         int wordAddr;
+        short result;
 
         addr &= getAddressMask(LEN_WORD_BITS);
         checkAddress(addr);
 
-        wordAddr = (int)(addr / LEN_WORD);
+        if (state == StateCFI.STATE_READ_STATUS) {
+            result = (short)statusReg;
+        } else {
+            wordAddr = (int)(addr / LEN_WORD);
+            result = words[wordAddr];
+        }
 
-        //System.out.printf("read: 0x%08x, data: 0x%04x\n", addr, words[wordAddr]);
+        //System.out.printf("read: 0x%08x, data: 0x%04x\n", addr, result);
 
-        return words[wordAddr];
+        return result;
     }
 
     public void writeWord(long addr, short data) {
@@ -196,6 +224,28 @@ public class Flush16 extends SlaveCore {
             size = sizeCFI;
             state = StateCFI.STATE_READ_CFI;
             return;
+        case 0x70:
+            //Read Status
+            state = StateCFI.STATE_READ_STATUS;
+            return;
+        case 0x50:
+            //Clear Status
+            statusReg = 0x80;
+            return;
+        case 0x20:
+            //Block Erase
+            //Busy
+            statusReg = BitOp.setBit32(statusReg, 7, false);
+            state = StateCFI.STATE_ERASE_BLOCK;
+            return;
+        case 0xd0:
+            //Block Erase Confirm
+            if (state == StateCFI.STATE_ERASE_BLOCK) {
+                //Erase
+                eraseBlock(addr);
+                state = StateCFI.STATE_READ_STATUS;
+            }
+            return;
         }
 
         switch (state) {
@@ -205,16 +255,24 @@ public class Flush16 extends SlaveCore {
             //Read-only, ignored
             break;
         //case STATE_
-            //addr &= getAddressMask(LEN_WORD_BITS);
-            //checkAddress(addr);
+        //addr &= getAddressMask(LEN_WORD_BITS);
+        //checkAddress(addr);
 
-            //wordAddr = (int)(addr / LEN_WORD);
-            //words[wordAddr] = data;
-            //break;
+        //wordAddr = (int)(addr / LEN_WORD);
+        //words[wordAddr] = data;
+        //break;
         default:
             throw new IllegalArgumentException(String.format(
                     "Unknown state %s in write.", state.toString()));
         }
+    }
+
+    protected int getBlockIndex(long addr) {
+        return (int)(addr / LEN_BLOCK);
+    }
+
+    protected int getBlockAddress(long addr) {
+        return (int)(addr % LEN_BLOCK);
     }
 
     protected void setupID() {
@@ -303,6 +361,18 @@ public class Flush16 extends SlaveCore {
 
         //Offset A: Alternative Algorithm-specific Extended Query
         //Nothing
+    }
+
+    void eraseBlock(long addr) {
+        int block = getBlockIndex(addr);
+        int start = block * (LEN_BLOCK / LEN_WORD);
+
+        for (int i = 0; i < LEN_BLOCK / LEN_WORD; i++) {
+            wordsArray[start + i] = (short)0xffff;
+        }
+
+        //Ready
+        statusReg |= 0x80;
     }
 
     @Override
