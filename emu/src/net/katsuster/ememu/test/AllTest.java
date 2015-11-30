@@ -10,6 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
         BitOpTest.class,
         IntegerExtTest.class,
         SlaveCore64Test.class,
+        RAMTest.class,
 })
 public class AllTest {
     protected AllTest() {
