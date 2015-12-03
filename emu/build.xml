@@ -60,10 +60,6 @@
         </javac>
     </target>
 
-    <target name="test" depends="compile">
-        <echo message="----- test in ${ant.project.name} -----"/>
-    </target>
-
     <target name="dist" depends="compile">
         <echo message="----- dist in ${ant.project.name} -----"/>
         <jar jarfile="${dist.dir}/armemu.jar">
@@ -162,6 +158,11 @@
             <package name="${mainpackage}.*" />
             <group title="group_title_" packages="*" />
         </javadoc>
+    </target>
+
+    <target name="test" depends="dist">
+        <echo message="----- test in ${ant.project.name} -----"/>
+        <java jar="${dist.dir}/junit_armemu.jar" fork="true"/>
     </target>
 
     <target name="clean">
