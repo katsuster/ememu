@@ -26,7 +26,7 @@ public class Main {
         try {
             opts.setKernelImage(new URI("http://www.katsuster.net/contents/java/ememu/Image-4.1.10"));
             opts.setInitrdImage(new URI("http://www.katsuster.net/contents/java/ememu/initramfs.gz"));
-            opts.setCommandLine("console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1");
+            opts.setCommandLine("console=ttyAMA0 mem=64M root=/dev/ram init=/bin/init debug printk.time=1");
         } catch (URISyntaxException e) {
             //ignore
         }

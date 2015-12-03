@@ -39,7 +39,7 @@ public class MainApplet extends JApplet {
         ProxyOption proxyOpts = new ProxyOption();
         String kimage = "http://www2.katsuster.net/~katsuhiro/contents/java/ememu/Image-3.18.14";
         String initrd = "http://www2.katsuster.net/~katsuhiro/contents/java/ememu/initramfs.gz";
-        String cmdline = "console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1";
+        String cmdline = "console=ttyAMA0 mem=64M root=/dev/ram init=/bin/init debug printk.time=1";
         String proxyhost = "";
         String proxyport = "0";
 
