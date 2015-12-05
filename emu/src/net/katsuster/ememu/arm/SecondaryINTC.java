@@ -35,6 +35,10 @@ public class SecondaryINTC extends Controller32
 
         addReg(REG_SIC_ENCLR, "SIC_ENCLR", 0x00000000);
         addReg(REG_SIC_PICENSET, "SIC_PICENSET", 0x00000000);
+
+        //FIXME: Workaround for Linux Versatile Device Tree.
+        //  CONFIG_MACH_VERSATILE_DT
+        addReg(0x02c, "", 0x00000000);
     }
 
     /**
