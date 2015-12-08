@@ -142,11 +142,11 @@ public class BankedFlush16_16 extends SlaveCore {
 
     public int readWord(long addr) {
         long addrBank = addr >>> 1;
-        short data0, data1;
+        int data0, data1;
         int data;
 
-        data0 = bank0.read16(addrBank);
-        data1 = bank1.read16(addrBank);
+        data0 = bank0.read16(addrBank) & 0xffff;
+        data1 = bank1.read16(addrBank) & 0xffff;
         data = (data0 << 0) | (data1 << 16);
 
         return data;
