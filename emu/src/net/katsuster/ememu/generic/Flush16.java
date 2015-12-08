@@ -18,16 +18,14 @@ public class Flush16 extends SlaveCore {
     //ブロックサイズ
     public static final int LEN_BLOCK = 128 * 1024;
 
-    private short[] words;
-    private int size;
-    private StateCFI state;
-
     private short[] wordsArray;
-    private int sizeArray;
-    private short[] wordsID;
-    private int sizeID;
+    private int lenArray;
     private short[] wordsCFI;
-    private int sizeCFI;
+    private int lenCFI;
+
+    private short[] words;
+    private int len;
+    private StateMachine state;
     /**
      * Status Register
      *
@@ -36,7 +34,7 @@ public class Flush16 extends SlaveCore {
      * <li>6: ES : 0:Not erase suspend, 1:Erase suspend</li>
      * <li>5: EE : 0:Erase successful, 1:Erase error</li>
      * <li>4: PE : 0:Program successful, 1:Program fail</li>
-     * <li>3: VE : 0:, 1:VPEN</li>
+     * <li>3: VE : 0:Vpp is provided, 1:Vpp is low operation aborted</li>
      * <li>2: PS : 0:Not program suspend, 1:Program suspend</li>
      * <li>1: LE : 0:Block not locked, 1:Block locked and operation aborted</li>
      * <li>0: PS : 0:Buffered-EFP complete, 1:Buffered-EFP in progress</li>
@@ -44,12 +42,222 @@ public class Flush16 extends SlaveCore {
      */
     private int statusReg;
 
-    enum StateCFI {
-        STATE_READ_ARRAY,
-        STATE_READ_ID,
-        STATE_READ_CFI,
-        STATE_READ_STATUS,
-        STATE_ERASE_BLOCK,
+    //Definitions of Write State Machine
+
+    private final StateMachine STATE_READ_ARRAY = new SMReadArray();
+    private final StateMachine STATE_READ_CFI = new SMReadCFI();
+    private final StateMachine STATE_READ_STATUS = new SMReadStatus();
+    private final StateMachine STATE_WRITE_BUFFER = new SMWriteBuffer();
+    private final StateMachine STATE_ERASE_BLOCK = new SMEraseBlock();
+
+    protected interface StateMachine {
+        public abstract void setup();
+        public abstract short readWord(long addr, int wordAddr);
+        public abstract void writeWord(long addr, int wordAddr, short data);
+    }
+
+    protected abstract class AbstractStateMachine implements StateMachine {
+        public void setup() {
+            //Do nothing
+        }
+
+        public short readWord(long addr, int wordAddr) {
+            return 0;
+        }
+
+        public void writeWord(long addr, int wordAddr, short data) {
+            //ignored
+        }
+
+        public void acceptCommand(long addr, int wordAddr, short data) {
+            int cmd = data & 0xff;
+
+            switch (cmd) {
+            case 0xf0:
+            case 0xff:
+                //Read Array
+                setStateMachine(STATE_READ_ARRAY);
+                break;
+            case 0x90:
+                //Read Identifier
+                //Fall through
+            case 0x98:
+                //Read Query (Flush16)
+                setStateMachine(STATE_READ_CFI);
+                break;
+            case 0x70:
+                //Read Status
+                setStateMachine(STATE_READ_STATUS);
+                break;
+            case 0x50:
+                //Clear Status
+                statusReg = 0x80;
+                setStateMachine(STATE_READ_ARRAY);
+                break;
+            case 0xe8:
+                //Write to Buffer
+                setStateMachine(STATE_WRITE_BUFFER);
+                break;
+            case 0x20:
+                //Block Erase Setup
+                setStateMachine(STATE_ERASE_BLOCK);
+                break;
+            default:
+                System.err.println(String.format(
+                        "Unknown write addr:0x%08x data:0x%04x in %s mode.",
+                        addr, data, state.getClass().getName()));
+            }
+        }
+    }
+
+    protected class SMReadArray extends AbstractStateMachine {
+        public void setup() {
+            words = wordsArray;
+            len = lenArray;
+        }
+
+        public short readWord(long addr, int wordAddr) {
+            return wordsArray[wordAddr];
+        }
+
+        public void writeWord(long addr, int wordAddr, short data) {
+            acceptCommand(addr, wordAddr, data);
+        }
+    }
+
+    protected class SMReadCFI extends AbstractStateMachine {
+        public void setup() {
+            words = wordsCFI;
+            len = lenCFI;
+        }
+
+        public short readWord(long addr, int wordAddr) {
+            return wordsCFI[wordAddr];
+        }
+
+        public void writeWord(long addr, int wordAddr, short data) {
+            acceptCommand(addr, wordAddr, data);
+        }
+    }
+
+    protected class SMReadStatus extends AbstractStateMachine {
+        public short readWord(long addr, int wordAddr) {
+            return (short)statusReg;
+        }
+
+        public void writeWord(long addr, int wordAddr, short data) {
+            acceptCommand(addr, wordAddr, data);
+        }
+    }
+
+    protected class SMWriteBuffer extends AbstractStateMachine {
+        public static final int STATE_SETUP = 0;
+        public static final int STATE_WORD_COUNT = 1;
+        public static final int STATE_WRITE_START = 2;
+        public static final int STATE_WRITE_DATA = 3;
+        public static final int STATE_WRITE_CONFIRM = 4;
+        public static final int STATE_RETURN_STATUS = 5;
+
+        private short[] buf = new short[0xff];
+        private int innerState;
+        private int countMax;
+        private int countNow;
+        private int start;
+
+        public void setup() {
+            innerState = STATE_WORD_COUNT;
+
+            //Valid
+            statusReg = BitOp.setBit32(statusReg, 7, true);
+        }
+
+        public short readWord(long addr, int wordAddr) {
+            short result;
+
+            switch (innerState) {
+            case STATE_RETURN_STATUS:
+                setStateMachine(STATE_READ_STATUS);
+                result = (short)statusReg;
+                break;
+            default:
+                result = (short)statusReg;
+                break;
+            }
+
+            return result;
+        }
+
+        public void writeWord(long addr, int wordAddr, short data) {
+            int cmd = data & 0xff;
+
+            switch (innerState) {
+            case STATE_WORD_COUNT:
+                countMax = data & 0xff;
+                countMax += 1;
+                countNow = 0;
+                innerState = STATE_WRITE_START;
+                break;
+            case STATE_WRITE_START:
+                start = (int)addr;
+                buf[countNow] = data;
+                countNow += 1;
+                innerState = STATE_WRITE_DATA;
+                break;
+            case STATE_WRITE_DATA:
+                if (countNow < countMax) {
+                    buf[countNow] = data;
+                    countNow += 1;
+                }
+                if (countNow >= countMax) {
+                    innerState = STATE_WRITE_CONFIRM;
+                }
+                break;
+            case STATE_WRITE_CONFIRM:
+                switch (cmd) {
+                case 0xd0:
+                    //Write Confirm
+                    writeBuffer(start, countMax, buf);
+                    //Ready
+                    statusReg = BitOp.setBit32(statusReg, 7, true);
+                    innerState = STATE_RETURN_STATUS;
+                    break;
+                default:
+                    System.err.println(String.format(
+                            "Unknown write confirm addr:0x%08x data:0x%04x in %s mode.",
+                            addr, data, state.getClass().getName()));
+                    break;
+                }
+            }
+        }
+    }
+
+    protected class SMEraseBlock extends AbstractStateMachine {
+        public void setup() {
+            //Busy
+            statusReg = BitOp.setBit32(statusReg, 7, false);
+        }
+
+        public short readWord(long addr, int wordAddr) {
+            return (short)statusReg;
+        }
+
+        public void writeWord(long addr, int wordAddr, short data) {
+            int cmd = data & 0xff;
+
+            switch (cmd) {
+            case 0xd0:
+                //Block Erase Confirm
+                //Erase
+                eraseBlock(addr);
+                //Ready
+                statusReg |= 0x80;
+                setStateMachine(STATE_READ_ARRAY);
+                break;
+            default:
+                acceptCommand(addr, wordAddr, data);
+                break;
+            }
+        }
     }
 
     /**
@@ -62,16 +270,15 @@ public class Flush16 extends SlaveCore {
             throw new IllegalArgumentException("size is negative.");
         }
 
-        setupID();
         setupCFI();
-        sizeArray = 256 * LEN_BLOCK;
-        wordsArray = new short[sizeArray / LEN_WORD];
-        statusReg = 0x80;
+        lenArray = 256 * LEN_BLOCK;
+        wordsArray = new short[lenArray / LEN_WORD];
 
         //Read array state after reset
-        this.words = wordsArray;
-        this.size = sizeArray;
-        this.state = StateCFI.STATE_READ_ARRAY;
+        words = wordsArray;
+        len = lenArray;
+        state = STATE_READ_ARRAY;
+        statusReg = 0x80;
     }
 
     /**
@@ -80,7 +287,7 @@ public class Flush16 extends SlaveCore {
      * @return メモリのサイズ（バイト単位）
      */
     public int getSize() {
-        return size;
+        return len;
     }
 
     /**
@@ -184,87 +391,28 @@ public class Flush16 extends SlaveCore {
 
         addr &= getAddressMask(LEN_WORD_BITS);
         checkAddress(addr);
+        wordAddr = (int) (addr / LEN_WORD);
 
-        if (state == StateCFI.STATE_READ_STATUS) {
-            result = (short)statusReg;
-        } else {
-            wordAddr = (int)(addr / LEN_WORD);
-            result = words[wordAddr];
-        }
-
-        //System.out.printf("read: 0x%08x, data: 0x%04x\n", addr, result);
-
-        return result;
+        return state.readWord(addr, wordAddr);
     }
 
     public void writeWord(long addr, short data) {
-        //int wordAddr;
-        int cmd = data & 0xff;
+        int wordAddr;
 
-        System.out.printf("write: 0x%08x, data: 0x%04x\n", addr, data);
+        addr &= getAddressMask(LEN_WORD_BITS);
+        checkAddress(addr);
+        wordAddr = (int)(addr / LEN_WORD);
 
-        //Accept command
-        switch (cmd) {
-        case 0xf0:
-        case 0xff:
-            //Read Array
-            words = wordsArray;
-            size = sizeArray;
-            state = StateCFI.STATE_READ_ARRAY;
-            return;
-        case 0x90:
-            //Read Identifier
-            words = wordsID;
-            size = sizeID;
-            state = StateCFI.STATE_READ_ID;
-            return;
-        case 0x98:
-            //Read Query (Flush16)
-            words = wordsCFI;
-            size = sizeCFI;
-            state = StateCFI.STATE_READ_CFI;
-            return;
-        case 0x70:
-            //Read Status
-            state = StateCFI.STATE_READ_STATUS;
-            return;
-        case 0x50:
-            //Clear Status
-            statusReg = 0x80;
-            return;
-        case 0x20:
-            //Block Erase
-            //Busy
-            statusReg = BitOp.setBit32(statusReg, 7, false);
-            state = StateCFI.STATE_ERASE_BLOCK;
-            return;
-        case 0xd0:
-            //Block Erase Confirm
-            if (state == StateCFI.STATE_ERASE_BLOCK) {
-                //Erase
-                eraseBlock(addr);
-                state = StateCFI.STATE_READ_STATUS;
-            }
-            return;
-        }
+        state.writeWord(addr, wordAddr, data);
+    }
 
-        switch (state) {
-        case STATE_READ_ARRAY:
-        case STATE_READ_ID:
-        case STATE_READ_CFI:
-            //Read-only, ignored
-            break;
-        //case STATE_
-        //addr &= getAddressMask(LEN_WORD_BITS);
-        //checkAddress(addr);
+    protected StateMachine getStateMachine() {
+        return state;
+    }
 
-        //wordAddr = (int)(addr / LEN_WORD);
-        //words[wordAddr] = data;
-        //break;
-        default:
-            throw new IllegalArgumentException(String.format(
-                    "Unknown state %s in write.", state.toString()));
-        }
+    protected void setStateMachine(StateMachine s) {
+        s.setup();
+        state = s;
     }
 
     protected int getBlockIndex(long addr) {
@@ -275,23 +423,17 @@ public class Flush16 extends SlaveCore {
         return (int)(addr % LEN_BLOCK);
     }
 
-    protected void setupID() {
-        //ID
-        sizeID = 0x10 * 2;
-        wordsID = new short[sizeID / LEN_WORD];
-
-        //Offset 00h: Manufacturer code: 0089 (Intel)
-        wordsID[0x00] = (short)0x0089;
-        wordsID[0x01] = (short)0x8803;
-    }
-
     protected void setupCFI() {
         short addrP = 0x31;
         short addrA = 0x00;
 
         //Flush16
-        sizeCFI = 0xff * 2;
-        wordsCFI = new short[sizeCFI / LEN_WORD];
+        lenCFI = 0xff * 2;
+        wordsCFI = new short[lenCFI / LEN_WORD];
+
+        //Offset 00h: Manufacturer code: 0089 (Intel)
+        wordsCFI[0x00] = (short)0x0089;
+        wordsCFI[0x01] = (short)0x8803;
 
         //Offset 10h: Flush16 Query Identification String
         //Query-unique string: 'QRY'
@@ -363,7 +505,27 @@ public class Flush16 extends SlaveCore {
         //Nothing
     }
 
-    void eraseBlock(long addr) {
+    /**
+     * バッファを書き込みます。
+     *
+     * @param addr  バイトアドレス
+     * @param words 書き込むワード数
+     * @param buf   書き込むワードのバッファ
+     */
+    public void writeBuffer(long addr, int words, short[] buf) {
+        int start = (int)addr / LEN_WORD;
+
+        for (int i = 0; i < words; i++) {
+            wordsArray[start + i] = buf[i];
+        }
+    }
+
+    /**
+     * 指定したアドレスを含むブロックを消去します。
+     *
+     * @param addr バイトアドレス
+     */
+    public void eraseBlock(long addr) {
         int block = getBlockIndex(addr);
         int start = block * (LEN_BLOCK / LEN_WORD);
 
@@ -371,8 +533,7 @@ public class Flush16 extends SlaveCore {
             wordsArray[start + i] = (short)0xffff;
         }
 
-        //Ready
-        statusReg |= 0x80;
+        System.out.printf("flush16: erase: 0x%08x - 0x%08x\n", start * LEN_WORD, start * LEN_WORD + LEN_BLOCK);
     }
 
     @Override
