@@ -1,6 +1,7 @@
 package net.katsuster.ememu.generic;
 
 import java.util.*;
+import java.util.concurrent.locks.*;
 
 /**
  * 64 ビットアドレスバス。
@@ -8,6 +9,8 @@ import java.util.*;
  * @author katsuhiro
  */
 public class Bus implements RWCore {
+    //ロック
+    private ReentrantReadWriteLock rwlock;
     //全マスターコアを管理するリスト
     private List<MasterCore> masterList;
     //全スレーブコアを管理するリスト
@@ -20,12 +23,13 @@ public class Bus implements RWCore {
     private long cacheMiss;
 
     public Bus() {
-        this.masterList = new ArrayList<MasterCore>();
-        this.slaveList = new ArrayList<SlaveCoreAddress>();
+        rwlock = new ReentrantReadWriteLock();
+        masterList = new ArrayList<MasterCore>();
+        slaveList = new ArrayList<SlaveCoreAddress>();
         //4KB ごとにスレーブコアを記録するため、
         //2^32 / 2^12 = 2^20 の要素が必要となる
-        this.slaves = new SlaveCoreAddress[1024 * 1024];
-        this.cachedSlave = new InvalidSlaveCoreAddress();
+        slaves = new SlaveCoreAddress[1024 * 1024];
+        cachedSlave = new InvalidSlaveCoreAddress();
     }
 
     /**
@@ -100,8 +104,12 @@ public class Bus implements RWCore {
         }
 
         offSt = addr - sca.getStartAddress();
-        synchronized (this) {
+
+        rwlock.readLock().lock();
+        try {
             return sca.getCore().read8(offSt);
+        } finally {
+            rwlock.readLock().unlock();
         }
     }
 
@@ -117,8 +125,12 @@ public class Bus implements RWCore {
         }
 
         offSt = addr - sca.getStartAddress();
-        synchronized (this) {
+
+        rwlock.readLock().lock();
+        try {
             return sca.getCore().read16(offSt);
+        } finally {
+            rwlock.readLock().unlock();
         }
     }
 
@@ -134,8 +146,12 @@ public class Bus implements RWCore {
         }
 
         offSt = addr - sca.getStartAddress();
-        synchronized (this) {
+
+        rwlock.readLock().lock();
+        try {
             return sca.getCore().read32(offSt);
+        } finally {
+            rwlock.readLock().unlock();
         }
     }
 
@@ -151,8 +167,12 @@ public class Bus implements RWCore {
         }
 
         offSt = addr - sca.getStartAddress();
-        synchronized (this) {
+
+        rwlock.readLock().lock();
+        try {
             return sca.getCore().read64(offSt);
+        } finally {
+            rwlock.readLock().unlock();
         }
     }
 
@@ -186,8 +206,12 @@ public class Bus implements RWCore {
         }
 
         offSt = addr - sca.getStartAddress();
-        synchronized (this) {
+
+        rwlock.writeLock().lock();
+        try {
             sca.getCore().write8(offSt, data);
+        } finally {
+            rwlock.writeLock().unlock();
         }
     }
 
@@ -203,8 +227,12 @@ public class Bus implements RWCore {
         }
 
         offSt = addr - sca.getStartAddress();
-        synchronized (this) {
+
+        rwlock.writeLock().lock();
+        try {
             sca.getCore().write16(offSt, data);
+        } finally {
+            rwlock.writeLock().unlock();
         }
     }
 
@@ -220,8 +248,12 @@ public class Bus implements RWCore {
         }
 
         offSt = addr - sca.getStartAddress();
-        synchronized (this) {
+
+        rwlock.writeLock().lock();
+        try {
             sca.getCore().write32(offSt, data);
+        } finally {
+            rwlock.writeLock().unlock();
         }
     }
 
@@ -237,8 +269,12 @@ public class Bus implements RWCore {
         }
 
         offSt = addr - sca.getStartAddress();
-        synchronized (this) {
+
+        rwlock.writeLock().lock();
+        try {
             sca.getCore().write64(offSt, data);
+        } finally {
+            rwlock.writeLock().unlock();
         }
     }
 
