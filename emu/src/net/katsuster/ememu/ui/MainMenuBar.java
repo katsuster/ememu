@@ -19,10 +19,13 @@ public class MainMenuBar extends JMenuBar {
         JMenu menuSystem = new JMenu("System");
         JMenuItem itemReset = new JMenuItem("Reset");
         JMenuItem itemClear = new JMenuItem("Clear Log");
+        JMenuItem itemGC = new JMenuItem("GC");
 
         menuSystem.add(itemReset);
         menuSystem.addSeparator();
         menuSystem.add(itemClear);
+        menuSystem.addSeparator();
+        menuSystem.add(itemGC);
         menuSystem.setMnemonic(KeyEvent.VK_S);
 
         itemReset.setActionCommand("reset");
@@ -31,6 +34,8 @@ public class MainMenuBar extends JMenuBar {
         itemClear.setActionCommand("clear");
         itemClear.addActionListener(listener);
         itemClear.setMnemonic(KeyEvent.VK_C);
+        itemGC.setActionCommand("gc");
+        itemGC.addActionListener(listener);
 
         add(menuSystem);
     }

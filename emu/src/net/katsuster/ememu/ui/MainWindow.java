@@ -141,6 +141,9 @@ public class MainWindow extends JFrame {
             if (e.getActionCommand().equals("clear")) {
                 stdoutPanel.clear();
             }
+            if (e.getActionCommand().equals("gc")) {
+                System.gc();
+            }
         }
     }
 }
