@@ -16,8 +16,7 @@ public abstract class Controller32 extends SlaveCore {
     private Map<Long, Reg32> regs;
 
     public Controller32() {
-        regs = Collections.synchronizedMap(
-                new HashMap<Long, Reg32>());
+        regs = new HashMap<Long, Reg32>();
     }
 
     /**

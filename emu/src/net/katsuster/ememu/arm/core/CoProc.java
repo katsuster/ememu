@@ -2,8 +2,7 @@ package net.katsuster.ememu.arm.core;
 
 import java.util.*;
 
-import net.katsuster.ememu.arm.core.ARMv5;
-import net.katsuster.ememu.generic.Reg32;
+import net.katsuster.ememu.generic.*;
 
 /**
  * ARM コプロセッサ。
@@ -24,8 +23,7 @@ public class CoProc {
     public CoProc(int no, ARMv5 cpu) {
         this.no = no;
         this.cpu = cpu;
-        this.cregs = Collections.synchronizedMap(
-                new HashMap<Integer, Reg32>());
+        this.cregs = new HashMap<Integer, Reg32>();
     }
 
     /**
