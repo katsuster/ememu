@@ -182,8 +182,8 @@ public class SysBaseboard implements BusSlave {
                 //TODO: not implemented
                 boolean we = BitOp.getBit32(data, 0);
 
-                System.out.printf("SYS_FLASH: 0x%08x\n", data);
-                System.out.printf("WriteEnable: %b.\n", we);
+                //System.out.printf("SYS_FLASH: 0x%08x\n", data);
+                //System.out.printf("WriteEnable: %b.\n", we);
                 break;
             case REG_SYS_CLCD:
                 //TODO: not implemented
