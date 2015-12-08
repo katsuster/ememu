@@ -330,7 +330,8 @@ public class DualTimer implements INTSource, BusSlave {
                 try {
                     Thread.sleep(1000 / hz);
 
-                    synchronized(this) {
+                    //NOTE: タイマーカウンタのクリアと排他する必要がある
+                    synchronized (this) {
                         for (int id = 0; id < 2; id++) {
                             if (!timerEn[id]) {
                                 //hold value
