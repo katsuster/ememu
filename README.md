@@ -7,17 +7,17 @@
 #### Supported Systems
 * ARM Versatile AB/PB
   * CPU: ARM926EJ-S
-    * Supported: ARM
-    * Not yet: Thumb, EE, VFP, Jazelle
-  * Devices: Timer, UART
-  * Not yet: Ethernet, NAND, LCD, and so on...
+    * Supported: ARM, Thumb
+    * Not yet: EE, VFP, Jazelle
+  * Devices: Timer, UART, NAND
+  * Not yet: Ethernet, LCD, eMMC, and so on...
   * OS: Linux 4.1.x, Linux 3.18.x, Linux 3.14.x, Linux 3.12.x
-   * 3.12.x: Need to enable CONFIG_EABI if you want to use recently cross-compiler.
+    * 3.12.x: Need to enable CONFIG_EABI if you want to use recently cross-compiler.
 
 #### Live DEMO
 You can run the ememu (applet version) on my WEB site.
 
-http://www.katsuster.net/contents/java/ememu/ememu.html
+http://www.katsuster.net/contents/java/ememu/ememu_applet.html
 
 
 ## How to use
@@ -27,6 +27,10 @@ Download the cross-compiler for ARM.
 For example: 
 * Mentor Graphics(CodeSourcery): http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/overview/
 * Linaro: http://www.linaro.org/downloads/
+  * WARNING: Linaro's toolchain glibc includes Thumb-2 instructions. The ememu does not support Thmub-2 instructions yet...
+* From Scratch: http://www.katsuster.net/contents/java/ememu/ememu.html
+  * NOTE: If you want to know how to build these toolchains, please see 'crosstool-builder' repository of my github.
+  * https://github.com/katsuster/crosstool-builder
 
 #### Cross-compile the Linux kernel
 Set the default config of ARM Versatile.
