@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>コグノスケ - ememu - Embedded system emulator.</title>
+<link rel="stylesheet" type="text/css" href="../../../diaries/css/all.css">
+<link rel="stylesheet" type="text/css" href="../../../diaries/css/diary.css">
+<link rel="stylesheet" type="text/css" href="../../../diaries/css/diary_user.css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+
+<div class="div_title_index">
+<h1 class="h1_title">ememu</h1>
+</div>
+
+<div class="div_diary_today">
+<img src="../../../img/link.png" alt="link"> <a class="a_article_today" href="../../../">戻る</a>
+</div>
+
+<h2 class="h2_diary_top">About</h2>
+
+<p>
+ememu は Java で書かれた、組み込みシステムのエミュレータです。
+対応システムは下記の通りです。
+</p>
+
+<dl class="dl_article_user">
+<dt class="dt_article_user">ARM Versatile Application Baseboards (AB) and Platform Baseboards (PB)</dt>
+<dd class="dd_article_user">作成中。Linux 起動可。ARM9 CPU の一部、UART の一部が動作。</dd>
+</dl>
+
+<p>
+ソースコードは GitHub にて公開しています。
+</p>
+
+
+<h2 class="h2_diary_top">Live DEMO</h2>
+
+<p>
+こちらのページ（<a href="ememu_applet.html">Link</a>）で Java Applet によるデモを行っています。
+</p>
+
+
+<h2 class="h2_diary_top">Download</h2>
+
+<dl class="dl_article_user">
+<dt class="dt_article_user">Pre-build binaries</dt>
+<dd class="dd_article_user"><img src="../../../img/file_other.png" alt="link">
+<a href="armemu.jar">ARMv5 エミュレータ本体 (JAR file)</a></dd>
+
+<dt class="dt_article_user">Image files</dt>
+<dd class="dd_article_user"><img src="../../../img/file_other.png" alt="link">
+<a href="Image-4.1.10">ARM Linux 4.1 Image file</a></dd>
+<dd class="dd_article_user"><img src="../../../img/file_other.png" alt="link">
+<a href="Image-3.18.22">ARM Linux 3.18 Image file</a></dd>
+<dd class="dd_article_user"><img src="../../../img/file_other.png" alt="link">
+<a href="Image-3.14.54">ARM Linux 3.14 Image file</a></dd>
+<dd class="dd_article_user"><img src="../../../img/file_other.png" alt="link">
+<a href="Image-3.12.43">ARM Linux 3.12 Image file</a></dd>
+<dd class="dd_article_user"><img src="../../../img/file_other.png" alt="link">
+<a href="initramfs.gz">initramfs Image file for ARM (cpio gzipped)</a></dd>
+
+
+<dt class="dt_article_user">Source</dt>
+<dd class="dd_article_user"><img src="../../../img/link.png" alt="link">
+<a href="https://github.com/katsuster/ememu">https://github.com/katsuster/ememu</a></dd>
+</dl>
+
+<dl>
+<dt class="dt_article_user">Toolchains</dt>
+<dd class="dd_article_user"><img src="../../../img/file_other.png" alt="link">
+<a href="gcc-4.9.2-libc.tar.bz2">GCC-4.9.2 for ARM</a></dd>
+<dd class="dd_article_user"><img src="../../../img/file_other.png" alt="link">
+<a href="gcc-4.9.2-libc_x64.tar.bz2">GCC-4.9.2 for ARM (x64)</a></dd>
+
+<dt class="dt_article_user">Source</dt>
+<dd class="dd_article_user"><img src="../../../img/link.png" alt="link">
+<a href="https://github.com/katsuster/crosstool-builder">https://github.com/katsuster/crosstool-builder</a></dd>
+</dl>
+
+
+<h2 class="h2_diary_top">How to Run</h2>
+
+<p>
+エミュレータ本体、Linux イメージ、initramfs イメージをダウンロードし、同じディレクトリに置きます。コマンドプロンプトなどで、そのディレクトリに移動し、
+</p>
+
+<div class="div_article_user_reference">
+<pre class="pre_article_user_result">
+javaw -jar armemu.jar Image-3.18.14 initramfs.gz
+</pre>
+</div>
+
+<p>
+と実行すると、ウインドウが出ますので [Reset] ボタンを押してください。
+</p>
+
+
+<h2 class="h2_diary_top">Screenshots</h2>
+
+<p>
+<img class="img_article_user_diary" alt="" src="20151104_ememu_settings.png"><br>
+<a class="a_article_user_image_diary" href="20151104_ememu_settings.png">設定画面</a>
+</p>
+
+<p>
+<img class="img_article_user_diary" alt="" src="20151104_ememu_running.png"><br>
+<a class="a_article_user_image_diary" href="20151104_ememu_running.png">Linux 実行中</a>
+</p>
+
+
+<hr class="hr_layout_bottom">
+<div class="div_copyright">
+<p><b>管理者</b><br>Katsuhiro Suzuki(katsuhiro( a t )katsuster.net)</p>
+</div>
+<hr class="hr_layout_bottom">
+
+
+</body>
+</html>

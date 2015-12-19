@@ -1,28 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <head>
-    <title>ememu - Embedded system emulator.</title>
+<title>コグノスケ - ememu - Live DEMO.</title>
+<link rel="stylesheet" type="text/css" href="../../../diaries/css/all.css">
+<link rel="stylesheet" type="text/css" href="../../../diaries/css/diary.css">
+<link rel="stylesheet" type="text/css" href="../../../diaries/css/diary_user.css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
-<h1>ememu</h1>
+
+<div class="div_title_index">
+<h1 class="h1_title">ememu</h1>
+</div>
+
+<div class="div_diary_today">
+<img src="../../../img/link.png" alt="link"> <a class="a_article_today" href="ememu.html">戻る</a>
+</div>
+
+<h2 class="h2_diary_top">About</h2>
+
 <p>
-    ememu は Java で書かれた、組み込みシステムのエミュレータです。
-    対応システムは下記の通りです。
+ememu は Java で書かれた、組み込みシステムのエミュレータです。
+対応システムは下記の通りです。
 </p>
+
 <dl>
-    <dt>ARM Versatile Application Baseboards (AB) and Platform Baseboards (PB)</dt>
-    <dd>作成中。Linux 起動可。CPU の一部、UART の一部が動作。</dd>
+<dt class="dt_article_user">ARM Versatile Application Baseboards (AB) and Platform Baseboards (PB)</dt>
+<dd class="dd_article_user">作成中。Linux 起動可。ARM9 CPU の一部、UART の一部が動作。</dd>
 </dl>
+
+
+<h2 class="h2_diary_top">Live DEMO</h2>
+
 <p>
-    ソースコードは GitHub より取得可能です。
-    <a href="https://github.com/katsuster/ememu">https://github.com/katsuster/ememu</a>.
+Java アプレットによるライブデモです。
 </p>
 
 <applet codebase="./" archive="armemu_applet.jar" code="net.katsuster.ememu.ui.MainApplet" width=800 height=480>
-    <param name="kernelImage" value="http://www2.katsuster.net/~katsuhiro/contents/java/ememu/Image-3.18.14">
-    <param name="initramfsImage" value="http://www2.katsuster.net/~katsuhiro/contents/java/ememu/initramfs.gz">
+    <param name="kernelImage" value="http://www.katsuster.net/~katsuhiro/contents/java/ememu/Image-3.18.14">
+    <param name="initramfsImage" value="http://www.katsuster.net/~katsuhiro/contents/java/ememu/initramfs.gz">
     <param name="commandLine" value="console=ttyAMA0 mem=64M lpj=0 root=/dev/ram init=/bin/init debug printk.time=1">
 </applet>
+
+
+<h2 class="h2_diary_top">アプレット実行時のエラーについて</h2>
+
+<p>
+当サイトの Java アプレットには署名をしておりません。そのため Java 7 以降のデフォルトのセキュリティ設定ではアプレットが起動しません。
+</p>
+
+<p>
+もし当サイトを信用いただける方で、なおかつ、一時的にアプレットを試してみたい、という方がおられましたら、下記の設定変更を行うことで、アプレットを実行できます。
+</p>
+
+<ul>
+<li>当サイト上のアプレットを起動許可: [コントロールパネル] - [Java] - [セキュリティ] タブ - [例外サイトリスト] - [サイト・リストの編集] - [追加] - 当サイト http://www.katsuster.net を入力 - [続行] ボタンをクリック</li>
+<li>ポリシーで禁止されている処理の許可 (setIO, スレッド生成などを使うため): Java ランタイムのインストールディレクトリ (例: C:\Program Files\Java\jre など) の lib\security\java.policy を編集し、<br>
+grant {<br>
+    permission java.security.AllPermission;<br>
+};<br>
+を先頭に追記し、あらゆる処理の実行を許可します。</li>
+</ul>
+
+<p>
+なお、上記の設定を行いますと、セキュリティのレベルが低下しますので、お試しいただいた後は、必ずセキュリティ設定を元に戻してください。
+</p>
+
+
+<hr class="hr_layout_bottom">
+<div class="div_copyright">
+<p><b>管理者</b><br>Katsuhiro Suzuki(katsuhiro( a t )katsuster.net)</p>
+</div>
+<hr class="hr_layout_bottom">
 
 </body>
 </html>
