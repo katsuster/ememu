@@ -19,12 +19,12 @@ class VTInnerPane extends JComponent
     private VirtualTerminal parent;
 
     //端末画面の描画領域
-    ContentBox boxScreen;
+    private ContentBox boxScreen;
     //1文字の描画領域（ただし x, y は無視されます）
-    ContentBox boxChar;
+    private ContentBox boxChar;
 
     //入力された文字列を戻すためのバッファ
-    private StringBuilder strPushback;
+    private StringBuilder strPushBack;
 
     //1行の桁数
     private int columns;
@@ -54,7 +54,7 @@ class VTInnerPane extends JComponent
         boxChar = new ContentBox();
         boxChar.setMargin(0, 2, 0, 2);
 
-        strPushback = new StringBuilder();
+        strPushBack = new StringBuilder();
         columns = 80;
         lines = 0;
         maxLines = 1000;
@@ -67,6 +67,24 @@ class VTInnerPane extends JComponent
 
         setFocusable(false);
         addComponentListener(this);
+    }
+
+    /**
+     * スクリーンのレイアウト情報を取得します。
+     *
+     * @return スクリーンのレイアウト情報
+     */
+    public ContentBox getBoxScreen() {
+        return boxScreen;
+    }
+
+    /**
+     * 1文字のレイアウト情報を取得します。
+     *
+     * @return 1文字のレイアウト情報
+     */
+    public ContentBox getBoxChar() {
+        return boxChar;
     }
 
     /**
@@ -184,7 +202,7 @@ class VTInnerPane extends JComponent
     /**
      * スクリーンの一番下の行を取得します。
      *
-     * @return スクリーンの一番上の行
+     * @return スクリーンの一番下の行
      */
     public int getScreenBottomLine() {
         return Math.min(getCurrentLine(), getMaxLines() - 1);
@@ -271,6 +289,17 @@ class VTInnerPane extends JComponent
     }
 
     /**
+     * 指定した座標の文字を取得します。
+     *
+     * @param x X座標
+     * @param y Y座標
+     * @return 指定した座標の文字
+     */
+    public char getChar(int x, int y) {
+        return layoutBox[x][y];
+    }
+
+    /**
      * 1行古い履歴をスクロールし、捨てます。
      */
     public void scrollLine() {
@@ -291,10 +320,10 @@ class VTInnerPane extends JComponent
      * @return 次の文字
      * @throws IOException
      */
-    protected char getNextChar(InputStream ins) throws IOException {
-        if (strPushback.length() != 0) {
-            char c = strPushback.charAt(0);
-            strPushback.deleteCharAt(0);
+    protected char getNextInput(InputStream ins) throws IOException {
+        if (strPushBack.length() != 0) {
+            char c = strPushBack.charAt(0);
+            strPushBack.deleteCharAt(0);
 
             return c;
         }
@@ -313,13 +342,13 @@ class VTInnerPane extends JComponent
     /**
      * 文字を戻します。
      *
-     * 戻された文字は記憶され、次の getNextChar() で返されます。
+     * 戻された文字は記憶され、次の getNextInput() で返されます。
      * 複数の文字を戻した場合は、最後に戻した文字が先に返されます（LIFO）。
      *
      * @param c 戻す文字
      */
-    protected void pushbackChar(char c) {
-        strPushback.insert(0, c);
+    protected void pushBackInput(char c) {
+        strPushBack.insert(0, c);
     }
 
     /**
@@ -333,14 +362,14 @@ class VTInnerPane extends JComponent
      * @return 数値パラメータ、一文字もなければデフォルト値を返します。
      * @throws IOException
      */
-    protected int getNumberChar(InputStream ins, int def) throws IOException {
+    protected int getNumberParam(InputStream ins, int def) throws IOException {
         char c;
         int result = 0;
         boolean isDefault = true;
 
         output:
         while (true) {
-            c = getNextChar(ins);
+            c = getNextInput(ins);
             switch (c) {
             case '0': case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9':
@@ -349,7 +378,7 @@ class VTInnerPane extends JComponent
                 isDefault = false;
                 break;
             default:
-                pushbackChar(c);
+                pushBackInput(c);
                 break output;
             }
         }
@@ -367,7 +396,7 @@ class VTInnerPane extends JComponent
      * @param ins 文字列を入力するストリーム
      */
     protected boolean layoutEscape(InputStream ins) throws IOException {
-        char c = getNextChar(ins);
+        char c = getNextInput(ins);
 
         switch (c) {
         case '[':
@@ -376,7 +405,7 @@ class VTInnerPane extends JComponent
             break;
         default:
             //ignore it
-            pushbackChar(c);
+            pushBackInput(c);
             layoutNormalChar(ins);
 
             return false;
@@ -392,13 +421,13 @@ class VTInnerPane extends JComponent
      */
     protected boolean layoutEscapeCSI(InputStream ins) throws IOException {
         int defNum = -1;
-        int numN = getNumberChar(ins, defNum);
+        int numN = getNumberParam(ins, defNum);
         int numM = defNum;
         char csrChar;
         boolean sequenceEnd = false;
 
         while (!sequenceEnd) {
-            csrChar = getNextChar(ins);
+            csrChar = getNextInput(ins);
             switch (csrChar) {
             case 'A':
                 //CUU - Cursor Up
@@ -514,7 +543,7 @@ class VTInnerPane extends JComponent
                 break;
             case ';':
                 //Get next parameter
-                numM = getNumberChar(ins, defNum);
+                numM = getNumberParam(ins, defNum);
 
                 sequenceEnd = false;
                 break;
@@ -542,17 +571,17 @@ class VTInnerPane extends JComponent
      */
     protected boolean layoutEscapeCSIDEC(InputStream ins) throws IOException {
         int defNum = -1;
-        int numN = getNumberChar(ins, defNum);
+        int numN = getNumberParam(ins, defNum);
         int numM = defNum;
         char csrChar;
         boolean sequenceEnd = false;
 
         while (!sequenceEnd) {
-            csrChar = getNextChar(ins);
+            csrChar = getNextInput(ins);
             switch (csrChar) {
             case ';':
                 //Get next parameter
-                numM = getNumberChar(ins, defNum);
+                numM = getNumberParam(ins, defNum);
 
                 sequenceEnd = false;
                 break;
@@ -575,7 +604,7 @@ class VTInnerPane extends JComponent
      * @param ins 文字列を入力するストリーム
      */
     protected void layoutNormalChar(InputStream ins) throws IOException {
-        char c = getNextChar(ins);
+        char c = getNextInput(ins);
 
         if (getCursorX() == getColumns() - 1 && needWrap) {
             nextLine();
@@ -597,7 +626,7 @@ class VTInnerPane extends JComponent
      */
     public void layoutChars(InputStream ins) throws IOException {
         do {
-            char c = getNextChar(ins);
+            char c = getNextInput(ins);
 
             switch (c) {
             case 0x07:
@@ -629,7 +658,7 @@ class VTInnerPane extends JComponent
                 break;
             default:
                 //Other characters
-                pushbackChar(c);
+                pushBackInput(c);
                 layoutNormalChar(ins);
             }
 

@@ -1,9 +1,10 @@
 package net.katsuster.ememu.ui;
 
 import java.awt.*;
+import java.awt.datatransfer.*;
+import java.awt.event.*;
 import java.lang.reflect.*;
 import java.io.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 /**
@@ -12,7 +13,7 @@ import javax.swing.*;
  * @author katsuhiro
  */
 public class VirtualTerminal extends JPanel
-        implements MouseWheelListener, KeyListener {
+        implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
     //端末への出力の表示領域パネル
     private VTInnerPane vt;
     //表示領域の右端スクロールバー
@@ -42,6 +43,8 @@ public class VirtualTerminal extends JPanel
 
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
+        addMouseListener(this);
+        addMouseMotionListener(this);
         addMouseWheelListener(this);
         addKeyListener(this);
 
@@ -153,6 +156,82 @@ public class VirtualTerminal extends JPanel
      */
     public void setStartLine(int l) {
         startLine = l;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        switch (e.getButton()) {
+        case MouseEvent.BUTTON3:
+            //右クリックでクリップボードから貼り付け
+            Clipboard clip = getToolkit().getSystemClipboard();
+            String strClip = getClipboardText(clip);
+
+            if (!strClip.equals("")) {
+                try {
+                    inPout.write(strClip.getBytes());
+                } catch (IOException ie) {
+                    //do nothing
+                }
+            }
+            break;
+        }
+    }
+
+    private String getClipboardText(Clipboard clip) {
+        Transferable trans = clip.getContents(null);
+        String strClip;
+
+        if (trans == null || !trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            strClip = "";
+        } else {
+            try {
+                strClip = (String)trans.getTransferData(DataFlavor.stringFlavor);
+            } catch (UnsupportedFlavorException | IOException ue) {
+                strClip = "";
+            }
+        }
+
+        return strClip;
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        //do nothing
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        //do nothing
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        //do nothing
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        //do nothing
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        /*
+        e.translatePoint(-vt.getBoxScreen().getContents().x, -vt.getBoxScreen().getContents().y);
+        int x = e.getX() / vt.getBoxChar().getWidth();
+        int y = e.getY() / vt.getBoxChar().getHeight();
+        y += getStartLine();
+        x = Math.max(x, 0);
+        x = Math.min(x, vt.getColumns() - 1);
+        y = Math.max(y, 0);
+        y = Math.min(y, vt.getMaxLines() - 1);
+        System.out.printf("char (%d, %d) %c\n", x, y, vt.getChar(x, y));
+        */
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        //do nothing
     }
 
     @Override
