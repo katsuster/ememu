@@ -3,6 +3,7 @@ package net.katsuster.ememu.ui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -24,7 +25,7 @@ class VTInnerPane extends JComponent
     private ContentBox boxChar;
 
     //入力された文字列を戻すためのバッファ
-    private StringBuilder strPushBack;
+    private StringBuilder strWriteBack;
 
     //1行の桁数
     private int columns;
@@ -38,11 +39,38 @@ class VTInnerPane extends JComponent
     private int cursorX;
     private int cursorY;
     //画面上の文字の位置
-    private char[][] layoutBox;
+    private DecoratedChar[][] layoutBox;
     //自動改行が必要かどうか
     private boolean needWrap;
     //自動改行（後退時）が必要かどうか
     private boolean needWrapBack;
+
+    /**
+     * 装飾付きの文字を表すクラスです。
+     */
+    class DecoratedChar {
+        private char ch;
+
+        public DecoratedChar() {
+            this((char)0);
+        }
+
+        public DecoratedChar(char c) {
+            ch = c;
+        }
+
+        public void copy(DecoratedChar dc) {
+            ch = dc.ch;
+        }
+
+        public char getChar() {
+            return ch;
+        }
+
+        public void setChar(char c) {
+            ch = c;
+        }
+    }
 
     public VTInnerPane(VirtualTerminal p) {
         super();
@@ -54,14 +82,19 @@ class VTInnerPane extends JComponent
         boxChar = new ContentBox();
         boxChar.setMargin(0, 2, 0, 2);
 
-        strPushBack = new StringBuilder();
+        strWriteBack = new StringBuilder();
         columns = 80;
         lines = 0;
         maxLines = 1000;
         currentLine = 0;
         cursorX = 0;
         cursorY = 0;
-        layoutBox = new char[getColumns()][getMaxLines()];
+        layoutBox = new DecoratedChar[getColumns()][getMaxLines()];
+        for (int x = 0; x < getColumns(); x++) {
+            for (int y = 0; y < getMaxLines(); y++) {
+                layoutBox[x][y] = new DecoratedChar();
+            }
+        }
         needWrap = false;
         needWrapBack = false;
 
@@ -137,7 +170,7 @@ class VTInnerPane extends JComponent
      *
      * @param m 巻き戻せる最大の行数
      */
-    public void setMaxLines(int m) {
+    protected void setMaxLines(int m) {
         maxLines = m;
     }
 
@@ -289,6 +322,17 @@ class VTInnerPane extends JComponent
     }
 
     /**
+     * 1行古い履歴をスクロールし、捨てます。
+     */
+    public void scrollLine() {
+        for (int y = 1; y < getMaxLines(); y++) {
+            for (int x = 0; x < getColumns(); x++) {
+                layoutBox[x][y - 1].copy(layoutBox[x][y]);
+            }
+        }
+    }
+
+    /**
      * 指定した座標の文字を取得します。
      *
      * @param x X座標
@@ -296,18 +340,28 @@ class VTInnerPane extends JComponent
      * @return 指定した座標の文字
      */
     public char getChar(int x, int y) {
-        return layoutBox[x][y];
+        return layoutBox[x][y].getChar();
     }
 
     /**
-     * 1行古い履歴をスクロールし、捨てます。
+     * 指定した座標の文字を設定します。
+     *
+     * @param x X座標
+     * @param y Y座標
+     * @param c 指定した座標の文字
      */
-    public void scrollLine() {
-        for (int y = 1; y < getMaxLines(); y++) {
-            for (int x = 0; x < getColumns(); x++) {
-                layoutBox[x][y - 1] = layoutBox[x][y];
-            }
-        }
+    public void setChar(int x, int y, char c) {
+        layoutBox[x][y].setChar(c);
+    }
+
+    /**
+     * 指定した座標の文字を消去します。
+     *
+     * @param x X座標
+     * @param y Y座標
+     */
+    public void eraseChar(int x, int y) {
+        layoutBox[x][y].setChar((char)0);
     }
 
     /**
@@ -320,10 +374,10 @@ class VTInnerPane extends JComponent
      * @return 次の文字
      * @throws IOException
      */
-    protected char getNextInput(InputStream ins) throws IOException {
-        if (strPushBack.length() != 0) {
-            char c = strPushBack.charAt(0);
-            strPushBack.deleteCharAt(0);
+    protected char readNext(InputStream ins) throws IOException {
+        if (strWriteBack.length() != 0) {
+            char c = strWriteBack.charAt(0);
+            strWriteBack.deleteCharAt(0);
 
             return c;
         }
@@ -342,13 +396,13 @@ class VTInnerPane extends JComponent
     /**
      * 文字を戻します。
      *
-     * 戻された文字は記憶され、次の getNextInput() で返されます。
+     * 戻された文字は記憶され、次の readNext() で返されます。
      * 複数の文字を戻した場合は、最後に戻した文字が先に返されます（LIFO）。
      *
      * @param c 戻す文字
      */
-    protected void pushBackInput(char c) {
-        strPushBack.insert(0, c);
+    protected void writeBack(char c) {
+        strWriteBack.insert(0, c);
     }
 
     /**
@@ -362,14 +416,14 @@ class VTInnerPane extends JComponent
      * @return 数値パラメータ、一文字もなければデフォルト値を返します。
      * @throws IOException
      */
-    protected int getNumberParam(InputStream ins, int def) throws IOException {
+    protected int readParam(InputStream ins, int def) throws IOException {
         char c;
         int result = 0;
         boolean isDefault = true;
 
         output:
         while (true) {
-            c = getNextInput(ins);
+            c = readNext(ins);
             switch (c) {
             case '0': case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9':
@@ -378,7 +432,7 @@ class VTInnerPane extends JComponent
                 isDefault = false;
                 break;
             default:
-                pushBackInput(c);
+                writeBack(c);
                 break output;
             }
         }
@@ -391,12 +445,31 @@ class VTInnerPane extends JComponent
     }
 
     /**
+     * パラメータリストから指定したパラメータを取得します。
+     *
+     * 指定したインデックスのパラメータが存在しない場合、
+     * デフォルト値が返されます。
+     *
+     * @param l     パラメータリスト
+     * @param index 取得するパラメータのインデックス
+     * @param def   デフォルト値
+     * @return パラメータの値
+     */
+    protected int getParameter(java.util.List<Integer> l, int index, int def) {
+        if (l.size() > index) {
+            return l.get(index);
+        } else {
+            return def;
+        }
+    }
+
+    /**
      * ESC を処理します。
      *
      * @param ins 文字列を入力するストリーム
      */
     protected boolean layoutEscape(InputStream ins) throws IOException {
-        char c = getNextInput(ins);
+        char c = readNext(ins);
 
         switch (c) {
         case '[':
@@ -405,7 +478,7 @@ class VTInnerPane extends JComponent
             break;
         default:
             //ignore it
-            pushBackInput(c);
+            writeBack(c);
             layoutNormalChar(ins);
 
             return false;
@@ -420,79 +493,70 @@ class VTInnerPane extends JComponent
      * @param ins 文字列を入力するストリーム
      */
     protected boolean layoutEscapeCSI(InputStream ins) throws IOException {
-        int defNum = -1;
-        int numN = getNumberParam(ins, defNum);
-        int numM = defNum;
+        final int DEFAULT_NUMBER = -1;
+
+        java.util.List<Integer> params = new ArrayList<Integer>();
         char csrChar;
         boolean sequenceEnd = false;
+        int tmp, param0, param1;
+
+        tmp = readParam(ins, DEFAULT_NUMBER);
+        if (tmp != DEFAULT_NUMBER) {
+            params.add(tmp);
+        }
 
         while (!sequenceEnd) {
-            csrChar = getNextInput(ins);
+            csrChar = readNext(ins);
             switch (csrChar) {
             case 'A':
                 //CUU - Cursor Up
-                if (numN == defNum) {
-                    numN = 1;
-                }
-                setCursorY(Math.max(getScreenTopLine(), getCursorY() - numN));
+                param0 = getParameter(params, 0, 1);
+                setCursorY(Math.max(getScreenTopLine(), getCursorY() - param0));
 
                 sequenceEnd = true;
                 break;
             case 'B':
                 //CUD - Cursor Down
-                if (numN == defNum) {
-                    numN = 1;
-                }
-                setCursorY(getCursorY() + numN);
+                param0 = getParameter(params, 0, 1);
+                setCursorY(getCursorY() + param0);
 
                 sequenceEnd = true;
                 break;
             case 'C':
                 //CUF - Cursor Forward
-                if (numN == defNum) {
-                    numN = 1;
-                }
-                setCursorX(getCursorX() + numN);
+                param0 = getParameter(params, 0, 1);
+                setCursorX(getCursorX() + param0);
 
                 sequenceEnd = true;
                 break;
             case 'D':
                 //CUB - Cursor Back
-                if (numN == defNum) {
-                    numN = 1;
-                }
-                setCursorX(getCursorX() - numN);
+                param0 = getParameter(params, 0, 1);
+                setCursorX(getCursorX() - param0);
 
                 sequenceEnd = true;
                 break;
             case 'H':
                 //CUP - Cursor Position
-                if (numN == defNum) {
-                    numN = 1;
-                }
-                if (numM == defNum) {
-                    numN = 1;
-                }
+                param0 = getParameter(params, 0, 1);
+                param1 = getParameter(params, 1, 1);
                 //NOTE: ASCII Escape sequence cursor position is 1-origin
-                setCursorLocation(numM - 1, getScreenTopLine() + numN - 1);
+                setCursorLocation(param1 - 1, getScreenTopLine() + param0 - 1);
 
                 sequenceEnd = true;
                 break;
             case 'J':
                 //ED - Erase Display
-                if (numN == defNum) {
-                    numN = 0;
-                }
-
-                switch (numN) {
+                param0 = getParameter(params, 0, 0);
+                switch (param0) {
                 case 0:
                     //0: Clear from cursor to end of screen
                     for (int x = getCursorX(); x < getColumns(); x++) {
-                        layoutBox[x][getCursorY()] = 0;
+                        eraseChar(x, getCursorY());
                     }
                     for (int y = getCursorY() + 1; y < getScreenBottomLine() + 1; y++) {
                         for (int x = 0; x < getColumns(); x++) {
-                            layoutBox[x][y] = 0;
+                            eraseChar(x, y);
                         }
                     }
                     break;
@@ -506,7 +570,7 @@ class VTInnerPane extends JComponent
                     //break;
                 default:
                     //Unknown, do nothing
-                    System.out.printf("CSI %d J (Erase Display) is not implemented, sorry.\n", numN);
+                    System.out.printf("CSI %d J (Erase Display) is not implemented, sorry.\n", param0);
                     break;
                 }
 
@@ -514,15 +578,12 @@ class VTInnerPane extends JComponent
                 break;
             case 'K':
                 //EL - Erase Line
-                if (numN == defNum) {
-                    numN = 0;
-                }
-
-                switch (numN) {
+                param0 = getParameter(params, 0, 0);
+                switch (param0) {
                 case 0:
                     //0: Clear from cursor to the end of the line
                     for (int x = getCursorX(); x < getColumns(); x++) {
-                        layoutBox[x][getCursorY()] = 0;
+                        eraseChar(x, getCursorY());
                     }
                     break;
                 case 1:
@@ -535,15 +596,187 @@ class VTInnerPane extends JComponent
                     //break;
                 default:
                     //Unknown, do nothing
-                    System.out.printf("CSI %d K (Erase Line) is not implemented, sorry.\n", numN);
+                    System.out.printf("CSI %d K (Erase Line) is not implemented, sorry.\n", param0);
                     break;
+                }
+
+                sequenceEnd = true;
+                break;
+            case 'm':
+                //SGR - Select Graphic Rendition
+                for (int i = 0; i < params.size(); i++) {
+                    param0 = getParameter(params, i, 0);
+                    switch (param0) {
+                    case 0:
+                        //0: default rendition
+                        break;
+                    case 1:
+                        //1: bold or increased intensity
+                        break;
+                    case 2:
+                        //2: faint, decreased intensity or second colour
+                        break;
+                    case 3:
+                        //3: italicized
+                        break;
+                    case 4:
+                        //4: singly underlined
+                        break;
+                    case 5:
+                        //5: slowly blinking (less than 150 per minute)
+                        break;
+                    case 6:
+                        //6: rapidly blinking (150 per minute or more)
+                        break;
+                    case 7:
+                        //7: negative image
+                        break;
+                    case 8:
+                        //8: concealed characters
+                        break;
+                    case 9:
+                        //9: crossed-out (characters still legible but marked as to be deleted)
+                        break;
+                    case 10:
+                        //10: primary (default) font
+                        break;
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                        //11 - 19: first - ninth alternative font
+                        break;
+                    case 20:
+                        //20: Fraktur (Gothic)
+                        break;
+                    case 21:
+                        //21: doubly underlined
+                        break;
+                    case 22:
+                        //22: normal colour or nomal intensity (neither bold nor faint)
+                        break;
+                    case 23:
+                        //23: not italicized, not fraktur
+                        break;
+                    case 24:
+                        //24: not underlined (neither singly nor doubly)
+                        break;
+                    case 25:
+                        //25: steady (not blinking)
+                        break;
+                    //case 26:
+                    //26: reserved
+                    //break;
+                    case 27:
+                        //27: positive image
+                        break;
+                    case 28:
+                        //28: revealed characters
+                        break;
+                    case 29:
+                        //29: not crossed out
+                        break;
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                        //30 - 37: colour display
+                        //0: black, 1: red, 2: green, 3: yellow
+                        //4: blue, 5: magenta, 6: cyan, 7: white
+                        break;
+                    //case 38:
+                    //38: reserved
+                    //break;
+                    case 39:
+                        //39: default display colour
+                        break;
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                        //40 - 47: colour background
+                        //0: black, 1: red, 2: green, 3: yellow
+                        //4: blue, 5: magenta, 6: cyan, 7: white
+                        break;
+                    //case 48:
+                    //48: reserved
+                    //break;
+                    case 49:
+                        //49: default background colour
+                        break;
+                    //case 50:
+                    //50: reserved
+                    //break;
+                    case 51:
+                        //51: framed
+                        break;
+                    case 52:
+                        //52: encircled
+                        break;
+                    case 53:
+                        //53: overlined
+                        break;
+                    case 54:
+                        //54: not framed, not encircled
+                        break;
+                    case 55:
+                        //55: not overlined
+                        break;
+                    //case 56:
+                    //case 57:
+                    //case 58:
+                    //case 59:
+                    //56 - 59: reserved
+                    //break;
+                    case 60:
+                        //60: ideogram underline or right side line
+                        break;
+                    case 61:
+                        //61: ideogram double underline or double line on the right side
+                        break;
+                    case 62:
+                        //62: ideogram overline or left side line
+                        break;
+                    case 63:
+                        //63: ideogram double overline or double line on the left side
+                        break;
+                    case 64:
+                        //64: ideogram stress marking
+                        break;
+                    case 65:
+                        //65: cancels the effect of the rendition aspects established by parameter values 60 to 64
+                        break;
+                    default:
+                        //Unknown: ignore it
+                        System.out.printf("Unknown SGR %d;\n", param0);
+                        break;
+                    }
+
+                    //For debug
+                    //System.out.printf("Unknown SGR %d;\n", param0);
                 }
 
                 sequenceEnd = true;
                 break;
             case ';':
                 //Get next parameter
-                numM = getNumberParam(ins, defNum);
+                tmp = readParam(ins, DEFAULT_NUMBER);
+                if (tmp != DEFAULT_NUMBER) {
+                    params.add(tmp);
+                }
 
                 sequenceEnd = false;
                 break;
@@ -553,8 +786,12 @@ class VTInnerPane extends JComponent
                 break;
             default:
                 //Unknown: Ignore it
-                System.out.printf("Unknown CSR %d; %d; %c(0x%02x)\n", numN, numM, csrChar,
-                        (int)csrChar);
+                StringBuilder sb = new StringBuilder();
+                sb.append("Unknown CSI ");
+                for (Integer i : params) {
+                    sb.append(String.format("%d; ", i));
+                }
+                System.out.printf("%s%c(0x%02x)\n", sb, csrChar, (int)csrChar);
 
                 sequenceEnd = true;
                 break;
@@ -571,17 +808,17 @@ class VTInnerPane extends JComponent
      */
     protected boolean layoutEscapeCSIDEC(InputStream ins) throws IOException {
         int defNum = -1;
-        int numN = getNumberParam(ins, defNum);
+        int numN = readParam(ins, defNum);
         int numM = defNum;
         char csrChar;
         boolean sequenceEnd = false;
 
         while (!sequenceEnd) {
-            csrChar = getNextInput(ins);
+            csrChar = readNext(ins);
             switch (csrChar) {
             case ';':
                 //Get next parameter
-                numM = getNumberParam(ins, defNum);
+                numM = readParam(ins, defNum);
 
                 sequenceEnd = false;
                 break;
@@ -604,13 +841,13 @@ class VTInnerPane extends JComponent
      * @param ins 文字列を入力するストリーム
      */
     protected void layoutNormalChar(InputStream ins) throws IOException {
-        char c = getNextInput(ins);
+        char c = readNext(ins);
 
         if (getCursorX() == getColumns() - 1 && needWrap) {
             nextLine();
         }
 
-        layoutBox[getCursorX()][getCursorY()] = c;
+        setChar(getCursorX(), getCursorY(), c);
         //NOTE: Need wrap the line at next char if we are in end of line
         needWrap = (getCursorX() == getColumns() - 1);
         setCursorX(getCursorX() + 1);
@@ -626,7 +863,7 @@ class VTInnerPane extends JComponent
      */
     public void layoutChars(InputStream ins) throws IOException {
         do {
-            char c = getNextInput(ins);
+            char c = readNext(ins);
 
             switch (c) {
             case 0x07:
@@ -658,7 +895,7 @@ class VTInnerPane extends JComponent
                 break;
             default:
                 //Other characters
-                pushBackInput(c);
+                writeBack(c);
                 layoutNormalChar(ins);
             }
 
@@ -682,14 +919,14 @@ class VTInnerPane extends JComponent
         g.setColor(before);
         for (int y = start; y < yEnd; y++) {
             for (int x = 0; x < getColumns(); x++) {
-                if (layoutBox[x][y] == 0) {
+                if (getChar(x, y) == 0) {
                     continue;
                 }
 
                 boxChar.setX(rscr.x + x * boxChar.getWidth());
                 boxChar.setY(rscr.y + (y - start) * boxChar.getHeight());
                 r = boxChar.getContents();
-                g.drawString(String.valueOf(layoutBox[x][y]),
+                g.drawString(String.valueOf(getChar(x, y)),
                         r.x, r.y + r.height);
             }
         }
@@ -703,10 +940,10 @@ class VTInnerPane extends JComponent
         r = boxChar.getBounds();
         g.setColor(getForeground());
         g.fillRect(r.x, r.y, r.width, r.height);
-        if (layoutBox[x][y] != 0) {
+        if (getChar(x, y) != 0) {
             r = boxChar.getContents();
             g.setColor(getBackground());
-            g.drawString(String.valueOf(layoutBox[x][y]),
+            g.drawString(String.valueOf(getChar(x, y)),
                     r.x, r.y + r.height);
         }
     }
