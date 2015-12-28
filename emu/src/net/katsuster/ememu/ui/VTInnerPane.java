@@ -38,6 +38,8 @@ class VTInnerPane extends JComponent
     //カーソルの位置
     private int cursorX;
     private int cursorY;
+    //現在の文字の色
+    private DecoratedChar currentDecoration = new DecoratedChar();
     //画面上の文字の位置
     private DecoratedChar[][] layoutBox;
     //自動改行が必要かどうか
@@ -45,37 +47,32 @@ class VTInnerPane extends JComponent
     //自動改行（後退時）が必要かどうか
     private boolean needWrapBack;
 
-    /**
-     * 装飾付きの文字を表すクラスです。
-     */
-    class DecoratedChar {
-        private char ch;
-
-        public DecoratedChar() {
-            this((char)0);
-        }
-
-        public DecoratedChar(char c) {
-            ch = c;
-        }
-
-        public void copy(DecoratedChar dc) {
-            ch = dc.ch;
-        }
-
-        public char getChar() {
-            return ch;
-        }
-
-        public void setChar(char c) {
-            ch = c;
-        }
-    }
+    //色パレット
+    // 0: black, 1: red, 2: green, 3: yellow,
+    // 4: blue, 5: magenta, 6:cyan, 7:white, 8: default
+    private Color[] currentPalette;
+    private Color[] paletteNormal = {
+            new Color(0, 0, 0), new Color(205, 0, 0),
+            new Color(0, 205, 0), new Color(205, 205, 0),
+            new Color(0, 0, 238), new Color(205, 0, 205),
+            new Color(0, 205, 205), new Color(229, 229, 229),
+            new Color(127, 127, 127)
+    };
+    private Color[] paletteBold = {
+            new Color(0, 0, 0), new Color(255, 0, 0),
+            new Color(0, 255, 0), new Color(255, 255, 0),
+            new Color(92, 92, 255), new Color(255, 0, 255),
+            new Color(0, 255, 255), new Color(255, 255, 255),
+            new Color(127, 127, 127)
+    };
 
     public VTInnerPane(VirtualTerminal p) {
         super();
 
         parent = p;
+
+        setForeground(DecoratedChar.DEFAULT_FOREGROUND);
+        setBackground(DecoratedChar.DEFAULT_BACKGROUND);
 
         boxScreen = new ContentBox();
         boxScreen.setPadding(10, 10, 10, 10);
@@ -89,6 +86,7 @@ class VTInnerPane extends JComponent
         currentLine = 0;
         cursorX = 0;
         cursorY = 0;
+        currentDecoration = new DecoratedChar();
         layoutBox = new DecoratedChar[getColumns()][getMaxLines()];
         for (int x = 0; x < getColumns(); x++) {
             for (int y = 0; y < getMaxLines(); y++) {
@@ -97,9 +95,31 @@ class VTInnerPane extends JComponent
         }
         needWrap = false;
         needWrapBack = false;
+        currentPalette = paletteNormal;
 
         setFocusable(false);
         addComponentListener(this);
+    }
+
+    @Override
+    public void setForeground(Color fg) {
+        super.setForeground(fg);
+
+        getCurrentDecoration().setForeground(fg);
+    }
+
+    @Override
+    public void setBackground(Color bg) {
+        super.setBackground(bg);
+
+        getCurrentDecoration().setBackground(bg);
+    }
+
+    @Override
+    public void setFont(Font font) {
+        super.setFont(font);
+
+        getCurrentDecoration().setFont(font);
     }
 
     /**
@@ -333,6 +353,28 @@ class VTInnerPane extends JComponent
     }
 
     /**
+     * 現在の文字の装飾を取得します。
+     *
+     * 端末に新たな文字が入力されたときに設定される装飾です。
+     *
+     * @return 文字の装飾
+     */
+    public DecoratedChar getCurrentDecoration() {
+        return currentDecoration;
+    }
+
+    /**
+     * 指定した座標の装飾付き文字を取得します。
+     *
+     * @param x X座標
+     * @param y Y座標
+     * @return 指定した座標の装飾付き文字
+     */
+    public DecoratedChar getDecoratedChar(int x, int y) {
+        return layoutBox[x][y];
+    }
+
+    /**
      * 指定した座標の文字を取得します。
      *
      * @param x X座標
@@ -362,6 +404,28 @@ class VTInnerPane extends JComponent
      */
     public void eraseChar(int x, int y) {
         layoutBox[x][y].setChar((char)0);
+    }
+
+    /**
+     * 現在のパレットを取得します。
+     *
+     * @return 現在のパレット
+     */
+    public Color[] getCurrentPalette() {
+        return currentPalette;
+    }
+
+    /**
+     * 現在のパレットを設定します。
+     *
+     * @param p パレット
+     */
+    public void setCurrentPalette(Color[] p) {
+        if (p.length < 8) {
+            throw new IllegalArgumentException("Palette size is too small.");
+        }
+
+        currentPalette = p;
     }
 
     /**
@@ -495,10 +559,11 @@ class VTInnerPane extends JComponent
     protected boolean layoutEscapeCSI(InputStream ins) throws IOException {
         final int DEFAULT_NUMBER = -1;
 
-        java.util.List<Integer> params = new ArrayList<Integer>();
+        java.util.List<Integer> params = new ArrayList<>();
         char csrChar;
         boolean sequenceEnd = false;
         int tmp, param0, param1;
+        Font f;
 
         tmp = readParam(ins, DEFAULT_NUMBER);
         if (tmp != DEFAULT_NUMBER) {
@@ -609,15 +674,29 @@ class VTInnerPane extends JComponent
                     switch (param0) {
                     case 0:
                         //0: default rendition
+                        getCurrentDecoration().setForeground(getForeground());
+                        getCurrentDecoration().setBackground(getBackground());
+                        getCurrentDecoration().setNegaMode(false);
+                        f = getCurrentDecoration().getFont();
+                        getCurrentDecoration().setFont(f.deriveFont(Font.PLAIN));
+                        setCurrentPalette(paletteNormal);
                         break;
                     case 1:
                         //1: bold or increased intensity
+                        f = getCurrentDecoration().getFont();
+                        getCurrentDecoration().setFont(f.deriveFont(Font.BOLD));
+                        setCurrentPalette(paletteBold);
                         break;
                     case 2:
                         //2: faint, decreased intensity or second colour
+                        f = getCurrentDecoration().getFont();
+                        getCurrentDecoration().setFont(f.deriveFont(Font.PLAIN));
+                        setCurrentPalette(paletteNormal);
                         break;
                     case 3:
                         //3: italicized
+                        f = getCurrentDecoration().getFont();
+                        getCurrentDecoration().setFont(f.deriveFont(Font.ITALIC));
                         break;
                     case 4:
                         //4: singly underlined
@@ -630,6 +709,7 @@ class VTInnerPane extends JComponent
                         break;
                     case 7:
                         //7: negative image
+                        getCurrentDecoration().setNegaMode(true);
                         break;
                     case 8:
                         //8: concealed characters
@@ -674,6 +754,7 @@ class VTInnerPane extends JComponent
                     //break;
                     case 27:
                         //27: positive image
+                        getCurrentDecoration().setNegaMode(false);
                         break;
                     case 28:
                         //28: revealed characters
@@ -690,14 +771,14 @@ class VTInnerPane extends JComponent
                     case 36:
                     case 37:
                         //30 - 37: colour display
-                        //0: black, 1: red, 2: green, 3: yellow
-                        //4: blue, 5: magenta, 6: cyan, 7: white
+                        getCurrentDecoration().setForeground(getCurrentPalette()[param0 - 30]);
                         break;
                     //case 38:
                     //38: reserved
                     //break;
                     case 39:
                         //39: default display colour
+                        getCurrentDecoration().setForeground(getCurrentPalette()[8]);
                         break;
                     case 40:
                     case 41:
@@ -708,14 +789,14 @@ class VTInnerPane extends JComponent
                     case 46:
                     case 47:
                         //40 - 47: colour background
-                        //0: black, 1: red, 2: green, 3: yellow
-                        //4: blue, 5: magenta, 6: cyan, 7: white
+                        getCurrentDecoration().setBackground(getCurrentPalette()[param0 - 30]);
                         break;
                     //case 48:
                     //48: reserved
                     //break;
                     case 49:
                         //49: default background colour
+                        getCurrentDecoration().setBackground(getCurrentPalette()[8]);
                         break;
                     //case 50:
                     //50: reserved
@@ -841,13 +922,16 @@ class VTInnerPane extends JComponent
      * @param ins 文字列を入力するストリーム
      */
     protected void layoutNormalChar(InputStream ins) throws IOException {
+        DecoratedChar dch;
         char c = readNext(ins);
 
         if (getCursorX() == getColumns() - 1 && needWrap) {
             nextLine();
         }
 
-        setChar(getCursorX(), getCursorY(), c);
+        dch = getDecoratedChar(getCursorX(), getCursorY());
+        dch.copyAttributes(getCurrentDecoration());
+        dch.setChar(c);
         //NOTE: Need wrap the line at next char if we are in end of line
         needWrap = (getCursorX() == getColumns() - 1);
         setCursorX(getCursorX() + 1);
@@ -908,7 +992,7 @@ class VTInnerPane extends JComponent
 
     protected void drawAll(Graphics2D g, int start) {
         int yEnd = Math.min(start + getLines(), getMaxLines());
-        Color before = g.getColor();
+        DecoratedChar dch;
         Rectangle rscr, r;
 
         rscr = boxScreen.getContents();
@@ -916,18 +1000,25 @@ class VTInnerPane extends JComponent
         //Draw whole screen
         g.setColor(getBackground());
         g.fill3DRect(0, 0, getWidth(), getHeight(), false);
-        g.setColor(before);
         for (int y = start; y < yEnd; y++) {
             for (int x = 0; x < getColumns(); x++) {
-                if (getChar(x, y) == 0) {
+                dch = getDecoratedChar(x, y);
+
+                if (dch.getChar() == 0) {
                     continue;
                 }
 
                 boxChar.setX(rscr.x + x * boxChar.getWidth());
                 boxChar.setY(rscr.y + (y - start) * boxChar.getHeight());
+                r = boxChar.getBounds();
+                g.setColor(dch.getBackground());
+                g.fillRect(r.x, r.y, r.width, r.height);
+
                 r = boxChar.getContents();
-                g.drawString(String.valueOf(getChar(x, y)),
-                        r.x, r.y + r.height);
+                g.setColor(dch.getForeground());
+                g.setFont(dch.getFont());
+                g.drawString(String.valueOf(dch.getChar()),
+                        r.x, r.y + r.height - 1);
             }
         }
 
@@ -971,7 +1062,7 @@ class VTInnerPane extends JComponent
 
         //一行の高さの設定を更新する
         if (advance == -1) {
-            advance = ascent / 2;
+            advance = ascent / 2 + 1;
         }
         boxChar.setWidth(advance * 20 / 45);
         boxChar.setHeight(ascent);

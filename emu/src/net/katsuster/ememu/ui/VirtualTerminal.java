@@ -53,7 +53,7 @@ public class VirtualTerminal extends JPanel
         vt.setForeground(Color.GRAY);
         vt.setBackground(Color.BLACK);
         vt.setOpaque(false);
-        vt.setFont(new Font(Font.MONOSPACED, 0, 12));
+        vt.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         add(vt, BorderLayout.CENTER);
 
         //右端にスクロールバーを配置する
