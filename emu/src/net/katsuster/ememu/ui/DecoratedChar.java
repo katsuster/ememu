@@ -7,7 +7,7 @@ import java.awt.*;
  *
  * @author katsuhiro
  */
-class DecoratedChar {
+public class DecoratedChar {
     public static final Color DEFAULT_FOREGROUND = Color.WHITE;
     public static final Color DEFAULT_BACKGROUND = Color.DARK_GRAY;
     public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 10);

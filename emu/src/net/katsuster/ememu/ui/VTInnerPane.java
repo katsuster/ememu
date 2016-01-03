@@ -12,7 +12,7 @@ import javax.swing.event.*;
  *
  * @author katsuhiro
  */
-class VTInnerPane extends JComponent
+public class VTInnerPane extends JComponent
         implements ChangeListener, ComponentListener {
     private static final long serialVersionUID = 1L;
 

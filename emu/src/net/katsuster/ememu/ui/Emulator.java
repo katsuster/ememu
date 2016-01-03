@@ -9,7 +9,7 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-class Emulator extends Thread {
+public class Emulator extends Thread {
     private ARMv5 cpu;
     private Bus bus;
     private RAM ram;
