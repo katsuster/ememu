@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<jnlp spec="1.0+"
+      codebase="http://www.katsuster.net/contents/java/ememu"
+      href="armemu.jnlp">
+
+    <information>
+        <title>Hogehoge</title>
+        <vendor>fuga</vendor>
+        <offline-allowed/>
+    </information>
+
+    <resources>
+        <j2se version="1.7+"/>
+        <jar href="armemu.jar"/>
+    </resources>
+
+    <security>
+        <!-- all-permissions/ -->
+    </security>
+
+    <application-desc main-class="net.katsuster.ememu.ui.Main"/>
+</jnlp>
