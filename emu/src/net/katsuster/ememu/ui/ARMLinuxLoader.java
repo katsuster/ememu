@@ -59,11 +59,11 @@ public class ARMLinuxLoader {
         System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
 
         final int addrRAM = 0x00000000;
-        final int addrAtagsStart = addrRAM + 0x100;
+        final int addrAtagsStart = addrRAM + 0x800000;
         int addrAtags = addrAtagsStart;
         final int addrImage = addrRAM + 0x00008000;
         int sizeImage = 0;
-        final int addrInitrd = addrRAM + 0x00800000;
+        final int addrInitrd = addrRAM + 0x00810000;
         int sizeInitrd = 0;
         boolean initrdExist = !initrd.equals("");
 
@@ -99,7 +99,7 @@ public class ARMLinuxLoader {
         //ARM-Versatile AB
         //cpu.setReg(1, 0x0000025e);
 
-        //r2: atags or dtb pointer.
+        //r2: ATAGS pointer.
         cpu.setReg(2, addrAtags);
         {
             //ATAG_CORE, size, tag, [flags, pagesize, rootdev]
@@ -155,6 +155,60 @@ public class ARMLinuxLoader {
             cpu.write32_a32(addrAtags + 0x04, ATAG_NONE);
             addrAtags += 0x08;
         }
+
+        //pc: entry of stext
+        cpu.setPC(addrImage);
+        cpu.setJumped(false);
+    }
+
+    public static void bootFromURIWithDT(ARMv5 cpu, RAM ramMain, String dtree, String kimage, String initrd, String cmdline) {
+        byte[] cmdlb = cmdline.getBytes();
+        //+1: need null char at the end of line
+        byte[] cmdalign = new byte[(cmdlb.length + 1 + 3) & ~0x3];
+        System.arraycopy(cmdlb, 0, cmdalign, 0, cmdlb.length);
+
+        final int addrRAM = 0x00000000;
+        final int addrDT = addrRAM + 0x800000;
+        int sizeDT = 0;
+        final int addrImage = addrRAM + 0x008000;
+        int sizeImage = 0;
+        final int addrInitrd = addrRAM + 0x00810000;
+        int sizeInitrd = 0;
+        boolean initrdExist = !initrd.equals("");
+
+        //tentative boot loader for ARM Linux with Device Tree
+        try {
+            //load Device Tree Blob
+            sizeDT = loadURIResource(new URI(dtree), cpu, addrDT);
+            //load Image file
+            sizeImage = loadURIResource(new URI(kimage), cpu, addrImage);
+            //load Initrd/InitramFS file
+            if (initrdExist) {
+                sizeInitrd = loadURIResource(new URI(initrd), cpu, addrInitrd);
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace(System.err);
+            return;
+        }
+
+        //report address mapping
+        System.out.printf("Address mapping:\n" +
+                        "  RAM       : 0x%08x\n" +
+                        "  DeviceTree: 0x%08x - 0x%08x\n" +
+                        "  Kernel    : 0x%08x - 0x%08x\n" +
+                        "  InitramFS : 0x%08x - 0x%08x\n",
+                addrRAM, addrDT, addrDT + sizeDT - 1,
+                addrImage, addrImage + sizeImage - 1,
+                addrInitrd, addrInitrd + sizeInitrd - 1);
+
+        //r0: 0
+        cpu.setReg(0, 0);
+
+        //r1: Do not care.
+        cpu.setReg(1, 0);
+
+        //r2: Device tree blob pointer.
+        cpu.setReg(2, addrDT);
 
         //pc: entry of stext
         cpu.setPC(addrImage);

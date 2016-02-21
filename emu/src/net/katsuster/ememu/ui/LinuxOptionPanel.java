@@ -14,8 +14,8 @@ import javax.swing.filechooser.*;
  */
 public class LinuxOptionPanel extends JPanel {
     private LinuxOption opts;
-
-    private JTextField txtImage, txtInitrd, txtCmdline;
+    private JCheckBox chkUseDeviceTree;
+    private JTextField txtDeviceTree, txtImage, txtInitrd, txtCmdline;
     private File lastDir;
 
     /**
@@ -43,9 +43,23 @@ public class LinuxOptionPanel extends JPanel {
         //コンポーネントを作成
         ButtonListener listenButton = new ButtonListener(this);
 
+        chkUseDeviceTree = new JCheckBox("Use Device Tree");
+        if (opts.getDeviceTreeImage().toString().equals("")) {
+            chkUseDeviceTree.setSelected(false);
+        } else {
+            chkUseDeviceTree.setSelected(true);
+        }
+
         //Get prefered size(40 chars)
         JTextField tmpTxt = new JTextField(String.format("%040x", 0));
         Dimension dim = tmpTxt.getPreferredSize();
+
+        txtDeviceTree = new JTextField(opts.getDeviceTreeImage().toString());
+        txtDeviceTree.setPreferredSize(dim);
+        txtDeviceTree.setMinimumSize(dim);
+        JButton chooseDeviceTree = new JButton("...");
+        chooseDeviceTree.addActionListener(listenButton);
+        chooseDeviceTree.setActionCommand("chooseDeviceTree");
 
         txtImage = new JTextField(opts.getKernelImage().toString());
         txtImage.setPreferredSize(dim);
@@ -59,32 +73,49 @@ public class LinuxOptionPanel extends JPanel {
         txtInitrd.setMinimumSize(dim);
         JButton chooseInitrd = new JButton("...");
         chooseInitrd.addActionListener(listenButton);
-
         chooseInitrd.setActionCommand("chooseInitrd");
+
         txtCmdline = new JTextField(opts.getCommandLine());
         txtCmdline.setPreferredSize(dim);
         txtCmdline.setMinimumSize(dim);
 
         //コンポーネントを配置
         GridBagLayout layout = new GridBagLayout();
+        int gy = 0;
         setLayout(layout);
 
+        GridBagLayoutHelper.add(this, layout, new JLabel("Device Tree Image:", SwingConstants.RIGHT),
+                0, gy, 1, 1);
+        GridBagLayoutHelper.add(this, layout, txtDeviceTree,
+                1, gy, 1, 1);
+        GridBagLayoutHelper.add(this, layout, chooseDeviceTree,
+                2, gy, GridBagConstraints.RELATIVE, 1);
+
+        gy += 1;
+        GridBagLayoutHelper.add(this, layout, chkUseDeviceTree,
+                1, gy, 3, 1);
+
+        gy += 1;
         GridBagLayoutHelper.add(this, layout, new JLabel("Kernel Image:", SwingConstants.RIGHT),
-                0, 0, 1, 1);
+                0, gy, 1, 1);
         GridBagLayoutHelper.add(this, layout, txtImage,
-                1, 0, 1, 1);
+                1, gy, 1, 1);
         GridBagLayoutHelper.add(this, layout, chooseKernel,
-                2, 0, GridBagConstraints.RELATIVE, 1);
+                2, gy, GridBagConstraints.RELATIVE, 1);
+
+        gy += 1;
         GridBagLayoutHelper.add(this, layout, new JLabel("Initrd Image:", SwingConstants.RIGHT),
-                0, 1, 1, 1);
+                0, gy, 1, 1);
         GridBagLayoutHelper.add(this, layout, txtInitrd,
-                1, 1, 1, 1);
+                1, gy, 1, 1);
         GridBagLayoutHelper.add(this, layout, chooseInitrd,
-                2, 1, GridBagConstraints.RELATIVE, 1);
+                2, gy, GridBagConstraints.RELATIVE, 1);
+
+        gy += 1;
         GridBagLayoutHelper.add(this, layout, new JLabel("Command line:", SwingConstants.RIGHT),
-                0, 2, 1, 1);
+                0, gy, 1, 1);
         GridBagLayoutHelper.add(this, layout, txtCmdline,
-                1, 2, 2, 1);
+                1, gy, 2, 1);
 
         setBorder(BorderFactory.createTitledBorder("Linux Boot Options"));
     }
@@ -108,6 +139,7 @@ public class LinuxOptionPanel extends JPanel {
      */
     protected void updateOption() {
         try {
+            opts.setDeviceTreeImage(new URI(txtDeviceTree.getText()));
             opts.setKernelImage(new URI(txtImage.getText()));
             opts.setInitrdImage(new URI(txtInitrd.getText()));
             opts.setCommandLine(txtCmdline.getText());
@@ -129,6 +161,17 @@ public class LinuxOptionPanel extends JPanel {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(lastDir);
 
+            if (e.getActionCommand().equals("chooseDeviceTree")) {
+                FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                        "Device Tree Blob image", "dtb");
+                chooser.setFileFilter(filter);
+                int res = chooser.showOpenDialog(parent);
+                if (res == JFileChooser.APPROVE_OPTION) {
+                    selected = chooser.getSelectedFile();
+                    txtDeviceTree.setText(selected.toURI().toString());
+                }
+            }
+
             if (e.getActionCommand().equals("chooseKernel")) {
                 int res = chooser.showOpenDialog(parent);
                 if (res == JFileChooser.APPROVE_OPTION) {
@@ -136,6 +179,7 @@ public class LinuxOptionPanel extends JPanel {
                     txtImage.setText(selected.toURI().toString());
                 }
             }
+
             if (e.getActionCommand().equals("chooseInitrd")) {
                 FileNameExtensionFilter filter = new FileNameExtensionFilter(
                         "All Initrd image", "cpio", "gz");

@@ -56,10 +56,12 @@ public class ProxyOptionPanel extends JPanel {
 
         GridBagLayoutHelper.add(this, layout, chkSet,
                 0, 0, 2, 1);
+
         GridBagLayoutHelper.add(this, layout, new JLabel("Host:", SwingConstants.RIGHT),
                 0, 1, 1, 1);
         GridBagLayoutHelper.add(this, layout, txtHost,
                 1, 1, 1, 1);
+
         GridBagLayoutHelper.add(this, layout, new JLabel("Port:", SwingConstants.RIGHT),
                 0, 2, 1, 1);
         GridBagLayoutHelper.add(this, layout, txtPort,

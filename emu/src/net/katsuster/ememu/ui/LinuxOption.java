@@ -9,18 +9,47 @@ import java.net.*;
  * @author katsuhiro
  */
 public class LinuxOption {
+    private URI dtb;
     private URI kimage;
     private URI initrd;
     private String cmdline;
 
     public LinuxOption() {
         try {
+            dtb = new URI("");
             kimage = new URI("");
             initrd = new URI("");
         } catch (URISyntaxException ex) {
             //ignore
         }
         cmdline = "";
+    }
+
+    /**
+     * Linux Device Tree Blob イメージファイルの位置を取得します。
+     *
+     * @return Linux Device Tree Blob イメージファイルの URI
+     */
+    public URI getDeviceTreeImage() {
+        return dtb;
+    }
+
+    /**
+     * Linux Device Tree Blob イメージファイルの位置を設定します。
+     *
+     * @param file Linux Device Tree Blob イメージファイルパス
+     */
+    public void setDeviceTreeImage(File file) {
+        dtb = file.toURI();
+    }
+
+    /**
+     * Linux Device Tree Blob イメージファイルの位置を設定します。
+     *
+     * @param uri Linux Device Tree Blob イメージファイルの URI
+     */
+    public void setDeviceTreeImage(URI uri) {
+        dtb = uri;
     }
 
     /**
