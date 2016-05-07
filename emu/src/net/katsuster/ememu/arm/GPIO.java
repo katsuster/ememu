@@ -57,7 +57,7 @@ public class GPIO implements BusSlave {
             addReg(REG_GPIOIE, "GPIOIE", 0x00);
             //addReg(REG_GPIORIS, "GPIORIS", 0x00);
             //addReg(REG_GPIOMIS, "GPIOMIS", 0x00);
-            //addReg(REG_GPIOIC, "GPIOIC", 0x00);
+            addReg(REG_GPIOIC, "GPIOIC", 0x00);
             //addReg(REG_GPIOAFSEL, "GPIOAFSEL", 0x00);
 
             //0x424-0xfcc: Reserved for future use and test purposes
@@ -106,6 +106,11 @@ public class GPIO implements BusSlave {
                 System.out.printf("GPIOIE: read 0x%08x\n", 0);
                 result = 0;
                 break;
+            case REG_GPIOIC:
+                //TODO: not implemented
+                System.out.printf("GPIOIC: read 0x%08x\n", 0);
+                result = 0;
+                break;
             default:
                 result = super.readWord(regaddr);
                 break;
@@ -140,6 +145,10 @@ public class GPIO implements BusSlave {
             case REG_GPIOIE:
                 //TODO: not implemented
                 System.out.printf("GPIOIE: 0x%08x\n", data);
+                break;
+            case REG_GPIOIC:
+                //TODO: not implemented
+                System.out.printf("GPIOIC: 0x%08x\n", data);
                 break;
             case REG_GPIOPeriphID0:
             case REG_GPIOPeriphID1:
