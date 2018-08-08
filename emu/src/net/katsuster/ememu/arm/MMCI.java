@@ -69,9 +69,9 @@ public class MMCI implements BusSlave {
             //addReg(REG_MCIDataCtrl, "MCIDataCtrl", 0x00);
             //addReg(REG_MCIDataCnt, "MCIDataCnt", 0x0000);
             //addReg(REG_MCIStatus, "MCIStatus", 0x000000);
-            //addReg(REG_MCIClear, "MCIClear", 0x0);
-            //addReg(REG_MCIMask0, "MCIMask0", 0x000000);
-            //addReg(REG_MCIMask1, "MCIMask1", 0x000000);
+            addReg(REG_MCIClear, "MCIClear", 0x0);
+            addReg(REG_MCIMask0, "MCIMask0", 0x000000);
+            addReg(REG_MCIMask1, "MCIMask1", 0x000000);
             //addReg(REG_MCISelect, "MCISelect", 0x0);
             //addReg(REG_MCIFifoCnt, "MCIFifoCnt", 0x0000);
 
