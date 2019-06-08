@@ -11,7 +11,10 @@ import net.katsuster.ememu.generic.*;
  *
  * @author katsuhiro
  */
-public class ARMVersatile {
+public class ARMVersatile extends AbstractBoard {
+    private CPU cpu;
+    private Bus bus;
+    private RAM mpmc_c0_c1;
     private InputStream[] uartIn = new InputStream[4];
     private OutputStream[] uartOut = new OutputStream[4];
 
@@ -19,25 +22,48 @@ public class ARMVersatile {
         //do nothing
     }
 
+    @Override
+    public CPU getMainCPU() {
+        return cpu;
+    }
+
+    @Override
+    public Bus getMainBus() {
+        return bus;
+    }
+
+    @Override
+    public RAM getMainRAM() {
+        return mpmc_c0_c1;
+    }
+
+    @Override
     public InputStream getUARTInputStream(int index) {
         return uartIn[index];
     }
 
+    @Override
     public void setUARTInputStream(int index, InputStream is) {
         uartIn[index] = is;
     }
 
+    @Override
     public OutputStream getUARTOutputStream(int index) {
         return uartOut[index];
     }
 
+    @Override
     public void setUARTOutputStream(int index, OutputStream os) {
         uartOut[index] = os;
     }
 
-    public void setup(ARMv5 cpu, Bus bus, RAM ramMain) {
+    @Override
+    public void setup() {
+        cpu = new ARMv5();
+        bus = new Bus();
+
         //TODO: implement MPMC controller...
-        RAM mpmc_c0_c1 = ramMain;
+        mpmc_c0_c1 = new RAM32(64 * 1024 * 1024);
 
         SysBaseboard sysBoard = new SysBaseboard();
 
@@ -205,6 +231,27 @@ public class ARMVersatile {
         cpu.setEnabledDisasm(false);
         cpu.setPrintInstruction(false);
         cpu.setPrintRegs(false);
-        cpu.doExceptionReset("Init.");
+        cpu.init();
+    }
+
+    @Override
+    public void start() {
+        //start cores
+        bus.startAllSlaveCores();
+        bus.startAllMasterCores();
+
+        //wait CPU halted
+        try {
+            cpu.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace(System.err);
+            //ignored
+        }
+    }
+
+    @Override
+    public void stop() {
+        bus.haltAllMasterCores();
+        bus.haltAllSlaveCores();
     }
 }
