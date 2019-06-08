@@ -120,7 +120,6 @@ public class ARMVersatile extends AbstractBoard {
         RAM mpmc_c2_3 = new RAM64(4 * 1024);
 
         //Master core
-        cpu.setSlaveBus(bus);
         bus.addMasterCore(cpu);
 
         //Memory map of versatile

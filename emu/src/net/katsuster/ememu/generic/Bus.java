@@ -37,10 +37,11 @@ public class Bus implements RWCore {
      *
      * マスターコアはバスに読み取り、書き込みのリクエストができます。
      *
-     * @param core 追加するマスターコア
+     * @param c 追加するマスターコア
      */
-    public void addMasterCore(MasterCore core) {
-        masterList.add(core);
+    public void addMasterCore(MasterCore c) {
+        masterList.add(c);
+        c.setSlaveBus(this);
     }
 
     /**
