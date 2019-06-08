@@ -12,8 +12,6 @@ import net.katsuster.ememu.generic.BitOp;
  * 参考: ARM アーキテクチャリファレンスマニュアル Second Edition
  * ARM DDI0100DJ
  * </p>
- *
- * @author katsuhiro
  */
 public class MMUv5 {
     private boolean alignCheck;

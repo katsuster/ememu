@@ -4,8 +4,6 @@ import java.awt.*;
 
 /**
  * 装飾付き文字を表すクラスです。
- *
- * @author katsuhiro
  */
 public class DecoratedChar {
     public static final Color DEFAULT_FOREGROUND = Color.WHITE;

@@ -9,8 +9,6 @@ import javax.swing.event.*;
 
 /**
  * 端末への出力を表示するパネルです。
- *
- * @author katsuhiro
  */
 public class VTInnerPane extends JComponent
         implements ChangeListener, ComponentListener {

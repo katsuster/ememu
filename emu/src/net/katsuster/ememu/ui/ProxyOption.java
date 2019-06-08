@@ -4,8 +4,6 @@ import java.net.*;
 
 /**
  * プロキシの設定オプション。
- *
- * @author katsuhiro
  */
 public class ProxyOption {
     private URI proxyHost;

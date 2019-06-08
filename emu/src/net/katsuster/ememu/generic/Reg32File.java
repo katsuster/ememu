@@ -2,8 +2,6 @@ package net.katsuster.ememu.generic;
 
 /**
  * 32ビット長のレジスタファイルを表すインタフェースです。
- *
- * @author katsuhiro
  */
 public interface Reg32File {
     /**

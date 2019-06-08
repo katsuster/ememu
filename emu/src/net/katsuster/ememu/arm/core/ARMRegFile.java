@@ -4,8 +4,6 @@ import net.katsuster.ememu.generic.*;
 
 /**
  * ARM のレジスタファイルです。
- *
- * @author katsuhiro
  */
 public class ARMRegFile implements Reg32File {
     public static final int ARM_REGFILE_SIZE = 17;

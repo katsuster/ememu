@@ -9,8 +9,6 @@ import javax.swing.filechooser.*;
 
 /**
  * Linux 起動時に渡すオプションを設定するパネル。
- *
- * @author katsuhiro
  */
 public class LinuxOptionPanel extends JPanel {
     private LinuxOption opts;

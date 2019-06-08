@@ -6,8 +6,6 @@ import net.katsuster.ememu.generic.*;
 
 /**
  * ARM エミュレータです。
- *
- * @author katsuhiro
  */
 public class Emulator extends Thread {
     private Board board;

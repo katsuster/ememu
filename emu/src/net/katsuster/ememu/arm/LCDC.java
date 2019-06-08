@@ -10,8 +10,6 @@ import net.katsuster.ememu.generic.*;
  *
  * ARM DDI0161E はレジスタアドレスの仕様が変わっている。
  * Linux のドライバは DDI0161E に対応していない。
- *
- * @author katsuhiro
  */
 public class LCDC implements BusSlave {
     private LCDCSlave slave;

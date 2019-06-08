@@ -7,8 +7,6 @@ package net.katsuster.ememu.arm.core;
  * N, Z, C, V, Q, GE ビットのみ取得され、他の値は 0 でマスクされます。
  * また、
  * N, Z, C, V, Q, GE ビットのみ変更可能です。
- *
- * @author katsuhiro
  */
 public class APSR extends PSR {
     private PSR br;

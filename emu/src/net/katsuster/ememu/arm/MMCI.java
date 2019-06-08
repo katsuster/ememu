@@ -7,8 +7,6 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: ARM PrimeCell Multimedia Card Interface (PL180)
  * ARM DDI0172A
- *
- * @author katsuhiro
  */
 public class MMCI implements BusSlave {
     private MMCISlave slave;

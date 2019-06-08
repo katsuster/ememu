@@ -8,8 +8,6 @@ import net.katsuster.ememu.arm.core.ARMv5;
 
 /**
  * ARM Linux 用の簡易ブートローダです。
- *
- * @author katsuhiro
  */
 public class ARMLinuxLoader {
     public static final int ATAG_NONE      = 0x00000000;

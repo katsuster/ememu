@@ -5,8 +5,6 @@ package net.katsuster.ememu.arm.core;
  *
  * 参考: ARM アーキテクチャリファレンスマニュアル
  * ARM DDI0100HJ
- *
- * @author katsuhiro
  */
 public class CoProcDebugv1 extends CoProc {
     //----------------------------------------------------------------------

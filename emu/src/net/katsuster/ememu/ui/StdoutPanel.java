@@ -7,8 +7,6 @@ import javax.swing.*;
 
 /**
  * 標準出力を表示するパネル。
- *
- * @author katsuhiro
  */
 public class StdoutPanel extends JPanel {
     private static final PrintStream systemOut = System.out;

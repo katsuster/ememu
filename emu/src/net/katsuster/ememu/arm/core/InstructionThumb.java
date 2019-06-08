@@ -4,8 +4,6 @@ import net.katsuster.ememu.generic.*;
 
 /**
  * Thumb 命令。
- *
- * @author katsuhiro
  */
 public class InstructionThumb extends Instruction {
     /**

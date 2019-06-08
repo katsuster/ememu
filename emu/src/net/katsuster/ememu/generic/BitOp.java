@@ -2,8 +2,6 @@ package net.katsuster.ememu.generic;
 
 /**
  * 整数値へのビット演算ユーティリティクラス。
- *
- * @author katsuhiro
  */
 public class BitOp {
     /**

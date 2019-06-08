@@ -2,8 +2,6 @@ package net.katsuster.ememu.generic;
 
 /**
  * 整数演算のクラス
- *
- * @author katsuhiro
  */
 public class IntegerExt {
     /**

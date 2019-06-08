@@ -4,8 +4,6 @@ import net.katsuster.ememu.generic.*;
 
 /**
  * ARM アーキテクチャの SPSR(保存プログラムステートレジスタ)です。
- *
- * @author katsuhiro
  */
 public class SPSR extends PSR {
     private Reg32 br;

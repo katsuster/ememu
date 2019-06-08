@@ -7,8 +7,6 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: ARM PrimeCell Synchronous Serial Port (PL022)
  * ARM DDI0194G
- *
- * @author katsuhiro
  */
 public class SSP implements BusSlave {
     private SSPSlave slave;

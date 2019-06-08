@@ -2,8 +2,6 @@ package net.katsuster.ememu.generic;
 
 /**
  * 64 ビットアドレス、16 ビットデータ RAM
- *
- * @author katsuhiro
  */
 public class RAM16 extends RAM {
     //データ幅（バイト単位）

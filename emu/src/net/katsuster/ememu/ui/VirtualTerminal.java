@@ -9,8 +9,6 @@ import javax.swing.*;
 
 /**
  * 仮想端末。
- *
- * @author katsuhiro
  */
 public class VirtualTerminal extends JPanel
         implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {

@@ -2,8 +2,6 @@ package net.katsuster.ememu.ui;
 
 /**
  * 上下、左右の空白の大きさを表すクラスです。
- *
- * @author katsuhiro
  */
 public class Space {
     //左側の空白の大きさ

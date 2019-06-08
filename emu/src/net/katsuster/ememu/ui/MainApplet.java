@@ -8,8 +8,6 @@ import javax.swing.*;
 
 /**
  * エミュレータのグラフィカル画面、ログ表示用のアプレット。
- *
- * @author katsuhiro
  */
 public class MainApplet extends JApplet {
     public static final String PARAM_PROXY_HOST = "proxyHost";

@@ -10,8 +10,6 @@ import javax.swing.*;
  * テキスト領域に表示するクラスです。
  *
  * System.out の出力をフォークするために使います。
- *
- * @author katsuhiro
  */
 public class SystemPane extends JPanel {
     private PipedInputStream outPin;

@@ -42,8 +42,6 @@ import java.awt.*;
  * Bounds と Margin から自動的に決まります。
  * また、コンテンツ領域（Contents）の大きさは、
  * Border と Padding から自動的に決まります。
- *
- * @author katsuhiro
  */
 public class ContentBox {
     //描画領域

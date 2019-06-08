@@ -6,8 +6,6 @@ import java.awt.*;
 
 /**
  * エミュレータのテキスト画面、ログ表示用のクラス。
- *
- * @author katsuhiro
  */
 public class Main {
     public static void usage(String[] args) {

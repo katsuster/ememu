@@ -4,8 +4,6 @@ import net.katsuster.ememu.generic.*;
 
 /**
  * ARM 命令。
- *
- * @author katsuhiro
  */
 public class InstructionARM extends Instruction {
     /**

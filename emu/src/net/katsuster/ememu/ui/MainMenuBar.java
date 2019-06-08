@@ -5,8 +5,6 @@ import java.awt.event.*;
 
 /**
  * メインウインドウ、アプレットのメニュー。
- *
- * @author katsuhiro
  */
 public class MainMenuBar extends JMenuBar {
     /**

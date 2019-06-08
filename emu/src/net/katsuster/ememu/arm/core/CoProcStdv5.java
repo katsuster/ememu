@@ -7,8 +7,6 @@ import net.katsuster.ememu.generic.BitOp;
  *
  * 参考: ARM アーキテクチャリファレンスマニュアル Second Edition
  * ARM DDI0100DJ
- *
- * @author katsuhiro
  */
 public class CoProcStdv5 extends CoProc {
     //----------------------------------------------------------------------

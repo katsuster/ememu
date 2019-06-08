@@ -7,8 +7,6 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: ARM PrimeCell PS2 Keyboard/Mouse Interface (PL050)
  * ARM DDI0143C
- *
- * @author katsuhiro
  */
 public class KMI implements BusSlave {
     private KMISlave slave;

@@ -11,8 +11,6 @@ import java.io.*;
  *
  * 支流への出力で発生した例外は全て無視され、
  * 本流への出力で発生した例外のみ呼び出し元にスローされます。
- *
- * @author katsuhiro
  */
 public class ForkedPrintStream extends PrintStream {
     private PrintStream main;

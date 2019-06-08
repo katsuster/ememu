@@ -5,8 +5,6 @@ import java.net.*;
 
 /**
  * Linux 起動時に渡すオプション。
- *
- * @author katsuhiro
  */
 public class LinuxOption {
     private URI dtb;

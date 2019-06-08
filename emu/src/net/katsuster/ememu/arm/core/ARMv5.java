@@ -17,8 +17,6 @@ import net.katsuster.ememu.generic.*;
  * E はエンハンスド DSP 命令、
  * のことらしい。
  * </p>
- *
- * @author katsuhiro
  */
 public class ARMv5 extends CPU {
     //IRQ, FIQ の 2つの割り込み線を持つ

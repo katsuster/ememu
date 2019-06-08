@@ -5,8 +5,6 @@ import javax.swing.*;
 
 /**
  * GridBagLayout での典型的なコンポーネント配置を補助するクラスです。
- *
- * @author katsuhiro
  */
 public class GridBagLayoutHelper {
     private GridBagLayoutHelper() {

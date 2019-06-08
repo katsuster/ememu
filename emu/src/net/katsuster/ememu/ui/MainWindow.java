@@ -7,8 +7,6 @@ import javax.swing.*;
 
 /**
  * エミュレータのグラフィカル画面、ログ表示用のウインドウ。
- *
- * @author katsuhiro
  */
 public class MainWindow extends JFrame {
     private ButtonListener listenButton;

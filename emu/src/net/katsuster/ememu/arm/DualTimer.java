@@ -9,8 +9,6 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM Dual-Timer Module (SP804)
  * ARM DDI0271C
  * </p>
- *
- * @author katsuhiro
  */
 public class DualTimer implements INTSource, BusSlave {
     private INTDestination intDst = new NullINTDestination();

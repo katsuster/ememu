@@ -6,8 +6,6 @@ import javax.swing.*;
 
 /**
  * プロキシオプションを設定するパネル。
- *
- * @author katsuhiro
  */
 public class ProxyOptionPanel extends JPanel {
     private ProxyOption opts;
