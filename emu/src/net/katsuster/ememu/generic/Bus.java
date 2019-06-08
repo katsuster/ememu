@@ -5,8 +5,6 @@ import java.util.concurrent.locks.*;
 
 /**
  * 64 ビットアドレスバス。
- *
- * @author katsuhiro
  */
 public class Bus implements RWCore {
     //ロック

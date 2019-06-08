@@ -2,8 +2,6 @@ package net.katsuster.ememu.generic;
 
 /**
  * 割り込みを受け付けるコア。
- *
- * @author katsuhiro
  */
 public interface INTDestination {
     /**

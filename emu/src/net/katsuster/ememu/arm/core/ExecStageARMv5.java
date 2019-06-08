@@ -9,8 +9,6 @@ import net.katsuster.ememu.generic.*;
  * ARM DDI0100DJ
  *
  * 最新版は、日本語版 ARM DDI0100HJ, 英語版 ARM DDI0100I
- *
- * @author katsuhiro
  */
 public class ExecStageARMv5 extends Stage {
     /**

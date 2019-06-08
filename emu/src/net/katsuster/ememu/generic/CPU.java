@@ -2,8 +2,6 @@ package net.katsuster.ememu.generic;
 
 /**
  * CPU の基本クラス
- *
- * @author katsuhiro
  */
 public abstract class CPU extends MasterCore
         implements INTDestination {

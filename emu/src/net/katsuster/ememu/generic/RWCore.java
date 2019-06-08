@@ -7,8 +7,6 @@ package net.katsuster.ememu.generic;
  * コア外部からの読み取り、書き込み要求に応答する形で動作します。
  * 64ビット幅のアドレスを使用します。
  * </p>
- *
- * @author katsuhiro
  */
 public interface RWCore {
     /**

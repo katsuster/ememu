@@ -8,8 +8,6 @@ import net.katsuster.ememu.generic.*;
 
 /**
  * ARM Versatile Application Baseboards (AB) and Platform Baseboards (PB).
- *
- * @author katsuhiro
  */
 public class ARMVersatile extends AbstractBoard {
     private CPU cpu;

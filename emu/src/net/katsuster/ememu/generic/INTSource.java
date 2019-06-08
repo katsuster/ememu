@@ -2,8 +2,6 @@ package net.katsuster.ememu.generic;
 
 /**
  * 割り込みを発生させるコア。
- *
- * @author katsuhiro
  */
 public interface INTSource {
     /**

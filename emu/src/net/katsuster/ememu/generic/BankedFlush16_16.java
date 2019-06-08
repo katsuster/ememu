@@ -4,8 +4,6 @@ package net.katsuster.ememu.generic;
  * 64 ビットアドレス、32ビットデータ、バンク付き Flush メモリ
  *
  * 16ビットデータメモリ＋16ビットデータメモリの構成で使用します。
- *
- * @author katsuhiro
  */
 public class BankedFlush16_16 extends SlaveCore {
     //データ幅（バイト単位）

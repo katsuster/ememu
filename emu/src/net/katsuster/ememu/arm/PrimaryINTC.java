@@ -14,8 +14,6 @@ import net.katsuster.ememu.generic.*;
  * 参考: PrimeCell Vectored Interrupt Controller (PL190)
  * ARM DDI0181E
  * </p>
- *
- * @author katsuhiro
  */
 public class PrimaryINTC extends Controller32
         implements INTDestination {

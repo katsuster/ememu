@@ -4,8 +4,6 @@ import java.util.*;
 
 /**
  * 64 ビットアドレスバス、32 ビットレジスタを持つコントローラ。
- *
- * @author katsuhiro
  */
 public abstract class Controller32 extends SlaveCore {
     //データ幅（バイト単位）

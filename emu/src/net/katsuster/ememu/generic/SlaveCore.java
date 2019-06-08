@@ -12,8 +12,6 @@ package net.katsuster.ememu.generic;
  * <p>
  * バスからのアクセス時に用いるアドレスは 64 ビット幅です。
  * </p>
- *
- * @author katsuhiro
  */
 public abstract class SlaveCore extends AbstractCore
         implements RWCore {

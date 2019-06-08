@@ -2,8 +2,6 @@ package net.katsuster.ememu.generic;
 
 /**
  * 32ビットレジスタ。
- *
- * @author katsuhiro
  */
 public class Reg32 {
     private String name;

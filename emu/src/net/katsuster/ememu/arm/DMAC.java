@@ -7,8 +7,6 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: ARM PrimeCell DMA Controller (PL080)
  * ARM DDI0196G
- *
- * @author katsuhiro
  */
 public class DMAC implements BusSlave {
     private DMACSlave slave;

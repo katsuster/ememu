@@ -6,8 +6,6 @@ import net.katsuster.ememu.generic.*;
 
 /**
  * ARM コプロセッサ。
- *
- * @author katsuhiro
  */
 public class CoProc {
     private int no;

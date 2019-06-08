@@ -7,8 +7,6 @@ package net.katsuster.ememu.generic;
  * 複数の割り込み発生元から割り込みを受け付け、
  * 他のコアに割り込みを入れます。
  * </p>
- *
- * @author katsuhiro
  */
 public class NormalINTC implements INTSource, INTC {
     private INTDestination intDst = new NullINTDestination();

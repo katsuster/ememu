@@ -2,8 +2,6 @@ package net.katsuster.ememu.generic;
 
 /**
  * 命令。
- *
- * @author katsuhiro
  */
 public abstract class Instruction {
     private int rawInst;

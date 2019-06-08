@@ -7,8 +7,6 @@ package net.katsuster.ememu.generic;
  *   28F256K18:
  *     64K Word (128KB, 1Mbit) Block,
  *     256Blocks (256Mbits)
- *
- * @author katsuhiro
  */
 public class Flush16 extends SlaveCore {
     //データ幅（バイト単位）

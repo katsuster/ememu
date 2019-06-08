@@ -2,8 +2,6 @@ package net.katsuster.ememu.generic;
 
 /**
  * 64 ビットアドレス RAM
- *
- * @author katsuhiro
  */
 abstract public class RAM extends SlaveCore {
     private int size;

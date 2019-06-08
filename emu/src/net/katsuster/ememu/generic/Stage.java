@@ -5,8 +5,6 @@ package net.katsuster.ememu.generic;
  *
  * ステージは CPU が命令を解釈、実行するため、各々が独立して実行できる工程を指します。
  * 例えばフェッチ、デコード、実行ステージに分けることができます。
- *
- * @author katsuhiro
  */
 public class Stage {
     private CPU core;

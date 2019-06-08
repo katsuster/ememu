@@ -7,8 +7,6 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: ARM Watchdog Module (SP805)
  * ARM DDI0270B
- *
- * @author katsuhiro
  */
 public class Watchdog implements BusSlave {
     private WatchdogSlave slave;

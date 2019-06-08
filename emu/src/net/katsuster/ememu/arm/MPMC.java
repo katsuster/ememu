@@ -7,8 +7,6 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: ARM PrimeCell MultiPort Memory Controller (GX175)
  * ARM DDI0277F
- *
- * @author katsuhiro
  */
 public class MPMC implements BusSlave {
     private MPMCSlave slave;

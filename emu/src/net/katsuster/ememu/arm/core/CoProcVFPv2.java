@@ -5,8 +5,6 @@ package net.katsuster.ememu.arm.core;
  *
  * 参考: ARM アーキテクチャリファレンスマニュアル Second Edition
  * ARM DDI0100DJ
- *
- * @author katsuhiro
  */
 public class CoProcVFPv2 extends CoProc {
     //----------------------------------------------------------------------

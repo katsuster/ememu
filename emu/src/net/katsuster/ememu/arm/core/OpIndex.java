@@ -2,8 +2,6 @@ package net.katsuster.ememu.arm.core;
 
 /**
  * 命令の詳細な種類。
- *
- * @author katsuhiro
  */
 public enum OpIndex {
     INS_ARM_ALUADC,

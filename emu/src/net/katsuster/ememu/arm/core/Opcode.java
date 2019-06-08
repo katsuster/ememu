@@ -4,8 +4,6 @@ import net.katsuster.ememu.generic.*;
 
 /**
  * デコードされた命令。
- *
- * @author katsuhiro
  */
 public class Opcode {
     private Instruction instRaw;

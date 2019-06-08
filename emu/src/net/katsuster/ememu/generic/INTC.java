@@ -21,8 +21,6 @@ package net.katsuster.ememu.generic;
  *                               +-- ...
  *                               `-- INTSource
  * </pre>
- *
- * @author katsuhiro
  */
 public interface INTC extends INTDestination {
     /**

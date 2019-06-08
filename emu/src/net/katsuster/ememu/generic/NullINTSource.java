@@ -7,8 +7,6 @@ package net.katsuster.ememu.generic;
  * CPU に割り込みを発生させるコアが接続されるまでは、
  * このコアが接続されます。
  * </p>
- *
- * @author katsuhiro
  */
 public class NullINTSource implements INTSource {
     private INTDestination intDst = new NullINTDestination();

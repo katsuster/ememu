@@ -7,8 +7,6 @@ package net.katsuster.ememu.generic;
  * 自身のタイミングで動作します。
  * 外部からの停止要求を受け付け、停止する努力をします。
  * </p>
- *
- * @author katsuhiro
  */
 public interface Core extends Runnable {
     /**
