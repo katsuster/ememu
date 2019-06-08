@@ -85,6 +85,11 @@ public class ARMv5 extends CPU {
     }
 
     @Override
+    public void init() {
+        doExceptionReset("Init.");
+    }
+
+    @Override
     public String instructionToString(Instruction inst, String operation, String operand) {
         return String.format("%08x:    %-12s    %-7s %s\n",
                 getRegRaw(15), inst.toHex(), operation, operand);
@@ -215,6 +220,35 @@ public class ARMv5 extends CPU {
     @Override
     public String getRegName(int n) {
         return regfile.getReg(n).getName();
+    }
+
+    /**
+     * 割り込み線にコアを接続します。
+     *
+     * 割り込み線の番号に INTSRC_IRQ を指定すると割り込み線に、
+     * INTSRC_FIQ を指定すると高速割り込み線に接続されます。
+     *
+     * @param n 割り込み線の番号
+     * @param c 割り込みを発生させるコア
+     */
+    @Override
+    public void connectINTSource(int n, INTSource c) {
+        intc.connectINTSource(n, c);
+    }
+
+    /**
+     * 割り込み線からコアを切断します。
+     *
+     * 割り込み線の番号に INTSRC_IRQ を指定すると、
+     * 割り込み線に接続されていたコアが切断され、
+     * INTSRC_FIQ を指定すると、
+     * 高速割り込み線に接続されていたコアが切断されます。
+     *
+     * @param n 割り込み線の番号
+     */
+    @Override
+    public void disconnectINTSource(int n) {
+        intc.disconnectINTSource(n);
     }
 
     /**
@@ -765,33 +799,6 @@ public class ARMv5 extends CPU {
         } else {
             setRegRaw(15, 0x0000001c);
         }
-    }
-
-    /**
-     * 割り込み線にコアを接続します。
-     *
-     * 割り込み線の番号に INTSRC_IRQ を指定すると割り込み線に、
-     * INTSRC_FIQ を指定すると高速割り込み線に接続されます。
-     *
-     * @param n 割り込み線の番号
-     * @param c 割り込みを発生させるコア
-     */
-    public void connectINTSource(int n, INTSource c) {
-        intc.connectINTSource(n, c);
-    }
-
-    /**
-     * 割り込み線からコアを切断します。
-     *
-     * 割り込み線の番号に INTSRC_IRQ を指定すると、
-     * 割り込み線に接続されていたコアが切断され、
-     * INTSRC_FIQ を指定すると、
-     * 高速割り込み線に接続されていたコアが切断されます。
-     *
-     * @param n 割り込み線の番号
-     */
-    public void disconnectINTSource(int n) {
-        intc.disconnectINTSource(n);
     }
 
     /**

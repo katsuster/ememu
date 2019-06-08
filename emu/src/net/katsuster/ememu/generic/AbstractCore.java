@@ -15,6 +15,11 @@ public abstract class AbstractCore extends Thread
     private boolean halted = false;
 
     @Override
+    public void init() {
+
+    }
+
+    @Override
     public boolean shouldHalt() {
         return halted;
     }

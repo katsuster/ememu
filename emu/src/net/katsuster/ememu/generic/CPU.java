@@ -341,6 +341,25 @@ public abstract class CPU extends MasterCore
     public abstract String getRegName(int n);
 
     /**
+     * 割り込み線にコアを接続します。
+     *
+     * 割り込み線の番号の意味はアーキテクチャにより異なります。
+     *
+     * @param n 割り込み線の番号
+     * @param c 割り込みを発生させるコア
+     */
+    public abstract void connectINTSource(int n, INTSource c);
+
+    /**
+     * 割り込み線からコアを切断します。
+     *
+     * 割り込み線の番号の意味はアーキテクチャにより異なります。
+     *
+     * @param n 割り込み線の番号
+     */
+    public abstract void disconnectINTSource(int n);
+
+    /**
      * 現在位置から 1命令だけ実行します。
      */
     public abstract void step();
