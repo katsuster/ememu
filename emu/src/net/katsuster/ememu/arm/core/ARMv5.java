@@ -29,8 +29,8 @@ public class ARMv5 extends CPU {
     private MMUv5 mmu;
     private NormalINTC intc;
 
-    private boolean exceptions[];
-    private String exceptionReasons[];
+    private boolean[] exceptions;
+    private String[] exceptionReasons;
 
     private boolean raisedException;
     private boolean jumped;
