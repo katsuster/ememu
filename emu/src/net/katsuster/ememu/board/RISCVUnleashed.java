@@ -66,6 +66,12 @@ public class RISCVUnleashed extends AbstractBoard {
         //  0x0000_0100 - 0x0000_0fff: Debug
         //  0x0000_1000 - 0x0000_1fff: Mode Select
         bus.addSlaveCore(mode_select, 0x00001000L, 0x00001fffL);
+
+        //reset CPU
+        cpu.setEnabledDisasm(false);
+        cpu.setPrintInstruction(false);
+        cpu.setPrintRegs(false);
+        cpu.init();
     }
 
     @Override

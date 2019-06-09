@@ -23,6 +23,9 @@ public class RV64RegFile implements Reg64File {
         };
 
         regs_usr = new Reg64[RISCV_REGFILE_SIZE];
+        for (int i = 0; i < RISCV_REGFILE_SIZE; i++) {
+            regs_usr[i] = new Reg64(name_usr[i], 0);
+        }
 
         regs = regs_usr;
     }

@@ -12,6 +12,7 @@ public class RV64 extends CPU64 {
     @Override
     public void init() {
         //doExceptionReset("Init.");
+        setPC(0x1004);
     }
 
     @Override
@@ -47,37 +48,37 @@ public class RV64 extends CPU64 {
 
     @Override
     public long getPC() {
-        return 0;
+        return getReg(32);
     }
 
     @Override
     public void setPC(long val) {
-
+        setReg(32, val);
     }
 
     @Override
     public void jumpRel(long val) {
-
+        setPC(getPC() + val);
     }
 
     @Override
     public long getReg(int n) {
-        return 0;
+        return getRegRaw(n);
     }
 
     @Override
     public void setReg(int n, long val) {
-
+        setRegRaw(n, val);
     }
 
     @Override
     public long getRegRaw(int n) {
-        return 0;
+        return regfile.getReg(n).getValue();
     }
 
     @Override
     public void setRegRaw(int n, long val) {
-
+        regfile.getReg(n).setValue(val);
     }
 
     /**
@@ -87,12 +88,21 @@ public class RV64 extends CPU64 {
      */
     public Instruction fetch() {
         long vaddr, paddr;
-        int v;
+        short v16;
 
         //現在の PC の指すアドレスから命令を取得します
         vaddr = getRegRaw(32);
 
         paddr = vaddr;
+
+        if (!tryRead(paddr, 2)) {
+            //raiseException(EXCEPT_ABT_INST,
+            //        String.format("exec [%08x]", paddr));
+            return null;
+        }
+        v16 = read16(paddr);
+
+        //int ubw = inst.getField(0, 2);
 
 
         return null;
