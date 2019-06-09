@@ -2,7 +2,7 @@ package net.katsuster.ememu.riscv.core;
 
 import net.katsuster.ememu.generic.*;
 
-public class RV64 extends CPU {
+public class RV64 extends CPU64 {
     private RV64RegFile regfile;
 
     public RV64() {
@@ -26,46 +26,6 @@ public class RV64 extends CPU {
     }
 
     @Override
-    public int getPC() {
-        return 0;
-    }
-
-    @Override
-    public void setPC(int val) {
-
-    }
-
-    @Override
-    public void nextPC(Instruction inst) {
-
-    }
-
-    @Override
-    public void jumpRel(int val) {
-
-    }
-
-    @Override
-    public int getReg(int n) {
-        return 0;
-    }
-
-    @Override
-    public void setReg(int n, int val) {
-
-    }
-
-    @Override
-    public int getRegRaw(int n) {
-        return 0;
-    }
-
-    @Override
-    public void setRegRaw(int n, int val) {
-
-    }
-
-    @Override
     public String getRegName(int n) {
         return null;
     }
@@ -79,12 +39,62 @@ public class RV64 extends CPU {
     public void disconnectINTSource(int n) {
 
     }
+
+    @Override
+    public void nextPC(Instruction inst) {
+
+    }
+
+    @Override
+    public long getPC() {
+        return 0;
+    }
+
+    @Override
+    public void setPC(long val) {
+
+    }
+
+    @Override
+    public void jumpRel(long val) {
+
+    }
+
+    @Override
+    public long getReg(int n) {
+        return 0;
+    }
+
+    @Override
+    public void setReg(int n, long val) {
+
+    }
+
+    @Override
+    public long getRegRaw(int n) {
+        return 0;
+    }
+
+    @Override
+    public void setRegRaw(int n, long val) {
+
+    }
+
     /**
      * 命令を取得します。
      *
      * @return 命令
      */
     public Instruction fetch() {
+        long vaddr, paddr;
+        int v;
+
+        //現在の PC の指すアドレスから命令を取得します
+        vaddr = getRegRaw(32);
+
+        paddr = vaddr;
+
+
         return null;
     }
 
