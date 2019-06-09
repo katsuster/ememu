@@ -7,11 +7,11 @@ import net.katsuster.ememu.generic.*;
 /**
  * ARM エミュレータです。
  */
-public class Emulator extends Thread {
+public class EmulatorARM extends Thread {
     private Board board;
     private LinuxOption opts;
 
-    public Emulator() {
+    public EmulatorARM() {
         board = new ARMVersatile();
         opts = new LinuxOption();
     }
