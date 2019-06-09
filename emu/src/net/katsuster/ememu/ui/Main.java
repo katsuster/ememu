@@ -57,7 +57,7 @@ public class Main {
     }
 
     public static void mainConsole(LinuxOption opts) {
-        Emulator emu = new Emulator();
+        EmulatorARM emu = new EmulatorARM();
 
         emu.setOption(opts);
         emu.getBoard().setUARTInputStream(0, System.in);

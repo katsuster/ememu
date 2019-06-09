@@ -24,7 +24,7 @@ public class MainApplet extends JApplet {
     private StdoutPanel stdoutPanel;
     private LinuxOptionPanel linuxOptPanel;
     private ProxyOptionPanel proxyOptPanel;
-    private Emulator emu;
+    private EmulatorARM emu;
     private VirtualTerminal[] vttyAMA;
 
     public MainApplet() {
@@ -162,7 +162,7 @@ public class MainApplet extends JApplet {
         tabPane.setSelectedIndex(1);
 
         //Run the emulator
-        emu = new Emulator();
+        emu = new EmulatorARM();
         emu.setOption(linuxOptPanel.getOption());
         for (int i = 0; i < vttyAMA.length; i++) {
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());

@@ -2,7 +2,6 @@ package net.katsuster.ememu.ui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import javax.swing.*;
 
 /**
@@ -15,7 +14,7 @@ public class MainWindow extends JFrame {
     private StdoutPanel stdoutPanel;
     private LinuxOptionPanel linuxOptPanel;
     private ProxyOptionPanel proxyOptPanel;
-    private Emulator emu;
+    private EmulatorARM emu;
     private VirtualTerminal[] vttyAMA;
 
     public MainWindow(LinuxOption linuxOpts) {
@@ -96,7 +95,7 @@ public class MainWindow extends JFrame {
         tabPane.setSelectedIndex(1);
 
         //Run the emulator
-        emu = new Emulator();
+        emu = new EmulatorARM();
         emu.setOption(linuxOptPanel.getOption());
         for (int i = 0; i < vttyAMA.length; i++) {
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());
