@@ -22,7 +22,7 @@ public class Main {
         LinuxOption opts = new LinuxOption();
 
         try {
-            opts.setKernelImage(new URI("http://www.katsuster.net/contents/java/ememu/Image-4.1.10"));
+            opts.setKernelImage(new URI("http://www.katsuster.net/contents/java/ememu/Image-4.4.57"));
             opts.setInitrdImage(new URI("http://www.katsuster.net/contents/java/ememu/initramfs.gz"));
             opts.setCommandLine("console=ttyAMA0 mem=64M root=/dev/ram init=/bin/init debug printk.time=1");
         } catch (URISyntaxException e) {
