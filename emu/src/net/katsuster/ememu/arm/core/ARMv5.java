@@ -18,7 +18,7 @@ import net.katsuster.ememu.generic.*;
  * のことらしい。
  * </p>
  */
-public class ARMv5 extends CPU {
+public class ARMv5 extends CPU32 {
     //IRQ, FIQ の 2つの割り込み線を持つ
     public static final int MAX_INTSRCS = 2;
     public static final int INTSRC_IRQ = 0;
@@ -98,6 +98,54 @@ public class ARMv5 extends CPU {
         return regfile.toString();
     }
 
+    @Override
+    public String getRegName(int n) {
+        return regfile.getReg(n).getName();
+    }
+
+    /**
+     * 割り込み線にコアを接続します。
+     *
+     * 割り込み線の番号に INTSRC_IRQ を指定すると割り込み線に、
+     * INTSRC_FIQ を指定すると高速割り込み線に接続されます。
+     *
+     * @param n 割り込み線の番号
+     * @param c 割り込みを発生させるコア
+     */
+    @Override
+    public void connectINTSource(int n, INTSource c) {
+        intc.connectINTSource(n, c);
+    }
+
+    /**
+     * 割り込み線からコアを切断します。
+     *
+     * 割り込み線の番号に INTSRC_IRQ を指定すると、
+     * 割り込み線に接続されていたコアが切断され、
+     * INTSRC_FIQ を指定すると、
+     * 高速割り込み線に接続されていたコアが切断されます。
+     *
+     * @param n 割り込み線の番号
+     */
+    @Override
+    public void disconnectINTSource(int n) {
+        intc.disconnectINTSource(n);
+    }
+
+    /**
+     * PC を次の命令に移します。
+     *
+     * ただし、ブランチ命令の後は PC を変更しません。
+     */
+    @Override
+    public void nextPC(Instruction inst) {
+        if (isJumped()) {
+            setJumped(false);
+            return;
+        }
+        setRegRaw(15, getRegRaw(15) + inst.getLength());
+    }
+
     /**
      * PC（プログラムカウンタ）の値を取得します。
      *
@@ -122,20 +170,6 @@ public class ARMv5 extends CPU {
     @Override
     public void setPC(int val) {
         setReg(15, val);
-    }
-
-    /**
-     * PC を次の命令に移します。
-     *
-     * ただし、ブランチ命令の後は PC を変更しません。
-     */
-    @Override
-    public void nextPC(Instruction inst) {
-        if (isJumped()) {
-            setJumped(false);
-            return;
-        }
-        setRegRaw(15, getRegRaw(15) + inst.getLength());
     }
 
     /**
@@ -213,40 +247,6 @@ public class ARMv5 extends CPU {
     @Override
     public void setRegRaw(int n, int val) {
         regfile.getReg(n).setValue(val);
-    }
-
-    @Override
-    public String getRegName(int n) {
-        return regfile.getReg(n).getName();
-    }
-
-    /**
-     * 割り込み線にコアを接続します。
-     *
-     * 割り込み線の番号に INTSRC_IRQ を指定すると割り込み線に、
-     * INTSRC_FIQ を指定すると高速割り込み線に接続されます。
-     *
-     * @param n 割り込み線の番号
-     * @param c 割り込みを発生させるコア
-     */
-    @Override
-    public void connectINTSource(int n, INTSource c) {
-        intc.connectINTSource(n, c);
-    }
-
-    /**
-     * 割り込み線からコアを切断します。
-     *
-     * 割り込み線の番号に INTSRC_IRQ を指定すると、
-     * 割り込み線に接続されていたコアが切断され、
-     * INTSRC_FIQ を指定すると、
-     * 高速割り込み線に接続されていたコアが切断されます。
-     *
-     * @param n 割り込み線の番号
-     */
-    @Override
-    public void disconnectINTSource(int n) {
-        intc.disconnectINTSource(n);
     }
 
     /**

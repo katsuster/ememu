@@ -7,14 +7,14 @@ package net.katsuster.ememu.generic;
  * 例えばフェッチ、デコード、実行ステージに分けることができます。
  */
 public class Stage {
-    private CPU core;
+    private CPU32 core;
 
     /**
      * CPU コアのステージを生成します。
      *
      * @param c ステージを使う CPU コア
      */
-    public Stage(CPU c) {
+    public Stage(CPU32 c) {
         core = c;
     }
 
@@ -23,7 +23,7 @@ public class Stage {
      *
      * @return 実行ステージを使う CPU コア
      */
-    public CPU getCore() {
+    public CPU32 getCore() {
         return core;
     }
 

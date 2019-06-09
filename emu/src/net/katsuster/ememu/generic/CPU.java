@@ -254,83 +254,6 @@ public abstract class CPU extends MasterCore
     public abstract String regsToString();
 
     /**
-     * PC（プログラムカウンタ）の値を取得します。
-     *
-     * @return PC の値
-     */
-    public abstract int getPC();
-
-    /**
-     * PC（プログラムカウンタ）の値を設定します。
-     *
-     * @param val 新しい PC の値
-     */
-    public abstract void setPC(int val);
-
-    /**
-     * PC（プログラムカウンタ）を次の命令に移します。
-     *
-     * PC の増分は、現在実行している命令により異なります。
-     *
-     * @param inst 命令
-     */
-    public abstract void nextPC(Instruction inst);
-
-    /**
-     * 指定したアドレス分だけ相対ジャンプします。
-     *
-     * PC + 相対アドレス を、
-     * 新たな PC（プログラムカウンタ）として設定します。
-     *
-     * @param val 次に実行する命令の相対アドレス
-     */
-    public abstract void jumpRel(int val);
-
-    /**
-     * 命令から見えるレジスタ Rn の値を取得します。
-     *
-     * アーキテクチャによっては、
-     * レジスタそのものの値と、命令から見えるレジスタの値は異なる場合があります。
-     *
-     * @param n レジスタ番号
-     * @return レジスタの値
-     */
-    public abstract int getReg(int n);
-
-    /**
-     * 命令から見えるレジスタ Rn の値を設定します。
-     *
-     * アーキテクチャによっては、
-     * レジスタそのものの値と、命令から見えるレジスタの値は異なる場合があります。
-     *
-     * @param n   レジスタ番号
-     * @param val 新しいレジスタの値
-     */
-    public abstract void setReg(int n, int val);
-
-    /**
-     * レジスタ Rn そのものの値を取得します。
-     *
-     * アーキテクチャによっては、
-     * レジスタそのものの値と、命令から見えるレジスタの値は異なる場合があります。
-     *
-     * @param n レジスタ番号
-     * @return レジスタの値
-     */
-    public abstract int getRegRaw(int n);
-
-    /**
-     * レジスタ Rn そのもの値を設定します。
-     *
-     * アーキテクチャによっては、
-     * レジスタそのものの値と、命令から見えるレジスタの値は異なる場合があります。
-     *
-     * @param n   レジスタ番号
-     * @param val 新しいレジスタの値
-     */
-    public abstract void setRegRaw(int n, int val);
-
-    /**
      * レジスタ Rn の名前を取得します。
      *
      * @param n レジスタ番号
@@ -356,6 +279,15 @@ public abstract class CPU extends MasterCore
      * @param n 割り込み線の番号
      */
     public abstract void disconnectINTSource(int n);
+
+    /**
+     * PC（プログラムカウンタ）を次の命令に移します。
+     *
+     * PC の増分は、現在実行している命令により異なります。
+     *
+     * @param inst 命令
+     */
+    public abstract void nextPC(Instruction inst);
 
     /**
      * 現在位置から 1命令だけ実行します。
