@@ -16,7 +16,7 @@ public class RV64 extends CPU64 {
     }
 
     @Override
-    public String instructionToString(Instruction inst, String operation, String operand) {
+    public String instructionToString(Inst32 inst, String operation, String operand) {
         return String.format("%08x:    %-12s    %-7s %s\n",
                 getRegRaw(15), inst.toHex(), operation, operand);
     }
@@ -42,7 +42,7 @@ public class RV64 extends CPU64 {
     }
 
     @Override
-    public void nextPC(Instruction inst) {
+    public void nextPC(Inst32 inst) {
 
     }
 
@@ -86,7 +86,7 @@ public class RV64 extends CPU64 {
      *
      * @return 命令
      */
-    public Instruction fetch() {
+    public Inst32 fetch() {
         long vaddr, paddr;
         short v16;
 
@@ -114,7 +114,7 @@ public class RV64 extends CPU64 {
      * @param instgen 命令
      * @return デコードされた命令
      */
-    public Opcode decode(Instruction instgen) {
+    public Opcode decode(Inst32 instgen) {
         return null;
     }
 
@@ -149,7 +149,7 @@ public class RV64 extends CPU64 {
 
     @Override
     public void step() {
-        Instruction inst;
+        Inst32 inst;
         Opcode decinst;
 
         //要求された例外のうち、優先度の高い例外を 1つだけ処理します

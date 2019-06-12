@@ -205,7 +205,7 @@ public abstract class CPU extends MasterCore
      * @param operation 命令の文字列表記
      * @param operand   オペランドの文字列表記
      */
-    public void printDisasm(Instruction inst, String operation, String operand) {
+    public void printDisasm(Inst32 inst, String operation, String operand) {
         printInstruction(inst, operation, operand);
         printRegs();
     }
@@ -217,7 +217,7 @@ public abstract class CPU extends MasterCore
      * @param operation 命令を表す文字列
      * @param operand   オペランドを表す文字列
      */
-    public void printInstruction(Instruction inst, String operation, String operand) {
+    public void printInstruction(Inst32 inst, String operation, String operand) {
         if (!isPrintInstruction()) {
             return;
         }
@@ -244,7 +244,7 @@ public abstract class CPU extends MasterCore
      * @param operand   オペランドを表す文字列
      * @return 命令を逆アセンブルした文字列
      */
-    public abstract String instructionToString(Instruction inst, String operation, String operand);
+    public abstract String instructionToString(Inst32 inst, String operation, String operand);
 
     /**
      * 現在のレジスタの文字列表記を取得します。
@@ -287,7 +287,7 @@ public abstract class CPU extends MasterCore
      *
      * @param inst 命令
      */
-    public abstract void nextPC(Instruction inst);
+    public abstract void nextPC(Inst32 inst);
 
     /**
      * 現在位置から 1命令だけ実行します。

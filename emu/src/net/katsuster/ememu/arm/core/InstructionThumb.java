@@ -5,7 +5,7 @@ import net.katsuster.ememu.generic.*;
 /**
  * Thumb 命令。
  */
-public class InstructionThumb extends Instruction {
+public class InstructionThumb extends Inst32 {
     /**
      * 指定されたバイナリ値の Thumb 命令を作成します。
      *

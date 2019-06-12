@@ -3,7 +3,7 @@ package net.katsuster.ememu.generic;
 /**
  * 命令。
  */
-public abstract class Instruction {
+public abstract class Inst32 {
     private int rawInst;
     private int lengthInst;
 
@@ -13,7 +13,7 @@ public abstract class Instruction {
      * @param inst 命令のバイナリ値
      * @param len  命令長（バイト単位）
      */
-    public Instruction(int inst, int len) {
+    public Inst32(int inst, int len) {
         this.rawInst = inst;
         this.lengthInst = len;
     }

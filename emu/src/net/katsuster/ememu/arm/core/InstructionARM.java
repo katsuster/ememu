@@ -5,7 +5,7 @@ import net.katsuster.ememu.generic.*;
 /**
  * ARM 命令。
  */
-public class InstructionARM extends Instruction {
+public class InstructionARM extends Inst32 {
     /**
      * 指定されたバイナリ値の ARM 命令を作成します。
      *

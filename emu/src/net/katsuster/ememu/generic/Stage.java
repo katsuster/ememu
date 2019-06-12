@@ -166,7 +166,7 @@ public class Stage {
      * @param operation 命令の文字列表記
      * @param operand   オペランドの文字列表記
      */
-    public void printDisasm(Instruction inst, String operation, String operand) {
+    public void printDisasm(Inst32 inst, String operation, String operand) {
         getCore().printDisasm(inst, operation, operand);
     }
 
@@ -195,7 +195,7 @@ public class Stage {
      *
      * @param inst 命令
      */
-    public void nextPC(Instruction inst) {
+    public void nextPC(Inst32 inst) {
         getCore().nextPC(inst);
     }
 

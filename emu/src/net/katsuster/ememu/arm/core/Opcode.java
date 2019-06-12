@@ -6,7 +6,7 @@ import net.katsuster.ememu.generic.*;
  * デコードされた命令。
  */
 public class Opcode {
-    private Instruction instRaw;
+    private Inst32 instRaw;
     private OpType type;
     private OpIndex index;
 
@@ -17,7 +17,7 @@ public class Opcode {
      * @param optype  命令の種類
      * @param opindex 命令の詳細な種類
      */
-    public Opcode(Instruction inst, OpType optype, OpIndex opindex) {
+    public Opcode(Inst32 inst, OpType optype, OpIndex opindex) {
         instRaw = inst;
         type = optype;
         index = opindex;
@@ -31,7 +31,7 @@ public class Opcode {
      * @param optype  命令の種類
      * @param opindex 命令の詳細な種類
      */
-    public void reuse(Instruction inst, OpType optype, OpIndex opindex) {
+    public void reuse(Inst32 inst, OpType optype, OpIndex opindex) {
         instRaw = inst;
         type = optype;
         index = opindex;
@@ -42,7 +42,7 @@ public class Opcode {
      *
      * @return 命令データ
      */
-    public Instruction getInstruction() {
+    public Inst32 getInstruction() {
         return instRaw;
     }
 

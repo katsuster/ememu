@@ -88,7 +88,7 @@ public class ARMv5 extends CPU32 {
     }
 
     @Override
-    public String instructionToString(Instruction inst, String operation, String operand) {
+    public String instructionToString(Inst32 inst, String operation, String operand) {
         return String.format("%08x:    %-12s    %-7s %s\n",
                 getRegRaw(15), inst.toHex(), operation, operand);
     }
@@ -138,7 +138,7 @@ public class ARMv5 extends CPU32 {
      * ただし、ブランチ命令の後は PC を変更しません。
      */
     @Override
-    public void nextPC(Instruction inst) {
+    public void nextPC(Inst32 inst) {
         if (isJumped()) {
             setJumped(false);
             return;
@@ -313,7 +313,7 @@ public class ARMv5 extends CPU32 {
      *
      * @return 命令
      */
-    public Instruction fetch() {
+    public Inst32 fetch() {
         int v, vaddr, paddr;
 
         //現在の PC の指すアドレスから命令を取得します
@@ -380,7 +380,7 @@ public class ARMv5 extends CPU32 {
      * @param instgen 命令
      * @return デコードされた命令
      */
-    public Opcode decode(Instruction instgen) {
+    public Opcode decode(Inst32 instgen) {
         OpType optype;
         OpIndex opind;
 
@@ -904,7 +904,7 @@ public class ARMv5 extends CPU32 {
 
     @Override
     public void step() {
-        Instruction inst;
+        Inst32 inst;
         Opcode decinst;
 
         //要求された例外のうち、優先度の高い例外を 1つだけ処理します
