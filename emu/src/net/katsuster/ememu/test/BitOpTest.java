@@ -44,6 +44,45 @@ public class BitOpTest {
     }
 
     @org.junit.Test
+    public void testGetField64() throws Exception {
+        String msg1 = "BitOp.getField64() failed.";
+
+        //0bit
+        Assert.assertEquals(msg1, 0x0, BitOp.getField64(0xffffffffffffffffL, 0, 0));
+        Assert.assertEquals(msg1, 0x0, BitOp.getField64(0xffffffffffffffffL, 64, 0));
+        Assert.assertEquals(msg1, 0x0, BitOp.getField64(0xffffffffffffffffL, 1, 0));
+        Assert.assertEquals(msg1, 0x0, BitOp.getField64(0xffffffffffffffffL, 65, 0));
+        Assert.assertEquals(msg1, 0x0, BitOp.getField64(0xffffffffffffffffL, 63, 0));
+        Assert.assertEquals(msg1, 0x0, BitOp.getField64(0xffffffffffffffffL, 64, 0));
+
+        //1bit
+        Assert.assertEquals(msg1, 0x0, BitOp.getField64(0xfffffffffffffff0L, 0, 1));
+        Assert.assertEquals(msg1, 0x1, BitOp.getField64(0xffffffffffffffffL, 64, 1));
+        Assert.assertEquals(msg1, 0x0, BitOp.getField64(0xfffffffffffffff0L, 1, 1));
+        Assert.assertEquals(msg1, 0x1, BitOp.getField64(0xffffffffffffffffL, 65, 1));
+        Assert.assertEquals(msg1, 0x0, BitOp.getField64(0x7fffffffffffffffL, 63, 1));
+        Assert.assertEquals(msg1, 0x1, BitOp.getField64(0xffffffffffffffffL, 64, 1));
+
+        //5bits
+        Assert.assertEquals(msg1, 0x10, BitOp.getField64(0x0000000000002110L, 0, 5));
+        Assert.assertEquals(msg1, 0x00, BitOp.getField64(0x0000000000004300L, 0, 5));
+        Assert.assertEquals(msg1, 0x13, BitOp.getField64(0x8000000000de4d00L, 10, 5));
+        Assert.assertEquals(msg1, 0x02, BitOp.getField64(0x70000000008b4300L, 18, 5));
+        Assert.assertEquals(msg1, 0x02, BitOp.getField64(0x70000000008b4300L, 82, 5));
+        Assert.assertEquals(msg1, 0x11, BitOp.getField64(0x44be650000000000L, 58, 5));
+        Assert.assertEquals(msg1, 0x00, BitOp.getField64(0x07ad870000000000L, 59, 5));
+        Assert.assertEquals(msg1, 0x04, BitOp.getField64(0x87ad870000000000L, 61, 5));
+
+        //64bit
+        Assert.assertEquals(msg1, 0xfffffffffffffff0L, BitOp.getField64(0xfffffffffffffff0L, 0, 64));
+        Assert.assertEquals(msg1, 0xffffffffffffffffL, BitOp.getField64(0xffffffffffffffffL, 64, 64));
+        Assert.assertEquals(msg1, 0x7ffffffffffffff8L, BitOp.getField64(0xfffffffffffffff0L, 1, 64));
+        Assert.assertEquals(msg1, 0x7fffffffffffffffL, BitOp.getField64(0xffffffffffffffffL, 65, 64));
+        Assert.assertEquals(msg1, 0x0000000000000000L, BitOp.getField64(0x7fffffffffffffffL, 63, 64));
+        Assert.assertEquals(msg1, 0x0000000000000001L, BitOp.getField64(0xffffffffffffffffL, 63, 64));
+    }
+
+    @org.junit.Test
     public void testSetField32() throws Exception {
         String msg1 = "BitOp.setField32() failed.";
 
@@ -79,6 +118,44 @@ public class BitOpTest {
         Assert.assertEquals(msg1, 0x00000001, BitOp.setField32(0x00005600, 0, 32, 0x00000001));
         Assert.assertEquals(msg1, 0x80000001, BitOp.setField32(0x00340000, 0, 32, 0x80000001));
         Assert.assertEquals(msg1, 0xff4321ff, BitOp.setField32(0x12000000, 0, 32, 0xff4321ff));
+    }
+
+    @org.junit.Test
+    public void testSetField64() throws Exception {
+        String msg1 = "BitOp.setField64() failed.";
+
+        //0bit
+        Assert.assertEquals(msg1, 0x0000000000000000L, BitOp.setField64(0x0000000000000000L, 0, 0, 0x0000));
+        Assert.assertEquals(msg1, 0x0000000000000000L, BitOp.setField64(0x0000000000000000L, 0, 0, 0xffff));
+        Assert.assertEquals(msg1, 0xffffffffffffffffL, BitOp.setField64(0xffffffffffffffffL, 0, 0, 0x0000));
+        Assert.assertEquals(msg1, 0xffffffffffffffffL, BitOp.setField64(0xffffffffffffffffL, 0, 0, 0xffff));
+        Assert.assertEquals(msg1, 0x0000000000000000L, BitOp.setField64(0x0000000000000000L, 8, 0, 0x0000));
+        Assert.assertEquals(msg1, 0x0000000000000000L, BitOp.setField64(0x0000000000000000L, 8, 0, 0xffff));
+        Assert.assertEquals(msg1, 0xffffffffffffffffL, BitOp.setField64(0xffffffffffffffffL, 8, 0, 0x0000));
+        Assert.assertEquals(msg1, 0xffffffffffffffffL, BitOp.setField64(0xffffffffffffffffL, 8, 0, 0xffff));
+
+        //1bit
+        Assert.assertEquals(msg1, 0x8000000000000009L, BitOp.setField64(0x8000000000000008L, 0, 1, 0x1));
+        Assert.assertEquals(msg1, 0x9000000000000008L, BitOp.setField64(0x1000000000000008L, 63, 1, 0x1));
+        Assert.assertEquals(msg1, 0x7000000000008000L, BitOp.setField64(0x7000000000000000L, 15, 1, 0x1));
+        Assert.assertEquals(msg1, 0x7000000000008000L, BitOp.setField64(0x7000000000000000L, 79, 1, 0x1));
+        Assert.assertEquals(msg1, 0x7001000000000000L, BitOp.setField64(0x7000000000000000L, 48, 1, 0x1));
+        Assert.assertEquals(msg1, 0x8000000000000000L, BitOp.setField64(0x8000000000000001L, 0, 1, 0x0));
+        Assert.assertEquals(msg1, 0x0000000000000001L, BitOp.setField64(0x8000000000000001L, 63, 1, 0x0));
+
+        //5bits
+        Assert.assertEquals(msg1, 0x8000000000002110L, BitOp.setField64(0x8000000000002100L, 0, 5, 0x10));
+        Assert.assertEquals(msg1, 0x8000000000004300L, BitOp.setField64(0x8000000000004300L, 0, 5, 0x100));
+        Assert.assertEquals(msg1, 0x80de000000004d00L, BitOp.setField64(0x80de000000002100L, 10, 5, 0xf3));
+        Assert.assertEquals(msg1, 0x70000000008b4300L, BitOp.setField64(0x7000000000cf4300L, 18, 5, 0xe2));
+        Assert.assertEquals(msg1, 0x70000000008b4300L, BitOp.setField64(0x7000000000cf4300L, 82, 5, 0xe2));
+        Assert.assertEquals(msg1, 0x44be650000000000L, BitOp.setField64(0x60be650000000000L, 58, 5, 0xd1));
+        Assert.assertEquals(msg1, 0x07ad870000000000L, BitOp.setField64(0x5fad870000000000L, 59, 5, 0xc0));
+
+        //64bits
+        Assert.assertEquals(msg1, 0x0000000000000001L, BitOp.setField64(0x0000000056000000L, 0, 64, 0x0000000000000001L));
+        Assert.assertEquals(msg1, 0x8000000000000001L, BitOp.setField64(0x0000003400000000L, 0, 64, 0x8000000000000001L));
+        Assert.assertEquals(msg1, 0xffffff4321ffffffL, BitOp.setField64(0x1200000000000000L, 0, 64, 0xffffff4321ffffffL));
     }
 
     @org.junit.Test

@@ -19,6 +19,20 @@ public class BitOp {
     }
 
     /**
+     * 整数値の bit ビット目の値を取得します。
+     *
+     * ビット位置に 64 ビット以上を指定した場合、
+     * 下位 6 ビットが有効となります。
+     *
+     * @param val 整数値
+     * @param bit ビット位置
+     * @return ビットがセットされていれば true、クリアされていれば false
+     */
+    public static boolean getBit64(long val, int bit) {
+        return ((val >> bit) & 0x1) == 1;
+    }
+
+    /**
      * 整数値の bit ビット目の値を設定します。
      *
      * ビット位置に 32 ビット以上を指定した場合、
@@ -31,6 +45,27 @@ public class BitOp {
      */
     public static int setBit32(int val, int bit, boolean nv) {
         int m = 1 << bit;
+
+        if (nv) {
+            return val | m;
+        } else {
+            return val & ~m;
+        }
+    }
+
+    /**
+     * 整数値の bit ビット目の値を設定します。
+     *
+     * ビット位置に 64 ビット以上を指定した場合、
+     * 下位 6 ビットが有効となります。
+     *
+     * @param val 整数値
+     * @param bit ビット位置
+     * @param nv  新しいビットの値、セットするなら true、クリアするなら false
+     * @return val の指定されたビット位置を変更した後の値
+     */
+    public static long setBit64(long val, int bit, boolean nv) {
+        long m = 1 << bit;
 
         if (nv) {
             return val | m;
@@ -70,6 +105,36 @@ public class BitOp {
     }
 
     /**
+     * 整数値の指定された位置にあるビットフィールドの値を取得します。
+     *
+     * ビット位置に 64 ビット以上を指定した場合、
+     * 下位 6 ビットが有効となります。
+     *
+     * ビットフィールドの長さに 64 ビット以上を指定した場合、
+     * 長さは 64 ビットとなります。
+     *
+     * ビット位置とビットフィールドの長さの合計が 64 ビットを超えた位置を参照する場合、
+     * 全てのビットは 0 で埋められます。
+     * すなわち 64 ビットより上位のビットに全て 0 が入っているかのように振舞います。
+     *
+     * @param val 整数値
+     * @param pos ビット位置
+     * @param len ビットフィールドの長さ
+     * @return ビットフィールドの値
+     */
+    public static long getField64(long val, int pos, int len) {
+        long mask;
+
+        if (len >= 64) {
+            mask = 0xffffffffffffffffL;
+        } else {
+            mask = (1 << len) - 1;
+        }
+
+        return (val >>> pos) & mask;
+    }
+
+    /**
      * 整数値の指定された位置にあるビットフィールドの値を設定します。
      *
      * ビット位置に 32 ビット以上を指定した場合、
@@ -89,6 +154,35 @@ public class BitOp {
 
         if (len >= 32) {
             mask = 0xffffffff;
+        } else {
+            mask = (1 << len) - 1;
+        }
+        mask <<= pos;
+        nv <<= pos;
+
+        return (val & ~mask) | (nv & mask);
+    }
+
+    /**
+     * 整数値の指定された位置にあるビットフィールドの値を設定します。
+     *
+     * ビット位置に 64 ビット以上を指定した場合、
+     * 下位 6 ビットが有効となります。
+     *
+     * ビットフィールドの長さに 64 ビット以上を指定した場合、
+     * 長さは 64 ビットとなります。
+     *
+     * @param val 整数値
+     * @param pos ビット位置
+     * @param len ビットフィールドの長さ
+     * @param nv  ビットフィールドに設定する値
+     * @return val の指定されたビットフィールドを変更した後の値
+     */
+    public static long setField64(long val, int pos, int len, long nv) {
+        long mask;
+
+        if (len >= 64) {
+            mask = 0xffffffffffffffffL;
         } else {
             mask = (1 << len) - 1;
         }
