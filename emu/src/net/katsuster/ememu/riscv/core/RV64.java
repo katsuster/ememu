@@ -43,7 +43,7 @@ public class RV64 extends CPU64 {
 
     @Override
     public void nextPC(Inst32 inst) {
-
+        setPCRaw(getPCRaw() + inst.getLength());
     }
 
     @Override
