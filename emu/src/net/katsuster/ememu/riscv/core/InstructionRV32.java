@@ -55,6 +55,75 @@ public class InstructionRV32 extends Inst32 {
         return getField(2, 5);
     }
 
+    //funct3
+    public static final int FUNC_BRANCH_BEQ = 0;
+    public static final int FUNC_BRANCH_BNE = 1;
+    public static final int FUNC_BRANCH_BLT = 4;
+    public static final int FUNC_BRANCH_BGE = 5;
+    public static final int FUNC_BRANCH_BLTU = 6;
+    public static final int FUNC_BRANCH_BGEU = 7;
+
+    public static final int FUNC_LOAD_LB = 0;
+    public static final int FUNC_LOAD_LH = 1;
+    public static final int FUNC_LOAD_LW = 2;
+    public static final int FUNC_LOAD_LBU = 4;
+    public static final int FUNC_LOAD_LHU = 5;
+
+    /**
+     * RV32 命令の funct3 フィールド（ビット [14:12]）を取得します。
+     *
+     * @return funct3 フィールド
+     */
+    public int getFunct3() {
+        return getField(12, 3);
+    }
+
+    /**
+     * RV32 命令の rd フィールド（ビット [11:7]）を取得します。
+     *
+     * @return rd フィールド
+     */
+    public int getRd() {
+        return getField(7, 5);
+    }
+
+    /**
+     * RV32 命令の rs1 フィールド（ビット [19:15]）を取得します。
+     *
+     * @return rs1 フィールド
+     */
+    public int getRs1() {
+        return getField(15, 5);
+    }
+
+    /**
+     * RV32 命令の rs2 フィールド（ビット [24:20]）を取得します。
+     *
+     * @return rs2 フィールド
+     */
+    public int getRs2() {
+        return getField(20, 5);
+    }
+
+    /**
+     * RV32 命令 I-type の imm フィールド（ビット [31:20]）を取得します。
+     *
+     * @return imm[11:0] フィールド
+     */
+    public int getImm12I() {
+        return getField(20, 12);
+    }
+
+    /**
+     * RV32 命令 U-type の imm フィールド（ビット [31:12]）を取得します。
+     * 12bit 左シフトした値を返します。
+     *
+     * @return imm フィールド
+     */
+    public int getImm20U() {
+        return getField(12, 20) << 12;
+    }
+
     /**
      * 命令の 16進数表記を取得します。
      *
