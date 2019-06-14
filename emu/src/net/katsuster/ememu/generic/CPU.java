@@ -9,12 +9,14 @@ public abstract class CPU extends MasterCore
     private boolean fPrintInstruction;
     private boolean fPrintRegs;
     private boolean raisedInterrupt;
+    private boolean jumped;
 
     public CPU() {
         fEnabledDisasm = false;
         fPrintInstruction = false;
         fPrintRegs = false;
         raisedInterrupt = false;
+        jumped = false;
     }
 
     public boolean isEnabledDisasm() {
@@ -279,6 +281,24 @@ public abstract class CPU extends MasterCore
      * @param n 割り込み線の番号
      */
     public abstract void disconnectINTSource(int n);
+
+    /**
+     * ジャンプが行われたかどうかを取得します。
+     *
+     * @return ジャンプが行われたならば true、そうでなければ false
+     */
+    public boolean isJumped() {
+        return jumped;
+    }
+
+    /**
+     * ジャンプが行われたかどうかを設定します。
+     *
+     * @param b ジャンプが行われたならば true、そうでなければ false
+     */
+    public void setJumped(boolean b) {
+        jumped = b;
+    }
 
     /**
      * PC（プログラムカウンタ）を次の命令に移します。

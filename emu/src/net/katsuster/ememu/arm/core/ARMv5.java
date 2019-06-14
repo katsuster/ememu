@@ -33,7 +33,6 @@ public class ARMv5 extends CPU32 {
     private String[] exceptionReasons;
 
     private boolean raisedException;
-    private boolean jumped;
     private boolean highVector;
 
     private InstructionARM instA32;
@@ -68,7 +67,6 @@ public class ARMv5 extends CPU32 {
         exceptionReasons = new String[7];
 
         raisedException = false;
-        jumped = false;
         highVector = false;
 
         instA32 = new InstructionARM(0);
@@ -886,24 +884,6 @@ public class ARMv5 extends CPU32 {
      */
     public void setRaisedException(boolean m) {
         raisedException = m;
-    }
-
-    /**
-     * ジャンプが行われたかどうかを取得します。
-     *
-     * @return ジャンプが行われたならば true、そうでなければ false
-     */
-    public boolean isJumped() {
-        return jumped;
-    }
-
-    /**
-     * ジャンプが行われたかどうかを設定します。
-     *
-     * @param b ジャンプが行われたならば true、そうでなければ false
-     */
-    public void setJumped(boolean b) {
-        jumped = b;
     }
 
     /**
