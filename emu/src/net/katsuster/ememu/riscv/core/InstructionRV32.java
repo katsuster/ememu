@@ -56,6 +56,8 @@ public class InstructionRV32 extends Inst32 {
     }
 
     //funct3
+    public static final int FUNC_JALR_JALR = 0;
+
     public static final int FUNC_BRANCH_BEQ = 0;
     public static final int FUNC_BRANCH_BNE = 1;
     public static final int FUNC_BRANCH_BLT = 4;
@@ -68,6 +70,24 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_LOAD_LW = 2;
     public static final int FUNC_LOAD_LBU = 4;
     public static final int FUNC_LOAD_LHU = 5;
+
+    public static final int FUNC_OP_IMM_ADDI = 0;
+    public static final int FUNC_OP_IMM_SLTI = 2;
+    public static final int FUNC_OP_IMM_SLTIU = 3;
+    public static final int FUNC_OP_IMM_XORI = 4;
+    public static final int FUNC_OP_IMM_ORI = 6;
+    public static final int FUNC_OP_IMM_ANDI = 7;
+    public static final int FUNC_OP_IMM_SLI = 1;
+    public static final int FUNC_OP_IMM_SRI = 5;
+
+    public static final int FUNC_OP_ADDSUB = 0;
+    public static final int FUNC_OP_SLL = 1;
+    public static final int FUNC_OP_SLT = 2;
+    public static final int FUNC_OP_SLTU = 3;
+    public static final int FUNC_OP_XOR = 4;
+    public static final int FUNC_OP_SR = 5;
+    public static final int FUNC_OP_OR = 6;
+    public static final int FUNC_OP_AND = 7;
 
     /**
      * RV32 命令の funct3 フィールド（ビット [14:12]）を取得します。
@@ -112,6 +132,28 @@ public class InstructionRV32 extends Inst32 {
      */
     public int getImm12I() {
         return getField(20, 12);
+    }
+
+    /**
+     * RV32 命令 I-type の imm フィールドの上位 7ビット（ビット [31:25]）を取得します。
+     *
+     * RV32I の ADD, SLLI 命令などに使われます。
+     *
+     * @return imm[11:0] フィールドの上位 7ビット
+     */
+    public int getImm7I() {
+        return getField(25, 7);
+    }
+
+    /**
+     * RV64 命令 I-type の imm フィールドの上位 6ビット（ビット [31:26]）を取得します。
+     *
+     * RV64I の ADD, SLLI 命令などに使われます。
+     *
+     * @return imm[11:0] フィールドの上位 6ビット
+     */
+    public int getImm6I() {
+        return getField(26, 6);
     }
 
     /**

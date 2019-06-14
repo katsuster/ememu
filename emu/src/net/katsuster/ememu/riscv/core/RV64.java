@@ -60,6 +60,10 @@ public class RV64 extends CPU64 {
 
     @Override
     public void nextPC(Inst32 inst) {
+        if (isJumped()) {
+            setJumped(false);
+            return;
+        }
         setPCRaw(getPCRaw() + inst.getLength());
     }
 
@@ -70,6 +74,7 @@ public class RV64 extends CPU64 {
 
     @Override
     public void setPC(long val) {
+        setJumped(true);
         setReg(32, val);
     }
 
@@ -106,6 +111,15 @@ public class RV64 extends CPU64 {
     @Override
     public void setRegRaw(int n, long val) {
         regfile.getReg(n).setValue(val);
+    }
+
+    /**
+     * RISC-V アーキテクチャのビット数を返します。
+     *
+     * @return RV32 なら 32、RV64 なら 64
+     */
+    public int getRVBits() {
+        return 64;
     }
 
     /**
@@ -214,6 +228,7 @@ public class RV64 extends CPU64 {
         ////////////////////
         setPrintInstruction(true);
         setEnabledDisasm(true);
+        setPrintRegs(true);
 
         //要求された例外のうち、優先度の高い例外を 1つだけ処理します
         //doImportantException();

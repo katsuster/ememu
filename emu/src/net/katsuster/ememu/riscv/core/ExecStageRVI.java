@@ -23,6 +23,28 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * JALR () 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeJalr(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        long off = BitOp.signExt64(inst.getImm12I(), 12);
+
+        if (!exec) {
+            printDisasm(inst, "jalr",
+                    String.format("%s, %d(%s)", getRegName(rd),
+                            off, getRegName(rs1)));
+            return;
+        }
+
+        setReg(rd, getPC() + 4);
+        setPC((getReg(rs1) + off) & ~0x1L);
+    }
+
+    /**
      * AUIPC (add upper immediate to pc) 命令。
      *
      * @param inst 32bit 命令
@@ -82,6 +104,49 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * SLLI (logical left shift) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSlli(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int shamt = inst.getField(20, 5);
+        int imm6 = inst.getImm6I();
+
+        if (!exec) {
+            printDisasm(inst, "slli",
+                    String.format("%s, %s, %d", getRegName(rd),
+                            getRegName(rs1), shamt));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) << shamt);
+    }
+
+    /**
+     * ADD 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAdd(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+
+        if (!exec) {
+            printDisasm(inst, "add",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rs1), getRegName(rs2)));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) + getReg(rs2));
+    }
+
+    /**
      * 32bit 命令を実行します。
      *
      * @param decinst デコードされた命令
@@ -91,11 +156,21 @@ public class ExecStageRVI extends Stage64 {
         InstructionRV32 inst = (InstructionRV32) decinst.getInstruction();
 
         switch (decinst.getIndex()) {
+        case INS_RV32I_JALR:
+            executeJalr(inst, exec);
+            break;
         case INS_RV32I_AUIPC:
             executeAuipc(inst, exec);
             break;
         case INS_RV32I_LW:
             executeLw(inst, exec);
+            break;
+        case INS_RV32I_SLLI:
+        case INS_RV64I_SLLI:
+            executeSlli(inst, exec);
+            break;
+        case INS_RV32I_ADD:
+            executeAdd(inst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown RV32I instruction " +
