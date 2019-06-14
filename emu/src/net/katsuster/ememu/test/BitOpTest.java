@@ -167,6 +167,31 @@ public class BitOpTest {
     }
 
     @org.junit.Test
+    public void testSignExt32() throws Exception {
+        String msg1 = "BitOp.signExt32() failed.";
+
+        Assert.assertEquals(msg1, 0, BitOp.signExt32(0x1, -1));
+        Assert.assertEquals(msg1, 0, BitOp.signExt32(0x1, 0));
+
+        Assert.assertEquals(msg1, -2, BitOp.signExt32(0xe, 34));
+        Assert.assertEquals(msg1, 0, BitOp.signExt32(0xe, 33));
+        Assert.assertEquals(msg1, -2, BitOp.signExt32(0xfffffffe, 32));
+        Assert.assertEquals(msg1, -2, BitOp.signExt32(0x7ffffffe, 31));
+
+        Assert.assertEquals(msg1, -1, BitOp.signExt32(0x1, 1));
+        Assert.assertEquals(msg1, 1, BitOp.signExt32(0x1, 2));
+        Assert.assertEquals(msg1, -3, BitOp.signExt32(0x5, 3));
+        Assert.assertEquals(msg1, 5, BitOp.signExt32(0x5, 4));
+
+        Assert.assertEquals(msg1, -16, BitOp.signExt32(0xff0, 12));
+        Assert.assertEquals(msg1, -57360, BitOp.signExt32(0xff1ff0, 24));
+
+        Assert.assertEquals(msg1, -16L, BitOp.signExt32(0xbffffff0, 30));
+        Assert.assertEquals(msg1, 0x3ffffff0, BitOp.signExt32(0xbffffff0, 31));
+        Assert.assertEquals(msg1, -1073741840, BitOp.signExt32(0xbffffff0, 32));
+    }
+
+    @org.junit.Test
     public void testSignExt64() throws Exception {
         String msg1 = "BitOp.signExt64() failed.";
 

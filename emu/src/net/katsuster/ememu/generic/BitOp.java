@@ -212,6 +212,31 @@ public class BitOp {
      * 符号拡張を行います。
      *
      * @param v 任意の値
+     * @param n 値のビット数、32 を指定すると v を返します。
+     *          33 以上を指定すると 32 で割った余りを使います。
+     * @return v を符号拡張した値
+     */
+    public static long signExt32(int v, int n) {
+        int sb, mb;
+
+        if (n <= 0) {
+            return 0;
+        }
+
+        sb = 1 << (n - 1);
+        mb = (-1 << (n - 1)) << 1;
+        v &= ~mb;
+        if ((v & sb) != 0) {
+            v = mb + v;
+        }
+
+        return v;
+    }
+
+    /**
+     * 符号拡張を行います。
+     *
+     * @param v 任意の値
      * @param n 値のビット数、64 を指定すると v を返します。
      *          65 以上を指定すると 64 で割った余りを使います。
      * @return v を符号拡張した値
