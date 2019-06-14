@@ -4,22 +4,12 @@ import net.katsuster.ememu.generic.*;
 
 public class DecodeStage extends Stage64 {
     /**
-     * RISC-V 64 コア c の実行ステージを生成します。
+     * RISC-V I コア c の実行ステージを生成します。
      *
-     * @param c 実行ステージの持ち主となる RISC-V 64 コア
+     * @param c 実行ステージの持ち主となる RISC-V I コア
      */
     public DecodeStage(RV64 c) {
         super(c);
-    }
-
-    /**
-     * 実行ステージの持ち主となる CPU コアを取得します。
-     *
-     * @return 実行ステージの持ち主となる CPU コア
-     */
-    @Override
-    public RV64 getCore() {
-        return (RV64)super.getCore();
     }
 
     /**

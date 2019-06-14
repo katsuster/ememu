@@ -2,14 +2,19 @@ package net.katsuster.ememu.riscv.core;
 
 import net.katsuster.ememu.generic.*;
 
+/**
+ * RISC-V 64bit
+ *
+ * RISC-V User-Level ISA V2.2
+ */
 public class RV64 extends CPU64 {
     private RV64RegFile regfile;
 
     private InstructionRV16 instRV16;
     private InstructionRV32 instRV32;
     private Opcode decinstAll;
-    private DecodeStage rv32Dec;
-    private ExecStage rv32Exe;
+    private DecodeStage rviDec;
+    private ExecStage rviExe;
 
     public RV64() {
         regfile = new RV64RegFile();
@@ -17,8 +22,8 @@ public class RV64 extends CPU64 {
         instRV16 = new InstructionRV16(0);
         instRV32 = new InstructionRV32(0);
         decinstAll = new Opcode(instRV32, OpType.INS_TYPE_UNKNOWN, OpIndex.INS_UNKNOWN);
-        rv32Dec = new DecodeStage(this);
-        rv32Exe = new ExecStage(this);
+        rviDec = new DecodeStage(this);
+        rviExe = new ExecStage(this);
     }
 
     @Override
@@ -155,9 +160,9 @@ public class RV64 extends CPU64 {
         OpType optype;
         OpIndex opind;
 
-        //RV32I 命令
-        optype = OpType.INS_TYPE_RV32I;
-        opind = rv32Dec.decode(inst);
+        //RVI 命令
+        optype = OpType.INS_TYPE_RVI;
+        opind = rviDec.decode(inst);
 
         decinstAll.reuse(instgen, optype, opind);
 
@@ -191,8 +196,8 @@ public class RV64 extends CPU64 {
      */
     public void executeInst(Opcode decinst, boolean exec) {
         switch (decinst.getType()) {
-        case INS_TYPE_RV32I:
-            rv32Exe.execute(decinst, exec);
+        case INS_TYPE_RVI:
+            rviExe.execute(decinst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown instruction type " +
