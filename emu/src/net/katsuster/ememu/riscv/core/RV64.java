@@ -18,17 +18,17 @@ public class RV64 extends CPU64 {
     @Override
     public String instructionToString(Inst32 inst, String operation, String operand) {
         return String.format("%08x:    %-12s    %-7s %s\n",
-                getRegRaw(15), inst.toHex(), operation, operand);
+                getPCRaw(), inst.toHex(), operation, operand);
     }
 
     @Override
     public String regsToString() {
-        return null;
+        return regfile.toString();
     }
 
     @Override
     public String getRegName(int n) {
-        return null;
+        return regfile.getReg(n).getName();
     }
 
     @Override
