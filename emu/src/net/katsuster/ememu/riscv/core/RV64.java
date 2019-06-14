@@ -5,8 +5,20 @@ import net.katsuster.ememu.generic.*;
 public class RV64 extends CPU64 {
     private RV64RegFile regfile;
 
+    private InstructionRV16 instRV16;
+    private InstructionRV32 instRV32;
+    private Opcode decinstAll;
+    private DecodeStage rv32Dec;
+    private ExecStage rv32Exe;
+
     public RV64() {
         regfile = new RV64RegFile();
+
+        instRV16 = new InstructionRV16(0);
+        instRV32 = new InstructionRV32(0);
+        decinstAll = new Opcode(instRV32, OpType.INS_TYPE_UNKNOWN, OpIndex.INS_UNKNOWN);
+        rv32Dec = new DecodeStage(this);
+        rv32Exe = new ExecStage(this);
     }
 
     @Override
@@ -99,6 +111,7 @@ public class RV64 extends CPU64 {
     public Inst32 fetch() {
         long vaddr, paddr;
         short v16;
+        int v32;
 
         //現在の PC の指すアドレスから命令を取得します
         vaddr = getRegRaw(32);
@@ -112,10 +125,23 @@ public class RV64 extends CPU64 {
         }
         v16 = read16(paddr);
 
-        //int ubw = inst.getField(0, 2);
+        int aa = BitOp.getField32(v16, 0, 2);
+        if (aa != 3) {
+            //16bit
+            instRV16.reuse(v16, 2);
+            return instRV16;
+        }
 
+        int bbb = BitOp.getField32(v16, 2, 3);
+        if (bbb != 7) {
+            //32bit
+            v32 = read32(paddr);
+            instRV32.reuse(v32, 4);
+            return instRV32;
+        }
 
-        return null;
+        //TODO: Over 32bit is not support
+        throw new IllegalArgumentException("Not support over 32bit length instructions");
     }
 
     /**
@@ -125,7 +151,17 @@ public class RV64 extends CPU64 {
      * @return デコードされた命令
      */
     public Opcode decode(Inst32 instgen) {
-        return null;
+        InstructionRV32 inst = (InstructionRV32) instgen;
+        OpType optype;
+        OpIndex opind;
+
+        //RV32I 命令
+        optype = OpType.INS_TYPE_RV32I;
+        opind = rv32Dec.decode(inst);
+
+        decinstAll.reuse(instgen, optype, opind);
+
+        return decinstAll;
     }
 
     /**
@@ -154,6 +190,14 @@ public class RV64 extends CPU64 {
      *             デコード、逆アセンブルのみなら false
      */
     public void executeInst(Opcode decinst, boolean exec) {
+        switch (decinst.getType()) {
+        case INS_TYPE_RV32I:
+            rv32Exe.execute(decinst, exec);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown instruction type " +
+                    decinst.getType());
+        }
 
     }
 
@@ -161,6 +205,10 @@ public class RV64 extends CPU64 {
     public void step() {
         Inst32 inst;
         Opcode decinst;
+
+        ////////////////////
+        setPrintInstruction(true);
+        setEnabledDisasm(true);
 
         //要求された例外のうち、優先度の高い例外を 1つだけ処理します
         //doImportantException();
