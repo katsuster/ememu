@@ -13,8 +13,8 @@ public class RV64 extends CPU64 {
     private InstructionRV16 instRV16;
     private InstructionRV32 instRV32;
     private Opcode decinstAll;
-    private DecodeStage rviDec;
-    private ExecStage rviExe;
+    private DecodeStageRVI rviDec;
+    private ExecStageRVI rviExe;
 
     public RV64() {
         regfile = new RV64RegFile();
@@ -22,8 +22,8 @@ public class RV64 extends CPU64 {
         instRV16 = new InstructionRV16(0);
         instRV32 = new InstructionRV32(0);
         decinstAll = new Opcode(instRV32, OpType.INS_TYPE_UNKNOWN, OpIndex.INS_UNKNOWN);
-        rviDec = new DecodeStage(this);
-        rviExe = new ExecStage(this);
+        rviDec = new DecodeStageRVI(this);
+        rviExe = new ExecStageRVI(this);
     }
 
     @Override

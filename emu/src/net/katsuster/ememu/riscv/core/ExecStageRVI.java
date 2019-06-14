@@ -2,13 +2,13 @@ package net.katsuster.ememu.riscv.core;
 
 import net.katsuster.ememu.generic.*;
 
-public class ExecStage extends Stage64 {
+public class ExecStageRVI extends Stage64 {
     /**
      * RISC-V 64 コア c の実行ステージを生成します。
      *
      * @param c 実行ステージの持ち主となる RISC-V 64 コア
      */
-    public ExecStage(RV64 c) {
+    public ExecStageRVI(RV64 c) {
         super(c);
     }
 

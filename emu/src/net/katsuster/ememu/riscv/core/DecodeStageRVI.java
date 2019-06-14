@@ -2,13 +2,13 @@ package net.katsuster.ememu.riscv.core;
 
 import net.katsuster.ememu.generic.*;
 
-public class DecodeStage extends Stage64 {
+public class DecodeStageRVI extends Stage64 {
     /**
      * RISC-V I コア c の実行ステージを生成します。
      *
      * @param c 実行ステージの持ち主となる RISC-V I コア
      */
-    public DecodeStage(RV64 c) {
+    public DecodeStageRVI(RV64 c) {
         super(c);
     }
 
