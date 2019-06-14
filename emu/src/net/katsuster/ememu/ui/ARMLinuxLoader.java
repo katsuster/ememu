@@ -24,7 +24,9 @@ public class ARMLinuxLoader {
     public static int loadURIResource(URI uri, CPU cpu, int addr) {
         int i;
 
-        System.out.println("loadURL: " + uri.toString());
+        System.out.printf("loadURL: %s\n" +
+                        "  addr : 0x%08x\n",
+                uri.toString(), addr);
 
         try {
             DataInputStream s = new DataInputStream(
