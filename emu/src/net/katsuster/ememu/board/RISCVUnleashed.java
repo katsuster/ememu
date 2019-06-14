@@ -57,6 +57,7 @@ public class RISCVUnleashed extends AbstractBoard {
         bus = new Bus();
 
         RAM mode_select = new RAM32(4 * 1024);
+        RAM mask_rom = new RAM32(8 * 1024);
         cl0_ddr = new RAM32(64 * 1024 * 1024);
 
         //Master core
@@ -65,7 +66,9 @@ public class RISCVUnleashed extends AbstractBoard {
         //Memory map of Unleashed
         //  0x0000_0100 - 0x0000_0fff: Debug
         //  0x0000_1000 - 0x0000_1fff: Mode Select
+        //  0x0001_0000 - 0x0001_7fff: Mask ROM
         bus.addSlaveCore(mode_select, 0x00001000L, 0x00001fffL);
+        bus.addSlaveCore(mask_rom, 0x00010000L, 0x00017fffL);
 
         //reset CPU
         cpu.setEnabledDisasm(false);

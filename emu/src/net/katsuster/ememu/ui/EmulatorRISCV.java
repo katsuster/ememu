@@ -45,7 +45,7 @@ public class EmulatorRISCV extends Thread {
 
     @Override
     public void run() {
-        String dtree, kimage, initrd, cmdline;
+        String rom0, rom1;
         RV64 cpu;
         Bus bus;
 
@@ -55,12 +55,11 @@ public class EmulatorRISCV extends Thread {
         cpu = (RV64)board.getMainCPU();
         bus = board.getMainBus();
 
-        dtree = opts.getDeviceTreeImage().toString();
-        kimage = "file:///home/katsuhiro/share/ememu/unleashed/rom0.bin";//opts.getKernelImage().toString();
-        initrd = opts.getInitrdImage().toString();
-        cmdline = opts.getCommandLine();
+        rom0 = "file:///home/katsuhiro/share/ememu/unleashed/rom0.bin";
+        rom1 = "file:///home/katsuhiro/share/ememu/unleashed/rom1.bin";
 
-        BinaryLoader.loadFromURI(bus, kimage, 0x1000);
+        BinaryLoader.loadFromURI(bus, rom0, 0x1000);
+        BinaryLoader.loadFromURI(bus, rom1, 0x10000);
 
         board.start();
     }
