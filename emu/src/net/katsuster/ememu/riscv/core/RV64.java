@@ -57,6 +57,16 @@ public class RV64 extends CPU64 {
     }
 
     @Override
+    public long getPCRaw() {
+        return getRegRaw(32);
+    }
+
+    @Override
+    public void setPCRaw(long val) {
+        setRegRaw(32, val);
+    }
+
+    @Override
     public void jumpRel(long val) {
         setPC(getPC() + val);
     }

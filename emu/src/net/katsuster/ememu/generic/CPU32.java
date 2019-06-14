@@ -24,6 +24,26 @@ public abstract class CPU32 extends CPU
     public abstract void setPC(int val);
 
     /**
+     * PC（プログラムカウンタ）そのものの値を取得します。
+     *
+     * アーキテクチャによっては、
+     * レジスタそのものの値と、命令から見えるレジスタの値は異なる場合があります。
+     *
+     * @return PC の値
+     */
+    public abstract int getPCRaw();
+
+    /**
+     * PC（プログラムカウンタ）そのものの値を設定します。
+     *
+     * アーキテクチャによっては、
+     * レジスタそのものの値と、命令から見えるレジスタの値は異なる場合があります。
+     *
+     * @param val 新しい PC の値
+     */
+    public abstract void setPCRaw(int val);
+
+    /**
      * 指定したアドレス分だけ相対ジャンプします。
      *
      * PC + 相対アドレス を、

@@ -90,7 +90,7 @@ public class ARMv5 extends CPU32 {
     @Override
     public String instructionToString(Inst32 inst, String operation, String operand) {
         return String.format("%08x:    %-12s    %-7s %s\n",
-                getRegRaw(15), inst.toHex(), operation, operand);
+                getPCRaw(), inst.toHex(), operation, operand);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class ARMv5 extends CPU32 {
             setJumped(false);
             return;
         }
-        setRegRaw(15, getRegRaw(15) + inst.getLength());
+        setPCRaw(getPCRaw() + inst.getLength());
     }
 
     /**
@@ -170,6 +170,32 @@ public class ARMv5 extends CPU32 {
     @Override
     public void setPC(int val) {
         setReg(15, val);
+    }
+
+    /**
+     * PC（プログラムカウンタ）そのものの値を取得します。
+     *
+     * 下記の呼び出しと同一です。
+     * getRegRaw(15)
+     *
+     * @return PC の値
+     */
+    @Override
+    public int getPCRaw() {
+        return getRegRaw(15);
+    }
+
+    /**
+     * PC（プログラムカウンタ）そのものの値を設定します。
+     *
+     * 下記の呼び出しと同一です。
+     * setRegRaw(15, val)
+     *
+     * @param val 新しい PC の値
+     */
+    @Override
+    public void setPCRaw(int val) {
+        setRegRaw(15, val);
     }
 
     /**
@@ -317,7 +343,7 @@ public class ARMv5 extends CPU32 {
         int v, vaddr, paddr;
 
         //現在の PC の指すアドレスから命令を取得します
-        vaddr = getRegRaw(15);
+        vaddr = getPCRaw();
 
         if (getCPSR().getTBit()) {
             //Thumb モード
@@ -579,10 +605,10 @@ public class ARMv5 extends CPU32 {
         //pc, cpsr の値を取っておく
         if (getCPSR().getTBit()) {
             //Thumb モード
-            pcOrg = getRegRaw(15) + 2;
+            pcOrg = getPCRaw() + 2;
         } else {
             //ARM モード
-            pcOrg = getRegRaw(15) + 4;
+            pcOrg = getPCRaw() + 4;
         }
         cpsrOrg = getCPSR().getValue();
 
@@ -625,10 +651,10 @@ public class ARMv5 extends CPU32 {
         //pc, cpsr の値を取っておく
         if (getCPSR().getTBit()) {
             //Thumb モード
-            pcOrg = getRegRaw(15) + 2;
+            pcOrg = getPCRaw() + 2;
         } else {
             //ARM モード
-            pcOrg = getRegRaw(15) + 4;
+            pcOrg = getPCRaw() + 4;
         }
         cpsrOrg = getCPSR().getValue();
 
@@ -666,7 +692,7 @@ public class ARMv5 extends CPU32 {
 
         //pc, cpsr の値を取っておく
         //Thumb, ARM モード
-        pcOrg = getRegRaw(15) + 4;
+        pcOrg = getPCRaw() + 4;
         cpsrOrg = getCPSR().getValue();
 
         //アボートモード、ARM 状態、割り込み禁止、
@@ -703,7 +729,7 @@ public class ARMv5 extends CPU32 {
 
         //pc, cpsr の値を取っておく
         //Thumb, ARM モード
-        pcOrg = getRegRaw(15) + 8;
+        pcOrg = getPCRaw() + 8;
         cpsrOrg = getCPSR().getValue();
 
         //アボートモード、ARM 状態、割り込み禁止、
@@ -740,7 +766,7 @@ public class ARMv5 extends CPU32 {
 
         //pc, cpsr の値を取っておく
         //Thumb, ARM モード
-        pcOrg = getRegRaw(15) + 4;
+        pcOrg = getPCRaw() + 4;
         cpsrOrg = getCPSR().getValue();
 
         //IRQ モード、ARM 状態、割り込み禁止、
@@ -777,7 +803,7 @@ public class ARMv5 extends CPU32 {
 
         //pc, cpsr の値を取っておく
         //Thumb, ARM モード
-        pcOrg = getRegRaw(15) + 4;
+        pcOrg = getPCRaw() + 4;
         cpsrOrg = getCPSR().getValue();
 
         //FIQ モード、ARM 状態、高速割り込み禁止、割り込み禁止、
