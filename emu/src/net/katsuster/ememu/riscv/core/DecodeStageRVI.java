@@ -44,8 +44,8 @@ public class DecodeStageRVI extends Stage64 {
         case InstructionRV32.FUNC_JALR_JALR:
             return OpIndex.INS_RV32I_JALR;
         default:
-            throw new IllegalArgumentException("Unknown JALR funct3 " +
-                    String.format("%d.", funct3));
+            throw new IllegalArgumentException("Unknown JALR " +
+                    String.format("funct3 %d.", funct3));
         }
     }
 
@@ -72,8 +72,8 @@ public class DecodeStageRVI extends Stage64 {
         case InstructionRV32.FUNC_BRANCH_BGEU:
             return OpIndex.INS_RV32I_BGEU;
         default:
-            throw new IllegalArgumentException("Unknown BRANCH funct3 " +
-                    String.format("%d.", funct3));
+            throw new IllegalArgumentException("Unknown BRANCH " +
+                    String.format("funct3 %d.", funct3));
         }
     }
 
@@ -102,8 +102,8 @@ public class DecodeStageRVI extends Stage64 {
         case InstructionRV32.FUNC_LOAD_LWU:
             return OpIndex.INS_RV64I_LWU;
         default:
-            throw new IllegalArgumentException("Unknown LOAD funct3 " +
-                    String.format("%d.", funct3));
+            throw new IllegalArgumentException("Unknown LOAD " +
+                    String.format("funct3 %d.", funct3));
         }
     }
 
@@ -138,8 +138,8 @@ public class DecodeStageRVI extends Stage64 {
                     return OpIndex.INS_RV64I_SLLI;
                 }
 
-                throw new IllegalArgumentException("Unknown op-imm SLI 64bit imm6 " +
-                        String.format("0x%x.", imm6));
+                throw new IllegalArgumentException("Unknown OP-IMM SLI 64bit " +
+                        String.format("imm6 0x%x.", imm6));
             } else if (getRVBits() == 32) {
                 int imm7 = inst.getImm7I();
 
@@ -148,11 +148,11 @@ public class DecodeStageRVI extends Stage64 {
                     return OpIndex.INS_RV32I_SLLI;
                 }
 
-                throw new IllegalArgumentException("Unknown op-imm SLI 32bit imm7 " +
-                        String.format("0x%x.", imm7));
+                throw new IllegalArgumentException("Unknown OP-IMM SLI 32bit " +
+                        String.format("imm7 0x%x.", imm7));
             }
 
-            throw new IllegalArgumentException("Unknown op-imm SLI " +
+            throw new IllegalArgumentException("Unknown OP-IMM SLI " +
                     String.format("%dbit.", getRVBits()));
         case InstructionRV32.FUNC_OP_IMM_SRI:
             if (getCore().getRVBits() == 64) {
@@ -166,8 +166,8 @@ public class DecodeStageRVI extends Stage64 {
                     return OpIndex.INS_RV64I_SRAI;
                 }
 
-                throw new IllegalArgumentException("Unknown op-imm SRI 64bit imm6 " +
-                        String.format("0x%x.", imm6));
+                throw new IllegalArgumentException("Unknown OP-IMM SRI 64bit " +
+                        String.format("imm6 0x%x.", imm6));
             } else if (getRVBits() == 32) {
                 int imm7 = inst.getImm7I();
 
@@ -179,15 +179,15 @@ public class DecodeStageRVI extends Stage64 {
                     return OpIndex.INS_RV32I_SRAI;
                 }
 
-                throw new IllegalArgumentException("Unknown op-imm SRI 32bit imm7 " +
-                        String.format("0x%x.", imm7));
+                throw new IllegalArgumentException("Unknown OP-IMM SRI 32bit " +
+                        String.format("imm7 0x%x.", imm7));
             }
 
-            throw new IllegalArgumentException("Unknown op-imm SRI " +
+            throw new IllegalArgumentException("Unknown OP-IMM SRI " +
                     String.format("%dbit.", getRVBits()));
         default:
-            throw new IllegalArgumentException("Unknown op-imm funct3 " +
-                    String.format("%d.", funct3));
+            throw new IllegalArgumentException("Unknown OP-IMM " +
+                    String.format("funct3 %d.", funct3));
         }
     }
 
@@ -274,13 +274,12 @@ public class DecodeStageRVI extends Stage64 {
             opname = "AND";
             break;
         default:
-            throw new IllegalArgumentException("Unknown op funct3 " +
-                    String.format("%d.", funct3));
+            throw new IllegalArgumentException("Unknown OP " +
+                    String.format("funct3 %d.", funct3));
         }
 
-        throw new IllegalArgumentException("Unknown op-imm 32bit imm7 " +
-                String.format("%s", opname) +
-                String.format("0x%x.", imm7));
+        throw new IllegalArgumentException("Unknown OP " +
+                String.format("%s imm7 0x%x.", opname, imm7));
     }
 
     /**
