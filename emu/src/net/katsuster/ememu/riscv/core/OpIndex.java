@@ -4,12 +4,19 @@ package net.katsuster.ememu.riscv.core;
  * 命令の詳細な種類。
  */
 public enum OpIndex {
+    //LUI
     INS_RV32I_LUI,
+
+    //AUIPC
     INS_RV32I_AUIPC,
 
+    //JAL
     INS_RV32I_JAL,
+
+    //JALR
     INS_RV32I_JALR,
 
+    //BRANCH
     INS_RV32I_BEQ,
     INS_RV32I_BNE,
     INS_RV32I_BLT,
@@ -17,16 +24,19 @@ public enum OpIndex {
     INS_RV32I_BLTU,
     INS_RV32I_BGEU,
 
+    //LOAD
     INS_RV32I_LB,
     INS_RV32I_LH,
     INS_RV32I_LW,
     INS_RV32I_LBU,
     INS_RV32I_LHU,
 
+    //STORE
     INS_RV32I_SB,
     INS_RV32I_SH,
     INS_RV32I_SW,
 
+    //OP-IMM
     INS_RV32I_ADDI,
     INS_RV32I_SLTI,
     INS_RV32I_SLTIU,
@@ -37,6 +47,7 @@ public enum OpIndex {
     INS_RV32I_SRLI,
     INS_RV32I_SRAI,
 
+    //OP
     INS_RV32I_ADD,
     INS_RV32I_SUB,
     INS_RV32I_SLL,
@@ -48,9 +59,11 @@ public enum OpIndex {
     INS_RV32I_OR,
     INS_RV32I_AND,
 
+    //MISC-MEM
     INS_RV32I_FENCE,
     INS_RV32I_FENCE_I,
 
+    //SYSTEM
     INS_RV32I_CSRRW,
     INS_RV32I_CSRRS,
     INS_RV32I_CSRRC,
@@ -58,20 +71,25 @@ public enum OpIndex {
     INS_RV32I_CSRRSI,
     INS_RV32I_CSRRCI,
 
+    //LOAD
     INS_RV64I_LWU,
     INS_RV64I_LD,
 
+    //STORE
     INS_RV64I_SD,
 
+    //OP-IMM
     INS_RV64I_SLLI,
     INS_RV64I_SRLI,
     INS_RV64I_SRAI,
 
+    //OP-IMM32
     INS_RV64I_ADDIW,
     INS_RV64I_SLLIW,
     INS_RV64I_SRLIW,
     INS_RV64I_SRAIW,
 
+    //OP32
     INS_RV64I_ADDW,
     INS_RV64I_SUBW,
     INS_RV64I_SLLW,
