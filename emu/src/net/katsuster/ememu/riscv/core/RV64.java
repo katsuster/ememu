@@ -116,6 +116,36 @@ public class RV64 extends CPU64 {
     }
 
     /**
+     * CSR の値を取得します。
+     *
+     * @param n レジスタ番号
+     * @return レジスタの値
+     */
+    public long getCSR(int n) {
+        return csrfile.getReg(n).getValue();
+    }
+
+    /**
+     * CSR の値を設定します。
+     *
+     * @param n   レジスタ番号
+     * @param val 新しいレジスタの値
+     */
+    public void setCSR(int n, long val) {
+        csrfile.getReg(n).setValue(val);
+    }
+
+    /**
+     * CSR の名前を取得します。
+     *
+     * @param n レジスタ番号
+     * @return レジスタの名前
+     */
+    public String getCSRName(int n) {
+        return csrfile.getReg(n).getName();
+    }
+
+    /**
      * RISC-V アーキテクチャのビット数を返します。
      *
      * @return RV32 なら 32、RV64 なら 64

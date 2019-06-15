@@ -527,16 +527,24 @@ public class RV64CSRFile implements Reg64File {
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
+        int[] n = {
+                CSR_MSTATUS, CSR_MISA, CSR_MEDELEG, CSR_MIDELEG,
+                CSR_MIE, CSR_MTVEC, CSR_MCOUNTEREN, 0xffff,
+                CSR_MSCRATCH, CSR_MEPC, CSR_MCAUSE, CSR_MTVAL,
+                CSR_MIP, 0xffff, 0xffff, 0xffff,
+        };
 
-        for (int i = 0; i < 32; i += 4) {
-            b.append(String.format("  %3s: %08x, %3s: %08x, %3s: %08x, %3s: %08x, \n",
-                    getReg(i).getName(), getReg(i).getValue(),
-                    getReg(i + 1).getName(), getReg(i + 1).getValue(),
-                    getReg(i + 2).getName(), getReg(i + 2).getValue(),
-                    getReg(i + 3).getName(), getReg(i + 3).getValue()));
+        for (int i = 0; i < n.length; i++) {
+            if (i % 4 == 0)
+                b.append("  ");
+
+            if (n[i] != 0xffff)
+                b.append(String.format("%3s: %08x, ",
+                        getReg(n[i]).getName(), getReg(n[i]).getValue()));
+
+            if (i % 4 == 3)
+                b.append("\n");
         }
-        b.append(String.format("  %s, %s\n",
-                getReg(32).toString(), getReg(32).toString()));
 
         return b.toString();
     }

@@ -23,6 +23,36 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * CSR の値を取得します。
+     *
+     * @param n レジスタ番号
+     * @return レジスタの値
+     */
+    public long getCSR(int n) {
+        return getCore().getCSR(n);
+    }
+
+    /**
+     * CSR の値を設定します。
+     *
+     * @param n   レジスタ番号
+     * @param val 新しいレジスタの値
+     */
+    public void setCSR(int n, long val) {
+        getCore().setCSR(n, val);
+    }
+
+    /**
+     * CSR の名前を取得します。
+     *
+     * @param n レジスタ番号
+     * @return レジスタの名前
+     */
+    public String getCSRName(int n) {
+        return getCore().getCSRName(n);
+    }
+
+    /**
      * JALR () 命令。
      *
      * @param inst 32bit 命令
@@ -169,6 +199,30 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * CSRRW (Atomic Read/Write CSR) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeCsrrw(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int csr = inst.getImm12I();
+        long t;
+
+        if (!exec) {
+            printDisasm(inst, "csrrw",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getCSRName(csr), getRegName(rs1)));
+            return;
+        }
+
+        t = getCSR(csr);
+        setCSR(csr, getReg(rs1));
+        setReg(rd, t);
+    }
+
+    /**
      * 32bit 命令を実行します。
      *
      * @param decinst デコードされた命令
@@ -196,6 +250,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_ADD:
             executeAdd(inst, exec);
+            break;
+        case INS_RV32I_CSRRW:
+            executeCsrrw(inst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown RV32I instruction " +
