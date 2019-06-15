@@ -9,6 +9,7 @@ import net.katsuster.ememu.generic.*;
  */
 public class RV64 extends CPU64 {
     private RV64RegFile regfile;
+    private RV64CSRFile csrfile;
 
     private InstructionRV16 instRV16;
     private InstructionRV32 instRV32;
@@ -18,6 +19,7 @@ public class RV64 extends CPU64 {
 
     public RV64() {
         regfile = new RV64RegFile();
+        csrfile = new RV64CSRFile();
 
         instRV16 = new InstructionRV16(0);
         instRV32 = new InstructionRV32(0);
