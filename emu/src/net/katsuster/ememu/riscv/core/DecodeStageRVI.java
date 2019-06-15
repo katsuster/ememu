@@ -283,6 +283,51 @@ public class DecodeStageRVI extends Stage64 {
     }
 
     /**
+     * 32bit SYSTEM 命令をデコードします。
+     *
+     * @param inst 32bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeSystem(InstructionRV32 inst) {
+        int funct3 = inst.getFunct3();
+
+        switch (funct3) {
+        case InstructionRV32.FUNC_SYSTEM_EX: {
+            int rd = inst.getRd();
+            int rs1 = inst.getRs1();
+            int imm12 = inst.getImm12I();
+
+            if (imm12 == 0 && rs1 == 0 && rd == 0) {
+                //ECALL
+                return OpIndex.INS_RV32I_ECALL;
+            } else if (imm12 == 1 && rs1 == 0 && rd == 0) {
+                //EBREAK
+                return OpIndex.INS_RV32I_EBREAK;
+            }
+
+            throw new IllegalArgumentException("Unknown SYSTEM " +
+                    String.format("imm12 0x%x, rs1 0x%x, rd 0x%x.",
+                            imm12, rs1, rd));
+        }
+        case InstructionRV32.FUNC_SYSTEM_CSRRW:
+            return OpIndex.INS_RV32I_CSRRW;
+        case InstructionRV32.FUNC_SYSTEM_CSRRS:
+            return OpIndex.INS_RV32I_CSRRS;
+        case InstructionRV32.FUNC_SYSTEM_CSRRC:
+            return OpIndex.INS_RV32I_CSRRC;
+        case InstructionRV32.FUNC_SYSTEM_CSRRWI:
+            return OpIndex.INS_RV32I_CSRRWI;
+        case InstructionRV32.FUNC_SYSTEM_CSRRSI:
+            return OpIndex.INS_RV32I_CSRRSI;
+        case InstructionRV32.FUNC_SYSTEM_CSRRCI:
+            return OpIndex.INS_RV32I_CSRRCI;
+        default:
+            throw new IllegalArgumentException("Unknown SYSTEM " +
+                    String.format("funct3 %d.", funct3));
+        }
+    }
+
+    /**
      * 32bit 命令をデコードします。
      *
      * @param inst 32bit 命令
@@ -304,6 +349,8 @@ public class DecodeStageRVI extends Stage64 {
             return decodeOpImm(inst);
         case InstructionRV32.OPCODE_OP:
             return decodeOp(inst);
+        case InstructionRV32.OPCODE_SYSTEM:
+            return decodeSystem(inst);
         default:
             throw new IllegalArgumentException("Unknown opcode " +
                     String.format("%d.", code));

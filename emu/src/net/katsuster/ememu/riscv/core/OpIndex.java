@@ -64,6 +64,8 @@ public enum OpIndex {
     INS_RV32I_FENCE_I,
 
     //SYSTEM
+    INS_RV32I_ECALL,
+    INS_RV32I_EBREAK,
     INS_RV32I_CSRRW,
     INS_RV32I_CSRRS,
     INS_RV32I_CSRRC,

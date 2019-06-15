@@ -91,6 +91,14 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_OP_OR = 6;
     public static final int FUNC_OP_AND = 7;
 
+    public static final int FUNC_SYSTEM_EX = 0;
+    public static final int FUNC_SYSTEM_CSRRW = 1;
+    public static final int FUNC_SYSTEM_CSRRS = 2;
+    public static final int FUNC_SYSTEM_CSRRC = 3;
+    public static final int FUNC_SYSTEM_CSRRWI = 5;
+    public static final int FUNC_SYSTEM_CSRRSI = 6;
+    public static final int FUNC_SYSTEM_CSRRCI = 7;
+
     /**
      * RV32 命令の funct3 フィールド（ビット [14:12]）を取得します。
      *
