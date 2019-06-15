@@ -62,6 +62,7 @@ public class ExecStageRVI extends Stage64 {
         int rd = inst.getRd();
         int rs1 = inst.getRs1();
         long off = BitOp.signExt64(inst.getImm12I(), 12);
+        long t;
 
         if (!exec) {
             printDisasm(inst, "jalr",
@@ -70,8 +71,9 @@ public class ExecStageRVI extends Stage64 {
             return;
         }
 
-        setReg(rd, getPC() + 4);
+        t = getPC() + 4;
         setPC((getReg(rs1) + off) & ~0x1L);
+        setReg(rd, t);
     }
 
     /**
