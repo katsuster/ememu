@@ -68,8 +68,10 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_LOAD_LB = 0;
     public static final int FUNC_LOAD_LH = 1;
     public static final int FUNC_LOAD_LW = 2;
+    public static final int FUNC_LOAD_LD = 3;
     public static final int FUNC_LOAD_LBU = 4;
     public static final int FUNC_LOAD_LHU = 5;
+    public static final int FUNC_LOAD_LWU = 6;
 
     public static final int FUNC_OP_IMM_ADDI = 0;
     public static final int FUNC_OP_IMM_SLTI = 2;

@@ -93,10 +93,14 @@ public class DecodeStageRVI extends Stage64 {
             return OpIndex.INS_RV32I_LH;
         case InstructionRV32.FUNC_LOAD_LW:
             return OpIndex.INS_RV32I_LW;
+        case InstructionRV32.FUNC_LOAD_LD:
+            return OpIndex.INS_RV64I_LD;
         case InstructionRV32.FUNC_LOAD_LBU:
             return OpIndex.INS_RV32I_LBU;
         case InstructionRV32.FUNC_LOAD_LHU:
             return OpIndex.INS_RV32I_LHU;
+        case InstructionRV32.FUNC_LOAD_LWU:
+            return OpIndex.INS_RV64I_LWU;
         default:
             throw new IllegalArgumentException("Unknown LOAD funct3 " +
                     String.format("%d.", funct3));
