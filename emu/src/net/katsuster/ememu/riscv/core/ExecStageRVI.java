@@ -104,6 +104,28 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * ADDI (add immediate) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAddi(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int imm12 = inst.getImm12I();
+        long imm = BitOp.signExt64(imm12, 12);
+
+        if (!exec) {
+            printDisasm(inst, "add",
+                    String.format("%s, %s, %d # 0x%x", getRegName(rd),
+                            getRegName(rs1), imm, imm12));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) + imm);
+    }
+
+    /**
      * SLLI (logical left shift) 命令。
      *
      * @param inst 32bit 命令
@@ -164,6 +186,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_LW:
             executeLw(inst, exec);
+            break;
+        case INS_RV32I_ADDI:
+            executeAddi(inst, exec);
             break;
         case INS_RV32I_SLLI:
         case INS_RV64I_SLLI:
