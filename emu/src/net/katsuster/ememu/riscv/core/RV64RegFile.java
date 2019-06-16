@@ -7,6 +7,7 @@ import net.katsuster.ememu.generic.*;
  */
 public class RV64RegFile implements Reg64File {
     public static final int RISCV_REGFILE_SIZE = 33;
+    public static final int REG_PC = 32;
 
     private Reg64[] regs_usr;
 
@@ -49,7 +50,7 @@ public class RV64RegFile implements Reg64File {
                     getReg(i + 3).getName(), getReg(i + 3).getValue()));
         }
         b.append(String.format("  %s, %s\n",
-                getReg(32).toString(), getReg(32).toString()));
+                getReg(REG_PC).toString(), getReg(REG_PC).toString()));
 
         return b.toString();
     }

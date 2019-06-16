@@ -71,23 +71,23 @@ public class RV64 extends CPU64 {
 
     @Override
     public long getPC() {
-        return getReg(32);
+        return getReg(RV64RegFile.REG_PC);
     }
 
     @Override
     public void setPC(long val) {
         setJumped(true);
-        setReg(32, val);
+        setReg(RV64RegFile.REG_PC, val);
     }
 
     @Override
     public long getPCRaw() {
-        return getRegRaw(32);
+        return getRegRaw(RV64RegFile.REG_PC);
     }
 
     @Override
     public void setPCRaw(long val) {
-        setRegRaw(32, val);
+        setRegRaw(RV64RegFile.REG_PC, val);
     }
 
     @Override
@@ -165,7 +165,7 @@ public class RV64 extends CPU64 {
         int v32;
 
         //現在の PC の指すアドレスから命令を取得します
-        vaddr = getRegRaw(32);
+        vaddr = getPCRaw();
 
         paddr = vaddr;
 
