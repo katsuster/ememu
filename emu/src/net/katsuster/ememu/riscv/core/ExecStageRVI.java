@@ -4,16 +4,16 @@ import net.katsuster.ememu.generic.*;
 
 public class ExecStageRVI extends Stage64 {
     /**
-     * RISC-V 64 コア c の実行ステージを生成します。
+     * RVI 命令の実行ステージを生成します。
      *
-     * @param c 実行ステージの持ち主となる RISC-V 64 コア
+     * @param c 実行ステージの持ち主となる CPU コア
      */
     public ExecStageRVI(RV64 c) {
         super(c);
     }
 
     /**
-     * 実行ステージの持ち主となる CPU コアを取得します。
+     * RVI 命令の実行ステージの持ち主となる CPU コアを取得します。
      *
      * @return 実行ステージの持ち主となる CPU コア
      */
