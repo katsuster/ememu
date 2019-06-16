@@ -15,7 +15,9 @@ public class RV64 extends CPU64 {
     private InstructionRV32 instRV32;
     private Opcode decinstAll;
     private DecodeStageRVI rviDec;
+    private DecodeStageRVC rvcDec;
     private ExecStageRVI rviExe;
+    private ExecStageRVC rvcExe;
 
     public RV64() {
         regfile = new RV64RegFile();
@@ -25,7 +27,9 @@ public class RV64 extends CPU64 {
         instRV32 = new InstructionRV32(0);
         decinstAll = new Opcode(instRV32, OpType.INS_TYPE_UNKNOWN, OpIndex.INS_UNKNOWN);
         rviDec = new DecodeStageRVI(this);
+        rvcDec = new DecodeStageRVC(this);
         rviExe = new ExecStageRVI(this);
+        rvcExe = new ExecStageRVC(this);
     }
 
     @Override
@@ -202,13 +206,27 @@ public class RV64 extends CPU64 {
      * @return デコードされた命令
      */
     public Opcode decode(Inst32 instgen) {
-        InstructionRV32 inst = (InstructionRV32) instgen;
         OpType optype;
         OpIndex opind;
 
-        //RVI 命令
-        optype = OpType.INS_TYPE_RVI;
-        opind = rviDec.decode(inst);
+        if (instgen.getLength() == 4) {
+            //RVI 命令
+            InstructionRV32 inst = (InstructionRV32) instgen;
+
+            opind = rviDec.decode(inst);
+            //TODO: opind から決める
+            optype = OpType.INS_TYPE_RVI;
+        } else if (instgen.getLength() == 2) {
+            //RVC 命令
+            InstructionRV16 inst = (InstructionRV16) instgen;
+
+            opind = rvcDec.decode(inst);
+            //TODO: opind から決める
+            optype = OpType.INS_TYPE_RVC;
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "Unknown instruction length %d.", instgen.getLength()));
+        }
 
         decinstAll.reuse(instgen, optype, opind);
 
@@ -245,11 +263,13 @@ public class RV64 extends CPU64 {
         case INS_TYPE_RVI:
             rviExe.execute(decinst, exec);
             break;
+        case INS_TYPE_RVC:
+            rvcExe.execute(decinst, exec);
+            break;
         default:
             throw new IllegalArgumentException("Unknown instruction type " +
                     decinst.getType());
         }
-
     }
 
     @Override
