@@ -47,7 +47,7 @@ public class InstructionRV32 extends Inst32 {
     public static final int OPCODE_80B = 31;
 
     /**
-     * RV32 命令の opcode フィールド（ビット [6:2]）を取得します。
+     * 32bit 命令の opcode フィールド（ビット [6:2]）を取得します。
      *
      * @return opcode フィールド
      */
@@ -100,7 +100,7 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_SYSTEM_CSRRCI = 7;
 
     /**
-     * RV32 命令の funct3 フィールド（ビット [14:12]）を取得します。
+     * 32bit 命令の funct3 フィールド（ビット [14:12]）を取得します。
      *
      * @return funct3 フィールド
      */
@@ -109,7 +109,7 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
-     * RV32 命令の rd フィールド（ビット [11:7]）を取得します。
+     * 32bit 命令の rd フィールド（ビット [11:7]）を取得します。
      *
      * @return rd フィールド
      */
@@ -118,7 +118,7 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
-     * RV32 命令の rs1 フィールド（ビット [19:15]）を取得します。
+     * 32bit 命令の rs1 フィールド（ビット [19:15]）を取得します。
      *
      * @return rs1 フィールド
      */
@@ -127,7 +127,7 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
-     * RV32 命令の rs2 フィールド（ビット [24:20]）を取得します。
+     * 32bit 命令の rs2 フィールド（ビット [24:20]）を取得します。
      *
      * @return rs2 フィールド
      */
@@ -136,7 +136,7 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
-     * RV32 命令 I-type の imm フィールド（ビット [31:20]）を取得します。
+     * 32bit 命令 I-type の imm フィールド（ビット [31:20]）を取得します。
      *
      * @return imm[11:0] フィールド
      */
@@ -145,7 +145,7 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
-     * RV32 命令 I-type の imm フィールドの上位 7ビット（ビット [31:25]）を取得します。
+     * 32bit 命令 I-type の imm フィールドの上位 7ビット（ビット [31:25]）を取得します。
      *
      * RV32I の ADD, SLLI 命令などに使われます。
      *
@@ -167,7 +167,7 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
-     * RV32 命令 U-type の imm フィールド（ビット [31:12]）を取得します。
+     * 32bit 命令 U-type の imm フィールド（ビット [31:12]）を取得します。
      * 12bit 左シフトした値を返します。
      *
      * @return imm フィールド
