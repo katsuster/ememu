@@ -11,6 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
         IntegerExtTest.class,
         SlaveCoreTest.class,
         RAMTest.class,
+        BusTest.class,
 })
 public class AllTest {
     protected AllTest() {
