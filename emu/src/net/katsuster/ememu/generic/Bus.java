@@ -338,14 +338,23 @@ public class Bus implements RWCore {
     /**
      * バスから指定したスレーブコアを削除します。
      *
+     * 2つ以上の領域に同一のスレーブコアが登録されている場合、
+     * 全て削除します。
+     *
      * @param c スレーブコア
      * @return バスから指定したスレーブコアを削除できた場合は true、
      * そうでなければ false
      */
     public boolean removeSlaveCore(SlaveCore c) {
+        boolean result = false;
+
         //32bit アドレス範囲内のスレーブコアならばテーブルから消去する
-        for (long i = 0; i <= 0xffffffff; i += 4096) {
+        for (long i = 0; i <= 0xffffffffL; i += 4096) {
             int ind = (int) (i >>> 12);
+
+            if (slaves[ind] == null || slaves[ind].getCore() == null) {
+                continue;
+            }
 
             if (slaves[ind].getCore().equals(c)) {
                 slaves[ind] = null;
@@ -353,17 +362,27 @@ public class Bus implements RWCore {
         }
 
         //リストからスレーブコアを消去する
-        for (SlaveCoreAddress sca : slaveList) {
-            SlaveCore sc = sca.getCore();
+        out: while (true) {
+            boolean found = false;
 
-            if (sc.equals(c)) {
-                slaveList.remove(sc);
-                sc.setMasterBus(null);
-                return true;
+            for (SlaveCoreAddress sca : slaveList) {
+                SlaveCore sc = sca.getCore();
+
+                if (sc.equals(c)) {
+                    slaveList.remove(sca);
+                    sc.setMasterBus(null);
+                    found = true;
+                    result = true;
+
+                    break;
+                }
+            }
+            if (!found) {
+                break out;
             }
         }
 
-        return false;
+        return result;
     }
 
     /**
