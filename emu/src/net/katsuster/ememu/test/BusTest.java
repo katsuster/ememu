@@ -139,7 +139,7 @@ public class BusTest {
 
         try {
             result = bus.removeSlaveCore(null);
-            Assert.assertFalse(msg1, result);
+            Assert.assertFalse(msg3, result);
         } catch (Exception e) {
             Assert.fail(msg1);
         }
