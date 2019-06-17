@@ -302,13 +302,14 @@ public class Bus implements RWCore {
         }
 
         //32bit アドレス範囲内のスレーブコアならばテーブルにも記録する
+        sca = new SlaveCoreAddress(c, start, end);
         for (long i = start; i <= end; i += 4096) {
             int ind = (int) (i >>> 12);
             if (ind > 0xfffff) {
                 //32bit アドレスの範囲外
                 break;
             }
-            slaves[ind] = new SlaveCoreAddress(c, start, end);
+            slaves[ind] = sca;
         }
 
         //リストにスレーブコアを記録する
@@ -407,7 +408,9 @@ public class Bus implements RWCore {
             if (slaves[ind] != null) {
                 cachedSlave = slaves[ind];
             }
-            return slaves[ind];
+            if (cachedSlave.contains(start, end)) {
+                return slaves[ind];
+            }
         }
 
         //リストから線形探索する
