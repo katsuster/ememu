@@ -56,6 +56,47 @@ public class BusTest {
     }
 
     @Test
+    public void testGetSlaveCore() throws Exception {
+        String msg1 = "getSlaveCore() failed.";
+        String msg2 = "getSlaveCore() non-exist check failed.";
+        String msg3 = "getSlaveCore() address check failed.";
+
+        Bus bus = new Bus();
+        RAM16 ram1 = new RAM16(0x1000);
+        RAM32 ram2 = new RAM32(0x1000);
+
+        bus.addSlaveCore(ram1, 0x0, 0xfff);
+        bus.addSlaveCore(ram1, 0x100000000L, 0x100000fffL);
+        bus.addSlaveCore(ram2, 0x20000, 0x207ff);
+
+        //simple
+        Assert.assertEquals(msg1, ram1, bus.getSlaveCore(0x100, 0x200));
+        Assert.assertEquals(msg1, ram1, bus.getSlaveCore(0x100000100L, 0x100000200L));
+        Assert.assertEquals(msg1, ram2, bus.getSlaveCore(0x20100, 0x20200));
+
+        //non-exist
+        Assert.assertNull(msg2, bus.getSlaveCore(0x1000, 0x1100));
+        Assert.assertNull(msg2, bus.getSlaveCore(0x100001000L, 0x100001100L));
+        Assert.assertNull(msg2, bus.getSlaveCore(0x20800, 0x20900));
+
+        try {
+            //wrong range
+            bus.getSlaveCore(0x100, 0x80);
+            Assert.fail(msg3);
+        } catch (Exception e) {
+            //OK
+        }
+
+        try {
+            //wrong range
+            bus.getSlaveCore(0x4000, 0x3000);
+            Assert.fail(msg3);
+        } catch (Exception e) {
+            //OK
+        }
+    }
+
+    @Test
     public void testRemoveSlaveCore() throws Exception {
         String msg1 = "removeSlaveCore() failed.";
         String msg2 = "removeSlaveCore() re-add failed.";
