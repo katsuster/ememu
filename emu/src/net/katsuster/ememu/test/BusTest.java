@@ -109,7 +109,7 @@ public class BusTest {
         boolean result;
 
         bus.addSlaveCore(ram1, 0x0, 0xfff);
-        bus.addSlaveCore(ram1, 0x2000, 0x2fff);
+        bus.addSlaveCore(ram1, 0x2000, 0x7fff);
         bus.addSlaveCore(ram2, 0x8000, 0x8fff);
         bus.addSlaveCore(ram3, 0x10000, 0x10fff);
 
