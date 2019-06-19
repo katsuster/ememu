@@ -335,28 +335,8 @@ public class Flush16 extends SlaveCore {
     }
 
     @Override
-    public byte read8(long addr) {
-        throw new IllegalArgumentException("Cannot read 8bit.");
-    }
-
-    @Override
     public short read16(long addr) {
         return readWord(addr);
-    }
-
-    @Override
-    public int read32(long addr) {
-        throw new IllegalArgumentException("Cannot read 32bit.");
-    }
-
-    @Override
-    public long read64(long addr) {
-        throw new IllegalArgumentException("Cannot read 64bit.");
-    }
-
-    @Override
-    public void write8(long addr, byte data) {
-        throw new IllegalArgumentException("Cannot write 8bit.");
     }
 
     @Override
@@ -364,19 +344,8 @@ public class Flush16 extends SlaveCore {
         writeWord(addr, data);
     }
 
-    @Override
-    public void write32(long addr, int data) {
-        throw new IllegalArgumentException("Cannot write 32bit.");
-    }
-
-    @Override
-    public void write64(long addr, long data) {
-        throw new IllegalArgumentException("Cannot write 64bit.");
-    }
-
     public short readWord(long addr) {
         int wordAddr;
-        short result;
 
         addr &= getAddressMask(LEN_WORD_BITS);
         checkAddress(addr);

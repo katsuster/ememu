@@ -153,12 +153,6 @@ public abstract class Controller32 extends SlaveCore {
     }
 
     @Override
-    public long read64(long addr) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
-    }
-
-    @Override
     public void write8(long addr, byte data) {
         int w = (int)writeMasked(addr, 0, data, LEN_WORD_BITS, 8);
 
@@ -177,11 +171,5 @@ public abstract class Controller32 extends SlaveCore {
         int w = (int)writeMasked(addr, 0, data, LEN_WORD_BITS, 32);
 
         writeWord(addr, w);
-    }
-
-    @Override
-    public void write64(long addr, long data) {
-        //TODO: Not implemented
-        throw new IllegalArgumentException("Sorry, not implemented.");
     }
 }

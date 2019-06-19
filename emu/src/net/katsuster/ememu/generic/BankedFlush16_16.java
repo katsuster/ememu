@@ -106,12 +106,6 @@ public class BankedFlush16_16 extends SlaveCore {
     }
 
     @Override
-    public long read64(long addr) {
-        //TODO: Implemented yet
-        throw new IllegalArgumentException("Cannot read 64bit.");
-    }
-
-    @Override
     public void write8(long addr, byte data) {
         long v = readWord(addr) & 0xffffffffL;
         int w = (int)writeMasked(addr, v, data, LEN_WORD_BITS, 8);
@@ -130,12 +124,6 @@ public class BankedFlush16_16 extends SlaveCore {
     @Override
     public void write32(long addr, int data) {
         writeWord(addr, data);
-    }
-
-    @Override
-    public void write64(long addr, long data) {
-        //TODO: Implemented yet
-        throw new IllegalArgumentException("Cannot write 64bit.");
     }
 
     public int readWord(long addr) {
