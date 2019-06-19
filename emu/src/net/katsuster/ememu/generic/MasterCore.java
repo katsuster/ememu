@@ -60,6 +60,21 @@ public abstract class MasterCore extends AbstractCore
     }
 
     @Override
+    public short read_ua16(long addr) {
+        return slaveBus.read_ua16(addr);
+    }
+
+    @Override
+    public int read_ua32(long addr) {
+        return slaveBus.read_ua32(addr);
+    }
+
+    @Override
+    public long read_ua64(long addr) {
+        return slaveBus.read_ua64(addr);
+    }
+
+    @Override
     public boolean tryWrite(long addr, int len) {
         return slaveBus.tryWrite(addr, len);
     }
@@ -82,5 +97,20 @@ public abstract class MasterCore extends AbstractCore
     @Override
     public void write64(long addr, long data) {
         slaveBus.write64(addr, data);
+    }
+
+    @Override
+    public void write_ua16(long addr, short data) {
+        slaveBus.write_ua16(addr, data);
+    }
+
+    @Override
+    public void write_ua32(long addr, int data) {
+        slaveBus.write_ua32(addr, data);
+    }
+
+    @Override
+    public void write_ua64(long addr, long data) {
+        slaveBus.write_ua64(addr, data);
     }
 }

@@ -130,6 +130,51 @@ public abstract class CPU extends MasterCore
     }
 
     /**
+     * 指定したアドレスから 16 ビットを読み出します。
+     * アドレスは 16ビット境界でなくても構いません。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @return 指定したアドレスにあるデータ
+     */
+    public short read_ua16_a32(int addr) {
+        long addrl = addr & 0xffffffffL;
+        return read_ua16(addrl);
+    }
+
+    /**
+     * 指定したアドレスから 32 ビットを読み出します。
+     * アドレスは 32ビット境界でなくても構いません。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @return 指定したアドレスにあるデータ
+     */
+    public int read_ua32_a32(int addr) {
+        long addrl = addr & 0xffffffffL;
+        return read_ua32(addrl);
+    }
+
+    /**
+     * 指定したアドレスから 64 ビットを読み出します。
+     * アドレスは 64ビット境界でなくても構いません。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @return 指定したアドレスにあるデータ
+     */
+    public long read_ua64_a32(int addr) {
+        long addrl = addr & 0xffffffffL;
+        return read_ua64(addrl);
+    }
+
+    /**
      * 指定したアドレスにデータを書き込めるかどうかを取得します。
      *
      * アドレス幅は符号無し 32 ビットとして解釈し、
@@ -198,6 +243,51 @@ public abstract class CPU extends MasterCore
     public void write64_a32(int addr, long data) {
         long addrl = addr & 0xffffffffL;
         write64(addrl, data);
+    }
+
+    /**
+     * 指定したアドレスに 16 ビットを書き込みます。
+     * アドレスは 16ビット境界でなくても構いません。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @param data 書き込むデータ
+     */
+    public void write_ua16_a32(int addr, short data) {
+        long addrl = addr & 0xffffffffL;
+        write_ua16(addrl, data);
+    }
+
+    /**
+     * 指定したアドレスに 32 ビットを書き込みます。
+     * アドレスは 32ビット境界でなくても構いません。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @param data 書き込むデータ
+     */
+    public void write_ua32_a32(int addr, int data) {
+        long addrl = addr & 0xffffffffL;
+        write_ua32(addrl, data);
+    }
+
+    /**
+     * 指定したアドレスに 64 ビットを書き込みます。
+     * アドレスは 64ビット境界でなくても構いません。
+     *
+     * アドレス幅は符号無し 32 ビットとして解釈し、
+     * 64ビットに変換された後にスレーブバスに渡されます。
+     *
+     * @param addr アドレス
+     * @param data 書き込むデータ
+     */
+    public void write_ua64_a32(int addr, long data) {
+        long addrl = addr & 0xffffffffL;
+        write_ua64(addrl, data);
     }
 
     /**

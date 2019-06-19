@@ -176,6 +176,69 @@ public class Bus implements RWCore {
     }
 
     @Override
+    public short read_ua16(long addr) {
+        SlaveCoreAddress sca;
+        long offSt;
+
+        sca = findSlaveCoreAddress(addr, addr + 1);
+        if (sca == null) {
+            throw new IllegalArgumentException("Read from invalid address" +
+                    String.format("(0x%08x).", addr));
+        }
+
+        offSt = addr - sca.getStartAddress();
+
+        rwlock.readLock().lock();
+        try {
+            return sca.getCore().read_ua16(offSt);
+        } finally {
+            rwlock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public int read_ua32(long addr) {
+        SlaveCoreAddress sca;
+        long offSt;
+
+        sca = findSlaveCoreAddress(addr, addr + 3);
+        if (sca == null) {
+            throw new IllegalArgumentException("Read from invalid address" +
+                    String.format("(0x%08x).", addr));
+        }
+
+        offSt = addr - sca.getStartAddress();
+
+        rwlock.readLock().lock();
+        try {
+            return sca.getCore().read_ua32(offSt);
+        } finally {
+            rwlock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public long read_ua64(long addr) {
+        SlaveCoreAddress sca;
+        long offSt;
+
+        sca = findSlaveCoreAddress(addr, addr + 7);
+        if (sca == null) {
+            throw new IllegalArgumentException("Read from invalid address" +
+                    String.format("(0x%08x).", addr));
+        }
+
+        offSt = addr - sca.getStartAddress();
+
+        rwlock.readLock().lock();
+        try {
+            return sca.getCore().read_ua64(offSt);
+        } finally {
+            rwlock.readLock().unlock();
+        }
+    }
+
+    @Override
     public boolean tryWrite(long addr, int len) {
         SlaveCoreAddress sca;
         long offSt;
@@ -272,6 +335,69 @@ public class Bus implements RWCore {
         rwlock.writeLock().lock();
         try {
             sca.getCore().write64(offSt, data);
+        } finally {
+            rwlock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public void write_ua16(long addr, short data) {
+        SlaveCoreAddress sca;
+        long offSt;
+
+        sca = findSlaveCoreAddress(addr, addr + 1);
+        if (sca == null) {
+            throw new IllegalArgumentException("Write to invalid address" +
+                    String.format("(0x%08x).", addr));
+        }
+
+        offSt = addr - sca.getStartAddress();
+
+        rwlock.writeLock().lock();
+        try {
+            sca.getCore().write_ua16(offSt, data);
+        } finally {
+            rwlock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public void write_ua32(long addr, int data) {
+        SlaveCoreAddress sca;
+        long offSt;
+
+        sca = findSlaveCoreAddress(addr, addr + 3);
+        if (sca == null) {
+            throw new IllegalArgumentException("Write to invalid address" +
+                    String.format("(0x%08x).", addr));
+        }
+
+        offSt = addr - sca.getStartAddress();
+
+        rwlock.writeLock().lock();
+        try {
+            sca.getCore().write_ua32(offSt, data);
+        } finally {
+            rwlock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public void write_ua64(long addr, long data) {
+        SlaveCoreAddress sca;
+        long offSt;
+
+        sca = findSlaveCoreAddress(addr, addr + 7);
+        if (sca == null) {
+            throw new IllegalArgumentException("Write to invalid address" +
+                    String.format("(0x%08x).", addr));
+        }
+
+        offSt = addr - sca.getStartAddress();
+
+        rwlock.writeLock().lock();
+        try {
+            sca.getCore().write_ua64(offSt, data);
         } finally {
             rwlock.writeLock().unlock();
         }

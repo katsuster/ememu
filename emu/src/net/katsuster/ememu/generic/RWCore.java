@@ -51,6 +51,33 @@ public interface RWCore {
     public abstract long read64(long addr);
 
     /**
+     * 指定されたアドレスから 16 ビットのデータを読み取ります。
+     * アドレスは 16ビット境界でなくても構いません。
+     *
+     * @param addr アドレス
+     * @return データ
+     */
+    public abstract short read_ua16(long addr);
+
+    /**
+     * 指定されたアドレスから 32 ビットのデータを読み取ります。
+     * アドレスは 32ビット境界でなくても構いません。
+     *
+     * @param addr アドレス
+     * @return データ
+     */
+    public abstract int read_ua32(long addr);
+
+    /**
+     * 指定されたアドレスから 64 ビットのデータを読み取ります。
+     * アドレスは 64ビット境界でなくても構いません。
+     *
+     * @param addr アドレス
+     * @return データ
+     */
+    public abstract long read_ua64(long addr);
+
+    /**
      * 指定されたアドレスへの書き込みが可能かどうかを判定します。
      *
      * @param addr アドレス
@@ -90,4 +117,31 @@ public interface RWCore {
      * @param data データ
      */
     public abstract void write64(long addr, long data);
+
+    /**
+     * 指定したアドレスへ 16 ビットのデータを書き込みます。
+     * アドレスは 16ビット境界でなくても構いません。
+     *
+     * @param addr アドレス
+     * @param data データ
+     */
+    public abstract void write_ua16(long addr, short data);
+
+    /**
+     * 指定したアドレスへ 32 ビットのデータを書き込みます。
+     * アドレスは 32ビット境界でなくても構いません。
+     *
+     * @param addr アドレス
+     * @param data データ
+     */
+    public abstract void write_ua32(long addr, int data);
+
+    /**
+     * 指定したアドレスへ 64 ビットのデータを書き込みます。
+     * アドレスは 64ビット境界でなくても構いません。
+     *
+     * @param addr アドレス
+     * @param data データ
+     */
+    public abstract void write_ua64(long addr, long data);
 }
