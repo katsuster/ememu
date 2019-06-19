@@ -183,7 +183,7 @@ public class BusTest {
     }
 
     public void unalignedAccess8(long start, Bus bus) throws Exception {
-        String msg1 = "Bus aligned access 8bits failed.";
+        String msg1 = "Bus unaligned access 8bits failed.";
 
         byte[] actual8 = {
                 (byte)0x01, (byte)0x23, (byte)0x45, (byte)0x67,
@@ -238,7 +238,7 @@ public class BusTest {
     }
 
     public void unalignedAccess16(long start, Bus bus) throws Exception {
-        String msg1 = "Bus aligned access 16bits failed.";
+        String msg1 = "Bus unaligned access 16bits failed.";
 
         short[] actual16 = {
                 (short)0x0123, (short)0x4567, (short)0x89ab, (short)0xcdef,
@@ -288,7 +288,7 @@ public class BusTest {
     }
 
     public void unalignedAccess32(long start, Bus bus) throws Exception {
-        String msg1 = "Bus aligned access 32bits failed.";
+        String msg1 = "Bus unaligned access 32bits failed.";
 
         int[] actual32 = {
                 0x01234567, 0x89abcdef, 0x12345678, 0x9abcdef9,
@@ -336,7 +336,7 @@ public class BusTest {
     }
 
     public void unalignedAccess64(long start, Bus bus) throws Exception {
-        String msg1 = "Bus aligned access 64bits failed.";
+        String msg1 = "Bus unaligned access 64bits failed.";
 
         long[] actual64 = {
                 0x0123456789abcdefL, 0x89abcdeffedcba98L,
