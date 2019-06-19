@@ -31,6 +31,11 @@ public class RAMTest {
                 (byte)0x89, (byte)0xab, (byte)0xcd, (byte)0xef,
                 (byte)0x12, (byte)0x34, (byte)0x56, (byte)0x78,
                 (byte)0x9a, (byte)0xbc, (byte)0xde, (byte)0xf9,
+
+                (byte)0x01, (byte)0x23, (byte)0x67, (byte)0xcd,
+                (byte)0x89, (byte)0xab, (byte)0xef, (byte)0x45,
+                (byte)0x12, (byte)0x56, (byte)0x78, (byte)0xbc,
+                (byte)0x9a, (byte)0xde, (byte)0xf9, (byte)0x34,
         };
         for (int i = 0; i < actual8.length; i++) {
             obj.write8(start + i, actual8[i]);
@@ -39,6 +44,8 @@ public class RAMTest {
         long[] expected8_8= {
                 0x01L, 0x23L, 0x45L, 0x67L, 0x89L, 0xabL, 0xcdL, 0xefL,
                 0x12L, 0x34L, 0x56L, 0x78L, 0x9aL, 0xbcL, 0xdeL, 0xf9L,
+                0x01L, 0x23L, 0x67L, 0xcdL, 0x89L, 0xabL, 0xefL, 0x45L,
+                0x12L, 0x56L, 0x78L, 0xbcL, 0x9aL, 0xdeL, 0xf9L, 0x34L,
         };
         for (int i = 0; i < expected8_8.length; i++) {
             Assert.assertEquals(msg1, expected8_8[i], obj.read8(start + i) & 0xffL);
@@ -47,6 +54,8 @@ public class RAMTest {
         long[] expected8_16 = {
                 0x2301L, 0x6745L, 0xab89L, 0xefcdL,
                 0x3412L, 0x7856L, 0xbc9aL, 0xf9deL,
+                0x2301L, 0xcd67L, 0xab89L, 0x45efL,
+                0x5612L, 0xbc78L, 0xde9aL, 0x34f9L,
         };
         for (int i = 0; i < expected8_16.length; i++) {
             Assert.assertEquals(msg1, expected8_16[i], obj.read16(start + i * 2) & 0xffffL);
@@ -54,6 +63,7 @@ public class RAMTest {
 
         long[] expected8_32 = {
                 0x67452301L, 0xefcdab89L, 0x78563412L, 0xf9debc9aL,
+                0xcd672301L, 0x45efab89L, 0xbc785612L, 0x34f9de9aL,
         };
         for (int i = 0; i < expected8_32.length; i++) {
             Assert.assertEquals(msg1, expected8_32[i], obj.read32(start + i * 4) & 0xffffffffL);
@@ -61,6 +71,7 @@ public class RAMTest {
 
         long[] expected8_64 = {
                 0xefcdab8967452301L, 0xf9debc9a78563412L,
+                0x45efab89cd672301L, 0x34f9de9abc785612L,
         };
         for (int i = 0; i < expected8_64.length; i++) {
             Assert.assertEquals(msg1, expected8_64[i], obj.read64(start + i * 8));
@@ -73,6 +84,8 @@ public class RAMTest {
         short[] actual16 = {
                 (short)0x0123, (short)0x4567, (short)0x89ab, (short)0xcdef,
                 (short)0x1234, (short)0x5678, (short)0x9abc, (short)0xdef9,
+                (short)0x4567, (short)0x89ab, (short)0xcdef, (short)0x0123,
+                (short)0xdef9, (short)0x1234, (short)0x5678, (short)0x9abc,
         };
         for (int i = 0; i < actual16.length; i++) {
             obj.write16(start + i * 2, actual16[i]);
@@ -81,6 +94,8 @@ public class RAMTest {
         long[] expected16_8 = {
                 0x23L, 0x01L, 0x67L, 0x45L, 0xabL, 0x89L, 0xefL, 0xcdL,
                 0x34L, 0x12L, 0x78L, 0x56L, 0xbcL, 0x9aL, 0xf9L, 0xdeL,
+                0x67L, 0x45L, 0xabL, 0x89L, 0xefL, 0xcdL, 0x23L, 0x01L,
+                0xf9L, 0xdeL, 0x34L, 0x12L, 0x78L, 0x56L, 0xbcL, 0x9aL,
         };
         for (int i = 0; i < expected16_8.length; i++) {
             Assert.assertEquals(msg1, expected16_8[i], obj.read8(start + i) & 0xffL);
@@ -89,6 +104,8 @@ public class RAMTest {
         long[] expected16_16 = {
                 0x0123L, 0x4567L, 0x89abL, 0xcdefL,
                 0x1234L, 0x5678L, 0x9abcL, 0xdef9L,
+                0x4567L, 0x89abL, 0xcdefL, 0x0123L,
+                0xdef9L, 0x1234L, 0x5678L, 0x9abcL,
         };
         for (int i = 0; i < expected16_16.length; i++) {
             Assert.assertEquals(msg1, expected16_16[i], obj.read16(start + i * 2) & 0xffffL);
@@ -96,6 +113,7 @@ public class RAMTest {
 
         long[] expected16_32 = {
                 0x45670123L, 0xcdef89abL, 0x56781234L, 0xdef99abcL,
+                0x89ab4567L, 0x0123cdefL, 0x1234def9L, 0x9abc5678L,
         };
         for (int i = 0; i < expected16_32.length; i++) {
             Assert.assertEquals(msg1, expected16_32[i], obj.read32(start + i * 4) & 0xffffffffL);
@@ -103,6 +121,7 @@ public class RAMTest {
 
         long[] expected16_64 = {
                 0xcdef89ab45670123L, 0xdef99abc56781234L,
+                0x0123cdef89ab4567L, 0x9abc56781234def9L,
         };
         for (int i = 0; i < expected16_64.length; i++) {
             Assert.assertEquals(msg1, expected16_64[i], obj.read64(start + i * 8));
@@ -114,6 +133,7 @@ public class RAMTest {
 
         int[] actual32 = {
                 0x01234567, 0x89abcdef, 0x12345678, 0x9abcdef9,
+                0x23456789, 0xabcdef12, 0x3456789a, 0xbcdef9ba,
         };
         for (int i = 0; i < actual32.length; i++) {
             obj.write32(start + i * 4, actual32[i]);
@@ -122,6 +142,8 @@ public class RAMTest {
         long[] expected32_8 = {
                 0x67L, 0x45L, 0x23L, 0x01L, 0xefL, 0xcdL, 0xabL, 0x89L,
                 0x78L, 0x56L, 0x34L, 0x12L, 0xf9L, 0xdeL, 0xbcL, 0x9aL,
+                0x89L, 0x67L, 0x45L, 0x23L, 0x12L, 0xefL, 0xcdL, 0xabL,
+                0x9aL, 0x78L, 0x56L, 0x34L, 0xbaL, 0xf9L, 0xdeL, 0xbcL,
         };
         for (int i = 0; i < expected32_8.length; i++) {
             Assert.assertEquals(msg1, expected32_8[i], obj.read8(start + i) & 0xffL);
@@ -130,6 +152,8 @@ public class RAMTest {
         long[] expected32_16 = {
                 0x4567L, 0x0123L, 0xcdefL, 0x89abL,
                 0x5678L, 0x1234L, 0xdef9L, 0x9abcL,
+                0x6789L, 0x2345L, 0xef12L, 0xabcdL,
+                0x789aL, 0x3456L, 0xf9baL, 0xbcdeL,
         };
         for (int i = 0; i < expected32_16.length; i++) {
             Assert.assertEquals(msg1, expected32_16[i], obj.read16(start + i * 2) & 0xffffL);
@@ -137,6 +161,7 @@ public class RAMTest {
 
         long[] expected32_32 = {
                 0x01234567L, 0x89abcdefL, 0x12345678L, 0x9abcdef9L,
+                0x23456789L, 0xabcdef12L, 0x3456789aL, 0xbcdef9baL,
         };
         for (int i = 0; i < expected32_32.length; i++) {
             Assert.assertEquals(msg1, expected32_32[i], obj.read32(start + i * 4) & 0xffffffffL);
@@ -144,6 +169,7 @@ public class RAMTest {
 
         long[] expected32_64 = {
                 0x89abcdef01234567L, 0x9abcdef912345678L,
+                0xabcdef1223456789L, 0xbcdef9ba3456789aL,
         };
         for (int i = 0; i < expected32_64.length; i++) {
             Assert.assertEquals(msg1, expected32_64[i], obj.read64(start + i * 8));
@@ -155,6 +181,7 @@ public class RAMTest {
 
         long[] actual64 = {
                 0x0123456789abcdefL, 0x89abcdeffedcba98L,
+                0x23456789abcdef89L, 0xabcdeffedcba9801L,
         };
         for (int i = 0; i < actual64.length; i++) {
             obj.write64(start + i * 8, actual64[i]);
@@ -163,6 +190,8 @@ public class RAMTest {
         long[] expected64_8 = {
                 0xefL, 0xcdL, 0xabL, 0x89L, 0x67L, 0x45L, 0x23L, 0x01L,
                 0x98L, 0xbaL, 0xdcL, 0xfeL, 0xefL, 0xcdL, 0xabL, 0x89L,
+                0x89L, 0xefL, 0xcdL, 0xabL, 0x89L, 0x67L, 0x45L, 0x23L,
+                0x01L, 0x98L, 0xbaL, 0xdcL, 0xfeL, 0xefL, 0xcdL, 0xabL,
         };
         for (int i = 0; i < expected64_8.length; i++) {
             Assert.assertEquals(msg1, expected64_8[i], obj.read8(start + i) & 0xffL);
@@ -171,6 +200,8 @@ public class RAMTest {
         long[] expected64_16 = {
                 0xcdefL, 0x89abL, 0x4567L, 0x0123L,
                 0xba98L, 0xfedcL, 0xcdefL, 0x89abL,
+                0xef89L, 0xabcdL, 0x6789L, 0x2345L,
+                0x9801L, 0xdcbaL, 0xeffeL, 0xabcdL,
         };
         for (int i = 0; i < expected64_16.length; i++) {
             Assert.assertEquals(msg1, expected64_16[i], obj.read16(start + i * 2) & 0xffffL);
@@ -178,6 +209,7 @@ public class RAMTest {
 
         long[] expected64_32 = {
                 0x89abcdefL, 0x01234567L, 0xfedcba98L, 0x89abcdefL,
+                0xabcdef89L, 0x23456789L, 0xdcba9801L, 0xabcdeffeL,
         };
         for (int i = 0; i < expected64_32.length; i++) {
             Assert.assertEquals(msg1, expected64_32[i], obj.read32(start + i * 4) & 0xffffffffL);
@@ -185,6 +217,7 @@ public class RAMTest {
 
         long[] expected64_64 = {
                 0x0123456789abcdefL, 0x89abcdeffedcba98L,
+                0x23456789abcdef89L, 0xabcdeffedcba9801L,
         };
         for (int i = 0; i < expected64_64.length; i++) {
             Assert.assertEquals(msg1, expected64_64[i], obj.read64(start + i * 8));
