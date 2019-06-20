@@ -148,16 +148,16 @@ public class BusTest {
     @Test
     public void testAlignedAccess() throws Exception {
         Bus bus = new Bus();
-        RAM16 ram16 = new RAM16(0x2000);
-        RAM32 ram32 = new RAM32(0x2000);
-        RAM64 ram64 = new RAM64(0x2000);
+        RAM16 ram16 = new RAM16(0x3000);
+        RAM32 ram32 = new RAM32(0x3000);
+        RAM64 ram64 = new RAM64(0x3000);
 
-        bus.addSlaveCore(ram16, 0x10000, 0x11fff);
-        bus.addSlaveCore(ram32, 0x12000, 0x13fff);
-        bus.addSlaveCore(ram64, 0x14000, 0x15fff);
-        bus.addSlaveCore(ram16, 0x100000000L, 0x100001fffL);
-        bus.addSlaveCore(ram32, 0x100002000L, 0x100003fffL);
-        bus.addSlaveCore(ram64, 0x100004000L, 0x100005fffL);
+        bus.addSlaveCore(ram16, 0x10000, 0x12fff);
+        bus.addSlaveCore(ram32, 0x13000, 0x15fff);
+        bus.addSlaveCore(ram64, 0x16000, 0x18fff);
+        bus.addSlaveCore(ram16, 0x100000000L, 0x100002fffL);
+        bus.addSlaveCore(ram32, 0x100003000L, 0x100005fffL);
+        bus.addSlaveCore(ram64, 0x100006000L, 0x100008fffL);
 
         //Aligned
         unalignedAccess(0x10ff0, bus);
@@ -165,14 +165,11 @@ public class BusTest {
         unalignedAccess(0x14ff0, bus);
 
         //Unaligned
-        unalignedAccess(0x10ff0, bus);
-        unalignedAccess(0x10ff1, bus);
-        unalignedAccess(0x10ff2, bus);
-        unalignedAccess(0x10ff3, bus);
-        unalignedAccess(0x10ff4, bus);
-        unalignedAccess(0x10ff5, bus);
-        unalignedAccess(0x10ff6, bus);
-        unalignedAccess(0x10ff7, bus);
+        for (int i = 0; i < 8; i++) {
+            unalignedAccess(0x11ff0 + i, bus);
+            unalignedAccess(0x13ff0 + i, bus);
+            unalignedAccess(0x15ff0 + i, bus);
+        }
     }
 
     public void unalignedAccess(long start, Bus bus) throws Exception {
