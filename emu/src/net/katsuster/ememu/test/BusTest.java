@@ -161,14 +161,14 @@ public class BusTest {
 
         //Aligned
         unalignedAccess(0x10ff0, bus);
-        unalignedAccess(0x12ff0, bus);
-        unalignedAccess(0x14ff0, bus);
+        unalignedAccess(0x13ff0, bus);
+        unalignedAccess(0x16ff0, bus);
 
         //Unaligned
         for (int i = 0; i < 8; i++) {
             unalignedAccess(0x11ff0 + i, bus);
-            unalignedAccess(0x13ff0 + i, bus);
-            unalignedAccess(0x15ff0 + i, bus);
+            unalignedAccess(0x14ff0 + i, bus);
+            unalignedAccess(0x17ff0 + i, bus);
         }
     }
 
