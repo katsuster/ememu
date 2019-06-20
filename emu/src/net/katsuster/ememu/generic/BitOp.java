@@ -465,4 +465,149 @@ public class BitOp {
 
         return (data & ~(eraseMask << sh)) | ((newData & eraseMask) << sh);
     }
+
+    /**
+     * リトルエンディアンにて、
+     * アラインされていないアドレスから、指定された長さのデータを取得します。
+     *
+     * バスにはデータ幅の倍数のアドレスでのみアクセスできるものとします。
+     * 例えば、
+     * <pre>
+     * バスのデータ幅が 32bits であればアドレス 0, 4, 8, 12, ... 4n のみ、
+     * バスのデータ幅が 64bits であればアドレス 0, 8, 16, 24, ... 8n のみ、
+     * </pre>
+     * です。
+     *
+     * バスのデータ幅より小さいデータを取得するとき、
+     * バス幅のデータを取得した後に得られた値をシフトして、
+     * 目的のアドレスにあるデータを取得する必要があります。
+     *
+     * 例えば、バスのデータ幅が 64bits、データ幅が 16bits のシステムにて、
+     * アドレス 0x12 のデータを取得するとします。
+     *
+     * バスのデータ幅は 64bits 幅のためアドレス 0x12 はアクセスできません。
+     * 従って最も近い 8の倍数であるアドレス 0x10 から 64bits を読み出します。
+     *
+     * このときバスから読み出したデータが 0x1234_5678_0246_8ace だとします。
+     * バスから読み出したデータを 16bits ごとに分割し、
+     * 符号ビットから近い順（上位ビットから）から並べると、
+     * <pre>
+     * 0x1234:
+     * 0x5678:
+     * 0x0246:
+     * 0x8ace:
+     * </pre>
+     * となります。
+     *
+     * リトルエンディアンシステムの場合、データの上位から、
+     * アドレス+6, アドレス+4, アドレス+2, アドレス, に対応しますので、
+     * <pre>
+     * 0x1234: アドレス+6
+     * 0x5678: アドレス+4
+     * 0x0246: アドレス+2
+     * 0x8ace: アドレス
+     * </pre>
+     * と対応します。
+     *
+     * 従って、目的のアドレス 0x12 にあるデータは 0x0246 となり、
+     * バスから読み出したデータをシフトする量は 16bits です。
+     *
+     * 同様に 0x13 ならばデータは 0x468a となり、シフトする量は 24bits です。
+     *
+     * バス幅に指定可能な数値は、2のべき乗（8, 16, 32, 64）のみです。
+     * データ幅に指定可能な数値は、8の倍数のみです。
+     *
+     * アドレスのバス内でのオフセットと、データ幅の合計がバス幅を超える場合、
+     * IllegalArgumentException 例外をスローします。
+     *
+     * @param addr     データのアドレス（バイト単位）
+     * @param data     バスから読んだデータ
+     * @param busLen   バスのデータ幅（ビット単位）
+     * @param dataLen  データ幅（ビット単位）
+     * @return addr にあるデータ
+     */
+    public static long unalignedReadMasked(long addr, long data, int busLen, int dataLen) {
+        long busMask = getAddressMask(busLen);
+        int offLen = (int)(addr & ~busMask) << 3;
+        if (offLen + dataLen > busLen) {
+            throw new IllegalArgumentException(String.format(
+                    "Offset %d + data %d is exceeded bus %dbits.",
+                    offLen, dataLen, busLen));
+        }
+
+        return BitOp.getField64(data, offLen, dataLen);
+    }
+
+    /**
+     * リトルエンディアンにて、
+     * アラインされていないアドレスにあるワードを変更します。
+     *
+     * バスにはバスのデータ幅の倍数のアドレスでのみアクセスできるものとします。
+     * 例えば、
+     * <pre>
+     * バス幅が 32bits であればアドレス 0, 4, 8, 12, ... 4n のみ、
+     * バス幅が 64bits であればアドレス 0, 8, 16, 24, ... 8n のみ、
+     * </pre>
+     * です。
+     *
+     * バスのデータ幅より小さいデータ幅を変更するとき、
+     * バスのデータ幅のデータを取得した後に得られた値をマスクして、
+     * 目的のアドレスにあるデータを変更する必要があります。
+     *
+     * 例えば、データのバス幅が 64bits、データ幅が 16bits のシステムにて、
+     * アドレス 0x12 のデータを変更するとします。
+     *
+     * バスのデータ幅は 64bits のためアドレス 0x12 はアクセスできません。
+     * 従って最も近い 8の倍数であるアドレス 0x10 から 64bits を読み出します。
+     *
+     * このときバスから読み出したデータが 0x1234_5678_0246_8ace だとします。
+     * バスから読み出したデータを 16bits ごとに分割し、
+     * 符号ビットから近い順（上位ビットから）から並べると、
+     * <pre>
+     * 0x1234:
+     * 0x5678:
+     * 0x0246:
+     * 0x8ace:
+     * </pre>
+     * となります。
+     *
+     * リトルエンディアンシステムの場合、データの上位から、
+     * アドレス+6, アドレス+4, アドレス+2, アドレス, に対応しますので、
+     * <pre>
+     * 0x1234: アドレス+6
+     * 0x5678: アドレス+4
+     * 0x0246: アドレス+2
+     * 0x8ace: アドレス
+     * </pre>
+     * と対応します。
+     *
+     * 従って、目的のアドレス 0x12 にあるデータは 0x0246 となり、
+     * バスから読み出したデータを変更するためのシフト量は 16bits です。
+     *
+     * 同様に 0x13 ならばデータは 0x468a となり、シフトする量は 24bits です。
+     *
+     * バス幅に指定可能な数値は、2のべき乗（8, 16, 32, 64）のみです。
+     * データ幅に指定可能な数値は、8の倍数のみです。
+     *
+     * アドレスのバス内でのオフセットと、データ幅の合計がバス幅を超える場合、
+     * IllegalArgumentException 例外をスローします。
+     *
+     * @param addr     データのアドレス（バイト単位）
+     * @param data     バスから読んだデータ
+     * @param busLen   バスのデータ幅（ビット単位）
+     * @param dataLen  書き込むデータ幅（ビット単位）
+     * @param newData  addr に書き込むデータ
+     * @return addr に newData を書き込んだ後のデータ
+     */
+    public static long unalignedWriteMasked(long addr, long data, long newData, int busLen, int dataLen) {
+        long busMask = getAddressMask(busLen);
+        int offLen = (int)(addr & ~busMask) << 3;
+        if (offLen + dataLen > busLen) {
+            throw new IllegalArgumentException(String.format(
+                    "Offset %d + data %d is exceeded bus %dbits.",
+                    offLen, dataLen, busLen));
+        }
+
+        return BitOp.setField64(data, offLen, dataLen, newData);
+    }
 }
