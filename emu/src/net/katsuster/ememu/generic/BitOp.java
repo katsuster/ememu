@@ -137,7 +137,7 @@ public class BitOp {
         if (len >= 64) {
             mask = 0xffffffffffffffffL;
         } else {
-            mask = (1 << len) - 1;
+            mask = (1L << len) - 1;
         }
 
         return (val >>> pos) & mask;
@@ -193,7 +193,7 @@ public class BitOp {
         if (len >= 64) {
             mask = 0xffffffffffffffffL;
         } else {
-            mask = (1 << len) - 1;
+            mask = (1L << len) - 1;
         }
         mask <<= pos;
         nv <<= pos;
