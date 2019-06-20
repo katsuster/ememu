@@ -168,8 +168,6 @@ public abstract class Controller32 extends SlaveCore {
 
     @Override
     public void write32(long addr, int data) {
-        int w = (int)BitOp.writeMasked(addr, 0, data, LEN_WORD_BITS, 32);
-
-        writeWord(addr, w);
+        writeWord(addr, data);
     }
 }
