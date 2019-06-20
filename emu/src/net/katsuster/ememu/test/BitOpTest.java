@@ -34,6 +34,12 @@ public class BitOpTest {
         Assert.assertEquals(msg1, 0x00, BitOp.getField32(0x07ad8700, 27, 5));
         Assert.assertEquals(msg1, 0x04, BitOp.getField32(0x87ad8700, 29, 5));
 
+        //31bit
+        Assert.assertEquals(msg1, 0x7ffffff0, BitOp.getField32(0xfffffff0, 0, 31));
+        Assert.assertEquals(msg1, 0x7fffffff, BitOp.getField32(0xffffffff, 32, 31));
+        Assert.assertEquals(msg1, 0x7ffffff8, BitOp.getField32(0xfffffff0, 1, 31));
+        Assert.assertEquals(msg1, 0x3ffffffc, BitOp.getField32(0xfffffff0, 2, 31));
+
         //32bit
         Assert.assertEquals(msg1, 0xfffffff0, BitOp.getField32(0xfffffff0, 0, 32));
         Assert.assertEquals(msg1, 0xffffffff, BitOp.getField32(0xffffffff, 32, 32));
@@ -72,6 +78,12 @@ public class BitOpTest {
         Assert.assertEquals(msg1, 0x11, BitOp.getField64(0x44be650000000000L, 58, 5));
         Assert.assertEquals(msg1, 0x00, BitOp.getField64(0x07ad870000000000L, 59, 5));
         Assert.assertEquals(msg1, 0x04, BitOp.getField64(0x87ad870000000000L, 61, 5));
+
+        //63bit
+        Assert.assertEquals(msg1, 0x7ffffffffffffff0L, BitOp.getField64(0xfffffffffffffff0L, 0, 63));
+        Assert.assertEquals(msg1, 0x7fffffffffffffffL, BitOp.getField64(0xffffffffffffffffL, 64, 63));
+        Assert.assertEquals(msg1, 0x7ffffffffffffff8L, BitOp.getField64(0xfffffffffffffff0L, 1, 63));
+        Assert.assertEquals(msg1, 0x3ffffffffffffffcL, BitOp.getField64(0xfffffffffffffff0L, 2, 63));
 
         //64bit
         Assert.assertEquals(msg1, 0xfffffffffffffff0L, BitOp.getField64(0xfffffffffffffff0L, 0, 64));
@@ -114,6 +126,13 @@ public class BitOpTest {
         Assert.assertEquals(msg1, 0x44be6500, BitOp.setField32(0x60be6500, 26, 5, 0xd1));
         Assert.assertEquals(msg1, 0x07ad8700, BitOp.setField32(0x5fad8700, 27, 5, 0xc0));
 
+        //31bits
+        Assert.assertEquals(msg1, 0x80000001, BitOp.setField32(0x80005600, 0, 31, 0x00000001));
+        Assert.assertEquals(msg1, 0x00000001, BitOp.setField32(0x00340000, 0, 31, 0x80000001));
+        Assert.assertEquals(msg1, 0x7f4321ff, BitOp.setField32(0x12000000, 0, 31, 0xff4321ff));
+        Assert.assertEquals(msg1, 0xf4321ff0, BitOp.setField32(0x82000000, 4, 31, 0xff4321ff));
+        Assert.assertEquals(msg1, 0x4321ff00, BitOp.setField32(0x82000000, 8, 31, 0xff4321ff));
+
         //32bits
         Assert.assertEquals(msg1, 0x00000001, BitOp.setField32(0x00005600, 0, 32, 0x00000001));
         Assert.assertEquals(msg1, 0x80000001, BitOp.setField32(0x00340000, 0, 32, 0x80000001));
@@ -151,6 +170,13 @@ public class BitOpTest {
         Assert.assertEquals(msg1, 0x70000000008b4300L, BitOp.setField64(0x7000000000cf4300L, 82, 5, 0xe2));
         Assert.assertEquals(msg1, 0x44be650000000000L, BitOp.setField64(0x60be650000000000L, 58, 5, 0xd1));
         Assert.assertEquals(msg1, 0x07ad870000000000L, BitOp.setField64(0x5fad870000000000L, 59, 5, 0xc0));
+
+        //63bits
+        Assert.assertEquals(msg1, 0x8000000000000001L, BitOp.setField64(0x80005600, 0, 63, 0x0000000000000001L));
+        Assert.assertEquals(msg1, 0x0000000000000001L, BitOp.setField64(0x00340000, 0, 63, 0x8000000000000001L));
+        Assert.assertEquals(msg1, 0x7f430000000021ffL, BitOp.setField64(0x12000000, 0, 63, 0xff430000000021ffL));
+        Assert.assertEquals(msg1, 0xf430000000021ff0L, BitOp.setField64(0x82000000, 4, 63, 0xff430000000021ffL));
+        Assert.assertEquals(msg1, 0x430000000021ff00L, BitOp.setField64(0x82000000, 8, 63, 0xff430000000021ffL));
 
         //64bits
         Assert.assertEquals(msg1, 0x0000000000000001L, BitOp.setField64(0x0000000056000000L, 0, 64, 0x0000000000000001L));
