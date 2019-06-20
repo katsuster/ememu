@@ -9,7 +9,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
         BitOpTest.class,
         IntegerExtTest.class,
-        SlaveCoreTest.class,
         RAMTest.class,
         BusTest.class,
 })
