@@ -376,10 +376,16 @@ public class BitOp {
      *
      * 同様に 0x14 ならばデータは 0x5678 となり、シフトする量は 32bits です。
      *
-     * @param addr     データのアドレス
+     * バス幅およびデータ幅に指定可能な数値は、2のべき乗（8, 16, 32, 64）のみです。
+     *
+     * バス幅の倍数ではないアドレスを指定した場合、アドレス以下の最も近いバス幅の倍数に丸められます。
+     * 例えば、32bit バスに 0x11 を指定した場合、0x10 と同様に扱われます。
+     * 同様に 0x12, 0x13 を指定した場合、0x10 と同様に扱われます。
+     *
+     * @param addr     データのアドレス（バイト単位）
      * @param data     バスから読んだデータ
-     * @param busLen   バスのデータ幅（バイト単位）
-     * @param dataLen  データ幅（バイト単位）
+     * @param busLen   バスのデータ幅（ビット単位）
+     * @param dataLen  データ幅（ビット単位）
      * @return addr にあるデータ
      */
     public static long readMasked(long addr, long data, int busLen, int dataLen) {
@@ -438,10 +444,16 @@ public class BitOp {
      *
      * 同様に 0x14 ならばデータは 0x5678 となり、シフトする量は 32bits です。
      *
-     * @param addr     データのアドレス
+     * バス幅およびデータ幅に指定可能な数値は、2のべき乗（8, 16, 32, 64）のみです。
+     *
+     * バス幅の倍数ではないアドレスを指定した場合、アドレス以下の最も近いバス幅の倍数に丸められます。
+     * 例えば、32bit バスに 0x11 を指定した場合、0x10 と同様に扱われます。
+     * 同様に 0x12, 0x13 を指定した場合、0x10 と同様に扱われます。
+     *
+     * @param addr     データのアドレス（バイト単位）
      * @param data     バスから読んだデータ
-     * @param busLen   バスのデータ幅
-     * @param dataLen  書き込むデータ幅
+     * @param busLen   バスのデータ幅（ビット単位）
+     * @param dataLen  書き込むデータ幅（ビット単位）
      * @param newData  addr に書き込むデータ
      * @return addr に newData を書き込んだ後のデータ
      */
