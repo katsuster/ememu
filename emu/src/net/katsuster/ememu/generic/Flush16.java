@@ -347,7 +347,7 @@ public class Flush16 extends SlaveCore {
     public short readWord(long addr) {
         int wordAddr;
 
-        addr &= getAddressMask(LEN_WORD_BITS);
+        addr &= BitOp.getAddressMask(LEN_WORD_BITS);
         checkAddress(addr);
         wordAddr = (int) (addr / LEN_WORD);
 
@@ -357,7 +357,7 @@ public class Flush16 extends SlaveCore {
     public void writeWord(long addr, short data) {
         int wordAddr;
 
-        addr &= getAddressMask(LEN_WORD_BITS);
+        addr &= BitOp.getAddressMask(LEN_WORD_BITS);
         checkAddress(addr);
         wordAddr = (int)(addr / LEN_WORD);
 

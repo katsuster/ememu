@@ -45,7 +45,7 @@ public class RAM16 extends RAM {
     public byte read8(long addr) {
         short v = readWord(addr);
 
-        return (byte)readMasked(addr, v, LEN_WORD_BITS, 8);
+        return (byte)BitOp.readMasked(addr, v, LEN_WORD_BITS, 8);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class RAM16 extends RAM {
     @Override
     public void write8(long addr, byte data) {
         short v = readWord(addr);
-        short w = (short)writeMasked(addr, v, data, LEN_WORD_BITS, 8);
+        short w = (short)BitOp.writeMasked(addr, v, data, LEN_WORD_BITS, 8);
 
         writeWord(addr, w);
     }
@@ -105,7 +105,7 @@ public class RAM16 extends RAM {
     public short readWord(long addr) {
         int wordAddr;
 
-        addr &= getAddressMask(LEN_WORD_BITS);
+        addr &= BitOp.getAddressMask(LEN_WORD_BITS);
         checkAddress(addr, LEN_WORD);
 
         wordAddr = getWordAddress(addr);
@@ -116,7 +116,7 @@ public class RAM16 extends RAM {
     public void writeWord(long addr, short data) {
         int wordAddr;
 
-        addr &= getAddressMask(LEN_WORD_BITS);
+        addr &= BitOp.getAddressMask(LEN_WORD_BITS);
         checkAddress(addr, LEN_WORD);
 
         wordAddr = getWordAddress(addr);

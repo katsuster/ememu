@@ -45,21 +45,21 @@ public class RAM64 extends RAM {
     public byte read8(long addr) {
         long v = readWord(addr);
 
-        return (byte)readMasked(addr, v, LEN_WORD_BITS, 8);
+        return (byte)BitOp.readMasked(addr, v, LEN_WORD_BITS, 8);
     }
 
     @Override
     public short read16(long addr) {
         long v = readWord(addr);
 
-        return (short)readMasked(addr, v, LEN_WORD_BITS, 16);
+        return (short)BitOp.readMasked(addr, v, LEN_WORD_BITS, 16);
     }
 
     @Override
     public int read32(long addr) {
         long v = readWord(addr);
 
-        return (int)readMasked(addr, v, LEN_WORD_BITS, 32);
+        return (int)BitOp.readMasked(addr, v, LEN_WORD_BITS, 32);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class RAM64 extends RAM {
     @Override
     public void write8(long addr, byte data) {
         long v = readWord(addr);
-        long w = writeMasked(addr, v, data, LEN_WORD_BITS, 8);
+        long w = BitOp.writeMasked(addr, v, data, LEN_WORD_BITS, 8);
 
         writeWord(addr, w);
     }
@@ -78,7 +78,7 @@ public class RAM64 extends RAM {
     @Override
     public void write16(long addr, short data) {
         long v = readWord(addr);
-        long w = writeMasked(addr, v, data, LEN_WORD_BITS, 16);
+        long w = BitOp.writeMasked(addr, v, data, LEN_WORD_BITS, 16);
 
         writeWord(addr, w);
     }
@@ -86,7 +86,7 @@ public class RAM64 extends RAM {
     @Override
     public void write32(long addr, int data) {
         long v = readWord(addr);
-        long w = writeMasked(addr, v, data, LEN_WORD_BITS, 32);
+        long w = BitOp.writeMasked(addr, v, data, LEN_WORD_BITS, 32);
 
         writeWord(addr, w);
     }
@@ -99,7 +99,7 @@ public class RAM64 extends RAM {
     public long readWord(long addr) {
         int wordAddr;
 
-        addr &= getAddressMask(LEN_WORD_BITS);
+        addr &= BitOp.getAddressMask(LEN_WORD_BITS);
         checkAddress(addr, LEN_WORD);
 
         wordAddr = getWordAddress(addr);
@@ -110,7 +110,7 @@ public class RAM64 extends RAM {
     public void writeWord(long addr, long data) {
         int wordAddr;
 
-        addr &= getAddressMask(LEN_WORD_BITS);
+        addr &= BitOp.getAddressMask(LEN_WORD_BITS);
         checkAddress(addr, LEN_WORD);
 
         wordAddr = getWordAddress(addr);

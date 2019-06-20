@@ -128,7 +128,7 @@ public class AACI implements BusSlave {
             int regaddr;
             int result;
 
-            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
+            regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
             default:
@@ -143,7 +143,7 @@ public class AACI implements BusSlave {
         public void writeWord(long addr, int data) {
             int regaddr;
 
-            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
+            regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
             case REG_AACIPERIPHID0:

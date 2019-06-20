@@ -201,7 +201,7 @@ public class DualTimer implements INTSource, BusSlave {
             int regaddr;
             int result;
 
-            regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+            regaddr = (int)(addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
             case REG_Timer1Load:
@@ -254,7 +254,7 @@ public class DualTimer implements INTSource, BusSlave {
         public void writeWord(long addr, int data) {
             int regaddr;
 
-            regaddr = (int) (addr & getAddressMask(LEN_WORD_BITS));
+            regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             synchronized(this) {
                 switch (regaddr) {

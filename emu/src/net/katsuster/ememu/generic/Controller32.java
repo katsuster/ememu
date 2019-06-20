@@ -105,7 +105,7 @@ public abstract class Controller32 extends SlaveCore {
     public boolean tryAccess(long addr, int len) {
         int regaddr;
 
-        regaddr = (int)(addr & getAddressMask(LEN_WORD_BITS));
+        regaddr = (int)(addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
         switch (regaddr) {
         default:
@@ -137,14 +137,14 @@ public abstract class Controller32 extends SlaveCore {
     public byte read8(long addr) {
         long v = readWord(addr);
 
-        return (byte)readMasked(addr, v, LEN_WORD_BITS, 8);
+        return (byte)BitOp.readMasked(addr, v, LEN_WORD_BITS, 8);
     }
 
     @Override
     public short read16(long addr) {
         long v = readWord(addr);
 
-        return (short)readMasked(addr, v, LEN_WORD_BITS, 16);
+        return (short)BitOp.readMasked(addr, v, LEN_WORD_BITS, 16);
     }
 
     @Override
@@ -154,21 +154,21 @@ public abstract class Controller32 extends SlaveCore {
 
     @Override
     public void write8(long addr, byte data) {
-        int w = (int)writeMasked(addr, 0, data, LEN_WORD_BITS, 8);
+        int w = (int)BitOp.writeMasked(addr, 0, data, LEN_WORD_BITS, 8);
 
         writeWord(addr, w);
     }
 
     @Override
     public void write16(long addr, short data) {
-        int w = (int)writeMasked(addr, 0, data, LEN_WORD_BITS, 16);
+        int w = (int)BitOp.writeMasked(addr, 0, data, LEN_WORD_BITS, 16);
 
         writeWord(addr, w);
     }
 
     @Override
     public void write32(long addr, int data) {
-        int w = (int)writeMasked(addr, 0, data, LEN_WORD_BITS, 32);
+        int w = (int)BitOp.writeMasked(addr, 0, data, LEN_WORD_BITS, 32);
 
         writeWord(addr, w);
     }

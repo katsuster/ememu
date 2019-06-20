@@ -90,14 +90,14 @@ public class BankedFlush16_16 extends SlaveCore {
     public byte read8(long addr) {
         long v = readWord(addr) & 0xffffffffL;
 
-        return (byte)readMasked(addr, v, LEN_WORD_BITS, 8);
+        return (byte)BitOp.readMasked(addr, v, LEN_WORD_BITS, 8);
     }
 
     @Override
     public short read16(long addr) {
         long v = readWord(addr) & 0xffffffffL;
 
-        return (short)readMasked(addr, v, LEN_WORD_BITS, 16);
+        return (short)BitOp.readMasked(addr, v, LEN_WORD_BITS, 16);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class BankedFlush16_16 extends SlaveCore {
     @Override
     public void write8(long addr, byte data) {
         long v = readWord(addr) & 0xffffffffL;
-        int w = (int)writeMasked(addr, v, data, LEN_WORD_BITS, 8);
+        int w = (int)BitOp.writeMasked(addr, v, data, LEN_WORD_BITS, 8);
 
         writeWord(addr, w);
     }
@@ -116,7 +116,7 @@ public class BankedFlush16_16 extends SlaveCore {
     @Override
     public void write16(long addr, short data) {
         long v = readWord(addr) & 0xffffffffL;
-        int w = (int)writeMasked(addr, v, data, LEN_WORD_BITS, 16);
+        int w = (int)BitOp.writeMasked(addr, v, data, LEN_WORD_BITS, 16);
 
         writeWord(addr, w);
     }
