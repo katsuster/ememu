@@ -224,6 +224,13 @@ public class BitOpTest {
     public void testReadMasked() throws Exception {
         String msg1 = "BitOp.readMasked() failed.";
 
+        //bus:8bits, data:8bits
+        Assert.assertEquals(msg1, (byte) 0xfe, (byte) BitOp.readMasked(0x60, 0xfe, 8, 8));
+        Assert.assertEquals(msg1, (byte) 0x54, (byte) BitOp.readMasked(0x61, 0x54, 8, 8));
+
+        Assert.assertEquals(msg1, (byte) 0xfd, (byte) BitOp.readMasked(0xfffffffffffffff0L, 0xfd, 8, 8));
+        Assert.assertEquals(msg1, (byte) 0x53, (byte) BitOp.readMasked(0xfffffffffffffff1L, 0x53, 8, 8));
+
         //bus:16bits, data:8bits
         Assert.assertEquals(msg1, (byte) 0x54, (byte) BitOp.readMasked(0x0, 0xfe54, 16, 8));
         Assert.assertEquals(msg1, (byte) 0xfe, (byte) BitOp.readMasked(0x1, 0xfe54, 16, 8));
@@ -274,6 +281,13 @@ public class BitOpTest {
     @org.junit.Test
     public void testWriteMasked() throws Exception {
         String msg1 = "BitOp.writeMasked() failed.";
+
+        //bus:8bits, data:8bits
+        Assert.assertEquals(msg1, (byte) 0xf0, (byte) BitOp.writeMasked(0x60, 0xfe, 0xf0, 8, 8));
+        Assert.assertEquals(msg1, (byte) 0xf2, (byte) BitOp.writeMasked(0x61, 0x54, 0xf2, 8, 8));
+
+        Assert.assertEquals(msg1, (byte) 0xf4, (byte) BitOp.writeMasked(0xfffffffffffffff0L, 0xfe, 0xf4, 8, 8));
+        Assert.assertEquals(msg1, (byte) 0xf6, (byte) BitOp.writeMasked(0xfffffffffffffff1L, 0x54, 0xf6, 8, 8));
 
         //bus:16bits, data:8bits
         Assert.assertEquals(msg1, (short) 0xfef0, (short) BitOp.writeMasked(0x60, 0xfe54, 0x1f0, 16, 8));
