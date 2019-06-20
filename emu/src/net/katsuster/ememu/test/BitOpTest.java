@@ -361,4 +361,247 @@ public class BitOpTest {
         Assert.assertEquals(msg1, 0x9876543823456789L, BitOp.writeMasked(0xb6, 0x89abcdef23456789L, 0x98765438, 64, 32));
         Assert.assertEquals(msg1, 0x9876543923456789L, BitOp.writeMasked(0xb7, 0x89abcdef23456789L, 0x98765439, 64, 32));
     }
+
+    @org.junit.Test
+    public void testUnalignedReadMasked() throws Exception {
+        String msg1 = "BitOp.unalignedReadMasked() failed.";
+        String msg2 = "BitOp.unalignedReadMasked() length check failed.";
+
+        //bus:16bits, data:8bits
+        Assert.assertEquals(msg1, (byte) 0x54, (byte) BitOp.unalignedReadMasked(0x0, 0xfe54L, 16, 8));
+        Assert.assertEquals(msg1, (byte) 0xfe, (byte) BitOp.unalignedReadMasked(0x1, 0xfe54L, 16, 8));
+
+        Assert.assertEquals(msg1, (byte) 0x54, (byte) BitOp.unalignedReadMasked(0xfffffffffffffff0L, 0xfe54L, 16, 8));
+        Assert.assertEquals(msg1, (byte) 0xfe, (byte) BitOp.unalignedReadMasked(0xfffffffffffffff1L, 0xfe54L, 16, 8));
+
+        //bus:32bits, data:8, 16, 24bits
+        Assert.assertEquals(msg1, (byte) 0x32, (byte) BitOp.unalignedReadMasked(0x10, 0xfedc5432L, 32, 8));
+        Assert.assertEquals(msg1, (byte) 0x54, (byte) BitOp.unalignedReadMasked(0x11, 0xfedc5432L, 32, 8));
+        Assert.assertEquals(msg1, (byte) 0xdc, (byte) BitOp.unalignedReadMasked(0x12, 0xfedc5432L, 32, 8));
+        Assert.assertEquals(msg1, (byte) 0xfe, (byte) BitOp.unalignedReadMasked(0x13, 0xfedc5432L, 32, 8));
+
+        Assert.assertEquals(msg1, (short) 0x5432, (short) BitOp.unalignedReadMasked(0x20, 0xfedc5432L, 32, 16));
+        Assert.assertEquals(msg1, (short) 0xdc54, (short) BitOp.unalignedReadMasked(0x21, 0xfedc5432L, 32, 16));
+        Assert.assertEquals(msg1, (short) 0xfedc, (short) BitOp.unalignedReadMasked(0x22, 0xfedc5432L, 32, 16));
+        try {
+            Assert.assertEquals(msg1, (short) 0x00fe, BitOp.unalignedReadMasked(0x23, 0xfedc5432L, 32, 16));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+
+        Assert.assertEquals(msg1, (short) 0xdc5432, (short) BitOp.unalignedReadMasked(0x30, 0xfedc5432L, 32, 24));
+        Assert.assertEquals(msg1, (short) 0xfedc54, (short) BitOp.unalignedReadMasked(0x31, 0xfedc5432L, 32, 24));
+        try {
+            Assert.assertEquals(msg1, (short) 0x00fedc, (short) BitOp.unalignedReadMasked(0x32, 0xfedc5432L, 32, 24));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, (short) 0x0000fe, BitOp.unalignedReadMasked(0x33, 0xfedc5432L, 32, 24));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+
+        //bus:64bits, data:8, 16, 32, 40bits
+        Assert.assertEquals(msg1, (byte) 0x10, (byte) BitOp.unalignedReadMasked(0x30, 0xfedcba9876543210L, 64, 8));
+        Assert.assertEquals(msg1, (byte) 0x32, (byte) BitOp.unalignedReadMasked(0x31, 0xfedcba9876543210L, 64, 8));
+        Assert.assertEquals(msg1, (byte) 0x54, (byte) BitOp.unalignedReadMasked(0x32, 0xfedcba9876543210L, 64, 8));
+        Assert.assertEquals(msg1, (byte) 0x76, (byte) BitOp.unalignedReadMasked(0x33, 0xfedcba9876543210L, 64, 8));
+        Assert.assertEquals(msg1, (byte) 0x98, (byte) BitOp.unalignedReadMasked(0x34, 0xfedcba9876543210L, 64, 8));
+        Assert.assertEquals(msg1, (byte) 0xba, (byte) BitOp.unalignedReadMasked(0x35, 0xfedcba9876543210L, 64, 8));
+        Assert.assertEquals(msg1, (byte) 0xdc, (byte) BitOp.unalignedReadMasked(0x36, 0xfedcba9876543210L, 64, 8));
+        Assert.assertEquals(msg1, (byte) 0xfe, (byte) BitOp.unalignedReadMasked(0x37, 0xfedcba9876543210L, 64, 8));
+
+        Assert.assertEquals(msg1, (short) 0x3210, (short) BitOp.unalignedReadMasked(0x40, 0xfedcba9876543210L, 64, 16));
+        Assert.assertEquals(msg1, (short) 0x5432, (short) BitOp.unalignedReadMasked(0x41, 0xfedcba9876543210L, 64, 16));
+        Assert.assertEquals(msg1, (short) 0x7654, (short) BitOp.unalignedReadMasked(0x42, 0xfedcba9876543210L, 64, 16));
+        Assert.assertEquals(msg1, (short) 0x9876, (short) BitOp.unalignedReadMasked(0x43, 0xfedcba9876543210L, 64, 16));
+        Assert.assertEquals(msg1, (short) 0xba98, (short) BitOp.unalignedReadMasked(0x44, 0xfedcba9876543210L, 64, 16));
+        Assert.assertEquals(msg1, (short) 0xdcba, (short) BitOp.unalignedReadMasked(0x45, 0xfedcba9876543210L, 64, 16));
+        Assert.assertEquals(msg1, (short) 0xfedc, (short) BitOp.unalignedReadMasked(0x46, 0xfedcba9876543210L, 64, 16));
+        try {
+            Assert.assertEquals(msg1, (short) 0x00fe, (short) BitOp.unalignedReadMasked(0x47, 0xfedcba9876543210L, 64, 16));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+
+        Assert.assertEquals(msg1, 0x76543210, (int) BitOp.unalignedReadMasked(0x50, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0x98765432, (int) BitOp.unalignedReadMasked(0x51, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0xba987654, (int) BitOp.unalignedReadMasked(0x52, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0xdcba9876, (int) BitOp.unalignedReadMasked(0x53, 0xfedcba9876543210L, 64, 32));
+        Assert.assertEquals(msg1, 0xfedcba98, (int) BitOp.unalignedReadMasked(0x54, 0xfedcba9876543210L, 64, 32));
+        try {
+            Assert.assertEquals(msg1, 0x00fedcba, (int) BitOp.unalignedReadMasked(0x55, 0xfedcba9876543210L, 64, 32));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, 0x0000fedc, (int) BitOp.unalignedReadMasked(0x56, 0xfedcba9876543210L, 64, 32));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, 0x000000fe, (int) BitOp.unalignedReadMasked(0x57, 0xfedcba9876543210L, 64, 32));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+
+        Assert.assertEquals(msg1, 0x9876543210L, BitOp.unalignedReadMasked(0x60, 0xfedcba9876543210L, 64, 40));
+        Assert.assertEquals(msg1, 0xba98765432L, BitOp.unalignedReadMasked(0x61, 0xfedcba9876543210L, 64, 40));
+        Assert.assertEquals(msg1, 0xdcba987654L, BitOp.unalignedReadMasked(0x62, 0xfedcba9876543210L, 64, 40));
+        Assert.assertEquals(msg1, 0xfedcba9876L, BitOp.unalignedReadMasked(0x63, 0xfedcba9876543210L, 64, 40));
+        try {
+            Assert.assertEquals(msg1, 0x00fedcba98L, BitOp.unalignedReadMasked(0x64, 0xfedcba9876543210L, 64, 40));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, 0x0000dcba, (int) BitOp.unalignedReadMasked(0x65, 0xfedcba9876543210L, 64, 40));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, 0x000000fe, (int) BitOp.unalignedReadMasked(0x66, 0xfedcba9876543210L, 64, 40));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+    }
+
+    @org.junit.Test
+    public void testUnalignedWriteMasked() throws Exception {
+        String msg1 = "BitOp.unalignedWriteMasked() failed.";
+        String msg2 = "BitOp.unalignedWriteMasked() length check failed.";
+
+        //bus:8bits, data:8bits
+        Assert.assertEquals(msg1, (byte) 0xf0, (byte) BitOp.unalignedWriteMasked(0x60, 0xfe, 0xf0, 8, 8));
+        Assert.assertEquals(msg1, (byte) 0xf2, (byte) BitOp.unalignedWriteMasked(0x61, 0x54, 0xf2, 8, 8));
+
+        Assert.assertEquals(msg1, (byte) 0xf4, (byte) BitOp.unalignedWriteMasked(0xfffffffffffffff0L, 0xfe, 0xf4, 8, 8));
+        Assert.assertEquals(msg1, (byte) 0xf6, (byte) BitOp.unalignedWriteMasked(0xfffffffffffffff1L, 0x54, 0xf6, 8, 8));
+
+        //bus:16bits, data:8bits
+        Assert.assertEquals(msg1, (short) 0xfef0, (short) BitOp.unalignedWriteMasked(0x60, 0xfe54, 0x1f0, 16, 8));
+        Assert.assertEquals(msg1, (short) 0xf054, (short) BitOp.unalignedWriteMasked(0x61, 0xfe54, 0x2f0, 16, 8));
+
+        Assert.assertEquals(msg1, (short) 0xfe0f, (short) BitOp.unalignedWriteMasked(0xfffffffffffffff0L, 0xfe54, 0xe0f, 16, 8));
+        Assert.assertEquals(msg1, (short) 0x0f54, (short) BitOp.unalignedWriteMasked(0xfffffffffffffff1L, 0xfe54, 0xf0f, 16, 8));
+
+        //bus:32bits, data:8, 16, 24bits
+        Assert.assertEquals(msg1, 0xcdef23f9, (int) BitOp.unalignedWriteMasked(0x70, 0xcdef2345, 0x1f9, 32, 8));
+        Assert.assertEquals(msg1, 0xcdeff845, (int) BitOp.unalignedWriteMasked(0x71, 0xcdef2345, 0x2f8, 32, 8));
+        Assert.assertEquals(msg1, 0xcdf72345, (int) BitOp.unalignedWriteMasked(0x72, 0xcdef2345, 0x3f7, 32, 8));
+        Assert.assertEquals(msg1, 0xf6ef2345, (int) BitOp.unalignedWriteMasked(0x73, 0xcdef2345, 0x4f6, 32, 8));
+
+        Assert.assertEquals(msg1, 0xcdefe123, (int) BitOp.unalignedWriteMasked(0x80, 0xcdef2345, 0x5e123, 32, 16));
+        Assert.assertEquals(msg1, 0xcde12445, (int) BitOp.unalignedWriteMasked(0x81, 0xcdef2345, 0x6e124, 32, 16));
+        Assert.assertEquals(msg1, 0xe1252345, (int) BitOp.unalignedWriteMasked(0x82, 0xcdef2345, 0x7e125, 32, 16));
+        try {
+            Assert.assertEquals(msg1, 0x26ef2345, (int) BitOp.unalignedWriteMasked(0x83, 0xcdef2345, 0x8e126, 32, 16));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+
+        Assert.assertEquals(msg1, 0xcdf12342, (int) BitOp.unalignedWriteMasked(0x80, 0xcdef2345, 0xaf12342, 32, 24));
+        Assert.assertEquals(msg1, 0xf1234345, (int) BitOp.unalignedWriteMasked(0x81, 0xcdef2345, 0xbf12343, 32, 24));
+        try {
+            Assert.assertEquals(msg1, 0x23442345, (int) BitOp.unalignedWriteMasked(0x82, 0xcdef2345, 0xcf12344, 32, 24));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, 0x45ef2345, (int) BitOp.unalignedWriteMasked(0x83, 0xcdef2345, 0xdf12345, 32, 24));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+
+        //bus:64bits, data:8, 16, 32, 40bits
+        Assert.assertEquals(msg1, 0x89abcdef234567f9L, BitOp.unalignedWriteMasked(0x90, 0x89abcdef23456789L, 0x11f9, 64, 8));
+        Assert.assertEquals(msg1, 0x89abcdef2345f889L, BitOp.unalignedWriteMasked(0x91, 0x89abcdef23456789L, 0x21f8, 64, 8));
+        Assert.assertEquals(msg1, 0x89abcdef23f76789L, BitOp.unalignedWriteMasked(0x92, 0x89abcdef23456789L, 0x31f7, 64, 8));
+        Assert.assertEquals(msg1, 0x89abcdeff6456789L, BitOp.unalignedWriteMasked(0x93, 0x89abcdef23456789L, 0x41f6, 64, 8));
+        Assert.assertEquals(msg1, 0x89abcdf523456789L, BitOp.unalignedWriteMasked(0x94, 0x89abcdef23456789L, 0x51f5, 64, 8));
+        Assert.assertEquals(msg1, 0x89abf4ef23456789L, BitOp.unalignedWriteMasked(0x95, 0x89abcdef23456789L, 0x61f4, 64, 8));
+        Assert.assertEquals(msg1, 0x89f3cdef23456789L, BitOp.unalignedWriteMasked(0x96, 0x89abcdef23456789L, 0x71f3, 64, 8));
+        Assert.assertEquals(msg1, 0xf2abcdef23456789L, BitOp.unalignedWriteMasked(0x97, 0x89abcdef23456789L, 0x81f2, 64, 8));
+
+        Assert.assertEquals(msg1, 0x89abcdef2345f9e8L, BitOp.unalignedWriteMasked(0xa0, 0x89abcdef23456789L, 0x12f9e8, 64, 16));
+        Assert.assertEquals(msg1, 0x89abcdef23f9e789L, BitOp.unalignedWriteMasked(0xa1, 0x89abcdef23456789L, 0x13f9e7, 64, 16));
+        Assert.assertEquals(msg1, 0x89abcdeff9e66789L, BitOp.unalignedWriteMasked(0xa2, 0x89abcdef23456789L, 0x14f9e6, 64, 16));
+        Assert.assertEquals(msg1, 0x89abcdf9e5456789L, BitOp.unalignedWriteMasked(0xa3, 0x89abcdef23456789L, 0x15f9e5, 64, 16));
+        Assert.assertEquals(msg1, 0x89abf9e423456789L, BitOp.unalignedWriteMasked(0xa4, 0x89abcdef23456789L, 0x16f9e4, 64, 16));
+        Assert.assertEquals(msg1, 0x89f9e3ef23456789L, BitOp.unalignedWriteMasked(0xa5, 0x89abcdef23456789L, 0x17f9e3, 64, 16));
+        Assert.assertEquals(msg1, 0xf9e2cdef23456789L, BitOp.unalignedWriteMasked(0xa6, 0x89abcdef23456789L, 0x18f9e2, 64, 16));
+        try {
+            Assert.assertEquals(msg1, 0xe1abcdef23456789L, BitOp.unalignedWriteMasked(0xa7, 0x89abcdef23456789L, 0x19f9e1, 64, 16));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+
+        Assert.assertEquals(msg1, 0x89abcdef98765432L, BitOp.unalignedWriteMasked(0xb0, 0x89abcdef23456789L, 0x298765432L, 64, 32));
+        Assert.assertEquals(msg1, 0x89abcd9876543389L, BitOp.unalignedWriteMasked(0xb1, 0x89abcdef23456789L, 0x298765433L, 64, 32));
+        Assert.assertEquals(msg1, 0x89ab987654346789L, BitOp.unalignedWriteMasked(0xb2, 0x89abcdef23456789L, 0x298765434L, 64, 32));
+        Assert.assertEquals(msg1, 0x8998765435456789L, BitOp.unalignedWriteMasked(0xb3, 0x89abcdef23456789L, 0x298765435L, 64, 32));
+        Assert.assertEquals(msg1, 0x9876543623456789L, BitOp.unalignedWriteMasked(0xb4, 0x89abcdef23456789L, 0x298765436L, 64, 32));
+        try {
+            Assert.assertEquals(msg1, 0x765437ef23456789L, BitOp.unalignedWriteMasked(0xb5, 0x89abcdef23456789L, 0x298765437L, 64, 32));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, 0x5438cdef23456789L, BitOp.unalignedWriteMasked(0xb6, 0x89abcdef23456789L, 0x298765438L, 64, 32));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, 0x39abcdef23456789L, BitOp.unalignedWriteMasked(0xb7, 0x89abcdef23456789L, 0x298765439L, 64, 32));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+
+        Assert.assertEquals(msg1, 0x89abcdba98765431L, BitOp.unalignedWriteMasked(0xb0, 0x89abcdef23456789L, 0x3ba98765431L, 64, 40));
+        Assert.assertEquals(msg1, 0x89abba9876543289L, BitOp.unalignedWriteMasked(0xb1, 0x89abcdef23456789L, 0x3ba98765432L, 64, 40));
+        Assert.assertEquals(msg1, 0x89ba987654336789L, BitOp.unalignedWriteMasked(0xb2, 0x89abcdef23456789L, 0x3ba98765433L, 64, 40));
+        Assert.assertEquals(msg1, 0xba98765434456789L, BitOp.unalignedWriteMasked(0xb3, 0x89abcdef23456789L, 0x3ba98765434L, 64, 40));
+        try {
+            Assert.assertEquals(msg1, 0x9876543523456789L, BitOp.unalignedWriteMasked(0xb4, 0x89abcdef23456789L, 0x3ba98765435L, 64, 40));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, 0x765436ef23456789L, BitOp.unalignedWriteMasked(0xb5, 0x89abcdef23456789L, 0x3ba98765436L, 64, 40));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, 0x5437cdef23456789L, BitOp.unalignedWriteMasked(0xb6, 0x89abcdef23456789L, 0x3ba98765437L, 64, 40));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+        try {
+            Assert.assertEquals(msg1, 0x38abcdef23456789L, BitOp.unalignedWriteMasked(0xb7, 0x89abcdef23456789L, 0x3ba98765438L, 64, 40));
+            Assert.fail(msg2);
+        } catch (Exception e) {
+            //OK
+        }
+    }
 }
