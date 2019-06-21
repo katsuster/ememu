@@ -53,7 +53,7 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
-     * JALR () 命令。
+     * JALR (Jump and link register) 命令。
      *
      * @param inst 32bit 命令
      * @param exec デコードと実行なら true、デコードのみなら false
@@ -77,7 +77,7 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
-     * AUIPC (add upper immediate to pc) 命令。
+     * AUIPC (Add upper immediate to pc) 命令。
      *
      * @param inst 32bit 命令
      * @param exec デコードと実行なら true、デコードのみなら false
@@ -96,7 +96,7 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
-     * LW (load word) 命令。
+     * LW (Load word) 命令。
      *
      * @param inst 32bit 命令
      * @param exec デコードと実行なら true、デコードのみなら false
@@ -136,7 +136,7 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
-     * ADDI (add immediate) 命令。
+     * ADDI (Add immediate) 命令。
      *
      * @param inst 32bit 命令
      * @param exec デコードと実行なら true、デコードのみなら false
@@ -158,7 +158,7 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
-     * SLLI (logical left shift) 命令。
+     * SLLI (Shift left logical immediate) 命令。
      *
      * @param inst 32bit 命令
      * @param exec デコードと実行なら true、デコードのみなら false
@@ -167,7 +167,6 @@ public class ExecStageRVI extends Stage64 {
         int rd = inst.getRd();
         int rs1 = inst.getRs1();
         int shamt = inst.getField(20, 5);
-        int imm6 = inst.getImm6I();
 
         if (!exec) {
             printDisasm(inst, "slli",
@@ -201,7 +200,7 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
-     * CSRRW (Atomic Read/Write CSR) 命令。
+     * CSRRW (Control and status register read and write) 命令。
      *
      * @param inst 32bit 命令
      * @param exec デコードと実行なら true、デコードのみなら false
