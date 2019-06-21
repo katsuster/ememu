@@ -84,7 +84,7 @@ public class ExecStageRVI extends Stage64 {
      */
     public void executeAuipc(InstructionRV32 inst, boolean exec) {
         int rd = inst.getRd();
-        long imm = BitOp.signExt64(inst.getImm20U(), 20);
+        long imm = BitOp.signExt64(inst.getImm20U() << 12, 31);
 
         if (!exec) {
             printDisasm(inst, "auipc",

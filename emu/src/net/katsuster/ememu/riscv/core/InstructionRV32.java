@@ -168,12 +168,11 @@ public class InstructionRV32 extends Inst32 {
 
     /**
      * 32bit 命令 U-type の imm フィールド（ビット [31:12]）を取得します。
-     * 12bit 左シフトした値を返します。
      *
      * @return imm フィールド
      */
     public int getImm20U() {
-        return getField(12, 20) << 12;
+        return getField(12, 20);
     }
 
     /**
