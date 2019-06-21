@@ -36,6 +36,7 @@ public class RV64 extends CPU64 {
     public void init() {
         //doExceptionReset("Init.");
         setPC(0x1004);
+        setJumped(false);
     }
 
     @Override
