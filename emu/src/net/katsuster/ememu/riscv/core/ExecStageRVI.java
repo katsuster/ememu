@@ -85,7 +85,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBeq(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffset(), 12);
+        int off = BitOp.signExt32(inst.getOffsetB(), 12);
 
         if (!exec) {
             printDisasm(inst, "beq",
@@ -108,7 +108,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBne(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffset(), 12);
+        int off = BitOp.signExt32(inst.getOffsetB(), 12);
 
         if (!exec) {
             printDisasm(inst, "bne",
@@ -131,7 +131,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBgeu(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffset(), 12);
+        int off = BitOp.signExt32(inst.getOffsetB(), 12);
 
         if (!exec) {
             printDisasm(inst, "bgeu",
@@ -213,7 +213,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeSd(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int offraw = inst.getImmOffsetS();
+        int offraw = inst.getOffsetS();
         long off = BitOp.signExt64(offraw, 12);
         long vaddr, paddr;
 

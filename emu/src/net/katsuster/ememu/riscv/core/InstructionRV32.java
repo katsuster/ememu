@@ -150,13 +150,28 @@ public class InstructionRV32 extends Inst32 {
      *
      * @return offset フィールド
      */
-    public int getOffset() {
+    public int getOffsetB() {
         int off12 = getField(31, 1);
         int off11 = getField(7, 1);
         int off5 = getField(25, 6);
         int off1 = getField(8, 4);
 
         return (off12 << 12) | (off11 << 11) | (off5 << 5) | (off1 << 1);
+    }
+
+    /**
+     * 32bit 命令 S-type の offset フィールドを取得します。
+     *
+     * offset[11: 5]: 31:25
+     * offset[ 4: 0]: 11: 7
+     *
+     * @return offset フィールド
+     */
+    public int getOffsetS() {
+        int off5 = getField(31, 1);
+        int off0 = getField(7, 1);
+
+        return (off5 << 5) | off0;
     }
 
     /**
@@ -188,21 +203,6 @@ public class InstructionRV32 extends Inst32 {
      */
     public int getImm6I() {
         return getField(26, 6);
-    }
-
-    /**
-     * 32bit 命令 S-type の offset フィールドを取得します。
-     *
-     * offset[11: 5]: 31:25
-     * offset[ 4: 0]: 11: 7
-     *
-     * @return offset フィールド
-     */
-    public int getImmOffsetS() {
-        int off5 = getField(31, 1);
-        int off0 = getField(7, 1);
-
-        return (off5 << 5) | off0;
     }
 
     /**
