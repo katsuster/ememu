@@ -77,6 +77,29 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * BNE (Branch if not equal) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBne(InstructionRV32 inst, boolean exec) {
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        int off = BitOp.signExt32(inst.getOffset(), 12);
+
+        if (!exec) {
+            printDisasm(inst, "bne",
+                    String.format("%s, %s, 0x%x", getRegName(rs1),
+                            getRegName(rs2), getPC() + off));
+            return;
+        }
+
+        if (getReg(rs1) != getReg(rs2)) {
+            jumpRel(off);
+        }
+    }
+
+    /**
      * AUIPC (Add upper immediate to pc) 命令。
      *
      * @param inst 32bit 命令
@@ -224,6 +247,30 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * CSRRS (Control and status register read and set) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeCsrrs(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int csr = inst.getImm12I();
+        long t;
+
+        if (!exec) {
+            printDisasm(inst, "csrrs",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getCSRName(csr), getRegName(rs1)));
+            return;
+        }
+
+        t = getCSR(csr);
+        setCSR(csr, t | getReg(rs1));
+        setReg(rd, t);
+    }
+
+    /**
      * 32bit 命令を実行します。
      *
      * @param decinst デコードされた命令
@@ -235,6 +282,9 @@ public class ExecStageRVI extends Stage64 {
         switch (decinst.getIndex()) {
         case INS_RV32I_JALR:
             executeJalr(inst, exec);
+            break;
+        case INS_RV32I_BNE:
+            executeBne(inst, exec);
             break;
         case INS_RV32I_AUIPC:
             executeAuipc(inst, exec);
@@ -254,6 +304,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_CSRRW:
             executeCsrrw(inst, exec);
+            break;
+        case INS_RV32I_CSRRS:
+            executeCsrrs(inst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown RV32I instruction " +

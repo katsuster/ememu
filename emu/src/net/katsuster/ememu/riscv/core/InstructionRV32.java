@@ -136,6 +136,25 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
+     * 32bit 命令 B-type の offset フィールドを取得します。
+     *
+     * offset[   12]:    31
+     * offset[   11]:     7
+     * offset[10: 5]: 30:25
+     * offset[ 4: 1]: 11: 8
+     *
+     * @return offset フィールド
+     */
+    public int getOffset() {
+        int off12 = getField(31, 1);
+        int off11 = getField(7, 1);
+        int off5 = getField(25, 6);
+        int off1 = getField(8, 4);
+
+        return (off12 << 12) | (off11 << 11) | (off5 << 5) | (off1 << 1);
+    }
+
+    /**
      * 32bit 命令 I-type の imm フィールド（ビット [31:20]）を取得します。
      *
      * @return imm[11:0] フィールド
