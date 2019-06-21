@@ -108,6 +108,30 @@ public class DecodeStageRVI extends Stage64 {
     }
 
     /**
+     * 32bit STORE 命令をデコードします。
+     *
+     * @param inst 32bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeStore(InstructionRV32 inst) {
+        int funct3 = inst.getFunct3();
+
+        switch (funct3) {
+        case InstructionRV32.FUNC_STORE_SB:
+            return OpIndex.INS_RV32I_SB;
+        case InstructionRV32.FUNC_STORE_SH:
+            return OpIndex.INS_RV32I_SH;
+        case InstructionRV32.FUNC_STORE_SW:
+            return OpIndex.INS_RV32I_SW;
+        case InstructionRV32.FUNC_STORE_SD:
+            return OpIndex.INS_RV64I_SD;
+        default:
+            throw new IllegalArgumentException("Unknown STORE " +
+                    String.format("funct3 %d.", funct3));
+        }
+    }
+
+    /**
      * 32bit OP-IMM 命令をデコードします。
      *
      * @param inst 32bit 命令
@@ -345,6 +369,8 @@ public class DecodeStageRVI extends Stage64 {
             return decodeBranch(inst);
         case InstructionRV32.OPCODE_LOAD:
             return decodeLoad(inst);
+        case InstructionRV32.OPCODE_STORE:
+            return decodeStore(inst);
         case InstructionRV32.OPCODE_OP_IMM:
             return decodeOpImm(inst);
         case InstructionRV32.OPCODE_OP:

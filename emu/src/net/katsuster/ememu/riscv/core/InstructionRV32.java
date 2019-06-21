@@ -73,6 +73,11 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_LOAD_LHU = 5;
     public static final int FUNC_LOAD_LWU = 6;
 
+    public static final int FUNC_STORE_SB = 0;
+    public static final int FUNC_STORE_SH = 1;
+    public static final int FUNC_STORE_SW = 2;
+    public static final int FUNC_STORE_SD = 3;
+
     public static final int FUNC_OP_IMM_ADDI = 0;
     public static final int FUNC_OP_IMM_SLTI = 2;
     public static final int FUNC_OP_IMM_SLTIU = 3;
@@ -183,6 +188,21 @@ public class InstructionRV32 extends Inst32 {
      */
     public int getImm6I() {
         return getField(26, 6);
+    }
+
+    /**
+     * 32bit 命令 S-type の offset フィールドを取得します。
+     *
+     * offset[11: 5]: 31:25
+     * offset[ 4: 0]: 11: 7
+     *
+     * @return offset フィールド
+     */
+    public int getImmOffsetS() {
+        int off5 = getField(31, 1);
+        int off0 = getField(7, 1);
+
+        return (off5 << 5) | off0;
     }
 
     /**

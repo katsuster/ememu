@@ -77,6 +77,29 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * BEQ (Branch if equal) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBeq(InstructionRV32 inst, boolean exec) {
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        int off = BitOp.signExt32(inst.getOffset(), 12);
+
+        if (!exec) {
+            printDisasm(inst, "beq",
+                    String.format("%s, %s, 0x%x", getRegName(rs1),
+                            getRegName(rs2), getPC() + off));
+            return;
+        }
+
+        if (getReg(rs1) == getReg(rs2)) {
+            jumpRel(off);
+        }
+    }
+
+    /**
      * BNE (Branch if not equal) 命令。
      *
      * @param inst 32bit 命令
@@ -95,6 +118,29 @@ public class ExecStageRVI extends Stage64 {
         }
 
         if (getReg(rs1) != getReg(rs2)) {
+            jumpRel(off);
+        }
+    }
+
+    /**
+     * BGEU (Branch if greater than or equal, unsigned) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBgeu(InstructionRV32 inst, boolean exec) {
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        int off = BitOp.signExt32(inst.getOffset(), 12);
+
+        if (!exec) {
+            printDisasm(inst, "bgeu",
+                    String.format("%s, %s, 0x%x", getRegName(rs1),
+                            getRegName(rs2), getPC() + off));
+            return;
+        }
+
+        if (IntegerExt.compareUint64(getReg(rs1),  getReg(rs2)) >= 0) {
             jumpRel(off);
         }
     }
@@ -156,6 +202,44 @@ public class ExecStageRVI extends Stage64 {
         val = read32(paddr);
 
         setReg(rd, BitOp.signExt64(val, 32));
+    }
+
+    /**
+     * SD (Store double word) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSd(InstructionRV32 inst, boolean exec) {
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        int offraw = inst.getImmOffsetS();
+        long off = BitOp.signExt64(offraw, 12);
+        long vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst, "sd",
+                    String.format("%s, %d(%s) # 0x%x",
+                            getRegName(rs2), off, getRegName(rs1), offraw));
+            return;
+        }
+
+        vaddr = getReg(rs1) + off;
+
+        //paddr = getMMU().translate(vaddr, 4, false, getPriv(), true);
+        paddr = vaddr;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        if (!tryWrite(paddr, 8)) {
+            //raiseException(ARMv5.EXCEPT_ABT_DATA,
+            //        String.format("ldrd [%08x]", paddr));
+            return;
+        }
+
+        write64(paddr, getReg(rs2));
     }
 
     /**
@@ -283,14 +367,23 @@ public class ExecStageRVI extends Stage64 {
         case INS_RV32I_JALR:
             executeJalr(inst, exec);
             break;
+        case INS_RV32I_BEQ:
+            executeBeq(inst, exec);
+            break;
         case INS_RV32I_BNE:
             executeBne(inst, exec);
+            break;
+        case INS_RV32I_BGEU:
+            executeBgeu(inst, exec);
             break;
         case INS_RV32I_AUIPC:
             executeAuipc(inst, exec);
             break;
         case INS_RV32I_LW:
             executeLw(inst, exec);
+            break;
+        case INS_RV64I_SD:
+            executeSd(inst, exec);
             break;
         case INS_RV32I_ADDI:
             executeAddi(inst, exec);
