@@ -148,7 +148,7 @@ public class ExecStageRVI extends Stage64 {
         long imm = BitOp.signExt64(imm12, 12);
 
         if (!exec) {
-            printDisasm(inst, "add",
+            printDisasm(inst, "addi",
                     String.format("%s, %s, %d # 0x%x", getRegName(rd),
                             getRegName(rs1), imm, imm12));
             return;
