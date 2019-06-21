@@ -13,7 +13,7 @@ public class IntegerExt {
      * @return キャリーが発生する場合は true、発生しない場合は false
      */
     public static boolean carryFrom(int left, int right) {
-        return compareUnsigned(left + right, left) < 0;
+        return compareUint32(left + right, left) < 0;
     }
 
     /**
@@ -25,7 +25,7 @@ public class IntegerExt {
      * @return キャリーが発生する場合は true、発生しない場合は false
      */
     public static boolean borrowFrom(int left, int right) {
-        return compareUnsigned(left, right) < 0;
+        return compareUint32(left, right) < 0;
     }
 
     /**
@@ -63,18 +63,18 @@ public class IntegerExt {
     }
 
     /**
-     * 2 つの int 値を符号無しと見なして数値的に比較します。
+     * 2 つの 32bit 値を符号無しと見なして数値的に比較します。
      *
-     * @param x 比較する最初の int
-     * @param y 比較する 2番目の int
+     * @param x 比較する最初の値
+     * @param y 比較する 2番目の値
      * @return x == y の場合は値 0、
      * x &lt; y の場合は 0 より小さい値、
      * x &gt; y の場合は 0 より大きい値
      */
-    public static int compareUnsigned(int x, int y) {
+    public static int compareUint32(int x, int y) {
         int r;
 
-        //上位 63ビットを比べる
+        //上位 31ビットを比べる
         r = (x >>> 1) - (y >>> 1);
         if (r != 0) {
             return r;

@@ -85,8 +85,8 @@ public class IntegerExtTest {
     }
 
     @org.junit.Test
-    public void testCompareUnsigned() throws Exception {
-        String msg1 = "IntegerExt.compareUnsigned() failed.";
+    public void testCompareUint32() throws Exception {
+        String msg1 = "IntegerExt.compareUint32() failed.";
 
         int vz0_1 = 0;
         int vz0_2 = 0;
@@ -107,39 +107,39 @@ public class IntegerExtTest {
         int vh4_1 = 0x80000001;
         int vh4_2 = 0x80000001;
 
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vz0_1, vz0_1) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vp1_1, vp1_1) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vp2_1, vp2_1) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vm1_1, vm1_1) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vm2_1, vm2_1) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh1_1, vh1_1) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh2_1, vh2_1) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh3_1, vh3_1) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh4_1, vh4_1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vz0_1, vz0_1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vp1_1, vp1_1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vp2_1, vp2_1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vm1_1, vm1_1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vm2_1, vm2_1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh1_1, vh1_1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh2_1, vh2_1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh3_1, vh3_1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh4_1, vh4_1) == 0);
 
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vz0_1, vz0_2) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vp1_1, vp1_2) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vp2_1, vp2_2) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vm1_1, vm1_2) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vm2_1, vm2_2) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh1_1, vh1_2) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh2_1, vh2_2) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh3_1, vh3_2) == 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh4_1, vh4_2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vz0_1, vz0_2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vp1_1, vp1_2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vp2_1, vp2_2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vm1_1, vm1_2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vm2_1, vm2_2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh1_1, vh1_2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh2_1, vh2_2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh3_1, vh3_2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh4_1, vh4_2) == 0);
 
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vz0_1, vh4_2) < 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vp1_1, vz0_2) > 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vp2_1, vp1_2) > 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vm1_1, vp2_2) > 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vm2_1, vm1_2) < 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh1_1, vm2_2) < 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh2_1, vh1_2) > 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh3_1, vh2_2) > 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vh4_1, vh3_2) > 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vz0_1, vh4_2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vp1_1, vz0_2) > 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vp2_1, vp1_2) > 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vm1_1, vp2_2) > 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vm2_1, vm1_2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh1_1, vm2_2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh2_1, vh1_2) > 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh3_1, vh2_2) > 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vh4_1, vh3_2) > 0);
 
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vz0_1, vp1_2) < 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vp1_1, vz0_2) > 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vm1_1, vz0_2) > 0);
-        Assert.assertEquals(msg1, true, IntegerExt.compareUnsigned(vz0_1, vm1_2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vz0_1, vp1_2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vp1_1, vz0_2) > 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vm1_1, vz0_2) > 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vz0_1, vm1_2) < 0);
     }
 }
