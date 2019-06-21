@@ -191,7 +191,7 @@ public class RV64 extends CPU64 {
         int bbb = BitOp.getField32(v16, 2, 3);
         if (bbb != 7) {
             //32bit
-            v32 = read32(paddr);
+            v32 = read_ua32(paddr);
             instRV32.reuse(v32, 4);
             return instRV32;
         }
