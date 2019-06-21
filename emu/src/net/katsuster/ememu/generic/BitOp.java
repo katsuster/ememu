@@ -225,7 +225,7 @@ public class BitOp {
      *          33 以上を指定すると 32 で割った余りを使います。
      * @return v を符号拡張した値
      */
-    public static long signExt32(int v, int n) {
+    public static int signExt32(int v, int n) {
         int sb, mb;
 
         if (n <= 0) {
