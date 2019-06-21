@@ -83,4 +83,26 @@ public class IntegerExt {
         //下位 1ビットを比べる
         return (x & 1) - (y & 1);
     }
+
+    /**
+     * 2 つの 64bit 値を符号無しと見なして数値的に比較します。
+     *
+     * @param x 比較する最初の値
+     * @param y 比較する 2番目の値
+     * @return x == y の場合は値 0、
+     * x &lt; y の場合は 0 より小さい値、
+     * x &gt; y の場合は 0 より大きい値
+     */
+    public static long compareUint64(long x, long y) {
+        long r;
+
+        //上位 63ビットを比べる
+        r = (x >>> 1) - (y >>> 1);
+        if (r != 0) {
+            return r;
+        }
+
+        //下位 1ビットを比べる
+        return (x & 1) - (y & 1);
+    }
 }
