@@ -55,19 +55,36 @@ public abstract class SlaveCore extends AbstractCore
         throw new IllegalArgumentException("Cannot read 64bit.");
     }
 
+    /**
+     * アラインメントされていないアドレスから指定された長さの値を取得します。
+     *
+     * @param addr アドレス（バイト単位）
+     * @param len  値の長さ（ビット単位）
+     * @return 値
+     */
+    public long read_ua(long addr, int len) {
+        long v = 0;
+
+        for (int i = 0; i < len; i += 8) {
+            v |= (long)(read8(addr + (i >>> 3)) & 0xff) << i;
+        }
+
+        return v;
+    }
+
     @Override
     public short read_ua16(long addr) {
-        throw new IllegalArgumentException("Cannot unaligned read 16bit.");
+        return (short)read_ua(addr, 16);
     }
 
     @Override
     public int read_ua32(long addr) {
-        throw new IllegalArgumentException("Cannot unaligned read 32bit.");
+        return (int)read_ua(addr, 32);
     }
 
     @Override
     public long read_ua64(long addr) {
-        throw new IllegalArgumentException("Cannot unaligned read 64bit.");
+        return read_ua(addr, 64);
     }
 
     @Override
@@ -90,18 +107,31 @@ public abstract class SlaveCore extends AbstractCore
         throw new IllegalArgumentException("Cannot write 64bit.");
     }
 
+    /**
+     * アラインメントされていないアドレスに指定された長さの値を設定します。
+     *
+     * @param addr アドレス（バイト単位）
+     * @param data 書き込むデータ
+     * @param len  値の長さ（ビット単位）
+     */
+    public void write_ua(long addr, long data, int len) {
+        for (int i = 0; i < len; i += 8) {
+            write8(addr + (i >>> 3),  (byte)(data >>> i));
+        }
+    }
+
     @Override
     public void write_ua16(long addr, short data) {
-        throw new IllegalArgumentException("Cannot unaligned write 16bit.");
+        write_ua(addr, data, 16);
     }
 
     @Override
     public void write_ua32(long addr, int data) {
-        throw new IllegalArgumentException("Cannot unaligned write 32bit.");
+        write_ua(addr, data, 32);
     }
 
     @Override
     public void write_ua64(long addr, long data) {
-        throw new IllegalArgumentException("Cannot unaligned write 64bit.");
+        write_ua(addr, data, 64);
     }
 }
