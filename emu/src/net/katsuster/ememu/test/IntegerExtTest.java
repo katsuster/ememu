@@ -152,4 +152,73 @@ public class IntegerExtTest {
 
         Assert.assertEquals(msg1, true, IntegerExt.compareUint32(vm2, vm1) < 0);
     }
+
+    @org.junit.Test
+    public void testCompareUint64() throws Exception {
+        String msg1 = "IntegerExt.compareUint64() failed.";
+
+        long vz0 = 0L;
+        long vp1 = 1L;
+        long vp2 = 2L;
+        long vh1 = 0x7ffffffffffffffeL;
+        long vh2 = 0x7fffffffffffffffL;
+        long vh3 = 0x8000000000000000L;
+        long vh4 = 0x8000000000000001L;
+        long vm2 = -2L;
+        long vm1 = -1L;
+
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vz0, vz0) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp1, vp1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp2, vp2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh1, vh1) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh2, vh2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh3, vh3) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh4, vh4) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vm2, vm2) == 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vm1, vm1) == 0);
+
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vz0, vp1) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vz0, vp2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vz0, vh1) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vz0, vh2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vz0, vh3) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vz0, vh4) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vz0, vm2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vz0, vm1) < 0);
+
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp1, vp2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp1, vh1) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp1, vh2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp1, vh3) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp1, vh4) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp1, vm2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp1, vm1) < 0);
+
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp2, vh1) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp2, vh2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp2, vh3) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp2, vh4) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp2, vm2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vp2, vm1) < 0);
+
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh1, vh2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh1, vh3) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh1, vh4) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh1, vm2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh1, vm1) < 0);
+
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh2, vh3) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh2, vh4) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh2, vm2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh2, vm1) < 0);
+
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh3, vm2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh3, vh4) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh3, vm1) < 0);
+
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh4, vm2) < 0);
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vh4, vm1) < 0);
+
+        Assert.assertEquals(msg1, true, IntegerExt.compareUint64(vm2, vm1) < 0);
+    }
 }
