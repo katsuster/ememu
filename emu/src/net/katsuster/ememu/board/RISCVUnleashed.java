@@ -3,7 +3,8 @@ package net.katsuster.ememu.board;
 import java.io.*;
 
 import net.katsuster.ememu.generic.*;
-import net.katsuster.ememu.riscv.core.RV64;
+import net.katsuster.ememu.riscv.*;
+import net.katsuster.ememu.riscv.core.*;
 
 public class RISCVUnleashed extends AbstractBoard {
     private CPU cpu;
@@ -58,6 +59,7 @@ public class RISCVUnleashed extends AbstractBoard {
 
         RAM mode_select = new RAM32(4 * 1024);
         RAM mask_rom = new RAM32(8 * 1024);
+        CLINT clint = new CLINT();
         RAM l2lim = new RAM32(32 * 1024 * 1024);
         cl0_ddr = new RAM32(64 * 1024 * 1024);
 
@@ -71,6 +73,7 @@ public class RISCVUnleashed extends AbstractBoard {
         //  0x0800_0000 - 0x09ff_ffff: L2 LIM
         bus.addSlaveCore(mode_select, 0x00001000L, 0x00001fffL);
         bus.addSlaveCore(mask_rom, 0x00010000L, 0x00017fffL);
+        bus.addSlaveCore(clint.getSlaveCore(), 0x02000000L, 0x0200ffffL);
         bus.addSlaveCore(l2lim, 0x08000000L, 0x09ffffffL);
 
         //reset CPU
