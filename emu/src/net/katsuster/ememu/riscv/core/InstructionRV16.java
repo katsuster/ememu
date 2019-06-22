@@ -58,8 +58,8 @@ public class InstructionRV16 extends Inst32 {
     /**
      * 16bit 命令 imm フィールド（6ビット）を取得します。
      *
-     *   [12]: imm[5]
-     *   [6:2]: imm[4:0]
+     *   imm[  5]:   12
+     *   imm[4:0]: 6: 2
      *
      * @return imm[5 | 4:0] フィールド
      */

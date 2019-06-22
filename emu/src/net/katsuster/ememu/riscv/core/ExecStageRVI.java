@@ -53,6 +53,44 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * AUIPC (Add upper immediate to pc) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAuipc(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        long imm = BitOp.signExt64(inst.getImm20U() << 12, 31);
+
+        if (!exec) {
+            printDisasm(inst, "auipc",
+                    String.format("%s, 0x%x", getRegName(rd), imm));
+            return;
+        }
+
+        setReg(rd, getPC() + imm);
+    }
+
+    /**
+     * LUI (Load upper immediate) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLui(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        long imm = BitOp.signExt64(inst.getImm20U() << 12, 31);
+
+        if (!exec) {
+            printDisasm(inst, "lui",
+                    String.format("%s, 0x%x", getRegName(rd), imm));
+            return;
+        }
+
+        setReg(rd, imm);
+    }
+
+    /**
      * JALR (Jump and link register) 命令。
      *
      * @param inst 32bit 命令
@@ -123,6 +161,29 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * BLTU (Branch if less than, unsigned) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBltu(InstructionRV32 inst, boolean exec) {
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        int off = BitOp.signExt32(inst.getOffsetB(), 12);
+
+        if (!exec) {
+            printDisasm(inst, "bltu",
+                    String.format("%s, %s, 0x%x", getRegName(rs1),
+                            getRegName(rs2), getPC() + off));
+            return;
+        }
+
+        if (IntegerExt.compareUint64(getReg(rs1),  getReg(rs2)) < 0) {
+            jumpRel(off);
+        }
+    }
+
+    /**
      * BGEU (Branch if greater than or equal, unsigned) 命令。
      *
      * @param inst 32bit 命令
@@ -143,25 +204,6 @@ public class ExecStageRVI extends Stage64 {
         if (IntegerExt.compareUint64(getReg(rs1),  getReg(rs2)) >= 0) {
             jumpRel(off);
         }
-    }
-
-    /**
-     * AUIPC (Add upper immediate to pc) 命令。
-     *
-     * @param inst 32bit 命令
-     * @param exec デコードと実行なら true、デコードのみなら false
-     */
-    public void executeAuipc(InstructionRV32 inst, boolean exec) {
-        int rd = inst.getRd();
-        long imm = BitOp.signExt64(inst.getImm20U() << 12, 31);
-
-        if (!exec) {
-            printDisasm(inst, "auipc",
-                    String.format("%s, 0x%x", getRegName(rd), imm));
-            return;
-        }
-
-        setReg(rd, getPC() + imm);
     }
 
     /**
@@ -364,6 +406,12 @@ public class ExecStageRVI extends Stage64 {
         InstructionRV32 inst = (InstructionRV32) decinst.getInstruction();
 
         switch (decinst.getIndex()) {
+        case INS_RV32I_AUIPC:
+            executeAuipc(inst, exec);
+            break;
+        case INS_RV32I_LUI:
+            executeLui(inst, exec);
+            break;
         case INS_RV32I_JALR:
             executeJalr(inst, exec);
             break;
@@ -373,11 +421,11 @@ public class ExecStageRVI extends Stage64 {
         case INS_RV32I_BNE:
             executeBne(inst, exec);
             break;
+        case INS_RV32I_BLTU:
+            executeBltu(inst, exec);
+            break;
         case INS_RV32I_BGEU:
             executeBgeu(inst, exec);
-            break;
-        case INS_RV32I_AUIPC:
-            executeAuipc(inst, exec);
             break;
         case INS_RV32I_LW:
             executeLw(inst, exec);

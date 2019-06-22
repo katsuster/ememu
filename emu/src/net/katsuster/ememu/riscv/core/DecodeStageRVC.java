@@ -32,7 +32,25 @@ public class DecodeStageRVC extends Stage64 {
     }
 
     /**
-     * 16bit LI 命令をデコードします。
+     * ADDI 命令をデコードします。
+     *
+     * @param inst 16bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeAddi(InstructionRV16 inst) {
+        int rd = inst.getRd();
+
+        if (rd != 0) {
+            //C.ADDI
+            return OpIndex.INS_RVC_ADDI;
+        }
+
+        throw new IllegalArgumentException("Unknown ADDI " +
+                String.format("rd %d.", rd));
+    }
+
+    /**
+     * LI 命令をデコードします。
      *
      * @param inst 16bit 命令
      * @return 命令の種類
@@ -59,6 +77,8 @@ public class DecodeStageRVC extends Stage64 {
         int code = inst.getOpcode();
 
         switch (code) {
+        case InstructionRV16.OPCODE_ADDI:
+            return decodeAddi(inst);
         case InstructionRV16.OPCODE_LI:
             return decodeLi(inst);
         default:

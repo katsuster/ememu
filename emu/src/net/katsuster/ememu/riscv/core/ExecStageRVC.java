@@ -53,7 +53,28 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
-     * LI (Load Immediate) 命令。
+     * ADDI (Add immediate) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAddi(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRd();
+        int imm6 = inst.getImm6();
+        long imm = BitOp.signExt64(imm6, 6);
+
+        if (!exec) {
+            printDisasm(inst, "c.addi",
+                    String.format("%s, %d # 0x%x", getRegName(rd),
+                            imm, imm6));
+            return;
+        }
+
+        setReg(rd, getReg(rd) + imm);
+    }
+
+    /**
+     * LI (Load immediate) 命令。
      *
      * @param inst 16bit 命令
      * @param exec デコードと実行なら true、デコードのみなら false
@@ -83,6 +104,9 @@ public class ExecStageRVC extends Stage64 {
         InstructionRV16 inst = (InstructionRV16) decinst.getInstruction();
 
         switch (decinst.getIndex()) {
+        case INS_RVC_ADDI:
+            executeAddi(inst, exec);
+            break;
         case INS_RVC_LI:
             executeLi(inst, exec);
             break;

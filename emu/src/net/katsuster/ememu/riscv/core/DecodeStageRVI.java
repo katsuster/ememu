@@ -361,6 +361,8 @@ public class DecodeStageRVI extends Stage64 {
         int code = inst.getOpcode();
 
         switch (code) {
+        case InstructionRV32.OPCODE_LUI:
+            return OpIndex.INS_RV32I_LUI;
         case InstructionRV32.OPCODE_AUIPC:
             return OpIndex.INS_RV32I_AUIPC;
         case InstructionRV32.OPCODE_JALR:

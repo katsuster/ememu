@@ -249,6 +249,7 @@ public enum OpIndex {
     INS_RVC_SD,
 
     INS_RVC_NOP,
+    INS_RVC_ADDI,
     INS_RVC_JAL,
     INS_RVC_ADDIW,
     INS_RVC_LI,
