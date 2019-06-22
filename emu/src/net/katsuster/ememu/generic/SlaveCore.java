@@ -37,22 +37,26 @@ public abstract class SlaveCore extends AbstractCore
 
     @Override
     public byte read8(long addr) {
-        throw new IllegalArgumentException("Cannot read 8bit.");
+        throw new IllegalArgumentException(String.format(
+                "Cannot read 8bit from 0x%08x.", addr));
     }
 
     @Override
     public short read16(long addr) {
-        throw new IllegalArgumentException("Cannot read 16bit.");
+        throw new IllegalArgumentException(String.format(
+                "Cannot read 16bit from 0x%08x.", addr));
     }
 
     @Override
     public int read32(long addr) {
-        throw new IllegalArgumentException("Cannot read 32bit.");
+        throw new IllegalArgumentException(String.format(
+                "Cannot read 32bit from 0x%08x.", addr));
     }
 
     @Override
     public long read64(long addr) {
-        throw new IllegalArgumentException("Cannot read 64bit.");
+        throw new IllegalArgumentException(String.format(
+                "Cannot read 64bit from 0x%08x.", addr));
     }
 
     /**
@@ -89,22 +93,26 @@ public abstract class SlaveCore extends AbstractCore
 
     @Override
     public void write8(long addr, byte data) {
-        throw new IllegalArgumentException("Cannot write 8bit.");
+        throw new IllegalArgumentException(String.format(
+                "Cannot write 8bit to 0x%08x.", addr));
     }
 
     @Override
     public void write16(long addr, short data) {
-        throw new IllegalArgumentException("Cannot write 16bit.");
+        throw new IllegalArgumentException(String.format(
+                "Cannot write 16bit to 0x%08x.", addr));
     }
 
     @Override
     public void write32(long addr, int data) {
-        throw new IllegalArgumentException("Cannot write 32bit.");
+        throw new IllegalArgumentException(String.format(
+                "Cannot write 32bit to 0x%08x.", addr));
     }
 
     @Override
     public void write64(long addr, long data) {
-        throw new IllegalArgumentException("Cannot write 64bit.");
+        throw new IllegalArgumentException(String.format(
+                "Cannot write 64bit to 0x%08x.", addr));
     }
 
     /**
