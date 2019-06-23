@@ -161,6 +161,29 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * BNE (Branch if less than) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBlt(InstructionRV32 inst, boolean exec) {
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        int off = BitOp.signExt32(inst.getOffsetB(), 12);
+
+        if (!exec) {
+            printDisasm(inst, "blt",
+                    String.format("%s, %s, 0x%x", getRegName(rs1),
+                            getRegName(rs2), getPC() + off));
+            return;
+        }
+
+        if (getReg(rs1) < getReg(rs2)) {
+            jumpRel(off);
+        }
+    }
+
+    /**
      * BLTU (Branch if less than, unsigned) 命令。
      *
      * @param inst 32bit 命令
@@ -244,6 +267,44 @@ public class ExecStageRVI extends Stage64 {
         val = read32(paddr);
 
         setReg(rd, BitOp.signExt64(val, 32));
+    }
+
+    /**
+     * SW (Store word) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSw(InstructionRV32 inst, boolean exec) {
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        int offraw = inst.getOffsetS();
+        long off = BitOp.signExt64(offraw, 12);
+        long vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst, "sw",
+                    String.format("%s, %d(%s) # 0x%x",
+                            getRegName(rs2), off, getRegName(rs1), offraw));
+            return;
+        }
+
+        vaddr = getReg(rs1) + off;
+
+        //paddr = getMMU().translate(vaddr, 4, false, getPriv(), true);
+        paddr = vaddr;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        if (!tryWrite(paddr, 4)) {
+            //raiseException(ARMv5.EXCEPT_ABT_DATA,
+            //        String.format("ldrd [%08x]", paddr));
+            return;
+        }
+
+        write32(paddr, (int)getReg(rs2));
     }
 
     /**
@@ -397,6 +458,30 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * ADDIW (Add word immediate) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAddiw(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int imm12 = inst.getImm12I();
+        long imm = BitOp.signExt64(imm12, 12);
+        long v;
+
+        if (!exec) {
+            printDisasm(inst, "addiw",
+                    String.format("%s, %s, %d # 0x%x", getRegName(rd),
+                            getRegName(rs1), imm, imm12));
+            return;
+        }
+
+        v = getReg(rs1) + imm;
+        setReg(rd, BitOp.signExt64(v & 0xffffffffL, 32));
+    }
+
+    /**
      * 32bit 命令を実行します。
      *
      * @param decinst デコードされた命令
@@ -421,6 +506,9 @@ public class ExecStageRVI extends Stage64 {
         case INS_RV32I_BNE:
             executeBne(inst, exec);
             break;
+        case INS_RV32I_BLT:
+            executeBlt(inst, exec);
+            break;
         case INS_RV32I_BLTU:
             executeBltu(inst, exec);
             break;
@@ -429,6 +517,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_LW:
             executeLw(inst, exec);
+            break;
+        case INS_RV32I_SW:
+            executeSw(inst, exec);
             break;
         case INS_RV64I_SD:
             executeSd(inst, exec);
@@ -448,6 +539,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_CSRRS:
             executeCsrrs(inst, exec);
+            break;
+        case INS_RV64I_ADDIW:
+            executeAddiw(inst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown RV32I instruction " +

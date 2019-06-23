@@ -216,6 +216,57 @@ public class DecodeStageRVI extends Stage64 {
     }
 
     /**
+     * OP-IMM-32 命令をデコードします。
+     *
+     * @param inst 32bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeOpImm32(InstructionRV32 inst) {
+        int funct3 = inst.getFunct3();
+
+        switch (funct3) {
+        case InstructionRV32.FUNC_OP_IMM_32_ADDIW:
+            return OpIndex.INS_RV64I_ADDIW;
+        case InstructionRV32.FUNC_OP_IMM_32_SLLIW:
+            if (getRVBits() == 64) {
+                int imm7 = inst.getImm7I();
+
+                if (imm7 == 0) {
+                    //RV64I SLLIW
+                    return OpIndex.INS_RV64I_SLLI;
+                }
+
+                throw new IllegalArgumentException("Unknown OP-IMM-32 SLLIW 64bit " +
+                        String.format("imm7 0x%x.", imm7));
+            }
+
+            throw new IllegalArgumentException("Unknown OP-IMM-32 SLLIW " +
+                    String.format("%dbit.", getRVBits()));
+        case InstructionRV32.FUNC_OP_IMM_32_SRLIW_SRAIW:
+            if (getRVBits() == 64) {
+                int imm7 = inst.getImm7I();
+
+                if (imm7 == 0) {
+                    //RV64I SRLIW
+                    return OpIndex.INS_RV64I_SRLIW;
+                } else if (imm7 == 32) {
+                    //RV64I SRAIW (imm7 = 0b0100000)
+                    return OpIndex.INS_RV64I_SRAIW;
+                }
+
+                throw new IllegalArgumentException("Unknown OP-IMM-32 SRLIW/SRAIW 64bit " +
+                        String.format("imm7 0x%x.", imm7));
+            }
+
+            throw new IllegalArgumentException("Unknown OP-IMM-32 SRLIW/SRAIW " +
+                    String.format("%dbit.", getRVBits()));
+        default:
+            throw new IllegalArgumentException("Unknown OP-IMM-32 " +
+                    String.format("funct3 %d.", funct3));
+        }
+    }
+
+    /**
      * 32bit OP 命令をデコードします。
      *
      * @param inst 32bit 命令
@@ -375,6 +426,8 @@ public class DecodeStageRVI extends Stage64 {
             return decodeStore(inst);
         case InstructionRV32.OPCODE_OP_IMM:
             return decodeOpImm(inst);
+        case InstructionRV32.OPCODE_OP_IMM_32:
+            return decodeOpImm32(inst);
         case InstructionRV32.OPCODE_OP:
             return decodeOp(inst);
         case InstructionRV32.OPCODE_SYSTEM:

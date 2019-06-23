@@ -87,6 +87,10 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_OP_IMM_SLI = 1;
     public static final int FUNC_OP_IMM_SRI = 5;
 
+    public static final int FUNC_OP_IMM_32_ADDIW = 0;
+    public static final int FUNC_OP_IMM_32_SLLIW = 1;
+    public static final int FUNC_OP_IMM_32_SRLIW_SRAIW = 5;
+
     public static final int FUNC_OP_ADDSUB = 0;
     public static final int FUNC_OP_SLL = 1;
     public static final int FUNC_OP_SLT = 2;
@@ -186,7 +190,8 @@ public class InstructionRV32 extends Inst32 {
     /**
      * 32bit 命令 I-type の imm フィールドの上位 7ビット（ビット [31:25]）を取得します。
      *
-     * RV32I の ADD, SLLI 命令などに使われます。
+     * RV32I の ADD, SLLI 命令、
+     * RV64I の SLLIW, SRLIW 命令などに使われます。
      *
      * @return imm[11:0] フィールドの上位 7ビット
      */
