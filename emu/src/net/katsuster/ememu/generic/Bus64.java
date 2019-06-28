@@ -10,7 +10,7 @@ public class Bus64 implements RWCore {
     //ロック
     private ReentrantReadWriteLock rwlock;
     //全マスターコアを管理するリスト
-    private List<MasterCore> masterList;
+    private List<MasterCore64> masterList;
     //全スレーブコアを管理するリスト
     private List<SlaveCoreAddress> slaveList;
     //32bit アドレス内のスレーブコアに高速にアクセスするためのテーブル
@@ -22,7 +22,7 @@ public class Bus64 implements RWCore {
 
     public Bus64() {
         rwlock = new ReentrantReadWriteLock();
-        masterList = new ArrayList<MasterCore>();
+        masterList = new ArrayList<MasterCore64>();
         slaveList = new ArrayList<SlaveCoreAddress>();
         //4KB ごとにスレーブコアを記録するため、
         //2^32 / 2^12 = 2^20 の要素が必要となる
@@ -37,7 +37,7 @@ public class Bus64 implements RWCore {
      *
      * @param c 追加するマスターコア
      */
-    public void addMasterCore(MasterCore c) {
+    public void addMasterCore(MasterCore64 c) {
         masterList.add(c);
         c.setSlaveBus(this);
     }
@@ -49,7 +49,7 @@ public class Bus64 implements RWCore {
      *
      * @param core 削除するマスターコア
      */
-    public void removeMasterCore(MasterCore core) {
+    public void removeMasterCore(MasterCore64 core) {
         masterList.remove(core);
     }
 
@@ -57,7 +57,7 @@ public class Bus64 implements RWCore {
      * バスに接続されている全てのマスターコアを起動します。
      */
     public void startAllMasterCores() {
-        for (MasterCore mc : masterList) {
+        for (MasterCore64 mc : masterList) {
             mc.setName(mc.getClass().getName());
             mc.start();
         }
@@ -68,7 +68,7 @@ public class Bus64 implements RWCore {
      * コアの停止を要求します。
      */
     public void haltAllMasterCores() {
-        for (MasterCore mc : masterList) {
+        for (MasterCore64 mc : masterList) {
             mc.halt();
         }
     }

@@ -3,7 +3,7 @@ package net.katsuster.ememu.generic;
 /**
  * CPU の基本クラス
  */
-public abstract class CPU extends MasterCore
+public abstract class CPU extends MasterCore64
         implements INTDestination {
     private boolean fEnabledDisasm;
     private boolean fPrintInstruction;
