@@ -6,7 +6,7 @@ import java.util.concurrent.locks.*;
 /**
  * 64 ビットアドレスバス。
  */
-public class Bus implements RWCore {
+public class Bus64 implements RWCore {
     //ロック
     private ReentrantReadWriteLock rwlock;
     //全マスターコアを管理するリスト
@@ -20,7 +20,7 @@ public class Bus implements RWCore {
     private long cacheHit;
     private long cacheMiss;
 
-    public Bus() {
+    public Bus64() {
         rwlock = new ReentrantReadWriteLock();
         masterList = new ArrayList<MasterCore>();
         slaveList = new ArrayList<SlaveCoreAddress>();

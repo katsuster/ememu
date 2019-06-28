@@ -8,7 +8,7 @@ import net.katsuster.ememu.riscv.core.*;
 
 public class RISCVUnleashed extends AbstractBoard {
     private CPU cpu;
-    private Bus bus;
+    private Bus64 bus;
     private RAM cl0_ddr;
     private InputStream[] uartIn = new InputStream[4];
     private OutputStream[] uartOut = new OutputStream[4];
@@ -23,7 +23,7 @@ public class RISCVUnleashed extends AbstractBoard {
     }
 
     @Override
-    public Bus getMainBus() {
+    public Bus64 getMainBus() {
         return bus;
     }
 
@@ -55,7 +55,7 @@ public class RISCVUnleashed extends AbstractBoard {
     @Override
     public void setup() {
         cpu = new RV64();
-        bus = new Bus();
+        bus = new Bus64();
 
         RAM mode_select = new RAM32(4 * 1024);
         RAM mask_rom = new RAM32(8 * 1024);

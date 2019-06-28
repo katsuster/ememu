@@ -47,7 +47,7 @@ public class EmulatorRISCV extends Thread {
     public void run() {
         String rom0, rom1;
         RV64 cpu;
-        Bus bus;
+        Bus64 bus;
 
         setName(getClass().getName());
 

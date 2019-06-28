@@ -15,7 +15,7 @@ public interface Board {
      *
      * @return メインバス
      */
-    public abstract Bus getMainBus();
+    public abstract Bus64 getMainBus();
 
     /**
      * メイン RAM を取得します。

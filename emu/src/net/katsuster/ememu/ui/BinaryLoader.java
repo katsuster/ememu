@@ -9,7 +9,7 @@ import java.net.*;
  * バイナリファイルのローダです。
  */
 public class BinaryLoader {
-    public static int loadURIResource(URI uri, Bus bus, long addr) {
+    public static int loadURIResource(URI uri, Bus64 bus, long addr) {
         int i = 0;
 
         System.out.printf("loadURL: %s\n" +
@@ -42,7 +42,7 @@ public class BinaryLoader {
         return i;
     }
 
-    public static int loadFromURI(Bus bus, String uri, long addr) {
+    public static int loadFromURI(Bus64 bus, String uri, long addr) {
         int size = 0;
 
         try {

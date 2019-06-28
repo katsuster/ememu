@@ -10,7 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
         BitOpTest.class,
         IntegerExtTest.class,
         RAMTest.class,
-        BusTest.class,
+        Bus64Test.class,
 })
 public class AllTest {
     protected AllTest() {

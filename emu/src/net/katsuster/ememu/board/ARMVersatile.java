@@ -11,7 +11,7 @@ import net.katsuster.ememu.generic.*;
  */
 public class ARMVersatile extends AbstractBoard {
     private CPU cpu;
-    private Bus bus;
+    private Bus64 bus;
     private RAM mpmc_c0_c1;
     private InputStream[] uartIn = new InputStream[4];
     private OutputStream[] uartOut = new OutputStream[4];
@@ -26,7 +26,7 @@ public class ARMVersatile extends AbstractBoard {
     }
 
     @Override
-    public Bus getMainBus() {
+    public Bus64 getMainBus() {
         return bus;
     }
 
@@ -58,7 +58,7 @@ public class ARMVersatile extends AbstractBoard {
     @Override
     public void setup() {
         cpu = new ARMv5();
-        bus = new Bus();
+        bus = new Bus64();
 
         //TODO: implement MPMC controller...
         mpmc_c0_c1 = new RAM32(64 * 1024 * 1024);

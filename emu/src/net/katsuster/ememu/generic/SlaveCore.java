@@ -15,14 +15,14 @@ package net.katsuster.ememu.generic;
  */
 public abstract class SlaveCore extends AbstractCore
         implements RWCore {
-    private Bus masterBus;
+    private Bus64 masterBus;
 
     /**
      * このスレーブコアが接続されているバスを取得します。
      *
      * @return コアが接続されているバス
      */
-    public Bus getMasterBus() {
+    public Bus64 getMasterBus() {
         return masterBus;
     }
 
@@ -31,7 +31,7 @@ public abstract class SlaveCore extends AbstractCore
      *
      * @param bus コアを接続するバス
      */
-    public void setMasterBus(Bus bus) {
+    public void setMasterBus(Bus64 bus) {
         masterBus = bus;
     }
 

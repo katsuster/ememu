@@ -3,7 +3,7 @@ package net.katsuster.ememu.test;
 import net.katsuster.ememu.generic.*;
 import org.junit.*;
 
-public class BusTest {
+public class Bus64Test {
     @Test
     public void testAddSlaveCore() throws Exception {
         String msg1 = "addSlaveCore() failed.";
@@ -11,7 +11,7 @@ public class BusTest {
         String msg3 = "addSlaveCore() duplicate check failed.";
         String msg4 = "addSlaveCore() null check failed.";
 
-        Bus bus = new Bus();
+        Bus64 bus = new Bus64();
         RAM16 ram1 = new RAM16(0x1000);
         RAM32 ram2 = new RAM32(0x1000);
         RAM64 ram3 = new RAM64(0x1000);
@@ -61,7 +61,7 @@ public class BusTest {
         String msg2 = "getSlaveCore() non-exist check failed.";
         String msg3 = "getSlaveCore() address check failed.";
 
-        Bus bus = new Bus();
+        Bus64 bus = new Bus64();
         RAM16 ram1 = new RAM16(0x1000);
         RAM32 ram2 = new RAM32(0x1000);
 
@@ -102,7 +102,7 @@ public class BusTest {
         String msg2 = "removeSlaveCore() re-add failed.";
         String msg3 = "removeSlaveCore(null) ignore failed.";
 
-        Bus bus = new Bus();
+        Bus64 bus = new Bus64();
         RAM16 ram1 = new RAM16(0x1000);
         RAM32 ram2 = new RAM32(0x1000);
         RAM64 ram3 = new RAM64(0x1000);
@@ -147,7 +147,7 @@ public class BusTest {
 
     @Test
     public void testAlignedAccess() throws Exception {
-        Bus bus = new Bus();
+        Bus64 bus = new Bus64();
         RAM16 ram16 = new RAM16(0x3000);
         RAM32 ram32 = new RAM32(0x3000);
         RAM64 ram64 = new RAM64(0x3000);
@@ -172,15 +172,15 @@ public class BusTest {
         }
     }
 
-    public void unalignedAccess(long start, Bus bus) throws Exception {
+    public void unalignedAccess(long start, Bus64 bus) throws Exception {
         unalignedAccess8(start, bus);
         unalignedAccess16(start, bus);
         unalignedAccess32(start, bus);
         unalignedAccess64(start, bus);
     }
 
-    public void unalignedAccess8(long start, Bus bus) throws Exception {
-        String msg1 = "Bus unaligned access 8bits failed.";
+    public void unalignedAccess8(long start, Bus64 bus) throws Exception {
+        String msg1 = "Bus64 unaligned access 8bits failed.";
 
         byte[] actual8 = {
                 (byte)0x01, (byte)0x23, (byte)0x45, (byte)0x67,
@@ -234,8 +234,8 @@ public class BusTest {
         }
     }
 
-    public void unalignedAccess16(long start, Bus bus) throws Exception {
-        String msg1 = "Bus unaligned access 16bits failed.";
+    public void unalignedAccess16(long start, Bus64 bus) throws Exception {
+        String msg1 = "Bus64 unaligned access 16bits failed.";
 
         short[] actual16 = {
                 (short)0x0123, (short)0x4567, (short)0x89ab, (short)0xcdef,
@@ -284,8 +284,8 @@ public class BusTest {
         }
     }
 
-    public void unalignedAccess32(long start, Bus bus) throws Exception {
-        String msg1 = "Bus unaligned access 32bits failed.";
+    public void unalignedAccess32(long start, Bus64 bus) throws Exception {
+        String msg1 = "Bus64 unaligned access 32bits failed.";
 
         int[] actual32 = {
                 0x01234567, 0x89abcdef, 0x12345678, 0x9abcdef9,
@@ -332,8 +332,8 @@ public class BusTest {
         }
     }
 
-    public void unalignedAccess64(long start, Bus bus) throws Exception {
-        String msg1 = "Bus unaligned access 64bits failed.";
+    public void unalignedAccess64(long start, Bus64 bus) throws Exception {
+        String msg1 = "Bus64 unaligned access 64bits failed.";
 
         long[] actual64 = {
                 0x0123456789abcdefL, 0x89abcdeffedcba98L,
