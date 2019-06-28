@@ -417,7 +417,7 @@ public class Bus64 implements RWCore {
      * @param start 開始アドレス
      * @param end   終了アドレス
      */
-    public void addSlaveCore(SlaveCore c, long start, long end) {
+    public void addSlaveCore(SlaveCore64 c, long start, long end) {
         SlaveCoreAddress sca;
 
         sca = findSlaveCoreAddress(start, end);
@@ -451,7 +451,7 @@ public class Bus64 implements RWCore {
      * @return 指定したアドレスに割り当てられているスレーブコア、
      * 何も割り当てられていなければ null
      */
-    public SlaveCore getSlaveCore(long start, long end) {
+    public SlaveCore64 getSlaveCore(long start, long end) {
         SlaveCoreAddress sca;
 
         sca = findSlaveCoreAddress(start, end);
@@ -472,7 +472,7 @@ public class Bus64 implements RWCore {
      * @return バスから指定したスレーブコアを削除できた場合は true、
      * そうでなければ false
      */
-    public boolean removeSlaveCore(SlaveCore c) {
+    public boolean removeSlaveCore(SlaveCore64 c) {
         boolean result = false;
 
         //32bit アドレス範囲内のスレーブコアならばテーブルから消去する
@@ -493,7 +493,7 @@ public class Bus64 implements RWCore {
             boolean found = false;
 
             for (SlaveCoreAddress sca : slaveList) {
-                SlaveCore sc = sca.getCore();
+                SlaveCore64 sc = sca.getCore();
 
                 if (sc.equals(c)) {
                     slaveList.remove(sca);
@@ -555,7 +555,7 @@ public class Bus64 implements RWCore {
      */
     public void startAllSlaveCores() {
         for (SlaveCoreAddress sca : slaveList) {
-            SlaveCore sc = sca.getCore();
+            SlaveCore64 sc = sca.getCore();
 
             sc.setName(sc.getClass().getName());
             sc.start();
@@ -576,7 +576,7 @@ public class Bus64 implements RWCore {
      * スレーブコアとスレーブコアが占めるアドレスを表すクラスです。
      */
     private class SlaveCoreAddress {
-        private SlaveCore slave;
+        private SlaveCore64 slave;
         private long start;
         private long end;
 
@@ -587,7 +587,7 @@ public class Bus64 implements RWCore {
          * @param st    開始アドレス
          * @param ed    終了アドレス
          */
-        public SlaveCoreAddress(SlaveCore slave, long st, long ed) {
+        public SlaveCoreAddress(SlaveCore64 slave, long st, long ed) {
             if (st > ed) {
                 throw new IllegalArgumentException("Invalid address" +
                         String.format("st(0x%08x) > ed(0x%08x).", st, ed));
@@ -603,7 +603,7 @@ public class Bus64 implements RWCore {
          *
          * @return スレーブコア
          */
-        public SlaveCore getCore() {
+        public SlaveCore64 getCore() {
             return slave;
         }
 
@@ -669,7 +669,7 @@ public class Bus64 implements RWCore {
          * @return 値を返しません
          */
         @Override
-        public SlaveCore getCore() {
+        public SlaveCore64 getCore() {
             throw new IllegalStateException("Invalid slave core.");
         }
 

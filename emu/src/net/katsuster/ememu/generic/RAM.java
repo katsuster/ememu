@@ -3,7 +3,7 @@ package net.katsuster.ememu.generic;
 /**
  * 64 ビットアドレス RAM
  */
-abstract public class RAM extends SlaveCore {
+abstract public class RAM extends SlaveCore64 {
     private int size;
 
     /**

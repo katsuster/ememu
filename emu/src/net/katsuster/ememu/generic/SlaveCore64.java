@@ -13,7 +13,7 @@ package net.katsuster.ememu.generic;
  * バスからのアクセス時に用いるアドレスは 64 ビット幅です。
  * </p>
  */
-public abstract class SlaveCore extends AbstractCore
+public abstract class SlaveCore64 extends AbstractCore
         implements RWCore {
     private Bus64 masterBus;
 

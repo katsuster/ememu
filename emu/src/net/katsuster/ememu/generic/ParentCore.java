@@ -13,5 +13,5 @@ public interface ParentCore {
      *
      * @return バススレーブコア
      */
-    public abstract SlaveCore getSlaveCore();
+    public abstract SlaveCore64 getSlaveCore();
 }

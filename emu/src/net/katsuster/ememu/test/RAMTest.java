@@ -16,14 +16,14 @@ public class RAMTest {
         alignedAccess(start, ram64);
     }
 
-    public void alignedAccess(long start, SlaveCore obj) throws Exception {
+    public void alignedAccess(long start, SlaveCore64 obj) throws Exception {
         alignedAccess8(start, obj);
         alignedAccess16(start, obj);
         alignedAccess32(start, obj);
         alignedAccess64(start, obj);
     }
 
-    public void alignedAccess8(long start, SlaveCore obj) throws Exception {
+    public void alignedAccess8(long start, SlaveCore64 obj) throws Exception {
         String msg1 = "RAM aligned access 8bits failed.";
 
         byte[] actual8 = {
@@ -78,7 +78,7 @@ public class RAMTest {
         }
     }
 
-    public void alignedAccess16(long start, SlaveCore obj) throws Exception {
+    public void alignedAccess16(long start, SlaveCore64 obj) throws Exception {
         String msg1 = "RAM aligned access 16bits failed.";
 
         short[] actual16 = {
@@ -128,7 +128,7 @@ public class RAMTest {
         }
     }
 
-    public void alignedAccess32(long start, SlaveCore obj) throws Exception {
+    public void alignedAccess32(long start, SlaveCore64 obj) throws Exception {
         String msg1 = "RAM aligned access 32bits failed.";
 
         int[] actual32 = {
@@ -176,7 +176,7 @@ public class RAMTest {
         }
     }
 
-    public void alignedAccess64(long start, SlaveCore obj) throws Exception {
+    public void alignedAccess64(long start, SlaveCore64 obj) throws Exception {
         String msg1 = "RAM aligned access 64bits failed.";
 
         long[] actual64 = {

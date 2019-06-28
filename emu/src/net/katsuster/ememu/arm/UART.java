@@ -142,7 +142,7 @@ public class UART implements INTSource, ParentCore {
     }
 
     @Override
-    public SlaveCore getSlaveCore() {
+    public SlaveCore64 getSlaveCore() {
         return slave;
     }
 

@@ -5,7 +5,7 @@ package net.katsuster.ememu.generic;
  *
  * 16ビットデータメモリ＋16ビットデータメモリの構成で使用します。
  */
-public class BankedFlush16_16 extends SlaveCore {
+public class BankedFlush16_16 extends SlaveCore64 {
     //データ幅（バイト単位）
     public static final int LEN_WORD = 4;
     //データ幅（ビット単位）

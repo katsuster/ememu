@@ -66,7 +66,7 @@ public class AACI implements ParentCore {
     }
 
     @Override
-    public SlaveCore getSlaveCore() {
+    public SlaveCore64 getSlaveCore() {
         return slave;
     }
 
