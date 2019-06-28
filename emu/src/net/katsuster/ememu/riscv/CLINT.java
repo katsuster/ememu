@@ -7,7 +7,7 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
-public class CLINT implements BusSlave {
+public class CLINT implements ParentCore {
     private CLINTSlave slave;
 
     //4bytes registers

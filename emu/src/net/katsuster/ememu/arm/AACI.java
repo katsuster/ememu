@@ -8,7 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell Advanced Audio CODEC Interface (PL041)
  * ARM DDI0173B
  */
-public class AACI implements BusSlave {
+public class AACI implements ParentCore {
     private AACISlave slave;
 
     public static final int REG_AACIRXCR1     = 0x000;

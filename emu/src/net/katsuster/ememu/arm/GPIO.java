@@ -8,7 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell General Purpose Input/Output (PL061)
  * ARM DDI0190B
  */
-public class GPIO implements BusSlave {
+public class GPIO implements ParentCore {
     private GPIOSlave slave;
 
     //0x000-0x3fc: REG_GPIODATA

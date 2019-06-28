@@ -8,7 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell Real Time Clock (PL031)
  * ARM DDI0224B
  */
-public class RTC implements BusSlave {
+public class RTC implements ParentCore {
     private RTCSlave slave;
 
     public static final int REG_RTCDR        = 0x000;

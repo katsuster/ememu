@@ -8,7 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM Watchdog Module (SP805)
  * ARM DDI0270B
  */
-public class Watchdog implements BusSlave {
+public class Watchdog implements ParentCore {
     private WatchdogSlave slave;
 
     public static final int REG_WdogLoad      = 0x00;

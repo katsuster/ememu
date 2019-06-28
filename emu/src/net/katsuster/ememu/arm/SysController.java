@@ -8,7 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: PrimeXsys System Controller (SP810)
  * ARM DDI0254B
  */
-public class SysController implements BusSlave {
+public class SysController implements ParentCore {
     private SysControllerSlave slave;
 
     public static final int REG_SCCTRL      = 0x000;

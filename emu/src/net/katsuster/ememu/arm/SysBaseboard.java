@@ -8,7 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: Versatile Application Baseboard for ARM926EJ-S User Guide
  * ARM DUI0225D
  */
-public class SysBaseboard implements BusSlave {
+public class SysBaseboard implements ParentCore {
     private SysBaseboardSlave slave;
 
     private long start24MHz;

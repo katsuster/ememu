@@ -8,7 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell Smart Card Interface (PL131)
  * ARM DDI0228A
  */
-public class SCard implements BusSlave {
+public class SCard implements ParentCore {
     private SCardSlave slave;
 
     public static final int REG_SCIDATA        = 0x000;

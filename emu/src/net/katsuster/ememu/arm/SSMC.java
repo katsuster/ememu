@@ -8,7 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell Synchronous Static Memory Controller (PL093)
  * ARM DDI0236H
  */
-public class SSMC implements BusSlave {
+public class SSMC implements ParentCore {
     private SSMCSlave slave;
 
     public static final int REG_SMBIDCYR0     = 0x000;

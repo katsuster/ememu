@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell UART (PL011)
  * 日本語版は ARM DDI0183AJ, 英語版は ARM DDI0183G
  */
-public class UART implements INTSource, BusSlave {
+public class UART implements INTSource, ParentCore {
     private INTDestination intDst = new NullINTDestination();
     private UARTSlave slave;
 

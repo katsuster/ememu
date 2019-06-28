@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  * ARM DDI0271C
  * </p>
  */
-public class DualTimer implements INTSource, BusSlave {
+public class DualTimer implements INTSource, ParentCore {
     private INTDestination intDst = new NullINTDestination();
     private DualTimerSlave slave;
 
