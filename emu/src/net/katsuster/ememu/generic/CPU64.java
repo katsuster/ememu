@@ -1,7 +1,7 @@
 package net.katsuster.ememu.generic;
 
 /**
- * CPU の基本クラス
+ * 64bit レジスタを持つ CPU の基本クラス
  */
 public abstract class CPU64 extends CPU
         implements INTDestination {
