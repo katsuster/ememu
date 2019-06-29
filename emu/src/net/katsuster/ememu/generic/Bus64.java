@@ -6,7 +6,7 @@ import java.util.concurrent.locks.*;
 /**
  * 64 ビットアドレスバス。
  */
-public class Bus64 implements RWCore {
+public class Bus64 implements BusSlave64 {
     //ロック
     private ReentrantReadWriteLock rwlock;
     //全マスターコアを管理するリスト

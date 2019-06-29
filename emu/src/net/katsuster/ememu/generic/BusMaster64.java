@@ -1,14 +1,11 @@
 package net.katsuster.ememu.generic;
 
 /**
- * 64 ビットアドレスを扱うコア。
+ * バスマスターのインタフェース（64bit アドレス）
  *
- * <p>
- * コア外部からの読み取り、書き込み要求に応答する形で動作します。
- * 64ビット幅のアドレスを使用します。
- * </p>
+ * アドレス空間への Read/Write 要求を出せるコアを表します。
  */
-public interface RWCore {
+public interface BusMaster64 {
     /**
      * 指定されたアドレスからの読み取りが可能かどうかを判定します。
      *

@@ -14,7 +14,7 @@ package net.katsuster.ememu.generic;
  * </p>
  */
 public abstract class SlaveCore64 extends AbstractCore
-        implements RWCore {
+        implements BusSlave64 {
     private Bus64 masterBus;
 
     /**
