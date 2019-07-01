@@ -13,7 +13,7 @@ import javax.swing.filechooser.*;
 public class LinuxOptionPanel extends JPanel {
     private LinuxOption opts;
     private JCheckBox chkUseDeviceTree;
-    private JTextField txtDeviceTree, txtImage, txtInitrd, txtCmdline;
+    private JTextField txtArch, txtDeviceTree, txtImage, txtInitrd, txtCmdline;
     private File lastDir;
 
     /**
@@ -52,6 +52,10 @@ public class LinuxOptionPanel extends JPanel {
         JTextField tmpTxt = new JTextField(String.format("%040x", 0));
         Dimension dim = tmpTxt.getPreferredSize();
 
+        txtArch = new JTextField(opts.getArch());
+        txtArch.setPreferredSize(dim);
+        txtArch.setMinimumSize(dim);
+
         txtDeviceTree = new JTextField(opts.getDeviceTreeImage().toString());
         txtDeviceTree.setPreferredSize(dim);
         txtDeviceTree.setMinimumSize(dim);
@@ -82,6 +86,12 @@ public class LinuxOptionPanel extends JPanel {
         int gy = 0;
         setLayout(layout);
 
+        GridBagLayoutHelper.add(this, layout, new JLabel("Architecture:", SwingConstants.RIGHT),
+                0, gy, 1, 1);
+        GridBagLayoutHelper.add(this, layout, txtArch,
+                1, gy, 2, 1);
+
+        gy += 1;
         GridBagLayoutHelper.add(this, layout, new JLabel("Device Tree Image:", SwingConstants.RIGHT),
                 0, gy, 1, 1);
         GridBagLayoutHelper.add(this, layout, txtDeviceTree,
@@ -137,6 +147,7 @@ public class LinuxOptionPanel extends JPanel {
      */
     protected void updateOption() {
         try {
+            opts.setArch(txtArch.getText());
             opts.setDeviceTreeImage(new URI(txtDeviceTree.getText()));
             opts.setKernelImage(new URI(txtImage.getText()));
             opts.setInitrdImage(new URI(txtInitrd.getText()));

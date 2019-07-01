@@ -7,40 +7,9 @@ import net.katsuster.ememu.generic.*;
 /**
  * RISCV エミュレータです。
  */
-public class EmulatorRISCV extends Thread {
-    private Board board;
-    private LinuxOption opts;
-
+public class EmulatorRISCV extends Emulator {
     public EmulatorRISCV() {
-        board = new RISCVUnleashed();
-        opts = new LinuxOption();
-    }
-
-    /**
-     * エミュレーション対象となるボードを取得します。
-     *
-     * @return エミュレーション対象のボード
-     */
-    public Board getBoard() {
-        return board;
-    }
-
-    /**
-     * エミュレータ起動のオプションを取得します。
-     *
-     * @return エミュレータに渡すオプション
-     */
-    public LinuxOption getOption() {
-        return opts;
-    }
-
-    /**
-     * エミュレータ起動のオプションを設定します。
-     *
-     * @param op エミュレータに渡すオプション
-     */
-    public void setOption(LinuxOption op) {
-        opts = op;
+        super(new RISCVUnleashed(), new LinuxOption());
     }
 
     @Override
@@ -51,9 +20,9 @@ public class EmulatorRISCV extends Thread {
 
         setName(getClass().getName());
 
-        board.setup();
-        cpu = (RV64)board.getMainCPU();
-        bus = board.getMainBus();
+        getBoard().setup();
+        cpu = (RV64)getBoard().getMainCPU();
+        bus = getBoard().getMainBus();
 
         rom0 = "file:///home/katsuhiro/share/ememu/unleashed/rom0.bin";
         rom1 = "file:///home/katsuhiro/share/ememu/unleashed/rom1.bin";
@@ -61,10 +30,11 @@ public class EmulatorRISCV extends Thread {
         BinaryLoader.loadFromURI(bus, rom0, 0x1000);
         BinaryLoader.loadFromURI(bus, rom1, 0x10000);
 
-        board.start();
+        getBoard().start();
     }
 
+    @Override
     public void halt() {
-        board.stop();
+        getBoard().stop();
     }
 }

@@ -10,9 +10,10 @@ import java.awt.*;
 public class Main {
     public static void usage(String[] args) {
         System.out.println("Usage:\n" +
-                "    ememu [-h] image initramfs [cmdline]\n" +
+                "    ememu [-h] arch image initramfs [cmdline]\n" +
                 "  Arguments:\n" +
                 "    -h       : Show this help messages.\n" +
+                "    arch     : Architecture of CPU.\n"  +
                 "    image    : Linux kernel image file.\n" +
                 "    initramfs: initrd or initramfs image file.\n" +
                 "    cmdline  : Command line parameters to Linux kernel.\n");
@@ -22,6 +23,7 @@ public class Main {
         LinuxOption opts = new LinuxOption();
 
         try {
+            opts.setArch("arm");
             opts.setKernelImage(new URI("http://www.katsuster.net/contents/java/ememu/Image-4.4.57"));
             opts.setInitrdImage(new URI("http://www.katsuster.net/contents/java/ememu/initramfs.gz"));
             opts.setCommandLine("console=ttyAMA0 mem=64M root=/dev/ram init=/bin/init debug printk.time=1");
@@ -35,14 +37,17 @@ public class Main {
                 usage(args);
                 return;
             }
-            opts.setKernelImage(new File(args[0]));
-            opts.setInitrdImage(new File(""));
+            opts.setArch(args[0]);
         }
         if (args.length >= 2) {
-            opts.setInitrdImage(new File(args[1]));
+            opts.setKernelImage(new File(args[1]));
+            opts.setInitrdImage(new File(""));
         }
         if (args.length >= 3) {
-            opts.setCommandLine(args[2]);
+            opts.setInitrdImage(new File(args[2]));
+        }
+        if (args.length >= 4) {
+            opts.setCommandLine(args[3]);
         }
 
         try {

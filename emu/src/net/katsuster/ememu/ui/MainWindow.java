@@ -14,7 +14,7 @@ public class MainWindow extends JFrame {
     private StdoutPanel stdoutPanel;
     private LinuxOptionPanel linuxOptPanel;
     private ProxyOptionPanel proxyOptPanel;
-    private EmulatorARM emu;
+    private Emulator emu;
     private VirtualTerminal[] vttyAMA;
 
     public MainWindow(LinuxOption linuxOpts) {
@@ -95,7 +95,16 @@ public class MainWindow extends JFrame {
         tabPane.setSelectedIndex(1);
 
         //Run the emulator
-        emu = new EmulatorARM();
+        String arch = linuxOptPanel.getOption().getArch();
+
+        if (arch.compareToIgnoreCase("arm") == 0) {
+            emu = new EmulatorARM();
+        } else if (arch.compareToIgnoreCase("riscv") == 0) {
+            emu = new EmulatorRISCV();
+        } else {
+            throw new IllegalArgumentException("Not support '" +
+                    arch + "' architecture.");
+        }
         emu.setOption(linuxOptPanel.getOption());
         for (int i = 0; i < vttyAMA.length; i++) {
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());

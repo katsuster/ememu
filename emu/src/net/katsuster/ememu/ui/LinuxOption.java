@@ -7,6 +7,7 @@ import java.net.*;
  * Linux 起動時に渡すオプション。
  */
 public class LinuxOption {
+    private String arch;
     private URI dtb;
     private URI kimage;
     private URI initrd;
@@ -21,6 +22,24 @@ public class LinuxOption {
             //ignore
         }
         cmdline = "";
+    }
+
+    /**
+     * エミュレートするアーキテクチャを取得します。
+     *
+     * @return アーキテクチャ
+     */
+    public String getArch() {
+        return arch;
+    }
+
+    /**
+     * エミュレートするアーキテクチャをを設定します。
+     *
+     * @param str アーキテクチャ
+     */
+    public void setArch(String str) {
+        arch = str;
     }
 
     /**
@@ -130,10 +149,12 @@ public class LinuxOption {
     @Override
     public String toString() {
         return String.format("%s: \n" +
+                        "  Arch        : '%s'\n" +
                         "  Kernel      : '%s'\n" +
                         "  Initrd      : '%s'\n" +
                         "  Command Line: '%s'",
                 getClass().getSimpleName(),
+                getArch(),
                 getKernelImage().toString(),
                 getInitrdImage().toString(),
                 getCommandLine());

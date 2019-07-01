@@ -7,40 +7,9 @@ import net.katsuster.ememu.generic.*;
 /**
  * ARM エミュレータです。
  */
-public class EmulatorARM extends Thread {
-    private Board board;
-    private LinuxOption opts;
-
+public class EmulatorARM extends Emulator {
     public EmulatorARM() {
-        board = new ARMVersatile();
-        opts = new LinuxOption();
-    }
-
-    /**
-     * エミュレーション対象となるボードを取得します。
-     *
-     * @return エミュレーション対象のボード
-     */
-    public Board getBoard() {
-        return board;
-    }
-
-    /**
-     * エミュレータ起動のオプションを取得します。
-     *
-     * @return エミュレータに渡すオプション
-     */
-    public LinuxOption getOption() {
-        return opts;
-    }
-
-    /**
-     * エミュレータ起動のオプションを設定します。
-     *
-     * @param op エミュレータに渡すオプション
-     */
-    public void setOption(LinuxOption op) {
-        opts = op;
+        super(new ARMVersatile(), new LinuxOption());
     }
 
     @Override
@@ -51,24 +20,25 @@ public class EmulatorARM extends Thread {
 
         setName(getClass().getName());
 
-        board.setup();
-        cpu = (ARMv5)board.getMainCPU();
-        ram = board.getMainRAM();
+        getBoard().setup();
+        cpu = (ARMv5)getBoard().getMainCPU();
+        ram = getBoard().getMainRAM();
 
-        dtree = opts.getDeviceTreeImage().toString();
-        kimage = opts.getKernelImage().toString();
-        initrd = opts.getInitrdImage().toString();
-        cmdline = opts.getCommandLine();
+        dtree = getOption().getDeviceTreeImage().toString();
+        kimage = getOption().getKernelImage().toString();
+        initrd = getOption().getInitrdImage().toString();
+        cmdline = getOption().getCommandLine();
         if (dtree.equals("")) {
             ARMLinuxLoader.bootFromURI(cpu, ram, kimage, initrd, cmdline);
         } else {
             ARMLinuxLoader.bootFromURIWithDT(cpu, ram, dtree, kimage, initrd, cmdline);
         }
 
-        board.start();
+        getBoard().start();
     }
 
+    @Override
     public void halt() {
-        board.stop();
+        getBoard().stop();
     }
 }
