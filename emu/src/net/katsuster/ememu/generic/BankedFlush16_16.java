@@ -61,23 +61,7 @@ public class BankedFlush16_16 extends SlaveCore64 {
     }
 
     @Override
-    public boolean tryRead(long addr, int len) {
-        return tryAccess(addr, len);
-    }
-
-    @Override
-    public boolean tryWrite(long addr, int len) {
-        return tryAccess(addr, len);
-    }
-
-    /**
-     * 指定されたアドレスからの読み書きが可能かどうかを判定します。
-     *
-     * @param addr アドレス
-     * @param len  データのサイズ
-     * @return 読み書きが可能な場合は true、不可能な場合は false
-     */
-    public boolean tryAccess(long addr, int len) {
+    public boolean tryAccess(BusMaster64 m, long addr, int len) {
         int wordAddr;
 
         wordAddr = (int)(addr / LEN_WORD);
@@ -87,66 +71,66 @@ public class BankedFlush16_16 extends SlaveCore64 {
     }
 
     @Override
-    public byte read8(long addr) {
-        long v = readWord(addr) & 0xffffffffL;
+    public byte read8(BusMaster64 m, long addr) {
+        long v = readWord(m, addr) & 0xffffffffL;
 
         return (byte)BitOp.readMasked(addr, v, LEN_WORD_BITS, 8);
     }
 
     @Override
-    public short read16(long addr) {
-        long v = readWord(addr) & 0xffffffffL;
+    public short read16(BusMaster64 m, long addr) {
+        long v = readWord(m, addr) & 0xffffffffL;
 
         return (short)BitOp.readMasked(addr, v, LEN_WORD_BITS, 16);
     }
 
     @Override
-    public int read32(long addr) {
-        return readWord(addr);
+    public int read32(BusMaster64 m, long addr) {
+        return readWord(m, addr);
     }
 
     @Override
-    public void write8(long addr, byte data) {
-        long v = readWord(addr) & 0xffffffffL;
+    public void write8(BusMaster64 m, long addr, byte data) {
+        long v = readWord(m, addr) & 0xffffffffL;
         int w = (int)BitOp.writeMasked(addr, v, data, LEN_WORD_BITS, 8);
 
-        writeWord(addr, w);
+        writeWord(m, addr, w);
     }
 
     @Override
-    public void write16(long addr, short data) {
-        long v = readWord(addr) & 0xffffffffL;
+    public void write16(BusMaster64 m, long addr, short data) {
+        long v = readWord(m, addr) & 0xffffffffL;
         int w = (int)BitOp.writeMasked(addr, v, data, LEN_WORD_BITS, 16);
 
-        writeWord(addr, w);
+        writeWord(m, addr, w);
     }
 
     @Override
-    public void write32(long addr, int data) {
-        writeWord(addr, data);
+    public void write32(BusMaster64 m, long addr, int data) {
+        writeWord(m, addr, data);
     }
 
-    public int readWord(long addr) {
+    public int readWord(BusMaster64 m, long addr) {
         long addrBank = addr >>> 1;
         int data0, data1;
         int data;
 
-        data0 = bank0.read16(addrBank) & 0xffff;
-        data1 = bank1.read16(addrBank) & 0xffff;
+        data0 = bank0.read16(m, addrBank) & 0xffff;
+        data1 = bank1.read16(m, addrBank) & 0xffff;
         data = (data0 << 0) | (data1 << 16);
 
         return data;
     }
 
-    public void writeWord(long addr, int data) {
+    public void writeWord(BusMaster64 m, long addr, int data) {
         long addrBank = addr >>> 1;
         short data0, data1;
 
         data0 = (short)(data >>> 0);
         data1 = (short)(data >>> 16);
 
-        bank0.write16(addrBank, data0);
-        bank1.write16(addrBank, data1);
+        bank0.write16(m, addrBank, data0);
+        bank1.write16(m, addrBank, data1);
     }
 
     @Override

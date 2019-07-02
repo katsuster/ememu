@@ -7,6 +7,20 @@ package net.katsuster.ememu.generic;
  */
 public interface BusMaster64 {
     /**
+     * コアが接続されているスレーブバスを取得します。
+     *
+     * @return スレーブバス
+     */
+    public abstract Bus64 getSlaveBus();
+
+    /**
+     * スレーブバスにコアを接続します。
+     *
+     * @param bus スレーブバス
+     */
+    public abstract void setSlaveBus(Bus64 bus);
+
+    /**
      * 指定されたアドレスからの読み取りが可能かどうかを判定します。
      *
      * @param addr アドレス

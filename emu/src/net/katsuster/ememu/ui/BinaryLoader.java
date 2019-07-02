@@ -22,7 +22,7 @@ public class BinaryLoader {
 
             try {
                 while (true) {
-                    bus.write8(addr + i, s.readByte());
+                    bus.write8(null, addr + i, s.readByte());
                     i++;
                 }
             } catch (EOFException e) {

@@ -310,23 +310,7 @@ public class Flush16 extends SlaveCore64 {
     }
 
     @Override
-    public boolean tryRead(long addr, int len) {
-        return tryAccess(addr, len);
-    }
-
-    @Override
-    public boolean tryWrite(long addr, int len) {
-        return tryAccess(addr, len);
-    }
-
-    /**
-     * 指定されたアドレスからの読み書きが可能かどうかを判定します。
-     *
-     * @param addr アドレス
-     * @param len  データのサイズ
-     * @return 読み書きが可能な場合は true、不可能な場合は false
-     */
-    public boolean tryAccess(long addr, int len) {
+    public boolean tryAccess(BusMaster64 m, long addr, int len) {
         int wordAddr;
 
         wordAddr = (int)(addr / LEN_WORD);
@@ -335,16 +319,16 @@ public class Flush16 extends SlaveCore64 {
     }
 
     @Override
-    public short read16(long addr) {
-        return readWord(addr);
+    public short read16(BusMaster64 m, long addr) {
+        return readWord(m, addr);
     }
 
     @Override
-    public void write16(long addr, short data) {
-        writeWord(addr, data);
+    public void write16(BusMaster64 m, long addr, short data) {
+        writeWord(m, addr, data);
     }
 
-    public short readWord(long addr) {
+    public short readWord(BusMaster64 m, long addr) {
         int wordAddr;
 
         addr &= BitOp.getAddressMask(LEN_WORD_BITS);
@@ -354,7 +338,7 @@ public class Flush16 extends SlaveCore64 {
         return state.readWord(addr, wordAddr);
     }
 
-    public void writeWord(long addr, short data) {
+    public void writeWord(BusMaster64 m, long addr, short data) {
         int wordAddr;
 
         addr &= BitOp.getAddressMask(LEN_WORD_BITS);

@@ -65,7 +65,7 @@ public class CLINT implements ParentCore {
         }
 
         @Override
-        public int readWord(long addr) {
+        public int readWord(BusMaster64 m, long addr) {
             int regaddr;
             int result;
 
@@ -73,7 +73,7 @@ public class CLINT implements ParentCore {
 
             switch (regaddr) {
             default:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 break;
             }
 
@@ -81,20 +81,20 @@ public class CLINT implements ParentCore {
         }
 
         @Override
-        public void writeWord(long addr, int data) {
+        public void writeWord(BusMaster64 m, long addr, int data) {
             int regaddr;
 
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
             default:
-                super.writeWord(regaddr, data);
+                super.writeWord(m, regaddr, data);
                 break;
             }
         }
 
         @Override
-        public long read64(long addr) {
+        public long read64(BusMaster64 m, long addr) {
             int regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
             long data;
 
@@ -112,14 +112,14 @@ public class CLINT implements ParentCore {
                         "Cannot read 64bit from 0x%08x.", addr));
             }
 
-            data = (((long)readWord(addr + 0) & 0xffffffffL) << 0) |
-                    (((long)readWord(addr + 4) & 0xffffffffL) << 32);
+            data = (((long)readWord(m, addr + 0) & 0xffffffffL) << 0) |
+                    (((long)readWord(m, addr + 4) & 0xffffffffL) << 32);
 
             return data;
         }
 
         @Override
-        public void write64(long addr, long data) {
+        public void write64(BusMaster64 m, long addr, long data) {
             int regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
@@ -136,8 +136,8 @@ public class CLINT implements ParentCore {
                         "Cannot write 64bit to 0x%08x.", addr));
             }
 
-            writeWord(addr + 0, (int)(data >>> 0));
-            writeWord(addr + 4, (int)(data >>> 32));
+            writeWord(m, addr + 0, (int)(data >>> 0));
+            writeWord(m, addr + 4, (int)(data >>> 32));
         }
 
         @Override

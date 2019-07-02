@@ -194,7 +194,7 @@ public class Bus64Test {
                 (byte)0x9a, (byte)0xde, (byte)0xf9, (byte)0x34,
         };
         for (int i = 0; i < actual8.length; i++) {
-            bus.write8(start + i, actual8[i]);
+            bus.write8(null, start + i, actual8[i]);
         }
 
         long[] expected8_8= {
@@ -204,7 +204,7 @@ public class Bus64Test {
                 0x12L, 0x56L, 0x78L, 0xbcL, 0x9aL, 0xdeL, 0xf9L, 0x34L,
         };
         for (int i = 0; i < expected8_8.length; i++) {
-            Assert.assertEquals(msg1, expected8_8[i], bus.read8(start + i) & 0xffL);
+            Assert.assertEquals(msg1, expected8_8[i], bus.read8(null, start + i) & 0xffL);
         }
 
         long[] expected8_16 = {
@@ -214,7 +214,7 @@ public class Bus64Test {
                 0x5612L, 0xbc78L, 0xde9aL, 0x34f9L,
         };
         for (int i = 0; i < expected8_16.length; i++) {
-            Assert.assertEquals(msg1, expected8_16[i], bus.read_ua16(start + i * 2) & 0xffffL);
+            Assert.assertEquals(msg1, expected8_16[i], bus.read_ua16(null, start + i * 2) & 0xffffL);
         }
 
         long[] expected8_32 = {
@@ -222,7 +222,7 @@ public class Bus64Test {
                 0xcd672301L, 0x45efab89L, 0xbc785612L, 0x34f9de9aL,
         };
         for (int i = 0; i < expected8_32.length; i++) {
-            Assert.assertEquals(msg1, expected8_32[i], bus.read_ua32(start + i * 4) & 0xffffffffL);
+            Assert.assertEquals(msg1, expected8_32[i], bus.read_ua32(null, start + i * 4) & 0xffffffffL);
         }
 
         long[] expected8_64 = {
@@ -230,7 +230,7 @@ public class Bus64Test {
                 0x45efab89cd672301L, 0x34f9de9abc785612L,
         };
         for (int i = 0; i < expected8_64.length; i++) {
-            Assert.assertEquals(msg1, expected8_64[i], bus.read_ua64(start + i * 8));
+            Assert.assertEquals(msg1, expected8_64[i], bus.read_ua64(null, start + i * 8));
         }
     }
 
@@ -244,7 +244,7 @@ public class Bus64Test {
                 (short)0xdef9, (short)0x1234, (short)0x5678, (short)0x9abc,
         };
         for (int i = 0; i < actual16.length; i++) {
-            bus.write_ua16(start + i * 2, actual16[i]);
+            bus.write_ua16(null, start + i * 2, actual16[i]);
         }
 
         long[] expected16_8 = {
@@ -254,7 +254,7 @@ public class Bus64Test {
                 0xf9L, 0xdeL, 0x34L, 0x12L, 0x78L, 0x56L, 0xbcL, 0x9aL,
         };
         for (int i = 0; i < expected16_8.length; i++) {
-            Assert.assertEquals(msg1, expected16_8[i], bus.read8(start + i) & 0xffL);
+            Assert.assertEquals(msg1, expected16_8[i], bus.read8(null, start + i) & 0xffL);
         }
 
         long[] expected16_16 = {
@@ -264,7 +264,7 @@ public class Bus64Test {
                 0xdef9L, 0x1234L, 0x5678L, 0x9abcL,
         };
         for (int i = 0; i < expected16_16.length; i++) {
-            Assert.assertEquals(msg1, expected16_16[i], bus.read_ua16(start + i * 2) & 0xffffL);
+            Assert.assertEquals(msg1, expected16_16[i], bus.read_ua16(null, start + i * 2) & 0xffffL);
         }
 
         long[] expected16_32 = {
@@ -272,7 +272,7 @@ public class Bus64Test {
                 0x89ab4567L, 0x0123cdefL, 0x1234def9L, 0x9abc5678L,
         };
         for (int i = 0; i < expected16_32.length; i++) {
-            Assert.assertEquals(msg1, expected16_32[i], bus.read_ua32(start + i * 4) & 0xffffffffL);
+            Assert.assertEquals(msg1, expected16_32[i], bus.read_ua32(null, start + i * 4) & 0xffffffffL);
         }
 
         long[] expected16_64 = {
@@ -280,7 +280,7 @@ public class Bus64Test {
                 0x0123cdef89ab4567L, 0x9abc56781234def9L,
         };
         for (int i = 0; i < expected16_64.length; i++) {
-            Assert.assertEquals(msg1, expected16_64[i], bus.read_ua64(start + i * 8));
+            Assert.assertEquals(msg1, expected16_64[i], bus.read_ua64(null, start + i * 8));
         }
     }
 
@@ -292,7 +292,7 @@ public class Bus64Test {
                 0x23456789, 0xabcdef12, 0x3456789a, 0xbcdef9ba,
         };
         for (int i = 0; i < actual32.length; i++) {
-            bus.write_ua32(start + i * 4, actual32[i]);
+            bus.write_ua32(null, start + i * 4, actual32[i]);
         }
 
         long[] expected32_8 = {
@@ -302,7 +302,7 @@ public class Bus64Test {
                 0x9aL, 0x78L, 0x56L, 0x34L, 0xbaL, 0xf9L, 0xdeL, 0xbcL,
         };
         for (int i = 0; i < expected32_8.length; i++) {
-            Assert.assertEquals(msg1, expected32_8[i], bus.read8(start + i) & 0xffL);
+            Assert.assertEquals(msg1, expected32_8[i], bus.read8(null, start + i) & 0xffL);
         }
 
         long[] expected32_16 = {
@@ -312,7 +312,7 @@ public class Bus64Test {
                 0x789aL, 0x3456L, 0xf9baL, 0xbcdeL,
         };
         for (int i = 0; i < expected32_16.length; i++) {
-            Assert.assertEquals(msg1, expected32_16[i], bus.read_ua16(start + i * 2) & 0xffffL);
+            Assert.assertEquals(msg1, expected32_16[i], bus.read_ua16(null, start + i * 2) & 0xffffL);
         }
 
         long[] expected32_32 = {
@@ -320,7 +320,7 @@ public class Bus64Test {
                 0x23456789L, 0xabcdef12L, 0x3456789aL, 0xbcdef9baL,
         };
         for (int i = 0; i < expected32_32.length; i++) {
-            Assert.assertEquals(msg1, expected32_32[i], bus.read_ua32(start + i * 4) & 0xffffffffL);
+            Assert.assertEquals(msg1, expected32_32[i], bus.read_ua32(null, start + i * 4) & 0xffffffffL);
         }
 
         long[] expected32_64 = {
@@ -328,7 +328,7 @@ public class Bus64Test {
                 0xabcdef1223456789L, 0xbcdef9ba3456789aL,
         };
         for (int i = 0; i < expected32_64.length; i++) {
-            Assert.assertEquals(msg1, expected32_64[i], bus.read_ua64(start + i * 8));
+            Assert.assertEquals(msg1, expected32_64[i], bus.read_ua64(null, start + i * 8));
         }
     }
 
@@ -340,7 +340,7 @@ public class Bus64Test {
                 0x23456789abcdef89L, 0xabcdeffedcba9801L,
         };
         for (int i = 0; i < actual64.length; i++) {
-            bus.write_ua64(start + i * 8, actual64[i]);
+            bus.write_ua64(null, start + i * 8, actual64[i]);
         }
 
         long[] expected64_8 = {
@@ -350,7 +350,7 @@ public class Bus64Test {
                 0x01L, 0x98L, 0xbaL, 0xdcL, 0xfeL, 0xefL, 0xcdL, 0xabL,
         };
         for (int i = 0; i < expected64_8.length; i++) {
-            Assert.assertEquals(msg1, expected64_8[i], bus.read8(start + i) & 0xffL);
+            Assert.assertEquals(msg1, expected64_8[i], bus.read8(null, start + i) & 0xffL);
         }
 
         long[] expected64_16 = {
@@ -360,7 +360,7 @@ public class Bus64Test {
                 0x9801L, 0xdcbaL, 0xeffeL, 0xabcdL,
         };
         for (int i = 0; i < expected64_16.length; i++) {
-            Assert.assertEquals(msg1, expected64_16[i], bus.read_ua16(start + i * 2) & 0xffffL);
+            Assert.assertEquals(msg1, expected64_16[i], bus.read_ua16(null, start + i * 2) & 0xffffL);
         }
 
         long[] expected64_32 = {
@@ -368,7 +368,7 @@ public class Bus64Test {
                 0xabcdef89L, 0x23456789L, 0xdcba9801L, 0xabcdeffeL,
         };
         for (int i = 0; i < expected64_32.length; i++) {
-            Assert.assertEquals(msg1, expected64_32[i], bus.read_ua32(start + i * 4) & 0xffffffffL);
+            Assert.assertEquals(msg1, expected64_32[i], bus.read_ua32(null, start + i * 4) & 0xffffffffL);
         }
 
         long[] expected64_64 = {
@@ -376,7 +376,7 @@ public class Bus64Test {
                 0x23456789abcdef89L, 0xabcdeffedcba9801L,
         };
         for (int i = 0; i < expected64_64.length; i++) {
-            Assert.assertEquals(msg1, expected64_64[i], bus.read_ua64(start + i * 8));
+            Assert.assertEquals(msg1, expected64_64[i], bus.read_ua64(null, start + i * 8));
         }
     }
 }

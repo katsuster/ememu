@@ -205,7 +205,7 @@ public class PrimaryINTC extends Controller32
     }
 
     @Override
-    public int readWord(long addr) {
+    public int readWord(BusMaster64 m, long addr) {
         int regaddr;
         int result;
 
@@ -232,7 +232,7 @@ public class PrimaryINTC extends Controller32
             result = 0x0;
             break;
         default:
-            result = super.readWord(regaddr);
+            result = super.readWord(m, regaddr);
             break;
         }
 
@@ -240,7 +240,7 @@ public class PrimaryINTC extends Controller32
     }
 
     @Override
-    public void writeWord(long addr, int data) {
+    public void writeWord(BusMaster64 m, long addr, int data) {
         int regaddr;
 
         regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
@@ -309,7 +309,7 @@ public class PrimaryINTC extends Controller32
             //read only, ignored
             break;
         default:
-            super.writeWord(regaddr, data);
+            super.writeWord(m, regaddr, data);
             break;
         }
     }

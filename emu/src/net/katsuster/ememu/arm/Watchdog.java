@@ -66,7 +66,7 @@ public class Watchdog implements ParentCore {
         }
 
         @Override
-        public int readWord(long addr) {
+        public int readWord(BusMaster64 m, long addr) {
             int regaddr;
             int result;
 
@@ -74,7 +74,7 @@ public class Watchdog implements ParentCore {
 
             switch (regaddr) {
             default:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 break;
             }
 
@@ -82,7 +82,7 @@ public class Watchdog implements ParentCore {
         }
 
         @Override
-        public void writeWord(long addr, int data) {
+        public void writeWord(BusMaster64 m, long addr, int data) {
             int regaddr;
 
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
@@ -99,7 +99,7 @@ public class Watchdog implements ParentCore {
                 //read only, ignored
                 break;
             default:
-                super.writeWord(regaddr, data);
+                super.writeWord(m, regaddr, data);
                 break;
             }
         }

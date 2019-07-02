@@ -184,7 +184,7 @@ public class SSMC implements ParentCore {
         }
 
         @Override
-        public int readWord(long addr) {
+        public int readWord(BusMaster64 m, long addr) {
             int regaddr;
             int result;
 
@@ -193,16 +193,16 @@ public class SSMC implements ParentCore {
             switch (regaddr) {
             case REG_SMBIDCYR0:
                 //TODO: Not implemented
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 System.out.printf("SMBIDCYR0: read 0x%08x\n", result);
                 break;
             case REG_SMBWSTOENR0:
                 //TODO: Not implemented
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 System.out.printf("SMBWSTOENR0: read 0x%08x\n", result);
                 break;
             default:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 break;
             }
 
@@ -210,7 +210,7 @@ public class SSMC implements ParentCore {
         }
 
         @Override
-        public void writeWord(long addr, int data) {
+        public void writeWord(BusMaster64 m, long addr, int data) {
             int regaddr;
 
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
@@ -235,7 +235,7 @@ public class SSMC implements ParentCore {
                 //read only, ignored
                 break;
             default:
-                super.writeWord(regaddr, data);
+                super.writeWord(m, regaddr, data);
                 break;
             }
         }

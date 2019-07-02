@@ -173,7 +173,7 @@ public class UART implements INTSource, ParentCore {
         }
 
         @Override
-        public int readWord(long addr) {
+        public int readWord(BusMaster64 m, long addr) {
             int regaddr;
             int result;
 
@@ -198,11 +198,11 @@ public class UART implements INTSource, ParentCore {
 
                 break;
             case REG_UARTLCR_H:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 //System.out.printf("UARTLCR_H: read 0x%08x\n", result);
                 break;
             case REG_UARTCR:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 //System.out.printf("UARTCR: read 0x%08x\n", result);
                 break;
             case REG_UARTIMSC:
@@ -215,7 +215,7 @@ public class UART implements INTSource, ParentCore {
                 result = getMaskedInt();
                 break;
             default:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 break;
             }
 
@@ -223,7 +223,7 @@ public class UART implements INTSource, ParentCore {
         }
 
         @Override
-        public void writeWord(long addr, int data) {
+        public void writeWord(BusMaster64 m, long addr, int data) {
             int regaddr;
 
             regaddr = (int)(addr & BitOp.getAddressMask(LEN_WORD_BITS));
@@ -260,12 +260,12 @@ public class UART implements INTSource, ParentCore {
             case REG_UARTLCR_H:
                 //TODO: Not implemented
                 System.out.printf("UARTLCR_H: 0x%08x\n", data);
-                super.writeWord(regaddr, data);
+                super.writeWord(m, regaddr, data);
                 break;
             case REG_UARTCR:
                 //TODO: Not implemented
                 //System.out.printf("UARTCR: 0x%08x\n", data);
-                super.writeWord(regaddr, data);
+                super.writeWord(m, regaddr, data);
                 break;
             case REG_UARTIFLS:
                 //TODO: Not implemented
@@ -292,7 +292,7 @@ public class UART implements INTSource, ParentCore {
                 //read only, ignored
                 break;
             default:
-                super.writeWord(regaddr, data);
+                super.writeWord(m, regaddr, data);
                 break;
             }
         }

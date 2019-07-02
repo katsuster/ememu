@@ -42,19 +42,19 @@ public class RAM16 extends RAM {
     }
 
     @Override
-    public byte read8(long addr) {
+    public byte read8(BusMaster64 m, long addr) {
         short v = readWord(addr);
 
         return (byte)BitOp.readMasked(addr, v, LEN_WORD_BITS, 8);
     }
 
     @Override
-    public short read16(long addr) {
+    public short read16(BusMaster64 m, long addr) {
         return readWord(addr);
     }
 
     @Override
-    public int read32(long addr) {
+    public int read32(BusMaster64 m, long addr) {
         int data;
 
         data = (((int)readWord(addr + 0) & 0xffff) << 0) |
@@ -64,7 +64,7 @@ public class RAM16 extends RAM {
     }
 
     @Override
-    public long read64(long addr) {
+    public long read64(BusMaster64 m, long addr) {
         long data;
 
         data = (((long)readWord(addr + 0) & 0xffff) << 0) |
@@ -76,7 +76,7 @@ public class RAM16 extends RAM {
     }
 
     @Override
-    public void write8(long addr, byte data) {
+    public void write8(BusMaster64 m, long addr, byte data) {
         short v = readWord(addr);
         short w = (short)BitOp.writeMasked(addr, v, data, LEN_WORD_BITS, 8);
 
@@ -84,18 +84,18 @@ public class RAM16 extends RAM {
     }
 
     @Override
-    public void write16(long addr, short data) {
+    public void write16(BusMaster64 m, long addr, short data) {
         writeWord(addr, data);
     }
 
     @Override
-    public void write32(long addr, int data) {
+    public void write32(BusMaster64 m, long addr, int data) {
         writeWord(addr + 0, (short)(data >>> 0));
         writeWord(addr + 2, (short)(data >>> 16));
     }
 
     @Override
-    public void write64(long addr, long data) {
+    public void write64(BusMaster64 m, long addr, long data) {
         writeWord(addr + 0, (short)(data >>> 0));
         writeWord(addr + 2, (short)(data >>> 16));
         writeWord(addr + 4, (short)(data >>> 32));

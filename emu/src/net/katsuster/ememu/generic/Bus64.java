@@ -74,7 +74,7 @@ public class Bus64 implements BusSlave64 {
     }
 
     @Override
-    public boolean tryRead(long addr, int len) {
+    public boolean tryRead(BusMaster64 m, long addr, int len) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -88,11 +88,11 @@ public class Bus64 implements BusSlave64 {
 
         offSt = addr - sca.getStartAddress();
         //offEd = offSt + len - 1;
-        return sca.getCore().tryRead(offSt, len);
+        return sca.getCore().tryRead(m, offSt, len);
     }
 
     @Override
-    public byte read8(long addr) {
+    public byte read8(BusMaster64 m, long addr) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -106,14 +106,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.readLock().lock();
         try {
-            return sca.getCore().read8(offSt);
+            return sca.getCore().read8(m, offSt);
         } finally {
             rwlock.readLock().unlock();
         }
     }
 
     @Override
-    public short read16(long addr) {
+    public short read16(BusMaster64 m, long addr) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -127,14 +127,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.readLock().lock();
         try {
-            return sca.getCore().read16(offSt);
+            return sca.getCore().read16(m, offSt);
         } finally {
             rwlock.readLock().unlock();
         }
     }
 
     @Override
-    public int read32(long addr) {
+    public int read32(BusMaster64 m, long addr) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -148,14 +148,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.readLock().lock();
         try {
-            return sca.getCore().read32(offSt);
+            return sca.getCore().read32(m, offSt);
         } finally {
             rwlock.readLock().unlock();
         }
     }
 
     @Override
-    public long read64(long addr) {
+    public long read64(BusMaster64 m, long addr) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -169,14 +169,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.readLock().lock();
         try {
-            return sca.getCore().read64(offSt);
+            return sca.getCore().read64(m, offSt);
         } finally {
             rwlock.readLock().unlock();
         }
     }
 
     @Override
-    public short read_ua16(long addr) {
+    public short read_ua16(BusMaster64 m, long addr) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -190,14 +190,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.readLock().lock();
         try {
-            return sca.getCore().read_ua16(offSt);
+            return sca.getCore().read_ua16(m, offSt);
         } finally {
             rwlock.readLock().unlock();
         }
     }
 
     @Override
-    public int read_ua32(long addr) {
+    public int read_ua32(BusMaster64 m, long addr) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -211,14 +211,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.readLock().lock();
         try {
-            return sca.getCore().read_ua32(offSt);
+            return sca.getCore().read_ua32(m, offSt);
         } finally {
             rwlock.readLock().unlock();
         }
     }
 
     @Override
-    public long read_ua64(long addr) {
+    public long read_ua64(BusMaster64 m, long addr) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -232,14 +232,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.readLock().lock();
         try {
-            return sca.getCore().read_ua64(offSt);
+            return sca.getCore().read_ua64(m, offSt);
         } finally {
             rwlock.readLock().unlock();
         }
     }
 
     @Override
-    public boolean tryWrite(long addr, int len) {
+    public boolean tryWrite(BusMaster64 m, long addr, int len) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -253,11 +253,11 @@ public class Bus64 implements BusSlave64 {
 
         offSt = addr - sca.getStartAddress();
         //offEd = offSt + len - 1;
-        return sca.getCore().tryWrite(offSt, len);
+        return sca.getCore().tryWrite(m, offSt, len);
     }
 
     @Override
-    public void write8(long addr, byte data) {
+    public void write8(BusMaster64 m, long addr, byte data) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -271,14 +271,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.writeLock().lock();
         try {
-            sca.getCore().write8(offSt, data);
+            sca.getCore().write8(m, offSt, data);
         } finally {
             rwlock.writeLock().unlock();
         }
     }
 
     @Override
-    public void write16(long addr, short data) {
+    public void write16(BusMaster64 m, long addr, short data) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -292,14 +292,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.writeLock().lock();
         try {
-            sca.getCore().write16(offSt, data);
+            sca.getCore().write16(m, offSt, data);
         } finally {
             rwlock.writeLock().unlock();
         }
     }
 
     @Override
-    public void write32(long addr, int data) {
+    public void write32(BusMaster64 m, long addr, int data) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -313,14 +313,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.writeLock().lock();
         try {
-            sca.getCore().write32(offSt, data);
+            sca.getCore().write32(m, offSt, data);
         } finally {
             rwlock.writeLock().unlock();
         }
     }
 
     @Override
-    public void write64(long addr, long data) {
+    public void write64(BusMaster64 m, long addr, long data) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -334,14 +334,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.writeLock().lock();
         try {
-            sca.getCore().write64(offSt, data);
+            sca.getCore().write64(m, offSt, data);
         } finally {
             rwlock.writeLock().unlock();
         }
     }
 
     @Override
-    public void write_ua16(long addr, short data) {
+    public void write_ua16(BusMaster64 m, long addr, short data) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -355,14 +355,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.writeLock().lock();
         try {
-            sca.getCore().write_ua16(offSt, data);
+            sca.getCore().write_ua16(m, offSt, data);
         } finally {
             rwlock.writeLock().unlock();
         }
     }
 
     @Override
-    public void write_ua32(long addr, int data) {
+    public void write_ua32(BusMaster64 m, long addr, int data) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -376,14 +376,14 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.writeLock().lock();
         try {
-            sca.getCore().write_ua32(offSt, data);
+            sca.getCore().write_ua32(m, offSt, data);
         } finally {
             rwlock.writeLock().unlock();
         }
     }
 
     @Override
-    public void write_ua64(long addr, long data) {
+    public void write_ua64(BusMaster64 m, long addr, long data) {
         SlaveCoreAddress sca;
         long offSt;
 
@@ -397,7 +397,7 @@ public class Bus64 implements BusSlave64 {
 
         rwlock.writeLock().lock();
         try {
-            sca.getCore().write_ua64(offSt, data);
+            sca.getCore().write_ua64(m, offSt, data);
         } finally {
             rwlock.writeLock().unlock();
         }

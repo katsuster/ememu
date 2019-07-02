@@ -136,18 +136,19 @@ public class DualTimer implements INTSource, ParentCore {
             addReg(REG_TimerPCellID3, "TimerPCellID3", 0x000000b1);
 
             //コントロールレジスタの設定を反映する
-            updateControl(0, REG_Timer1Control, 0x20);
-            updateControl(1, REG_Timer2Control, 0x20);
+            updateControl(0, null, REG_Timer1Control, 0x20);
+            updateControl(1, null, REG_Timer2Control, 0x20);
         }
 
         /**
          * コントロールレジスタの設定を反映する。
          *
          * @param id タイマー ID
+         * @param m  要求を出したマスター
          * @param regaddr レジスタのアドレス
          * @param val レジスタの値
          */
-        public void updateControl(int id, long regaddr, int val) {
+        public void updateControl(int id, BusMaster64 m, long regaddr, int val) {
             boolean en = BitOp.getBit32(val, 7);
             boolean peri = BitOp.getBit32(val, 6);
             boolean inten = BitOp.getBit32(val, 5);
@@ -193,11 +194,11 @@ public class DualTimer implements INTSource, ParentCore {
             timerSize32[id] = size32;
             oneshot[id] = one;
 
-            super.writeWord(regaddr, val);
+            super.writeWord(m, regaddr, val);
         }
 
         @Override
-        public int readWord(long addr) {
+        public int readWord(BusMaster64 m, long addr) {
             int regaddr;
             int result;
 
@@ -205,7 +206,7 @@ public class DualTimer implements INTSource, ParentCore {
 
             switch (regaddr) {
             case REG_Timer1Load:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 break;
             case REG_Timer1Value:
                 result = currentValue[0];
@@ -221,10 +222,10 @@ public class DualTimer implements INTSource, ParentCore {
                 result = rawInt[0] & intEnable[0];
                 break;
             case REG_Timer1BGLoad:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 break;
             case REG_Timer2Load:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 break;
             case REG_Timer2Value:
                 result = currentValue[1];
@@ -240,10 +241,10 @@ public class DualTimer implements INTSource, ParentCore {
                 result = rawInt[1] & intEnable[1];
                 break;
             case REG_Timer2BGLoad:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 break;
             default:
-                result = super.readWord(regaddr);
+                result = super.readWord(m, regaddr);
                 break;
             }
 
@@ -251,7 +252,7 @@ public class DualTimer implements INTSource, ParentCore {
         }
 
         @Override
-        public void writeWord(long addr, int data) {
+        public void writeWord(BusMaster64 m, long addr, int data) {
             int regaddr;
 
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
@@ -261,13 +262,13 @@ public class DualTimer implements INTSource, ParentCore {
                 case REG_Timer1Load:
                     loadValue[0] = data;
                     currentValue[0] = 0;
-                    super.writeWord(regaddr, data);
+                    super.writeWord(m, regaddr, data);
                     break;
                 case REG_Timer1Value:
                     //read only, ignored
                     break;
                 case REG_Timer1Control:
-                    updateControl(0, regaddr, data);
+                    updateControl(0, m, regaddr, data);
                     break;
                 case REG_Timer1IntClr:
                     rawInt[0] &= ~data;
@@ -278,18 +279,18 @@ public class DualTimer implements INTSource, ParentCore {
                     break;
                 case REG_Timer1BGLoad:
                     loadValue[0] = data;
-                    super.writeWord(regaddr, data);
+                    super.writeWord(m, regaddr, data);
                     break;
                 case REG_Timer2Load:
                     loadValue[1] = data;
                     currentValue[1] = 0;
-                    super.writeWord(regaddr, data);
+                    super.writeWord(m, regaddr, data);
                     break;
                 case REG_Timer2Value:
                     //read only, ignored
                     break;
                 case REG_Timer2Control:
-                    updateControl(1, regaddr, data);
+                    updateControl(1, m, regaddr, data);
                     break;
                 case REG_Timer2IntClr:
                     rawInt[1] &= ~data;
@@ -300,7 +301,7 @@ public class DualTimer implements INTSource, ParentCore {
                     break;
                 case REG_Timer2BGLoad:
                     loadValue[1] = data;
-                    super.writeWord(regaddr, data);
+                    super.writeWord(m, regaddr, data);
                     break;
                 case REG_TimerPeriphID0:
                 case REG_TimerPeriphID1:
@@ -313,7 +314,7 @@ public class DualTimer implements INTSource, ParentCore {
                     //read only, ignored
                     break;
                 default:
-                    super.writeWord(regaddr, data);
+                    super.writeWord(m, regaddr, data);
                     break;
                 }
             }
