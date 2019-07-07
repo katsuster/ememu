@@ -8,6 +8,7 @@ public abstract class CPU extends MasterCore64
     private boolean fEnabledDisasm;
     private boolean fPrintInstruction;
     private boolean fPrintRegs;
+    private boolean raisedException;
     private boolean raisedInterrupt;
     private boolean jumped;
 
@@ -15,6 +16,7 @@ public abstract class CPU extends MasterCore64
         fEnabledDisasm = false;
         fPrintInstruction = false;
         fPrintRegs = false;
+        raisedException = false;
         raisedInterrupt = false;
         jumped = false;
     }
@@ -41,6 +43,25 @@ public abstract class CPU extends MasterCore64
 
     public void setPrintRegs(boolean b) {
         fPrintRegs = b;
+    }
+
+    /**
+     * 最後に行われた命令実行において、
+     * CPU が例外を要求したかどうかを取得します。
+     *
+     * @return CPU が例外を要求した場合 true、要求していない場合 false
+     */
+    public boolean isRaisedException() {
+        return raisedException;
+    }
+
+    /**
+     * CPU が例外を要求したかどうかを設定します。
+     *
+     * @param m CPU が例外を要求した場合 true、要求していない場合 false
+     */
+    public void setRaisedException(boolean m) {
+        raisedException = m;
     }
 
     @Override

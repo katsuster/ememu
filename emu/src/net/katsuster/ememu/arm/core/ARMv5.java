@@ -32,7 +32,6 @@ public class ARMv5 extends CPU32 {
     private boolean[] exceptions;
     private String[] exceptionReasons;
 
-    private boolean raisedException;
     private boolean highVector;
 
     private InstructionARM instA32;
@@ -66,7 +65,6 @@ public class ARMv5 extends CPU32 {
         exceptions = new boolean[7];
         exceptionReasons = new String[7];
 
-        raisedException = false;
         highVector = false;
 
         instA32 = new InstructionARM(0);
@@ -865,25 +863,6 @@ public class ARMv5 extends CPU32 {
                 intc.getINTSource(INTSRC_FIQ).getIRQMessage());
 
         raiseException(EXCEPT_FIQ, msg);
-    }
-
-    /**
-     * 最後に行われた命令実行において、
-     * CPU が例外を要求したかどうかを取得します。
-     *
-     * @return CPU が例外を要求した場合 true、要求していない場合 false
-     */
-    public boolean isRaisedException() {
-        return raisedException;
-    }
-
-    /**
-     * CPU が例外を要求したかどうかを設定します。
-     *
-     * @param m CPU が例外を要求した場合 true、要求していない場合 false
-     */
-    public void setRaisedException(boolean m) {
-        raisedException = m;
     }
 
     /**
