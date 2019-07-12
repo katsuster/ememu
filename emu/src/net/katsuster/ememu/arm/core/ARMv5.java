@@ -24,6 +24,15 @@ public class ARMv5 extends CPU32 {
     public static final int INTSRC_IRQ = 0;
     public static final int INTSRC_FIQ = 1;
 
+    //例外
+    public static final int EXCEPT_RST = 0;
+    public static final int EXCEPT_ABT_DATA = 1;
+    public static final int EXCEPT_FIQ = 2;
+    public static final int EXCEPT_IRQ = 3;
+    public static final int EXCEPT_ABT_INST = 4;
+    public static final int EXCEPT_UND = 5;
+    public static final int EXCEPT_SVC = 6;
+
     private ARMRegFile regfile;
     private CoProc[] coProcs;
     private MMUv5 mmu;
@@ -473,14 +482,6 @@ public class ARMv5 extends CPU32 {
                     decinst.getType());
         }
     }
-
-    public static final int EXCEPT_RST = 0;
-    public static final int EXCEPT_ABT_DATA = 1;
-    public static final int EXCEPT_FIQ = 2;
-    public static final int EXCEPT_IRQ = 3;
-    public static final int EXCEPT_ABT_INST = 4;
-    public static final int EXCEPT_UND = 5;
-    public static final int EXCEPT_SVC = 6;
 
     /**
      * 例外を要求します。
