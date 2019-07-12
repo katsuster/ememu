@@ -383,7 +383,7 @@ public class CoProcStdv5 extends CoProc {
         ARMv5 cpu = getCPU();
 
         synchronized (cpu) {
-            while (!cpu.isRaisedInterrupt()) {
+            while (!cpu.isRaisedInterrupt() && !cpu.shouldHalt()) {
                 try {
                     cpu.wait(100000);
                 } catch (InterruptedException ex) {
