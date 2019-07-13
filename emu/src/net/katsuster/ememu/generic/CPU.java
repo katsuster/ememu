@@ -5,6 +5,7 @@ package net.katsuster.ememu.generic;
  */
 public abstract class CPU extends MasterCore64
         implements INTDestination {
+    private int threadId;
     private boolean fEnabledDisasm;
     private boolean fPrintInstruction;
     private boolean fPrintRegs;
@@ -13,12 +14,31 @@ public abstract class CPU extends MasterCore64
     private boolean jumped;
 
     public CPU() {
+        threadId = -1;
         fEnabledDisasm = false;
         fPrintInstruction = false;
         fPrintRegs = false;
         raisedException = false;
         raisedInterrupt = false;
         jumped = false;
+    }
+
+    /**
+     * ハードウェアスレッド ID を取得します。
+     *
+     * @return スレッド ID
+     */
+    public int getThreadID() {
+        return threadId;
+    }
+
+    /**
+     * ハードウェアスレッド ID を設定します。
+     *
+     * @param id スレッド ID
+     */
+    public void setThreadID(int id) {
+        threadId = id;
     }
 
     public boolean isEnabledDisasm() {
