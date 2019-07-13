@@ -3,8 +3,7 @@ package net.katsuster.ememu.generic;
 /**
  * 32bit レジスタを持つ CPU の基本クラス
  */
-public abstract class CPU32 extends CPU
-        implements INTDestination {
+public abstract class CPU32 extends CPU {
     public CPU32() {
 
     }
