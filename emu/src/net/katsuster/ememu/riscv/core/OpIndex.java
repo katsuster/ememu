@@ -73,6 +73,13 @@ public enum OpIndex {
     INS_RV32I_CSRRSI,
     INS_RV32I_CSRRCI,
 
+    //SYSTEM, privilege
+    INS_RV32_URET,
+    INS_RV32_SRET,
+    INS_RV32_MRET,
+    INS_RV32_WFI,
+    INS_RV32_SFENCE,
+
     //LOAD
     INS_RV64I_LWU,
     INS_RV64I_LD,

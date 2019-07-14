@@ -482,6 +482,44 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * WFI () 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeWfi(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int imm12 = inst.getImm12I();
+        long imm = BitOp.signExt64(imm12, 12);
+        long v;
+
+        if (!exec) {
+            printDisasm(inst, "wfi", "");
+            return;
+        }
+
+        waitInt();
+    }
+
+    /**
+     * 割り込み待ち。
+     */
+    public void waitInt() {
+        RV64 c = getCore();
+
+        synchronized (c) {
+            while (!c.isRaisedInterrupt() && !c.shouldHalt()) {
+                try {
+                    c.wait(1000);
+                } catch (InterruptedException ex) {
+                    //do nothing
+                }
+            }
+        }
+    }
+
+    /**
      * 32bit 命令を実行します。
      *
      * @param decinst デコードされた命令
@@ -542,6 +580,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV64I_ADDIW:
             executeAddiw(inst, exec);
+            break;
+        case INS_RV32_WFI:
+            executeWfi(inst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown RV32I instruction " +
