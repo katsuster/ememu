@@ -1,6 +1,7 @@
 package net.katsuster.ememu.riscv;
 
 import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.riscv.core.*;
 
 /**
  * Core Local Interruptor (CLINT)
@@ -8,6 +9,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
 public class CLINT implements ParentCore {
+    private RV64[] cores;
     private CLINTSlave slave;
 
     //4bytes registers
@@ -59,7 +61,8 @@ public class CLINT implements ParentCore {
     public static final int REG_MTIME_L       = 0xbff8;
     public static final int REG_MTIME_H       = 0xbffc;
 
-    public CLINT() {
+    public CLINT(RV64[] c) {
+        cores = c;
         slave = new CLINTSlave();
     }
 

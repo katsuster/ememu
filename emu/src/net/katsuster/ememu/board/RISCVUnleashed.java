@@ -7,7 +7,7 @@ import net.katsuster.ememu.riscv.*;
 import net.katsuster.ememu.riscv.core.*;
 
 public class RISCVUnleashed extends AbstractBoard {
-    private CPU cpu;
+    private RV64[] cpu;
     private Bus64 bus;
     private RAM cl0_ddr;
     private InputStream[] uartIn = new InputStream[4];
@@ -19,7 +19,7 @@ public class RISCVUnleashed extends AbstractBoard {
 
     @Override
     public CPU getMainCPU() {
-        return cpu;
+        return cpu[0];
     }
 
     @Override
@@ -54,17 +54,21 @@ public class RISCVUnleashed extends AbstractBoard {
 
     @Override
     public void setup() {
-        cpu = new RV64();
+        cpu = new RV64[1];
         bus = new Bus64();
 
         RAM mode_select = new RAM32(4 * 1024);
         RAM mask_rom = new RAM32(8 * 1024);
-        CLINT clint = new CLINT();
+        CLINT clint = new CLINT(cpu);
         RAM l2lim = new RAM32(32 * 1024 * 1024);
         cl0_ddr = new RAM32(64 * 1024 * 1024);
 
         //Master core
-        bus.addMasterCore(cpu);
+        for (int i = 0; i < cpu.length; i++) {
+            cpu[i] = new RV64();
+            cpu[i].setThreadID(i);
+            bus.addMasterCore(cpu[i]);
+        }
 
         //Memory map of Unleashed
         //  0x0000_0100 - 0x0000_0fff: Debug
@@ -77,10 +81,12 @@ public class RISCVUnleashed extends AbstractBoard {
         bus.addSlaveCore(l2lim, 0x08000000L, 0x09ffffffL);
 
         //reset CPU
-        cpu.setEnabledDisasm(false);
-        cpu.setPrintInstruction(false);
-        cpu.setPrintRegs(false);
-        cpu.init();
+        for (int i = 0; i < cpu.length; i++) {
+            cpu[i].setEnabledDisasm(false);
+            cpu[i].setPrintInstruction(false);
+            cpu[i].setPrintRegs(false);
+            cpu[i].init();
+        }
     }
 
     @Override
@@ -91,7 +97,9 @@ public class RISCVUnleashed extends AbstractBoard {
 
         //wait CPU halted
         try {
-            cpu.join();
+            for (int i = 0; i < cpu.length; i++) {
+                cpu[i].join();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace(System.err);
             //ignored
