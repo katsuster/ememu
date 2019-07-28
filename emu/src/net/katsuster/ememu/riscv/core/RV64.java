@@ -241,6 +241,268 @@ public class RV64 extends CPU64 {
         privMode = priv;
     }
 
+    private int[] xstatusRegs = {
+            CSR_USTATUS,
+            CSR_SSTATUS,
+            -1,
+            CSR_MSTATUS,
+    };
+
+    /**
+     * mstatus/sstatus/ustatus xIE ビットを取得します。
+     *
+     * @param priv 特権レベル
+     * @return xIE ビット
+     */
+    public boolean getXIE(int priv) {
+        int r = xstatusRegs[priv];
+        return BitOp.getBit64(getCSR(r), XSTATUS_XIE + priv);
+    }
+
+    /**
+     * mstatus/sstatus/ustatus xIE ビットを取得します。
+     *
+     * @param priv 特権レベル
+     * @param val xIE ビットの値
+     */
+    public void setXIE(int priv, boolean val) {
+        int r = xstatusRegs[priv];
+        long v = BitOp.setBit64(getCSR(r), XSTATUS_XIE + priv, val);
+        setCSR(r, v);
+    }
+
+    private int[] xtvecRegs = {
+            CSR_UTVEC,
+            CSR_STVEC,
+            -1,
+            CSR_MTVEC,
+    };
+
+    /**
+     * mtvec/stvec/utvec MODE を取得します。
+     *
+     * @param priv 特権レベル
+     * @return ベクトルモード
+     */
+    public int getXTVEC_MODE(int priv) {
+        int r = xtvecRegs[priv];
+        return (int)(getCSR(r) & XTVEC_MODE_MASK);
+    }
+
+    private int[] xieRegs = {
+            CSR_UIE,
+            CSR_SIE,
+            -1,
+            CSR_MIE,
+    };
+
+    /**
+     * mie/sie/uie xSIE ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @return xSIE ビット
+     */
+    public boolean getXIE_XSIE(int priv) {
+        int r = xieRegs[priv];
+        return BitOp.getBit64(getCSR(r), XIE_XSIE + priv);
+    }
+
+    /**
+     * mie/sie/uie xSIE ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @param val xSIE ビット
+     */
+    public void setXIE_XSIE(int priv, boolean val) {
+        int r = xieRegs[priv];
+        long v = BitOp.setBit64(getCSR(r), XIE_XSIE + priv, val);
+        setCSR(r, v);
+    }
+
+    /**
+     * mie/sie/uie xTIE ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @return xTIE ビット
+     */
+    public boolean getXIE_XTIE(int priv) {
+        int r = xieRegs[priv];
+        return BitOp.getBit64(getCSR(r), XIE_XTIE + priv);
+    }
+
+    /**
+     * mie/sie/uie xTIE ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @param val xTIE ビット
+     */
+    public void setXIE_XTIE(int priv, boolean val) {
+        int r = xieRegs[priv];
+        long v = BitOp.setBit64(getCSR(r), XIE_XTIE + priv, val);
+        setCSR(r, v);
+    }
+
+    /**
+     * mie/sie/uie xEIE ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @return xEIE ビット
+     */
+    public boolean getXIE_XEIE(int priv) {
+        int r = xieRegs[priv];
+        return BitOp.getBit64(getCSR(r), XIE_XEIE + priv);
+    }
+
+    /**
+     * mie/sie/uie xEIE ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @param val xEIE ビット
+     */
+    public void setXIE_XEIE(int priv, boolean val) {
+        int r = xieRegs[priv];
+        long v = BitOp.setBit64(getCSR(r), XIE_XEIE + priv, val);
+        setCSR(r, v);
+    }
+
+    private int[] xipRegs = {
+            CSR_UIP,
+            CSR_SIP,
+            -1,
+            CSR_MIP,
+    };
+
+    /**
+     * mip/sip/uip xSIP ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @return xSIP ビット
+     */
+    public boolean getXIP_XSIP(int priv) {
+        int r = xipRegs[priv];
+        return BitOp.getBit64(getCSR(r), XIP_XSIP + priv);
+    }
+
+    /**
+     * mip/sip/uip xSIP ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @param val xSIP ビット
+     */
+    public void setXIP_XSIP(int priv, boolean val) {
+        int r = xipRegs[priv];
+        long v = BitOp.setBit64(getCSR(r), XIP_XSIP + priv, val);
+        setCSR(r, v);
+    }
+
+    /**
+     * mip/sip/uip xTIP ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @return xTIP ビット
+     */
+    public boolean getXIP_XTIP(int priv) {
+        int r = xipRegs[priv];
+        return BitOp.getBit64(getCSR(r), XIP_XTIP + priv);
+    }
+
+    /**
+     * mip/sip/uip xTIP ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @param val xTIP ビット
+     */
+    public void setXIP_XTIP(int priv, boolean val) {
+        int r = xipRegs[priv];
+        long v = BitOp.setBit64(getCSR(r), XIP_XTIP + priv, val);
+        setCSR(r, v);
+    }
+
+    /**
+     * mip/sip/uip xEIP ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @return xEIP ビット
+     */
+    public boolean getXIP_XEIP(int priv) {
+        int r = xipRegs[priv];
+        return BitOp.getBit64(getCSR(r), XIP_XEIP + priv);
+    }
+
+    /**
+     * mip/sip/uip xEIP ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @param val xEIP ビット
+     */
+    public void setXIP_XEIP(int priv, boolean val) {
+        int r = xipRegs[priv];
+        long v = BitOp.setBit64(getCSR(r), XIP_XEIP + priv, val);
+        setCSR(r, v);
+    }
+
+    public boolean isRaisedInternalInterrupt() {
+        int ie = xieRegs[getPrivMode()];
+        int ip = xipRegs[getPrivMode()];
+
+        return (getCSR(ie) & getCSR(ip)) != 0;
+    }
+
+    private int[] xcauseRegs = {
+            CSR_UCAUSE,
+            CSR_SCAUSE,
+            -1,
+            CSR_MCAUSE,
+    };
+
+    /**
+     * mcause/scause/ucause Exception Code ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @return 例外コード
+     */
+    public long getXCAUSE_CODE(int priv) {
+        int r = xcauseRegs[priv];
+        int l = getRVBits() - 1;
+        return BitOp.getField64(getCSR(r), XCAUSE_CODE, l);
+    }
+
+    /**
+     * mcause/scause/ucause Exception Code ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @param val 例外コード
+     */
+    public void setXCAUSE_CODE(int priv, long val) {
+        int r = xcauseRegs[priv];
+        int l = getRVBits() - 1;
+        long v = BitOp.setField64(getCSR(r), XCAUSE_CODE, l, val);
+        setCSR(r, v);
+    }
+
+    /**
+     * mcause/scause/ucause Interrupt ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @return Interrupt ビット
+     */
+    public boolean getXCAUSE_INTR(int priv) {
+        int r = xcauseRegs[priv];
+        return BitOp.getBit64(getCSR(r), XCAUSE_INTERRUPT);
+    }
+
+    /**
+     * mcause/scause/ucause Interrupt ビットを取得します。
+     *
+     * @param priv 特権モード
+     * @param val Interrupt ビット
+     */
+    public void setXCAUSE_INTR(int priv, boolean val) {
+        int r = xcauseRegs[priv];
+        long v = BitOp.setBit64(getCSR(r), XCAUSE_INTERRUPT, val);
+        setCSR(r, v);
+    }
+
     /**
      * 命令を取得します。
      *
