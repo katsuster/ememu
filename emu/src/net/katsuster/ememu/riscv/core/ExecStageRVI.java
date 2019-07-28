@@ -509,7 +509,9 @@ public class ExecStageRVI extends Stage64 {
         RV64 c = getCore();
 
         synchronized (c) {
-            while (!c.isRaisedInterrupt() && !c.shouldHalt()) {
+            while (!c.isRaisedInterrupt() &&
+                    !c.isRaisedInternalInterrupt() &&
+                    !c.shouldHalt()) {
                 try {
                     c.wait(1000);
                 } catch (InterruptedException ex) {
