@@ -2,12 +2,64 @@ package net.katsuster.ememu.riscv.core;
 
 import net.katsuster.ememu.generic.*;
 
+import static net.katsuster.ememu.riscv.core.RV64CSRFile.*;
+
 /**
  * RISC-V 64bit
  *
  * RISC-V User-Level ISA V2.2
+ * RISC-V Privileged ISA V1.10
  */
 public class RV64 extends CPU64 {
+    //特権レベル
+    public static final int PRIV_U = 0;
+    public static final int PRIV_S = 1;
+    public static final int PRIV_RESERVED = 2;
+    public static final int PRIV_M = 3;
+    public static final int PRIV_MASK = 3;
+
+    //割り込み
+    public static final int INTR_SOFT_U = 0;
+    public static final int INTR_SOFT_S = 1;
+    public static final int INTR_RESERVED1 = 2;
+    public static final int INTR_SOFT_M = 3;
+
+    public static final int INTR_TIMER_U = 4;
+    public static final int INTR_TIMER_S = 5;
+    public static final int INTR_RESERVED2 = 6;
+    public static final int INTR_TIMER_M = 7;
+
+    public static final int INTR_EXTERNAL_U = 8;
+    public static final int INTR_EXTERNAL_S = 9;
+    public static final int INTR_RESERVED3 = 10;
+    public static final int INTR_EXTERNAL_M = 11;
+
+    public static final int INTR_MAX = 16;
+
+    //例外
+    public static final int EXCEPT_BASE = INTR_MAX;
+
+    public static final int EXCEPT_INS_ALIGN = EXCEPT_BASE + 0;
+    public static final int EXCEPT_INS_FAULT = EXCEPT_BASE + 1;
+    public static final int EXCEPT_ILL = EXCEPT_BASE + 2;
+    public static final int EXCEPT_BRK = EXCEPT_BASE + 3;
+    public static final int EXCEPT_LDR_ALIGN = EXCEPT_BASE + 4;
+    public static final int EXCEPT_LDR_FAULT = EXCEPT_BASE + 5;
+    public static final int EXCEPT_STR_ALIGN = EXCEPT_BASE + 6;
+    public static final int EXCEPT_STR_FAULT = EXCEPT_BASE + 7;
+    public static final int EXCEPT_ENV_UMODE = EXCEPT_BASE + 8;
+    public static final int EXCEPT_ENV_SMODE = EXCEPT_BASE + 9;
+    public static final int EXCEPT_RESERVED1 = EXCEPT_BASE + 10;
+    public static final int EXCEPT_ENV_MMODE = EXCEPT_BASE + 11;
+    public static final int EXCEPT_INS_PAGEF = EXCEPT_BASE + 12;
+    public static final int EXCEPT_LDR_PAGEF = EXCEPT_BASE + 13;
+    public static final int EXCEPT_RESERVED2 = EXCEPT_BASE + 14;
+    public static final int EXCEPT_STR_PAGEF = EXCEPT_BASE + 15;
+
+    //割り込み線を持つ
+    public static final int MAX_INTSRCS = 1;
+    public static final int INTSRC_IRQ = 0;
+
     private RV64RegFile regfile;
     private RV64CSRFile csrfile;
 

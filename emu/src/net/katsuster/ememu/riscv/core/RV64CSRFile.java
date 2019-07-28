@@ -264,6 +264,33 @@ public class RV64CSRFile implements Reg64File {
     public static final int CSR_DPC = 0x7b1;
     public static final int CSR_DSCRATCH = 0x7b2;
 
+    //xstatus registers bit field
+    public static final int XSTATUS_XIE = 0;
+    public static final int XSTATUS_XPIE = 4;
+
+    //xtvec registers bit field
+    public static final int XTVEC_MODE_DIRECT = 0;
+    public static final int XTVEC_MODE_VECTOR = 1;
+    public static final int XTVEC_MODE_RESERVED1 = 2;
+    public static final int XTVEC_MODE_RESERVED2 = 3;
+
+    public static final long XTVEC_BASE_MASK = ~3;
+    public static final long XTVEC_MODE_MASK = 3;
+
+    //xip registers bit field
+    public static final int XIP_XSIP = 0;
+    public static final int XIP_XTIP = 4;
+    public static final int XIP_XEIP = 8;
+
+    //xie registers bit field
+    public static final int XIE_XSIE = 0;
+    public static final int XIE_XTIE = 4;
+    public static final int XIE_XEIE = 8;
+
+    //xcause registers bit field
+    public static final int XCAUSE_CODE = 0;
+    public static final int XCAUSE_INTERRUPT = 63;
+
     public RV64CSRFile() {
         regs_csr = new HashMap<>();
 
