@@ -98,6 +98,7 @@ public class RV64 extends CPU64 {
     @Override
     public void init() {
         //doExceptionReset("Init.");
+        setPrivMode(PRIV_M);
         setPC(0x1004);
         setJumped(false);
     }
@@ -220,6 +221,24 @@ public class RV64 extends CPU64 {
      */
     public int getRVBits() {
         return 64;
+    }
+
+    /**
+     * 特権モードを取得します。
+     *
+     * @return 特権モード
+     */
+    int getPrivMode() {
+        return privMode;
+    }
+
+    /**
+     * 特権モードを設定します。
+     *
+     * @param priv 特権モード
+     */
+    void setPrivMode(int priv) {
+        privMode = priv;
     }
 
     /**
