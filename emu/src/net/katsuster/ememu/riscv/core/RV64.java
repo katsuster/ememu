@@ -62,6 +62,11 @@ public class RV64 extends CPU64 {
 
     private RV64RegFile regfile;
     private RV64CSRFile csrfile;
+    private NormalINTC intc;
+    private int privMode;
+
+    private boolean[] exceptions;
+    private String[] exceptionReasons;
 
     private InstructionRV16 instRV16;
     private InstructionRV32 instRV32;
@@ -74,6 +79,12 @@ public class RV64 extends CPU64 {
     public RV64() {
         regfile = new RV64RegFile();
         csrfile = new RV64CSRFile();
+        intc = new NormalINTC(MAX_INTSRCS);
+        intc.connectINTDestination(this);
+        privMode = PRIV_M;
+
+        exceptions = new boolean[16];
+        exceptionReasons = new String[16];
 
         instRV16 = new InstructionRV16(0);
         instRV32 = new InstructionRV32(0);
