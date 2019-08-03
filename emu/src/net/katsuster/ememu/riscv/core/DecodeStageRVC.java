@@ -68,6 +68,61 @@ public class DecodeStageRVC extends Stage64 {
     }
 
     /**
+     * SLLI 命令をデコードします。
+     *
+     * @param inst 16bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeSlli(InstructionRV16 inst) {
+        int rd = inst.getRd();
+        int imm = inst.getImm6CI();
+
+        if (rd != 0 && imm != 1) {
+            //C.SLLI
+            return OpIndex.INS_RVC_SLLI;
+        }
+
+        throw new IllegalArgumentException("Unknown SLLI " +
+                String.format("rd %d.", rd));
+    }
+
+    /**
+     * J[AL]R, MV, ADD 命令をデコードします。
+     *
+     * @param inst 16bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeJrMvAdd(InstructionRV16 inst) {
+        int funct4 = inst.getFunct4();
+        int rd = inst.getRd();
+        int rs2 = inst.getRs2();
+        int imm = inst.getImm6CI();
+
+        if (funct4 == 0x8) {
+            //c.jr, c.mv (funct4 = 0b1000)
+            if (rd != 0 && rs2 == 0) {
+                return OpIndex.INS_RVC_JR;
+            } else if (rd != 0 && rs2 != 0) {
+                return OpIndex.INS_RVC_MV;
+            }
+        } else if (funct4 == 0x9) {
+            //c.ebreak, c.jalr, c.add (funct4 = 0b1001)
+            if (rd == 0 && rs2 == 0) {
+                return OpIndex.INS_RVC_EBREAK;
+            } else if (rd != 0 && rs2 == 0) {
+                return OpIndex.INS_RVC_JALR;
+            } else if (rd != 0 && rs2 != 0) {
+                return OpIndex.INS_RVC_ADD;
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown J[AL]R, MV, ADD " +
+                String.format("funct4 %x, ", funct4) +
+                String.format("rd %d, ", rd) +
+                String.format("rs2 %d.", rs2));
+    }
+
+    /**
      * 16bit 命令をデコードします。
      *
      * @param inst 32bit 命令
@@ -81,6 +136,10 @@ public class DecodeStageRVC extends Stage64 {
             return decodeAddi(inst);
         case InstructionRV16.OPCODE_LI:
             return decodeLi(inst);
+        case InstructionRV16.OPCODE_SLLI:
+            return decodeSlli(inst);
+        case InstructionRV16.OPCODE_JR_MV_ADD:
+            return decodeJrMvAdd(inst);
         default:
             throw new IllegalArgumentException("Unknown opcode " +
                     String.format("%d.", code));

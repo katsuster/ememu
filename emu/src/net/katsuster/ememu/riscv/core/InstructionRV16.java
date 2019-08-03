@@ -47,6 +47,15 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
+     * 16bit 命令の funct4 フィールド（ビット [15:12]）を取得します。
+     *
+     * @return funct4 フィールド
+     */
+    public int getFunct4() {
+        return getField(12, 4);
+    }
+
+    /**
      * 16bit 命令の rd フィールド（ビット [11:7]）を取得します。
      *
      * @return rd フィールド
@@ -56,14 +65,24 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
+     * 16bit 命令の rs2 フィールド（ビット [6:2]）を取得します。
+     *
+     * @return rs2 フィールド
+     */
+    public int getRs2() {
+        return getField(2, 5);
+    }
+
+    /**
      * 16bit 命令 imm フィールド（6ビット）を取得します。
+     * CI (Immediate) Format が使います。
      *
      *   imm[  5]:   12
      *   imm[4:0]: 6: 2
      *
      * @return imm[5 | 4:0] フィールド
      */
-    public int getImm6() {
+    public int getImm6CI() {
         return (getField(12, 1) << 5) | getField(2, 5);
     }
 

@@ -60,7 +60,7 @@ public class ExecStageRVC extends Stage64 {
      */
     public void executeAddi(InstructionRV16 inst, boolean exec) {
         int rd = inst.getRd();
-        int imm6 = inst.getImm6();
+        int imm6 = inst.getImm6CI();
         long imm = BitOp.signExt64(imm6, 6);
 
         if (!exec) {
@@ -81,7 +81,7 @@ public class ExecStageRVC extends Stage64 {
      */
     public void executeLi(InstructionRV16 inst, boolean exec) {
         int rd = inst.getRd();
-        int imm6 = inst.getImm6();
+        int imm6 = inst.getImm6CI();
         long imm = BitOp.signExt64(imm6, 6);
 
         if (!exec) {
@@ -92,6 +92,46 @@ public class ExecStageRVC extends Stage64 {
         }
 
         setReg(rd, imm);
+    }
+
+    /**
+     * SLLI (Shift left logical immediate) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSlli(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRd();
+        int imm6 = inst.getImm6CI();
+
+        if (!exec) {
+            printDisasm(inst, "c.slli",
+                    String.format("%s, %s, %d", getRegName(rd),
+                            getRegName(rd), imm6));
+            return;
+        }
+
+        setReg(rd, getReg(rd) << imm6);
+    }
+
+    /**
+     * ADD (Add) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAdd(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs2 = inst.getRs2();
+
+        if (!exec) {
+            printDisasm(inst, "c.add",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rd), getRegName(rs2)));
+            return;
+        }
+
+        setReg(rd, getReg(rd) + getReg(rs2));
     }
 
     /**
@@ -109,6 +149,12 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_LI:
             executeLi(inst, exec);
+            break;
+        case INS_RVC_SLLI:
+            executeSlli(inst, exec);
+            break;
+        case INS_RVC_ADD:
+            executeAdd(inst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown RVC instruction " +
