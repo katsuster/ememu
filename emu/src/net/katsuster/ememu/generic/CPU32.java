@@ -8,6 +8,12 @@ public abstract class CPU32 extends CPU {
 
     }
 
+    @Override
+    public String instructionToString(Inst32 inst, String operation, String operand) {
+        return String.format("%d: %08x:    %-12s    %-7s %s\n",
+                getThreadID(), getPCRaw(), inst.toHex(), operation, operand);
+    }
+
     /**
      * PC（プログラムカウンタ）の値を取得します。
      *

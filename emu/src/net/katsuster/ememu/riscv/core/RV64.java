@@ -104,12 +104,6 @@ public class RV64 extends CPU64 {
     }
 
     @Override
-    public String instructionToString(Inst32 inst, String operation, String operand) {
-        return String.format("%08x:    %-12s    %-7s %s\n",
-                getPCRaw(), inst.toHex(), operation, operand);
-    }
-
-    @Override
     public String regsToString() {
         return regfile.toString();
     }
