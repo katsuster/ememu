@@ -129,6 +129,20 @@ public class CLINT implements ParentCore {
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
+            case REG_MSIP0:
+            //case REG_MSIP1:
+            //case REG_MSIP2:
+            //case REG_MSIP3:
+            //case REG_MSIP4:
+                int id = (regaddr - REG_MSIP0) / 4;
+
+                if (cores[id].getXIP_XSIP(RV64.PRIV_M)) {
+                    result = 1;
+                } else {
+                    result = 0;
+                }
+                System.out.printf("rd MSIP[%d] val:%08x\n", id, result);
+                break;
             default:
                 result = super.readWord(m, regaddr);
                 break;
@@ -144,6 +158,18 @@ public class CLINT implements ParentCore {
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
+            case REG_MSIP0:
+            //case REG_MSIP1:
+            //case REG_MSIP2:
+            //case REG_MSIP3:
+            //case REG_MSIP4:
+                int id = (regaddr - REG_MSIP0) / 4;
+                boolean b = (data & 1) != 0;
+
+                cores[id].setXIP_XSIP(RV64.PRIV_M, b);
+
+                System.out.printf("MSIP[%d] val:%08x\n", id, data);
+                break;
             default:
                 super.writeWord(m, regaddr, data);
                 break;
@@ -161,7 +187,6 @@ public class CLINT implements ParentCore {
             case REG_MTIMECMP2_L:
             case REG_MTIMECMP3_L:
             case REG_MTIMECMP4_L:
-
             case REG_MTIME_L:
                 break;
             default:
@@ -185,7 +210,6 @@ public class CLINT implements ParentCore {
             case REG_MTIMECMP2_L:
             case REG_MTIMECMP3_L:
             case REG_MTIMECMP4_L:
-
             case REG_MTIME_L:
                 break;
             default:
