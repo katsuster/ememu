@@ -611,6 +611,29 @@ public class RV64 extends CPU64 {
         }
     }
 
+    /**
+     * 例外を要求します。
+     *
+     * @param num    例外番号（INTR_xxxx, EXCEPT_xxxx）
+     * @param dbgmsg デバッグ用のメッセージ
+     */
+    public void raiseException(int num, String dbgmsg) {
+        if (num < 0 || exceptions.length <= num) {
+            throw new IllegalArgumentException("Illegal exception number " + num);
+        }
+
+        if (isRaisedException()) {
+            //例外状態がクリアされず残っている
+            //一度の命令で二度、例外が起きるのはおそらくバグでしょう
+            throw new IllegalStateException("Exception status is not cleared.");
+        }
+
+        exceptions[num] = true;
+        exceptionReasons[num] = dbgmsg;
+
+        setRaisedException(true);
+    }
+
     @Override
     public void step() {
         Inst32 inst;
@@ -647,10 +670,10 @@ public class RV64 extends CPU64 {
 
         //命令を取得します
         inst = fetch();
-        //if (isRaisedException()) {
-        //    setRaisedException(false);
-        //    return;
-        //}
+        if (isRaisedException()) {
+            setRaisedException(false);
+            return;
+        }
 
         //デコードします
         decinst = decode(inst);
@@ -668,10 +691,10 @@ public class RV64 extends CPU64 {
 
         //実行して、次の命令へ
         execute(decinst);
-        //if (isRaisedException()) {
-        //    setRaisedException(false);
-        //    return;
-        //}
+        if (isRaisedException()) {
+            setRaisedException(false);
+            return;
+        }
         nextPC(inst);
     }
 }
