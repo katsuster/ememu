@@ -54,7 +54,7 @@ public class RISCVUnleashed extends AbstractBoard {
 
     @Override
     public void setup() {
-        cpu = new RV64[1];
+        cpu = new RV64[5];
         bus = new Bus64();
 
         RAM mode_select = new RAM32(4 * 1024);
