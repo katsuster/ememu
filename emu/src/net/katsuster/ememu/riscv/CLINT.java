@@ -128,12 +128,17 @@ public class CLINT implements ParentCore {
 
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
+            // Reserved area always return 0
+            if (0x14 <= regaddr && regaddr <= 0x3fff) {
+                return 0;
+            }
+
             switch (regaddr) {
             case REG_MSIP0:
-            //case REG_MSIP1:
-            //case REG_MSIP2:
-            //case REG_MSIP3:
-            //case REG_MSIP4:
+            case REG_MSIP1:
+            case REG_MSIP2:
+            case REG_MSIP3:
+            case REG_MSIP4:
                 int id = (regaddr - REG_MSIP0) / 4;
 
                 if (cores[id].getXIP_XSIP(RV64.PRIV_M)) {
@@ -159,10 +164,10 @@ public class CLINT implements ParentCore {
 
             switch (regaddr) {
             case REG_MSIP0:
-            //case REG_MSIP1:
-            //case REG_MSIP2:
-            //case REG_MSIP3:
-            //case REG_MSIP4:
+            case REG_MSIP1:
+            case REG_MSIP2:
+            case REG_MSIP3:
+            case REG_MSIP4:
                 int id = (regaddr - REG_MSIP0) / 4;
                 boolean b = (data & 1) != 0;
 
