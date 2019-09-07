@@ -43,7 +43,7 @@ public class RV64RegFile implements Reg64File {
         StringBuilder b = new StringBuilder();
 
         for (int i = 0; i < 32; i += 4) {
-            b.append(String.format("  %3s: %08x, %3s: %08x, %3s: %08x, %3s: %08x, \n",
+            b.append(String.format("  %4s: %08x, %4s: %08x, %4s: %08x, %4s: %08x, \n",
                     getReg(i).getName(), getReg(i).getValue(),
                     getReg(i + 1).getName(), getReg(i + 1).getValue(),
                     getReg(i + 2).getName(), getReg(i + 2).getValue(),
