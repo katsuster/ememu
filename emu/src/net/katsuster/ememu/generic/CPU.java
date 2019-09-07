@@ -339,8 +339,10 @@ public abstract class CPU extends MasterCore64
      * @param operand   オペランドの文字列表記
      */
     public void printDisasm(Inst32 inst, String operation, String operand) {
-        printInstruction(inst, operation, operand);
-        printRegs();
+        synchronized (System.out) {
+            printInstruction(inst, operation, operand);
+            printRegs();
+        }
     }
 
     /**
