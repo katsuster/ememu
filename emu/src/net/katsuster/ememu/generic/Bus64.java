@@ -521,7 +521,7 @@ public class Bus64 implements BusSlave64 {
      * @return 指定したアドレスに割り当てられているスレーブコアアドレス、
      * 何も割り当てられていなければ null
      */
-    protected SlaveCoreAddress findSlaveCoreAddress(long start, long end) {
+    synchronized protected SlaveCoreAddress findSlaveCoreAddress(long start, long end) {
         if (cachedSlave.contains(start, end)) {
             cacheHit++;
             return cachedSlave;
