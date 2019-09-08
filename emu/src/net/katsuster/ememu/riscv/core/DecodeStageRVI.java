@@ -94,13 +94,23 @@ public class DecodeStageRVI extends Stage64 {
         case InstructionRV32.FUNC_LOAD_LW:
             return OpIndex.INS_RV32I_LW;
         case InstructionRV32.FUNC_LOAD_LD:
-            return OpIndex.INS_RV64I_LD;
+            if (getRVBits() == 64) {
+                return OpIndex.INS_RV64I_LD;
+            } else {
+                throw new IllegalArgumentException("Unknown LOAD, LD " +
+                        String.format("funct3 %d. RV%d", funct3, getRVBits()));
+            }
         case InstructionRV32.FUNC_LOAD_LBU:
             return OpIndex.INS_RV32I_LBU;
         case InstructionRV32.FUNC_LOAD_LHU:
             return OpIndex.INS_RV32I_LHU;
         case InstructionRV32.FUNC_LOAD_LWU:
-            return OpIndex.INS_RV64I_LWU;
+            if (getRVBits() == 64) {
+                return OpIndex.INS_RV64I_LWU;
+            } else {
+                throw new IllegalArgumentException("Unknown LOAD, LWU " +
+                        String.format("funct3 %d. RV%d", funct3, getRVBits()));
+            }
         default:
             throw new IllegalArgumentException("Unknown LOAD " +
                     String.format("funct3 %d.", funct3));
@@ -124,7 +134,12 @@ public class DecodeStageRVI extends Stage64 {
         case InstructionRV32.FUNC_STORE_SW:
             return OpIndex.INS_RV32I_SW;
         case InstructionRV32.FUNC_STORE_SD:
-            return OpIndex.INS_RV64I_SD;
+            if (getRVBits() == 64) {
+                return OpIndex.INS_RV64I_SD;
+            } else {
+                throw new IllegalArgumentException("Unknown STORE, SD " +
+                        String.format("funct3 %d. RV%d", funct3, getRVBits()));
+            }
         default:
             throw new IllegalArgumentException("Unknown STORE " +
                     String.format("funct3 %d.", funct3));
