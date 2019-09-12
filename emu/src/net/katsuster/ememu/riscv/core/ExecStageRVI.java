@@ -432,6 +432,27 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * SUB 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSub(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+
+        if (!exec) {
+            printDisasm(inst, "sub",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rs1), getRegName(rs2)));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) - getReg(rs2));
+    }
+
+    /**
      * CSRRW (Control and status register read and write) 命令。
      *
      * @param inst 32bit 命令
@@ -598,6 +619,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_ADD:
             executeAdd(inst, exec);
+            break;
+        case INS_RV32I_SUB:
+            executeSub(inst, exec);
             break;
         case INS_RV32I_CSRRW:
             executeCsrrw(inst, exec);
