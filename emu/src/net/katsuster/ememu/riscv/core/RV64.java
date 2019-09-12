@@ -78,7 +78,7 @@ public class RV64 extends CPU64 {
 
     public RV64() {
         regfile = new RV64RegFile();
-        csrfile = new RV64CSRFile();
+        csrfile = new RV64CSRFile(this);
         intc = new NormalINTC(MAX_INTSRCS);
         intc.connectINTDestination(this);
         privMode = PRIV_M;

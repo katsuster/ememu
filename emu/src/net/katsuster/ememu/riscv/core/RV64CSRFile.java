@@ -3,6 +3,7 @@ package net.katsuster.ememu.riscv.core;
 import java.util.*;
 
 import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.riscv.core.reg.*;
 
 /**
  * RISC-V 64 の CSRs (Control and Status Registers)ファイルです。
@@ -291,7 +292,7 @@ public class RV64CSRFile implements Reg64File {
     public static final int XCAUSE_CODE = 0;
     public static final int XCAUSE_INTERRUPT = 63;
 
-    public RV64CSRFile() {
+    public RV64CSRFile(RV64 c) {
         regs_csr = new HashMap<>();
 
         //User Trap Setup
@@ -399,7 +400,7 @@ public class RV64CSRFile implements Reg64File {
         regs_csr.put(CSR_MVENDORID,      new Reg64("mvendorid", 0));
         regs_csr.put(CSR_MARCHID,        new Reg64("marchid", 0));
         regs_csr.put(CSR_MIMPID,         new Reg64("mimpid", 0));
-        regs_csr.put(CSR_MHARTID,        new Reg64("mhartid", 0));
+        regs_csr.put(CSR_MHARTID,        new RegHartid64("mhartid", 0, c));
 
         //Machine Trap Setup
         regs_csr.put(CSR_MSTATUS,        new Reg64("mstatus", 0));
