@@ -123,6 +123,23 @@ public class DecodeStageRVC extends Stage64 {
     }
 
     /**
+     * FSWSP, SDSP命令をデコードします。
+     *
+     * @param inst 16bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeFswspSdsp(InstructionRV16 inst) {
+        if (getRVBits() == 32) {
+            return OpIndex.INS_RVC_FSWSP;
+        } else if (getRVBits() == 64 || getRVBits() == 128) {
+            return OpIndex.INS_RVC_SDSP;
+        }
+
+        throw new IllegalArgumentException("Unknown FSWSP, SDSP " +
+                String.format("%dbit.", getRVBits()));
+    }
+
+    /**
      * 16bit 命令をデコードします。
      *
      * @param inst 32bit 命令
@@ -140,6 +157,8 @@ public class DecodeStageRVC extends Stage64 {
             return decodeSlli(inst);
         case InstructionRV16.OPCODE_JR_MV_ADD:
             return decodeJrMvAdd(inst);
+        case InstructionRV16.OPCODE_FSWSP_SDSP:
+            return decodeFswspSdsp(inst);
         default:
             throw new IllegalArgumentException("Unknown opcode " +
                     String.format("%d.", code));

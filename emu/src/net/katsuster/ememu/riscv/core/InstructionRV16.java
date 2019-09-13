@@ -87,6 +87,45 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
+     * 16bit 命令 imm フィールド（6ビット）を取得します。
+     * SWSP, FSWSP が使います。
+     *
+     *   imm[7:6]:  8: 7
+     *   imm[5:2]: 12: 9
+     *
+     * @return imm[5 | 4:0] フィールド
+     */
+    public int getImm6SWSP() {
+        return (getField(6, 2) << 6) | getField(9, 4) << 2;
+    }
+
+    /**
+     * 16bit 命令 imm フィールド（6ビット）を取得します。
+     * SDSP, FSDSP が使います。
+     *
+     *   imm[8:6]:  9: 7
+     *   imm[5:3]: 12:10
+     *
+     * @return imm[5 | 4:0] フィールド
+     */
+    public int getImm6SDSP() {
+        return (getField(6, 3) << 6) | getField(10, 3) << 3;
+    }
+
+    /**
+     * 16bit 命令 imm フィールド（6ビット）を取得します。
+     * SQSP が使います。
+     *
+     *   imm[9:6]: 10: 7
+     *   imm[5:4]: 12:11
+     *
+     * @return imm[5 | 4:0] フィールド
+     */
+    public int getImm6SQSP() {
+        return (getField(6, 4) << 6) | getField(11, 2) << 4;
+    }
+
+    /**
      * 命令の 16進数表記を取得します。
      *
      * @return 命令の 16進数表記

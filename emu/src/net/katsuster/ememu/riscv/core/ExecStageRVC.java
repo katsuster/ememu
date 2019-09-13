@@ -135,6 +135,42 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * SDSP (Store doubleword, stack-pointer relative) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSdsp(InstructionRV16 inst, boolean exec) {
+        int rs2 = inst.getRs2();
+        int uimm = inst.getImm6SDSP();
+        long vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst, "c.sdsp",
+                    String.format("%s, %d(sp)", getRegName(rs2),
+                            uimm));
+            return;
+        }
+
+        vaddr = getReg(2) + uimm;
+
+        //paddr = getMMU().translate(vaddr, 8, false, getPriv(), true);
+        paddr = vaddr;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        if (!tryWrite(paddr, 8)) {
+            //raiseException(ARMv5.EXCEPT_ABT_DATA,
+            //        String.format("ldrd [%08x]", paddr));
+            return;
+        }
+
+        write64(paddr, getReg(rs2));
+    }
+
+    /**
      * 16bit 命令を実行します。
      *
      * @param decinst デコードされた命令
@@ -155,6 +191,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_ADD:
             executeAdd(inst, exec);
+            break;
+        case INS_RVC_SDSP:
+            executeSdsp(inst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown RVC instruction " +
