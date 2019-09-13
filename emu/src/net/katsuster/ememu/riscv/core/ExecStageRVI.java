@@ -60,7 +60,7 @@ public class ExecStageRVI extends Stage64 {
      */
     public void executeAuipc(InstructionRV32 inst, boolean exec) {
         int rd = inst.getRd();
-        long imm = BitOp.signExt64(inst.getImm20U() << 12, 31);
+        long imm = BitOp.signExt64(inst.getImm20U() << 12, 32);
 
         if (!exec) {
             printDisasm(inst, "auipc",
@@ -123,7 +123,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBeq(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffsetB(), 12);
+        int off = BitOp.signExt32(inst.getOffsetB(), 13);
 
         if (!exec) {
             printDisasm(inst, "beq",
@@ -146,7 +146,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBne(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffsetB(), 12);
+        int off = BitOp.signExt32(inst.getOffsetB(), 13);
 
         if (!exec) {
             printDisasm(inst, "bne",
@@ -169,7 +169,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBlt(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffsetB(), 12);
+        int off = BitOp.signExt32(inst.getOffsetB(), 13);
 
         if (!exec) {
             printDisasm(inst, "blt",
@@ -192,7 +192,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBltu(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffsetB(), 12);
+        int off = BitOp.signExt32(inst.getOffsetB(), 13);
 
         if (!exec) {
             printDisasm(inst, "bltu",
@@ -215,7 +215,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBgeu(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffsetB(), 12);
+        int off = BitOp.signExt32(inst.getOffsetB(), 13);
 
         if (!exec) {
             printDisasm(inst, "bgeu",
