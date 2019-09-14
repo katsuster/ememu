@@ -74,6 +74,15 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
+     * 16bit 命令の rd' フィールド（ビット [4:2]）を取得します。
+     *
+     * @return rd' フィールド
+     */
+    public int getRddash() {
+        return getField(2, 3);
+    }
+
+    /**
      * 16bit 命令の rs1' フィールド（ビット [9:7]）を取得します。
      *
      * @return rs1' フィールド
@@ -93,6 +102,22 @@ public class InstructionRV16 extends Inst32 {
      */
     public int getImm6CI() {
         return (getField(12, 1) << 5) | getField(2, 5);
+    }
+
+    /**
+     * 16bit 命令 imm フィールド（7ビット）を取得します。
+     * LW, FLW, SW, FSW が使います。
+     *
+     *   imm[  6]:     5
+     *   imm[5:3]: 12:10
+     *   imm[  2]:     6
+     *
+     * @return imm[5 | 4:0] フィールド
+     */
+    public int getImm7LWSW() {
+        return (getField(5, 1) << 6) |
+                getField(10, 3) << 3 |
+                getField(6, 1) << 2;
     }
 
     /**
