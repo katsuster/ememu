@@ -95,6 +95,28 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * BNEZ (Branch if not equal to zero) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBnez(InstructionRV16 inst, boolean exec) {
+        int rs1 = inst.getRs1dash() + 8;
+        int off = BitOp.signExt32(inst.getOffsetB(), 9);
+
+        if (!exec) {
+            printDisasm(inst, "c.bnez",
+                    String.format("%s, 0x%x", getRegName(rs1),
+                            getPC() + off));
+            return;
+        }
+
+        if (getReg(rs1) != 0) {
+            jumpRel(off);
+        }
+    }
+
+    /**
      * SLLI (Shift left logical immediate) 命令。
      *
      * @param inst 16bit 命令
@@ -185,6 +207,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_LI:
             executeLi(inst, exec);
+            break;
+        case INS_RVC_BNEZ:
+            executeBnez(inst, exec);
             break;
         case INS_RVC_SLLI:
             executeSlli(inst, exec);

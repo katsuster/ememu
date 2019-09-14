@@ -153,6 +153,8 @@ public class DecodeStageRVC extends Stage64 {
             return decodeAddi(inst);
         case InstructionRV16.OPCODE_LI:
             return decodeLi(inst);
+        case InstructionRV16.OPCODE_BNEZ:
+            return OpIndex.INS_RVC_BNEZ;
         case InstructionRV16.OPCODE_SLLI:
             return decodeSlli(inst);
         case InstructionRV16.OPCODE_JR_MV_ADD:

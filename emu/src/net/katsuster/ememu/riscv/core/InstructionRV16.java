@@ -74,6 +74,15 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
+     * 16bit 命令の rs1' フィールド（ビット [9:7]）を取得します。
+     *
+     * @return rs1' フィールド
+     */
+    public int getRs1dash() {
+        return getField(7, 3);
+    }
+
+    /**
      * 16bit 命令 imm フィールド（6ビット）を取得します。
      * CI (Immediate) Format が使います。
      *
@@ -123,6 +132,27 @@ public class InstructionRV16 extends Inst32 {
      */
     public int getImm6SQSP() {
         return (getField(6, 4) << 6) | getField(11, 2) << 4;
+    }
+
+    /**
+     * 16bit 命令の offset フィールドを取得します。
+     *
+     * offset[    8]:    12
+     * offset[ 7: 6]:  6: 5
+     * offset[    5]:     2
+     * offset[ 4: 3]: 11:10
+     * offset[ 2: 1]:  4: 3
+     *
+     * @return offset フィールド
+     */
+    public int getOffsetB() {
+        int off8 = getField(12, 1);
+        int off6 = getField(5, 2);
+        int off5 = getField(2, 1);
+        int off3 = getField(10, 2);
+        int off1 = getField(3, 2);
+
+        return (off8 << 8) | (off6 << 6) | (off5 << 5) | (off3 << 3) | (off1 << 1);
     }
 
     /**
