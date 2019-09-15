@@ -47,12 +47,30 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
+     * 16bit 命令の funct フィールド（ビット [6:5]）を取得します。
+     *
+     * @return funct フィールド
+     */
+    public int getFunct() {
+        return getField(5, 2);
+    }
+
+    /**
      * 16bit 命令の funct4 フィールド（ビット [15:12]）を取得します。
      *
      * @return funct4 フィールド
      */
     public int getFunct4() {
         return getField(12, 4);
+    }
+
+    /**
+     * 16bit 命令の funct6 フィールド（ビット [15:10]）を取得します。
+     *
+     * @return funct6 フィールド
+     */
+    public int getFunct6() {
+        return getField(10, 6);
     }
 
     /**

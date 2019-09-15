@@ -134,6 +134,27 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * ANDI (And immediate) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAndi(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRddash() + 8;
+        int imm6 = inst.getImm6CI();
+        long imm = BitOp.signExt64(imm6, 6);
+
+        if (!exec) {
+            printDisasm(inst, "c.andi",
+                    String.format("%s, %d # 0x%x", getRegName(rd),
+                            imm, imm6));
+            return;
+        }
+
+        setReg(rd, rd & imm);
+    }
+
+    /**
      * BNEZ (Branch if not equal to zero) 命令。
      *
      * @param inst 16bit 命令
@@ -249,6 +270,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_LI:
             executeLi(inst, exec);
+            break;
+        case INS_RVC_ANDI:
+            executeAndi(inst, exec);
             break;
         case INS_RVC_BNEZ:
             executeBnez(inst, exec);

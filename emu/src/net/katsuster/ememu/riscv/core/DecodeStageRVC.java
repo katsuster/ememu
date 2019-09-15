@@ -68,6 +68,74 @@ public class DecodeStageRVC extends Stage64 {
     }
 
     /**
+     * MISC-ALU 命令をデコードします。
+     *
+     * @param inst 16bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeMiscALU(InstructionRV16 inst) {
+        int funct6 = inst.getFunct6();
+        int imm6 = inst.getImm6CI();
+        int funct;
+
+        switch (funct6 & 0x7) {
+        case 0:
+        case 4:
+            //C.SRLI, C.SRLI64
+            if (imm6 != 0) {
+                return OpIndex.INS_RVC_SRLI;
+            } else if (getRVBits() == 128) {
+                return OpIndex.INS_RVC_SRLI64;
+            }
+        case 1:
+        case 5:
+            //C.SRAI, C.SRAI64
+            if (imm6 != 0) {
+                return OpIndex.INS_RVC_SRAI;
+            } else if (getRVBits() == 128) {
+                return OpIndex.INS_RVC_SRAI64;
+            }
+        case 2:
+        case 6:
+            //C.ANDI
+            return OpIndex.INS_RVC_ANDI;
+        case 3:
+            //C.SUB, C.XOR, C.OR, C.AND
+            funct = inst.getFunct();
+
+            switch (funct) {
+            case 0:
+                return OpIndex.INS_RVC_SUB;
+            case 1:
+                return OpIndex.INS_RVC_XOR;
+            case 2:
+                return OpIndex.INS_RVC_OR;
+            case 3:
+                return OpIndex.INS_RVC_AND;
+            default:
+                throw new IllegalArgumentException("Unknown MISC-ALU SUB/XOR/OR/AND " +
+                        String.format("funct 0x%x.", funct));
+            }
+        case 7:
+            //C.SUBW, C.ADDW
+            funct = inst.getFunct();
+
+            switch (funct) {
+            case 0:
+                return OpIndex.INS_RVC_SUBW;
+            case 1:
+                return OpIndex.INS_RVC_ADDW;
+            default:
+                throw new IllegalArgumentException("Unknown MISC-ALU SUBW/ADDW " +
+                        String.format("funct 0x%x.", funct));
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown MISC-ALU " +
+                String.format("funct6 0x%x.", funct6));
+    }
+
+    /**
      * SLLI 命令をデコードします。
      *
      * @param inst 16bit 命令
@@ -155,6 +223,8 @@ public class DecodeStageRVC extends Stage64 {
             return decodeAddi(inst);
         case InstructionRV16.OPCODE_LI:
             return decodeLi(inst);
+        case InstructionRV16.OPCODE_MISC_ALU:
+            return decodeMiscALU(inst);
         case InstructionRV16.OPCODE_BNEZ:
             return OpIndex.INS_RVC_BNEZ;
         case InstructionRV16.OPCODE_SLLI:
