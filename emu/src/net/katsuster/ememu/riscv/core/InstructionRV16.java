@@ -92,27 +92,27 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
-     * 16bit 命令 imm フィールド（6ビット）を取得します。
+     * 16bit 命令 imm フィールドを取得します。
      * CI (Immediate) Format が使います。
      *
      *   imm[  5]:   12
      *   imm[4:0]: 6: 2
      *
-     * @return imm[5 | 4:0] フィールド
+     * @return imm フィールド
      */
     public int getImm6CI() {
         return (getField(12, 1) << 5) | getField(2, 5);
     }
 
     /**
-     * 16bit 命令 imm フィールド（7ビット）を取得します。
+     * 16bit 命令 imm フィールドを取得します。
      * LW, FLW, SW, FSW が使います。
      *
      *   imm[  6]:     5
      *   imm[5:3]: 12:10
      *   imm[  2]:     6
      *
-     * @return imm[5 | 4:0] フィールド
+     * @return imm フィールド
      */
     public int getImm7LWSW() {
         return (getField(5, 1) << 6) |
@@ -121,46 +121,47 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
-     * 16bit 命令 imm フィールド（6ビット）を取得します。
+     * 16bit 命令 imm フィールドを取得します。
      * SWSP, FSWSP が使います。
      *
      *   imm[7:6]:  8: 7
      *   imm[5:2]: 12: 9
      *
-     * @return imm[5 | 4:0] フィールド
+     * @return imm フィールド
      */
-    public int getImm6SWSP() {
+    public int getImm8SWSP() {
         return (getField(6, 2) << 6) | getField(9, 4) << 2;
     }
 
     /**
-     * 16bit 命令 imm フィールド（6ビット）を取得します。
+     * 16bit 命令 imm フィールドを取得します。
      * SDSP, FSDSP が使います。
      *
      *   imm[8:6]:  9: 7
      *   imm[5:3]: 12:10
      *
-     * @return imm[5 | 4:0] フィールド
+     * @return imm フィールド
      */
-    public int getImm6SDSP() {
+    public int getImm9SDSP() {
         return (getField(6, 3) << 6) | getField(10, 3) << 3;
     }
 
     /**
-     * 16bit 命令 imm フィールド（6ビット）を取得します。
+     * 16bit 命令 imm フィールドを取得します。
      * SQSP が使います。
      *
      *   imm[9:6]: 10: 7
      *   imm[5:4]: 12:11
      *
-     * @return imm[5 | 4:0] フィールド
+     * @return imm フィールド
      */
-    public int getImm6SQSP() {
+    public int getImm10SQSP() {
         return (getField(6, 4) << 6) | getField(11, 2) << 4;
     }
 
     /**
      * 16bit 命令の offset フィールドを取得します。
+     * BEQZ, BNEZ が使います。
      *
      * offset[    8]:    12
      * offset[ 7: 6]:  6: 5
@@ -170,7 +171,7 @@ public class InstructionRV16 extends Inst32 {
      *
      * @return offset フィールド
      */
-    public int getOffsetB() {
+    public int getOffset9B() {
         int off8 = getField(12, 1);
         int off6 = getField(5, 2);
         int off5 = getField(2, 1);

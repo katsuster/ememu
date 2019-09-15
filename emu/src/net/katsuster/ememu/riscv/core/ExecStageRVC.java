@@ -141,7 +141,7 @@ public class ExecStageRVC extends Stage64 {
      */
     public void executeBnez(InstructionRV16 inst, boolean exec) {
         int rs1 = inst.getRs1dash() + 8;
-        int off = BitOp.signExt32(inst.getOffsetB(), 9);
+        int off = BitOp.signExt32(inst.getOffset9B(), 9);
 
         if (!exec) {
             printDisasm(inst, "c.bnez",
@@ -203,7 +203,7 @@ public class ExecStageRVC extends Stage64 {
      */
     public void executeSdsp(InstructionRV16 inst, boolean exec) {
         int rs2 = inst.getRs2();
-        int uimm = inst.getImm6SDSP();
+        int uimm = inst.getImm9SDSP();
         long vaddr, paddr;
 
         if (!exec) {
