@@ -154,7 +154,7 @@ public class InstructionRV32 extends Inst32 {
      *
      * @return offset フィールド
      */
-    public int getOffsetB() {
+    public int getOffset13B() {
         int off12 = getField(31, 1);
         int off11 = getField(7, 1);
         int off5 = getField(25, 6);
@@ -171,7 +171,7 @@ public class InstructionRV32 extends Inst32 {
      *
      * @return offset フィールド
      */
-    public int getOffsetS() {
+    public int getOffset12S() {
         int off5 = getField(31, 1);
         int off0 = getField(7, 1);
 
