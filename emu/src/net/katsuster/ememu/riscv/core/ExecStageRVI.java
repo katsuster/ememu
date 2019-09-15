@@ -53,6 +53,31 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * Fence 命令の pred, succ の名前を取得します。
+     *
+     * @param n pred もしくは succ の値
+     * @return pred もしくは succ の名前
+     */
+    public String getPredName(int n) {
+        StringBuffer result = new StringBuffer();
+
+        if ((n & 8) != 0) {
+            result.append("i");
+        }
+        if ((n & 4) != 0) {
+            result.append("o");
+        }
+        if ((n & 2) != 0) {
+            result.append("r");
+        }
+        if ((n & 1) != 0) {
+            result.append("w");
+        }
+
+        return result.toString();
+    }
+
+    /**
      * AUIPC (Add upper immediate to pc) 命令。
      *
      * @param inst 32bit 命令
@@ -453,6 +478,25 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * Fence (Fence memory and I/O) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeFence(InstructionRV32 inst, boolean exec) {
+        int imm = inst.getImm12I();
+        int succ = BitOp.getField32(imm, 0, 4);
+        int pred = BitOp.getField32(imm, 4, 4);
+
+        if (!exec) {
+            printDisasm(inst, "fence",
+                    String.format("%s, %s", getPredName(pred),
+                            getPredName(succ)));
+            return;
+        }
+    }
+
+    /**
      * CSRRW (Control and status register read and write) 命令。
      *
      * @param inst 32bit 命令
@@ -622,6 +666,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_SUB:
             executeSub(inst, exec);
+            break;
+        case INS_RV32I_FENCE:
+            executeFence(inst, exec);
             break;
         case INS_RV32I_CSRRW:
             executeCsrrw(inst, exec);

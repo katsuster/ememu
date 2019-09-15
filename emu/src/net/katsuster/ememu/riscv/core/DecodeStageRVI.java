@@ -373,6 +373,26 @@ public class DecodeStageRVI extends Stage64 {
     }
 
     /**
+     * 32bit MISC-MEM 命令をデコードします。
+     *
+     * @param inst 32bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeMiscMem(InstructionRV32 inst) {
+        int funct3 = inst.getFunct3();
+
+        switch (funct3) {
+        case InstructionRV32.FUNC_MISC_MEM_FENCE:
+            return OpIndex.INS_RV32I_FENCE;
+        case InstructionRV32.FUNC_MISC_MEM_FENCE_I:
+            return OpIndex.INS_RV32I_FENCE_I;
+        default:
+            throw new IllegalArgumentException("Unknown MISC-MEM " +
+                    String.format("funct3 %d.", funct3));
+        }
+    }
+
+    /**
      * 32bit SYSTEM 命令をデコードします。
      *
      * @param inst 32bit 命令
@@ -448,6 +468,8 @@ public class DecodeStageRVI extends Stage64 {
             return decodeOpImm32(inst);
         case InstructionRV32.OPCODE_OP:
             return decodeOp(inst);
+        case InstructionRV32.OPCODE_MISC_MEM:
+            return decodeMiscMem(inst);
         case InstructionRV32.OPCODE_SYSTEM:
             return decodeSystem(inst);
         default:
