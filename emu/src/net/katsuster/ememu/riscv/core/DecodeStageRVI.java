@@ -321,6 +321,26 @@ public class DecodeStageRVI extends Stage64 {
                 return OpIndex.INS_RV32I_SRA;
             }
             break;
+        case 1:
+            switch (funct3) {
+            case InstructionRV32.FUNC_OP_MUL:
+                return OpIndex.INS_RV32M_MUL;
+            case InstructionRV32.FUNC_OP_MULH:
+                return OpIndex.INS_RV32M_MULH;
+            case InstructionRV32.FUNC_OP_MULHSU:
+                return OpIndex.INS_RV32M_MULHSU;
+            case InstructionRV32.FUNC_OP_MULHU:
+                return OpIndex.INS_RV32M_MULHU;
+            case InstructionRV32.FUNC_OP_DIV:
+                return OpIndex.INS_RV32M_DIV;
+            case InstructionRV32.FUNC_OP_DIVU:
+                return OpIndex.INS_RV32M_DIVU;
+            case InstructionRV32.FUNC_OP_REM:
+                return OpIndex.INS_RV32M_REM;
+            case InstructionRV32.FUNC_OP_REMU:
+                return OpIndex.INS_RV32M_REMU;
+            }
+            break;
         }
 
         throw new IllegalArgumentException("Unknown OP " +

@@ -2,6 +2,8 @@ package net.katsuster.ememu.riscv.core;
 
 import net.katsuster.ememu.generic.*;
 
+import java.math.BigInteger;
+
 public class ExecStageRVI extends Stage64 {
     /**
      * RVI 命令の実行ステージを生成します。
@@ -609,6 +611,51 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * MUL (Multiply) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeMul(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+
+        if (!exec) {
+            printDisasm(inst, "mul",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rs1), getRegName(rs2)));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) * getReg(rs2));
+    }
+
+    /**
+     * DIVU (Divide, Unsigned) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeDivu(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        BigInteger dividend, divisor;
+
+        if (!exec) {
+            printDisasm(inst, "divu",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rs1), getRegName(rs2)));
+            return;
+        }
+
+        dividend = BitOp.toUnsignedBigInt(getReg(rs1));
+        divisor = BitOp.toUnsignedBigInt(getReg(rs2));
+        setReg(rd, dividend.divide(divisor).longValue());
+    }
+
+    /**
      * 32bit 命令を実行します。
      *
      * @param decinst デコードされた命令
@@ -681,6 +728,12 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32_WFI:
             executeWfi(inst, exec);
+            break;
+        case INS_RV32M_MUL:
+            executeMul(inst, exec);
+            break;
+        case INS_RV32M_DIVU:
+            executeDivu(inst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown RV32I instruction " +

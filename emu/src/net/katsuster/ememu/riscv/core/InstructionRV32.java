@@ -91,14 +91,25 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_OP_IMM_32_SLLIW = 1;
     public static final int FUNC_OP_IMM_32_SRLIW_SRAIW = 5;
 
-    public static final int FUNC_OP_ADDSUB = 0;
+    //imm7 = 0, 32
+    public static final int FUNC_OP_ADD_SUB = 0;
     public static final int FUNC_OP_SLL = 1;
     public static final int FUNC_OP_SLT = 2;
     public static final int FUNC_OP_SLTU = 3;
     public static final int FUNC_OP_XOR = 4;
-    public static final int FUNC_OP_SR = 5;
+    public static final int FUNC_OP_SRL_SRA = 5;
     public static final int FUNC_OP_OR = 6;
     public static final int FUNC_OP_AND = 7;
+
+    //imm7 = 1
+    public static final int FUNC_OP_MUL = 0;
+    public static final int FUNC_OP_MULH = 1;
+    public static final int FUNC_OP_MULHSU = 2;
+    public static final int FUNC_OP_MULHU = 3;
+    public static final int FUNC_OP_DIV = 4;
+    public static final int FUNC_OP_DIVU = 5;
+    public static final int FUNC_OP_REM = 6;
+    public static final int FUNC_OP_REMU = 7;
 
     public static final int FUNC_MISC_MEM_FENCE = 0;
     public static final int FUNC_MISC_MEM_FENCE_I = 1;
