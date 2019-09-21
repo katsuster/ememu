@@ -193,6 +193,20 @@ public class BitOpTest {
     }
 
     @org.junit.Test
+    public void testToUnsignedBigInt() throws Exception {
+        String msg1 = "BitOp.toUnsignedBigInt() failed.";
+
+        Assert.assertEquals(msg1, "0", BitOp.toUnsignedBigInt(0x0L).toString(16));
+        Assert.assertEquals(msg1, "1", BitOp.toUnsignedBigInt(0x1L).toString(16));
+        Assert.assertEquals(msg1, "80000000", BitOp.toUnsignedBigInt(0x80000000L).toString(16));
+        Assert.assertEquals(msg1, "7fffffff", BitOp.toUnsignedBigInt(0x7fffffffL).toString(16));
+        Assert.assertEquals(msg1, "ffffffff", BitOp.toUnsignedBigInt(0xffffffffL).toString(16));
+        Assert.assertEquals(msg1, "8000000000000000", BitOp.toUnsignedBigInt(0x8000000000000000L).toString(16));
+        Assert.assertEquals(msg1, "7fffffffffffffff", BitOp.toUnsignedBigInt(0x7fffffffffffffffL).toString(16));
+        Assert.assertEquals(msg1, "ffffffffffffffff", BitOp.toUnsignedBigInt(0xffffffffffffffffL).toString(16));
+    }
+
+    @org.junit.Test
     public void testSignExt32() throws Exception {
         String msg1 = "BitOp.signExt32() failed.";
 

@@ -1,5 +1,7 @@
 package net.katsuster.ememu.generic;
 
+import java.math.*;
+
 /**
  * 整数値へのビット演算ユーティリティクラス。
  */
@@ -214,6 +216,23 @@ public class BitOp {
             return 1;
         } else {
             return 0;
+        }
+    }
+
+    /**
+     * long 値を符号なし整数とみなして BigInteger に変換します。
+     *
+     * @param v long 値
+     * @return BigInteger
+     */
+    public static BigInteger toUnsignedBigInt(long v) {
+        if ((v & 0x8000000000000000L) == 0L) {
+            return BigInteger.valueOf(v);
+        } else {
+            long lower = v & 0x7fffffffffffffffL;
+            BigInteger higher = BigInteger.ONE.shiftLeft(63);
+
+            return BigInteger.valueOf(lower).add(higher);
         }
     }
 
