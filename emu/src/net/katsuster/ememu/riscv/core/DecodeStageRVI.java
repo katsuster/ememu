@@ -292,84 +292,39 @@ public class DecodeStageRVI extends Stage64 {
         int imm7 = inst.getImm7I();
         String opname = "unknown";
 
-        switch (funct3) {
-        case InstructionRV32.FUNC_OP_ADDSUB:
-            if (imm7 == 0) {
-                //ADD (imm7 = 0b0000000)
+        switch (imm7) {
+        case 0:
+            switch (funct3) {
+            case InstructionRV32.FUNC_OP_ADD_SUB:
                 return OpIndex.INS_RV32I_ADD;
-            } else if (imm7 == 32) {
-                //SUB (imm7 = 0b0100000)
-                return OpIndex.INS_RV32I_SUB;
-            }
-
-            opname = "ADD/SUB";
-            break;
-        case InstructionRV32.FUNC_OP_SLL:
-            if (imm7 == 0) {
-                //SLL
+            case InstructionRV32.FUNC_OP_SLL:
                 return OpIndex.INS_RV32I_SLL;
-            }
-
-            opname = "SLL";
-            break;
-        case InstructionRV32.FUNC_OP_SLT:
-            if (imm7 == 0) {
-                //SLT
+            case InstructionRV32.FUNC_OP_SLT:
                 return OpIndex.INS_RV32I_SLT;
-            }
-
-            opname = "SLT";
-            break;
-        case InstructionRV32.FUNC_OP_SLTU:
-            if (imm7 == 0) {
-                //SLTU
+            case InstructionRV32.FUNC_OP_SLTU:
                 return OpIndex.INS_RV32I_SLTU;
-            }
-
-            opname = "SLTU";
-            break;
-        case InstructionRV32.FUNC_OP_XOR:
-            if (imm7 == 0) {
-                //XOR
+            case InstructionRV32.FUNC_OP_XOR:
                 return OpIndex.INS_RV32I_XOR;
-            }
-
-            opname = "XOR";
-            break;
-        case InstructionRV32.FUNC_OP_SR:
-            if (imm7 == 0) {
-                //SRL (imm7 = 0b0000000)
+            case InstructionRV32.FUNC_OP_SRL_SRA:
                 return OpIndex.INS_RV32I_SRL;
-            } else if (imm7 == 32) {
-                //SRA (imm7 = 0b0100000)
-                return OpIndex.INS_RV32I_SRA;
-            }
-
-            opname = "SR";
-            break;
-        case InstructionRV32.FUNC_OP_OR:
-            if (imm7 == 0) {
-                //OR
+            case InstructionRV32.FUNC_OP_OR:
                 return OpIndex.INS_RV32I_OR;
-            }
-
-            opname = "OR";
-            break;
-        case InstructionRV32.FUNC_OP_AND:
-            if (imm7 == 0) {
-                //AND
+            case InstructionRV32.FUNC_OP_AND:
                 return OpIndex.INS_RV32I_AND;
             }
-
-            opname = "AND";
             break;
-        default:
-            throw new IllegalArgumentException("Unknown OP " +
-                    String.format("funct3 %d.", funct3));
+        case 32:
+            switch (funct3) {
+            case InstructionRV32.FUNC_OP_ADD_SUB:
+                return OpIndex.INS_RV32I_SUB;
+            case InstructionRV32.FUNC_OP_SRL_SRA:
+                return OpIndex.INS_RV32I_SRA;
+            }
+            break;
         }
 
         throw new IllegalArgumentException("Unknown OP " +
-                String.format("%s imm7 0x%x.", opname, imm7));
+                String.format("funct3 %d imm7 0x%x.", funct3, imm7));
     }
 
     /**
