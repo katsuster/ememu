@@ -190,11 +190,17 @@ public class DecodeStageRVC extends Stage64 {
      */
     public OpIndex decodeSlli(InstructionRV16 inst) {
         int rd = inst.getRd();
-        int imm = inst.getImm6CI();
+        int imm6 = inst.getImm6CI();
 
-        if (rd != 0 && imm != 1) {
-            //C.SLLI
-            return OpIndex.INS_RVC_SLLI;
+        if (rd != 0 && imm6 != 0) {
+            if (getRVBits() != 32) {
+                //C.SLLI
+                return OpIndex.INS_RVC_SLLI;
+            } else if (getRVBits() == 32 && (imm6 & 32) == 0) {
+                //C.SLLI
+                //  RV32 imm[5] = 1: Non standard extension
+                return OpIndex.INS_RVC_SLLI;
+            }
         }
 
         throw new IllegalArgumentException("Unknown SLLI " +
