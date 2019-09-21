@@ -63,6 +63,8 @@ public class RISCVUnleashed extends AbstractBoard {
         RAM l2lim = new RAM32(32 * 1024 * 1024);
         cl0_ddr = new RAM32(64 * 1024 * 1024);
         PRCI prci = new PRCI(cpu);
+        UART uart0 = new UART();
+        UART uart1 = new UART();
 
         //Master core
         for (int i = 0; i < cpu.length; i++) {
@@ -77,11 +79,15 @@ public class RISCVUnleashed extends AbstractBoard {
         //  0x0001_0000 - 0x0001_7fff: Mask ROM
         //  0x0800_0000 - 0x09ff_ffff: L2 LIM
         //  0x1000_0000 - 0x1000_0fff: PRCI
+        //  0x1001_0000 - 0x1001_0fff: UART0
+        //  0x1001_1000 - 0x1001_1fff: UART1
         bus.addSlaveCore(mode_select, 0x00001000L, 0x00001fffL);
         bus.addSlaveCore(mask_rom, 0x00010000L, 0x00017fffL);
         bus.addSlaveCore(clint.getSlaveCore(), 0x02000000L, 0x0200ffffL);
         bus.addSlaveCore(l2lim, 0x08000000L, 0x09ffffffL);
         bus.addSlaveCore(prci.getSlaveCore(), 0x10000000L, 0x10000fffL);
+        bus.addSlaveCore(uart0.getSlaveCore(), 0x10010000L, 0x10010fffL);
+        bus.addSlaveCore(uart1.getSlaveCore(), 0x10011000L, 0x10011fffL);
 
         //reset CPU
         for (int i = 0; i < cpu.length; i++) {
