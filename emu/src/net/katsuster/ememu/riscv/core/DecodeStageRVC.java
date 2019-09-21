@@ -50,6 +50,28 @@ public class DecodeStageRVC extends Stage64 {
     }
 
     /**
+     * JAL, ADDIW 命令をデコードします。
+     *
+     * @param inst 16bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeJalAddiw(InstructionRV16 inst) {
+        int rd = inst.getRd();
+
+        if (rd != 0 && getRVBits() != 32) {
+            //C.ADDIW
+            return OpIndex.INS_RVC_ADDIW;
+        } else if (getRVBits() == 32) {
+            //C.JAL
+            return OpIndex.INS_RVC_JAL;
+        }
+
+        throw new IllegalArgumentException("Unknown JAL, ADDIW " +
+                String.format("rd %d, ", rd) +
+                String.format("%dbit.", getRVBits()));
+    }
+
+    /**
      * LI 命令をデコードします。
      *
      * @param inst 16bit 命令
@@ -242,6 +264,8 @@ public class DecodeStageRVC extends Stage64 {
             return OpIndex.INS_RVC_LW;
         case InstructionRV16.OPCODE_ADDI:
             return decodeAddi(inst);
+        case InstructionRV16.OPCODE_JAL_ADDIW:
+            return decodeJalAddiw(inst);
         case InstructionRV16.OPCODE_LI:
             return decodeLi(inst);
         case InstructionRV16.OPCODE_LUI_ADDI16SP:

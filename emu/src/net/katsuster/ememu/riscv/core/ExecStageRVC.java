@@ -113,6 +113,30 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * ADDIW (Add word immediate) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAddiw(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRd();
+        int imm6 = inst.getImm6CI();
+        long imm = BitOp.signExt64(imm6, 6);
+        long v;
+
+        if (!exec) {
+            printDisasm(inst, "c.addiw",
+                    String.format("%s, %d # 0x%x", getRegName(rd),
+                            imm, imm6));
+            return;
+        }
+
+        v = (getReg(rd) + imm) & 0xffffffffL;
+
+        setReg(rd, BitOp.signExt64(v, 32));
+    }
+
+    /**
      * LI (Load immediate) 命令。
      *
      * @param inst 16bit 命令
@@ -288,6 +312,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_ADDI:
             executeAddi(inst, exec);
+            break;
+        case INS_RVC_ADDIW:
+            executeAddiw(inst, exec);
             break;
         case INS_RVC_LI:
             executeLi(inst, exec);
