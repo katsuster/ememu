@@ -39,10 +39,14 @@ public class DecodeStageRVC extends Stage64 {
      */
     public OpIndex decodeAddi(InstructionRV16 inst) {
         int rd = inst.getRd();
+        int imm6 = inst.getImm6CI();
 
         if (rd != 0) {
             //C.ADDI
             return OpIndex.INS_RVC_ADDI;
+        } else if (rd == 0 && imm6 == 0) {
+            //C.NOP
+            return OpIndex.INS_RVC_NOP;
         }
 
         throw new IllegalArgumentException("Unknown ADDI " +
