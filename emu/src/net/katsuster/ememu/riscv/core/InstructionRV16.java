@@ -110,6 +110,15 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
+     * 16bit 命令の rs2' フィールド（ビット [4:2]）を取得します。
+     *
+     * @return rs2' フィールド
+     */
+    public int getRs2dash() {
+        return getField(2, 3);
+    }
+
+    /**
      * 16bit 命令 imm フィールドを取得します。
      * CI (Immediate) Format が使います。
      *

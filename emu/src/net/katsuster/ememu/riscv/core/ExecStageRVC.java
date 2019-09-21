@@ -92,6 +92,43 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * SW (Store word) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSw(InstructionRV16 inst, boolean exec) {
+        int rs1 = inst.getRs1dash() + 8;
+        int rs2 = inst.getRs2dash() + 8;
+        int uimm = inst.getImm7LWSW();
+        long vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst, "c.sw",
+                    String.format("%s, %d(%s)", getRegName(rs2),
+                            uimm, getRegName(rs1)));
+            return;
+        }
+
+        vaddr = getReg(rs1) + uimm;
+
+        //paddr = getMMU().translate(vaddr, 4, false, getPriv(), true);
+        paddr = vaddr;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        if (!tryWrite(paddr, 4)) {
+            //raiseException(ARMv5.EXCEPT_ABT_DATA,
+            //        String.format("ldrd [%08x]", paddr));
+            return;
+        }
+
+        write32(paddr, (int)getReg(rs2));
+    }
+
+    /**
      * ADDI (Add immediate) 命令。
      *
      * @param inst 16bit 命令
@@ -309,6 +346,9 @@ public class ExecStageRVC extends Stage64 {
         switch (decinst.getIndex()) {
         case INS_RVC_LW:
             executeLw(inst, exec);
+            break;
+        case INS_RVC_SW:
+            executeSw(inst, exec);
             break;
         case INS_RVC_ADDI:
             executeAddi(inst, exec);

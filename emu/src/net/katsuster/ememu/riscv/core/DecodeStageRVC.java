@@ -272,6 +272,8 @@ public class DecodeStageRVC extends Stage64 {
         switch (code) {
         case InstructionRV16.OPCODE_LW:
             return OpIndex.INS_RVC_LW;
+        case InstructionRV16.OPCODE_SW:
+            return OpIndex.INS_RVC_SW;
         case InstructionRV16.OPCODE_ADDI:
             return decodeAddi(inst);
         case InstructionRV16.OPCODE_JAL_ADDIW:
