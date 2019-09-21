@@ -68,6 +68,27 @@ public class DecodeStageRVC extends Stage64 {
     }
 
     /**
+     * LUI, ADDI16SP 命令をデコードします。
+     *
+     * @param inst 16bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeLuiAddi16sp(InstructionRV16 inst) {
+        int rd = inst.getRd();
+
+        if (rd == 2) {
+            //C.ADDI16SP
+            return OpIndex.INS_RVC_ADDI16SP;
+        } else if (rd != 0 && rd != 2) {
+            //C.LUI
+            return OpIndex.INS_RVC_LUI;
+        }
+
+        throw new IllegalArgumentException("Unknown LUI, ADDI16SP " +
+                String.format("rd %d.", rd));
+    }
+
+    /**
      * MISC-ALU 命令をデコードします。
      *
      * @param inst 16bit 命令
@@ -223,6 +244,8 @@ public class DecodeStageRVC extends Stage64 {
             return decodeAddi(inst);
         case InstructionRV16.OPCODE_LI:
             return decodeLi(inst);
+        case InstructionRV16.OPCODE_LUI_ADDI16SP:
+            return decodeLuiAddi16sp(inst);
         case InstructionRV16.OPCODE_MISC_ALU:
             return decodeMiscALU(inst);
         case InstructionRV16.OPCODE_BNEZ:

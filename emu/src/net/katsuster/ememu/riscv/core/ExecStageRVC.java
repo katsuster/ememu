@@ -134,6 +134,27 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * LUI (Load upper immediate) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLui(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRd();
+        int imm6 = inst.getImm6CI();
+        long imm = BitOp.signExt64(imm6 << 12, 18);
+
+        if (!exec) {
+            printDisasm(inst, "c.lui",
+                    String.format("%s, %d # 0x%x", getRegName(rd),
+                            imm, imm6));
+            return;
+        }
+
+        setReg(rd, imm);
+    }
+
+    /**
      * ANDI (And immediate) 命令。
      *
      * @param inst 16bit 命令
@@ -270,6 +291,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_LI:
             executeLi(inst, exec);
+            break;
+        case INS_RVC_LUI:
+            executeLui(inst, exec);
             break;
         case INS_RVC_ANDI:
             executeAndi(inst, exec);
