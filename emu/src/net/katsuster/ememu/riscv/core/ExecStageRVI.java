@@ -652,6 +652,7 @@ public class ExecStageRVI extends Stage64 {
 
         dividend = BitOp.toUnsignedBigInt(getReg(rs1));
         divisor = BitOp.toUnsignedBigInt(getReg(rs2));
+
         setReg(rd, dividend.divide(divisor).longValue());
     }
 
