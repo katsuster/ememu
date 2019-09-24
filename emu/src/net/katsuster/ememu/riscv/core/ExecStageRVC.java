@@ -248,8 +248,8 @@ public class ExecStageRVC extends Stage64 {
 
         if (!exec) {
             printDisasm(inst, "c.srli",
-                    String.format("%s, %d", getRegName(rs1),
-                            imm6));
+                    String.format("%s, 0x%x # %d", getRegName(rs1),
+                            imm6, imm6));
             return;
         }
 
@@ -311,8 +311,8 @@ public class ExecStageRVC extends Stage64 {
 
         if (!exec) {
             printDisasm(inst, "c.slli",
-                    String.format("%s, %d", getRegName(rd),
-                            imm6));
+                    String.format("%s, 0x%x # %d", getRegName(rd),
+                            imm6, imm6));
             return;
         }
 
