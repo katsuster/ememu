@@ -195,6 +195,27 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * ADDI16SP (Add immediate, Scaled by 16, to Stack Pointer) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAddi16sp(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRd();
+        int imm6 = inst.getImm10ADDI16SP();
+        long imm = BitOp.signExt64(imm6, 6);
+
+        if (!exec) {
+            printDisasm(inst, "c.addi16sp",
+                    String.format("%s, %d # 0x%x", getRegName(rd),
+                            imm, imm6));
+            return;
+        }
+
+        setReg(rd, getReg(rd) + imm);
+    }
+
+    /**
      * LUI (Load upper immediate) 命令。
      *
      * @param inst 16bit 命令
@@ -358,6 +379,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_LI:
             executeLi(inst, exec);
+            break;
+        case INS_RVC_ADDI16SP:
+            executeAddi16sp(inst, exec);
             break;
         case INS_RVC_LUI:
             executeLui(inst, exec);
