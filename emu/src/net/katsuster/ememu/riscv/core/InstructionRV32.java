@@ -199,8 +199,8 @@ public class InstructionRV32 extends Inst32 {
      * @return offset フィールド
      */
     public int getOffset12S() {
-        return (getField(31, 1) << 5) |
-                (getField(7, 1) << 0);
+        return (getField(25, 7) << 5) |
+                (getField(7, 5) << 0);
     }
 
     /**
