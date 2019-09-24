@@ -237,6 +237,26 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * SRLI (Shift right logical immediate) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSrli(InstructionRV16 inst, boolean exec) {
+        int rs1 = inst.getRs1dash() + 8;
+        int imm6 = inst.getImm6CI();
+
+        if (!exec) {
+            printDisasm(inst, "c.srli",
+                    String.format("%s, %d", getRegName(rs1),
+                            imm6));
+            return;
+        }
+
+        setReg(rs1, getReg(rs1) >>> imm6);
+    }
+
+    /**
      * ANDI (And immediate) 命令。
      *
      * @param inst 16bit 命令
@@ -405,6 +425,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_LUI:
             executeLui(inst, exec);
+            break;
+        case INS_RVC_SRLI:
+            executeSrli(inst, exec);
             break;
         case INS_RVC_ANDI:
             executeAndi(inst, exec);
