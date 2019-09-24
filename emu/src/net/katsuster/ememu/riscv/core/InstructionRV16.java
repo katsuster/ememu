@@ -181,21 +181,22 @@ public class InstructionRV16 extends Inst32 {
      * 16bit 命令 imm フィールドを取得します。
      * ADDI16SP が使います。
      *
-     *   imm[  4]:    6
-     *   imm[  5]:    2
-     *   imm[  6]:    5
-     *   imm[8:7]: 4: 3
      *   imm[  9]:   12
+     *   imm[8:7]: 4: 3
+     *   imm[  6]:    5
+     *   imm[  5]:    2
+     *   imm[  4]:    6
      *
      * @return imm フィールド
      */
     public int getImm10ADDI16SP() {
-        return (getField(6, 1) << 4) |
-                (getField(2, 1) << 5) |
-                (getField(5, 1) << 6) |
+        return (getField(12, 1) << 9) |
                 (getField(3, 2) << 7) |
-                (getField(12, 1) << 9);
+                (getField(5, 1) << 6) |
+                (getField(2, 1) << 5) |
+                (getField(6, 1) << 4);
     }
+
 
     /**
      * 16bit 命令 imm フィールドを取得します。
