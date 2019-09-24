@@ -340,6 +340,24 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * Jr (Jump register) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeJr(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRd();
+
+        if (!exec) {
+            printDisasm(inst, "c.jr",
+                    String.format("%s", getRegName(rd)));
+            return;
+        }
+
+        setPC(getReg(rd));
+    }
+
+    /**
      * MV (Move) 命令。
      *
      * @param inst 16bit 命令
@@ -440,6 +458,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_ADD:
             executeAdd(inst, exec);
+            break;
+        case INS_RVC_JR:
+            executeJr(inst, exec);
             break;
         case INS_RVC_MV:
             executeMv(inst, exec);
