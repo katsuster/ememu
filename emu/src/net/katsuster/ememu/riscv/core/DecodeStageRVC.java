@@ -284,6 +284,8 @@ public class DecodeStageRVC extends Stage64 {
             return decodeLuiAddi16sp(inst);
         case InstructionRV16.OPCODE_MISC_ALU:
             return decodeMiscALU(inst);
+        case InstructionRV16.OPCODE_J:
+            return OpIndex.INS_RVC_J;
         case InstructionRV16.OPCODE_BNEZ:
             return OpIndex.INS_RVC_BNEZ;
         case InstructionRV16.OPCODE_SLLI:

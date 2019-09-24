@@ -300,6 +300,24 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * J (Jump) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeJ(InstructionRV16 inst, boolean exec) {
+        int off = BitOp.signExt32(inst.getOffset12J(), 12);
+
+        if (!exec) {
+            printDisasm(inst, "c.j",
+                    String.format("0x%x", getPC() + off));
+            return;
+        }
+
+        jumpRel(off);
+    }
+
+    /**
      * BNEZ (Branch if not equal to zero) 命令。
      *
      * @param inst 16bit 命令
@@ -474,6 +492,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_ADDW:
             executeAddw(inst, exec);
+            break;
+        case INS_RVC_J:
+            executeJ(inst, exec);
             break;
         case INS_RVC_BNEZ:
             executeBnez(inst, exec);

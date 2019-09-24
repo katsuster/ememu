@@ -224,6 +224,32 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
+     * 16bit 命令の offset フィールドを取得します。
+     * JAL, J が使います。
+     *
+     * offset[   11]:    12
+     * offset[   10]:     8
+     * offset[ 9: 8]: 10: 9
+     * offset[    7]:     6
+     * offset[    6]:     7
+     * offset[    5]:     2
+     * offset[    4]:    11
+     * offset[ 3: 1]:  5: 3
+     *
+     * @return offset フィールド
+     */
+    public int getOffset12J() {
+        return (getField(12, 1) << 11) |
+                (getField(8, 1) << 10) |
+                (getField(9, 2) << 8) |
+                (getField(6, 1) << 7) |
+                (getField(7, 1) << 6) |
+                (getField(2, 1) << 5) |
+                (getField(11, 1) << 4) |
+                (getField(3, 3) << 1);
+    }
+
+    /**
      * 命令の 16進数表記を取得します。
      *
      * @return 命令の 16進数表記
