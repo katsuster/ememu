@@ -32,52 +32,6 @@ public class DecodeStageRVI extends Stage64 {
     }
 
     /**
-     * 32bit JALR 命令をデコードします。
-     *
-     * @param inst 32bit 命令
-     * @return 命令の種類
-     */
-    public OpIndex decodeJalr(InstructionRV32 inst) {
-        int funct3 = inst.getFunct3();
-
-        switch (funct3) {
-        case InstructionRV32.FUNC_JALR_JALR:
-            return OpIndex.INS_RV32I_JALR;
-        default:
-            throw new IllegalArgumentException("Unknown JALR " +
-                    String.format("funct3 %d.", funct3));
-        }
-    }
-
-    /**
-     * 32bit BRANCH 命令をデコードします。
-     *
-     * @param inst 32bit 命令
-     * @return 命令の種類
-     */
-    public OpIndex decodeBranch(InstructionRV32 inst) {
-        int funct3 = inst.getFunct3();
-
-        switch (funct3) {
-        case InstructionRV32.FUNC_BRANCH_BEQ:
-            return OpIndex.INS_RV32I_BEQ;
-        case InstructionRV32.FUNC_BRANCH_BNE:
-            return OpIndex.INS_RV32I_BNE;
-        case InstructionRV32.FUNC_BRANCH_BLT:
-            return OpIndex.INS_RV32I_BLT;
-        case InstructionRV32.FUNC_BRANCH_BGE:
-            return OpIndex.INS_RV32I_BGE;
-        case InstructionRV32.FUNC_BRANCH_BLTU:
-            return OpIndex.INS_RV32I_BLTU;
-        case InstructionRV32.FUNC_BRANCH_BGEU:
-            return OpIndex.INS_RV32I_BGEU;
-        default:
-            throw new IllegalArgumentException("Unknown BRANCH " +
-                    String.format("funct3 %d.", funct3));
-        }
-    }
-
-    /**
      * 32bit LOAD 命令をデコードします。
      *
      * @param inst 32bit 命令
@@ -118,30 +72,21 @@ public class DecodeStageRVI extends Stage64 {
     }
 
     /**
-     * 32bit STORE 命令をデコードします。
+     * 32bit MISC-MEM 命令をデコードします。
      *
      * @param inst 32bit 命令
      * @return 命令の種類
      */
-    public OpIndex decodeStore(InstructionRV32 inst) {
+    public OpIndex decodeMiscMem(InstructionRV32 inst) {
         int funct3 = inst.getFunct3();
 
         switch (funct3) {
-        case InstructionRV32.FUNC_STORE_SB:
-            return OpIndex.INS_RV32I_SB;
-        case InstructionRV32.FUNC_STORE_SH:
-            return OpIndex.INS_RV32I_SH;
-        case InstructionRV32.FUNC_STORE_SW:
-            return OpIndex.INS_RV32I_SW;
-        case InstructionRV32.FUNC_STORE_SD:
-            if (getRVBits() == 64) {
-                return OpIndex.INS_RV64I_SD;
-            } else {
-                throw new IllegalArgumentException("Unknown STORE, SD " +
-                        String.format("funct3 %d. RV%d", funct3, getRVBits()));
-            }
+        case InstructionRV32.FUNC_MISC_MEM_FENCE:
+            return OpIndex.INS_RV32I_FENCE;
+        case InstructionRV32.FUNC_MISC_MEM_FENCE_I:
+            return OpIndex.INS_RV32I_FENCE_I;
         default:
-            throw new IllegalArgumentException("Unknown STORE " +
+            throw new IllegalArgumentException("Unknown MISC-MEM " +
                     String.format("funct3 %d.", funct3));
         }
     }
@@ -282,6 +227,35 @@ public class DecodeStageRVI extends Stage64 {
     }
 
     /**
+     * 32bit STORE 命令をデコードします。
+     *
+     * @param inst 32bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeStore(InstructionRV32 inst) {
+        int funct3 = inst.getFunct3();
+
+        switch (funct3) {
+        case InstructionRV32.FUNC_STORE_SB:
+            return OpIndex.INS_RV32I_SB;
+        case InstructionRV32.FUNC_STORE_SH:
+            return OpIndex.INS_RV32I_SH;
+        case InstructionRV32.FUNC_STORE_SW:
+            return OpIndex.INS_RV32I_SW;
+        case InstructionRV32.FUNC_STORE_SD:
+            if (getRVBits() == 64) {
+                return OpIndex.INS_RV64I_SD;
+            } else {
+                throw new IllegalArgumentException("Unknown STORE, SD " +
+                        String.format("funct3 %d. RV%d", funct3, getRVBits()));
+            }
+        default:
+            throw new IllegalArgumentException("Unknown STORE " +
+                    String.format("funct3 %d.", funct3));
+        }
+    }
+
+    /**
      * 32bit OP 命令をデコードします。
      *
      * @param inst 32bit 命令
@@ -348,21 +322,47 @@ public class DecodeStageRVI extends Stage64 {
     }
 
     /**
-     * 32bit MISC-MEM 命令をデコードします。
+     * 32bit BRANCH 命令をデコードします。
      *
      * @param inst 32bit 命令
      * @return 命令の種類
      */
-    public OpIndex decodeMiscMem(InstructionRV32 inst) {
+    public OpIndex decodeBranch(InstructionRV32 inst) {
         int funct3 = inst.getFunct3();
 
         switch (funct3) {
-        case InstructionRV32.FUNC_MISC_MEM_FENCE:
-            return OpIndex.INS_RV32I_FENCE;
-        case InstructionRV32.FUNC_MISC_MEM_FENCE_I:
-            return OpIndex.INS_RV32I_FENCE_I;
+        case InstructionRV32.FUNC_BRANCH_BEQ:
+            return OpIndex.INS_RV32I_BEQ;
+        case InstructionRV32.FUNC_BRANCH_BNE:
+            return OpIndex.INS_RV32I_BNE;
+        case InstructionRV32.FUNC_BRANCH_BLT:
+            return OpIndex.INS_RV32I_BLT;
+        case InstructionRV32.FUNC_BRANCH_BGE:
+            return OpIndex.INS_RV32I_BGE;
+        case InstructionRV32.FUNC_BRANCH_BLTU:
+            return OpIndex.INS_RV32I_BLTU;
+        case InstructionRV32.FUNC_BRANCH_BGEU:
+            return OpIndex.INS_RV32I_BGEU;
         default:
-            throw new IllegalArgumentException("Unknown MISC-MEM " +
+            throw new IllegalArgumentException("Unknown BRANCH " +
+                    String.format("funct3 %d.", funct3));
+        }
+    }
+
+    /**
+     * 32bit JALR 命令をデコードします。
+     *
+     * @param inst 32bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeJalr(InstructionRV32 inst) {
+        int funct3 = inst.getFunct3();
+
+        switch (funct3) {
+        case InstructionRV32.FUNC_JALR_JALR:
+            return OpIndex.INS_RV32I_JALR;
+        default:
+            throw new IllegalArgumentException("Unknown JALR " +
                     String.format("funct3 %d.", funct3));
         }
     }
@@ -425,28 +425,28 @@ public class DecodeStageRVI extends Stage64 {
         int code = inst.getOpcode();
 
         switch (code) {
-        case InstructionRV32.OPCODE_LUI:
-            return OpIndex.INS_RV32I_LUI;
-        case InstructionRV32.OPCODE_AUIPC:
-            return OpIndex.INS_RV32I_AUIPC;
-        case InstructionRV32.OPCODE_JAL:
-            return OpIndex.INS_RV32I_JAL;
-        case InstructionRV32.OPCODE_JALR:
-            return decodeJalr(inst);
-        case InstructionRV32.OPCODE_BRANCH:
-            return decodeBranch(inst);
         case InstructionRV32.OPCODE_LOAD:
             return decodeLoad(inst);
-        case InstructionRV32.OPCODE_STORE:
-            return decodeStore(inst);
-        case InstructionRV32.OPCODE_OP_IMM:
-            return decodeOpImm(inst);
-        case InstructionRV32.OPCODE_OP_IMM_32:
-            return decodeOpImm32(inst);
-        case InstructionRV32.OPCODE_OP:
-            return decodeOp(inst);
         case InstructionRV32.OPCODE_MISC_MEM:
             return decodeMiscMem(inst);
+        case InstructionRV32.OPCODE_OP_IMM:
+            return decodeOpImm(inst);
+        case InstructionRV32.OPCODE_AUIPC:
+            return OpIndex.INS_RV32I_AUIPC;
+        case InstructionRV32.OPCODE_OP_IMM_32:
+            return decodeOpImm32(inst);
+        case InstructionRV32.OPCODE_STORE:
+            return decodeStore(inst);
+        case InstructionRV32.OPCODE_OP:
+            return decodeOp(inst);
+        case InstructionRV32.OPCODE_LUI:
+            return OpIndex.INS_RV32I_LUI;
+        case InstructionRV32.OPCODE_BRANCH:
+            return decodeBranch(inst);
+        case InstructionRV32.OPCODE_JALR:
+            return decodeJalr(inst);
+        case InstructionRV32.OPCODE_JAL:
+            return OpIndex.INS_RV32I_JAL;
         case InstructionRV32.OPCODE_SYSTEM:
             return decodeSystem(inst);
         default:
