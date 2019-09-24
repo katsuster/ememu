@@ -159,22 +159,35 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
-     * 32bit 命令 B-type の offset フィールドを取得します。
+     * RV64 命令 I-type の imm フィールドの上位 6ビット（ビット [31:26]）を取得します。
      *
-     * offset[   12]:    31
-     * offset[   11]:     7
-     * offset[10: 5]: 30:25
-     * offset[ 4: 1]: 11: 8
+     * RV64I の ADD, SLLI 命令などに使われます。
      *
-     * @return offset フィールド
+     * @return imm[11:0] フィールドの上位 6ビット
      */
-    public int getOffset13B() {
-        int off12 = getField(31, 1);
-        int off11 = getField(7, 1);
-        int off5 = getField(25, 6);
-        int off1 = getField(8, 4);
+    public int getImm6I() {
+        return getField(26, 6);
+    }
 
-        return (off12 << 12) | (off11 << 11) | (off5 << 5) | (off1 << 1);
+    /**
+     * 32bit 命令 I-type の imm フィールドの上位 7ビット（ビット [31:25]）を取得します。
+     *
+     * RV32I の ADD, SLLI 命令、
+     * RV64I の SLLIW, SRLIW 命令などに使われます。
+     *
+     * @return imm[11:0] フィールドの上位 7ビット
+     */
+    public int getImm7I() {
+        return getField(25, 7);
+    }
+
+    /**
+     * 32bit 命令 I-type の imm フィールド（ビット [31:20]）を取得します。
+     *
+     * @return imm[11:0] フィールド
+     */
+    public int getImm12I() {
+        return getField(20, 12);
     }
 
     /**
@@ -193,35 +206,22 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
-     * 32bit 命令 I-type の imm フィールド（ビット [31:20]）を取得します。
+     * 32bit 命令 B-type の offset フィールドを取得します。
      *
-     * @return imm[11:0] フィールド
+     * offset[   12]:    31
+     * offset[   11]:     7
+     * offset[10: 5]: 30:25
+     * offset[ 4: 1]: 11: 8
+     *
+     * @return offset フィールド
      */
-    public int getImm12I() {
-        return getField(20, 12);
-    }
+    public int getOffset13B() {
+        int off12 = getField(31, 1);
+        int off11 = getField(7, 1);
+        int off5 = getField(25, 6);
+        int off1 = getField(8, 4);
 
-    /**
-     * 32bit 命令 I-type の imm フィールドの上位 7ビット（ビット [31:25]）を取得します。
-     *
-     * RV32I の ADD, SLLI 命令、
-     * RV64I の SLLIW, SRLIW 命令などに使われます。
-     *
-     * @return imm[11:0] フィールドの上位 7ビット
-     */
-    public int getImm7I() {
-        return getField(25, 7);
-    }
-
-    /**
-     * RV64 命令 I-type の imm フィールドの上位 6ビット（ビット [31:26]）を取得します。
-     *
-     * RV64I の ADD, SLLI 命令などに使われます。
-     *
-     * @return imm[11:0] フィールドの上位 6ビット
-     */
-    public int getImm6I() {
-        return getField(26, 6);
+        return (off12 << 12) | (off11 << 11) | (off5 << 5) | (off1 << 1);
     }
 
     /**
