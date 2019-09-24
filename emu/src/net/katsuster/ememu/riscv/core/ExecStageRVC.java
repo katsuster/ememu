@@ -311,8 +311,8 @@ public class ExecStageRVC extends Stage64 {
 
         if (!exec) {
             printDisasm(inst, "c.slli",
-                    String.format("%s, %s, %d", getRegName(rd),
-                            getRegName(rd), imm6));
+                    String.format("%s, %d", getRegName(rd),
+                            imm6));
             return;
         }
 
