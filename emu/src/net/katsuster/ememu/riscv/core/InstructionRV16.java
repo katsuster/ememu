@@ -159,7 +159,7 @@ public class InstructionRV16 extends Inst32 {
      * @return imm フィールド
      */
     public int getImm8SWSP() {
-        return (getField(6, 2) << 6) |
+        return (getField(7, 2) << 6) |
                 (getField(9, 4) << 2);
     }
 
@@ -207,7 +207,8 @@ public class InstructionRV16 extends Inst32 {
      * @return imm フィールド
      */
     public int getImm10SQSP() {
-        return (getField(6, 4) << 6) | getField(11, 2) << 4;
+        return (getField(7, 4) << 6) |
+                (getField(11, 2) << 4);
     }
 
     /**
