@@ -93,15 +93,6 @@ public class InstructionRV16 extends Inst32 {
     }
 
     /**
-     * 16bit 命令の rd' フィールド（ビット [4:2]）を取得します。
-     *
-     * @return rd' フィールド
-     */
-    public int getRddash() {
-        return getField(2, 3);
-    }
-
-    /**
      * 16bit 命令の rs1' フィールド（ビット [9:7]）を取得します。
      *
      * @return rs1' フィールド

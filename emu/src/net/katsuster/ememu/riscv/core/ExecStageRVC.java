@@ -60,7 +60,7 @@ public class ExecStageRVC extends Stage64 {
      */
     public void executeLw(InstructionRV16 inst, boolean exec) {
         int rs1 = inst.getRs1dash() + 8;
-        int rd = inst.getRddash() + 8;
+        int rd = inst.getRs2dash() + 8;
         int uimm = inst.getImm7LWSW();
         int val;
         long vaddr, paddr;
@@ -263,7 +263,7 @@ public class ExecStageRVC extends Stage64 {
      * @param exec デコードと実行なら true、デコードのみなら false
      */
     public void executeAndi(InstructionRV16 inst, boolean exec) {
-        int rd = inst.getRddash() + 8;
+        int rd = inst.getRs2dash() + 8;
         int imm6 = inst.getImm6CI();
         long imm = BitOp.signExt64(imm6, 6);
 
