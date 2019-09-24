@@ -237,6 +237,6 @@ public class InstructionRV16 extends Inst32 {
      */
     @Override
     public String toHex() {
-        return String.format("%04x", getInst());
+        return String.format("%04x", getInst() & 0xffff);
     }
 }
