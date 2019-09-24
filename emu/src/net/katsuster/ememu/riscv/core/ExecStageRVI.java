@@ -118,6 +118,29 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * JAL (Jump and link) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeJal(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        long off = BitOp.signExt64(inst.getImm20J(), 20);
+        long t;
+
+        if (!exec) {
+            printDisasm(inst, "jal",
+                    String.format("%s, 0x%x", getRegName(rd),
+                            off + getPC()));
+            return;
+        }
+
+        t = getPC() + 4;
+        jumpRel((int)off);
+        setReg(rd, t);
+    }
+
+    /**
      * JALR (Jump and link register) 命令。
      *
      * @param inst 32bit 命令
@@ -671,6 +694,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_LUI:
             executeLui(inst, exec);
+            break;
+        case INS_RV32I_JAL:
+            executeJal(inst, exec);
             break;
         case INS_RV32I_JALR:
             executeJalr(inst, exec);

@@ -429,6 +429,8 @@ public class DecodeStageRVI extends Stage64 {
             return OpIndex.INS_RV32I_LUI;
         case InstructionRV32.OPCODE_AUIPC:
             return OpIndex.INS_RV32I_AUIPC;
+        case InstructionRV32.OPCODE_JAL:
+            return OpIndex.INS_RV32I_JAL;
         case InstructionRV32.OPCODE_JALR:
             return decodeJalr(inst);
         case InstructionRV32.OPCODE_BRANCH:

@@ -225,6 +225,23 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
+     * 32bit 命令 J-type の imm フィールドを取得します。
+     *
+     *   imm[   20]:    31
+     *   imm[19:12]: 19:12
+     *   imm[   11]:    20
+     *   imm[10: 1]: 30:21
+     *
+     * @return imm フィールド
+     */
+    public int getImm20J() {
+        return (getField(31, 1) << 20) |
+                getField(12, 8) << 12 |
+                getField(20, 1) << 11 |
+                getField(21, 10) << 1;
+    }
+
+    /**
      * 32bit 命令 U-type の imm フィールド（ビット [31:12]）を取得します。
      *
      * @return imm フィールド
