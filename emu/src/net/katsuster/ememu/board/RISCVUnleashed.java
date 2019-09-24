@@ -58,7 +58,7 @@ public class RISCVUnleashed extends AbstractBoard {
         bus = new Bus64();
 
         RAM mode_select = new RAM32(4 * 1024);
-        RAM mask_rom = new RAM32(8 * 1024);
+        RAM mask_rom = new RAM32(32 * 1024);
         CLINT clint = new CLINT(cpu);
         RAM l2lim = new RAM32(32 * 1024 * 1024);
         cl0_ddr = new RAM32(64 * 1024 * 1024);
