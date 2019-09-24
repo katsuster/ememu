@@ -190,11 +190,11 @@ public class InstructionRV16 extends Inst32 {
      * @return imm フィールド
      */
     public int getImm10ADDI16SP() {
-        return (getField(4, 1) << 4) |
-                (getField(5, 1) << 5) |
-                (getField(6, 1) << 6) |
-                (getField(7, 2) << 7) |
-                (getField(9, 1) << 9);
+        return (getField(6, 1) << 4) |
+                (getField(2, 1) << 5) |
+                (getField(5, 1) << 6) |
+                (getField(3, 2) << 7) |
+                (getField(12, 1) << 9);
     }
 
     /**
