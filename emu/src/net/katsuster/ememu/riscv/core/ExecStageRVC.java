@@ -202,13 +202,13 @@ public class ExecStageRVC extends Stage64 {
      */
     public void executeAddi16sp(InstructionRV16 inst, boolean exec) {
         int rd = inst.getRd();
-        int imm6 = inst.getImm10ADDI16SP();
-        long imm = BitOp.signExt64(imm6, 6);
+        int imm10 = inst.getImm10ADDI16SP();
+        long imm = BitOp.signExt64(imm10, 10);
 
         if (!exec) {
             printDisasm(inst, "c.addi16sp",
                     String.format("%s, %d # 0x%x", getRegName(rd),
-                            imm, imm6));
+                            imm, imm10));
             return;
         }
 
