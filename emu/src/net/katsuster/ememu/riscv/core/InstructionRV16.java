@@ -43,7 +43,8 @@ public class InstructionRV16 extends Inst32 {
      * @return opcode フィールド
      */
     public int getOpcode() {
-        return (getField(0, 2) << 3) | getField(13, 3);
+        return (getField(0, 2) << 3) |
+                (getField(13, 3) << 0);
     }
 
     /**
@@ -128,7 +129,8 @@ public class InstructionRV16 extends Inst32 {
      * @return imm フィールド
      */
     public int getImm6CI() {
-        return (getField(12, 1) << 5) | getField(2, 5);
+        return (getField(12, 1) << 5) |
+                (getField(2, 5) << 0);
     }
 
     /**
@@ -143,8 +145,8 @@ public class InstructionRV16 extends Inst32 {
      */
     public int getImm7LWSW() {
         return (getField(5, 1) << 6) |
-                getField(10, 3) << 3 |
-                getField(6, 1) << 2;
+                (getField(10, 3) << 3) |
+                (getField(6, 1) << 2);
     }
 
     /**
@@ -157,7 +159,8 @@ public class InstructionRV16 extends Inst32 {
      * @return imm フィールド
      */
     public int getImm8SWSP() {
-        return (getField(6, 2) << 6) | getField(9, 4) << 2;
+        return (getField(6, 2) << 6) |
+                (getField(9, 4) << 2);
     }
 
     /**
@@ -170,7 +173,8 @@ public class InstructionRV16 extends Inst32 {
      * @return imm フィールド
      */
     public int getImm9SDSP() {
-        return (getField(6, 3) << 6) | getField(10, 3) << 3;
+        return (getField(6, 3) << 6) |
+                (getField(10, 3) << 3);
     }
 
     /**
@@ -219,13 +223,11 @@ public class InstructionRV16 extends Inst32 {
      * @return offset フィールド
      */
     public int getOffset9B() {
-        int off8 = getField(12, 1);
-        int off6 = getField(5, 2);
-        int off5 = getField(2, 1);
-        int off3 = getField(10, 2);
-        int off1 = getField(3, 2);
-
-        return (off8 << 8) | (off6 << 6) | (off5 << 5) | (off3 << 3) | (off1 << 1);
+        return (getField(12, 1) << 8) |
+                (getField(5, 2) << 6) |
+                (getField(2, 1) << 5) |
+                (getField(10, 2) << 3) |
+                (getField(3, 2) << 1);
     }
 
     /**
