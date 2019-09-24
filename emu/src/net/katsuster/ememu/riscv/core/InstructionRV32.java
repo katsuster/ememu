@@ -199,10 +199,8 @@ public class InstructionRV32 extends Inst32 {
      * @return offset フィールド
      */
     public int getOffset12S() {
-        int off5 = getField(31, 1);
-        int off0 = getField(7, 1);
-
-        return (off5 << 5) | off0;
+        return (getField(31, 1) << 5) |
+                (getField(7, 1) << 0);
     }
 
     /**
@@ -216,12 +214,10 @@ public class InstructionRV32 extends Inst32 {
      * @return offset フィールド
      */
     public int getOffset13B() {
-        int off12 = getField(31, 1);
-        int off11 = getField(7, 1);
-        int off5 = getField(25, 6);
-        int off1 = getField(8, 4);
-
-        return (off12 << 12) | (off11 << 11) | (off5 << 5) | (off1 << 1);
+        return (getField(31, 1) << 12) |
+                (getField(7, 1) << 11) |
+                (getField(25, 6) << 5) |
+                (getField(8, 4) << 1);
     }
 
     /**
@@ -236,9 +232,9 @@ public class InstructionRV32 extends Inst32 {
      */
     public int getImm20J() {
         return (getField(31, 1) << 20) |
-                getField(12, 8) << 12 |
-                getField(20, 1) << 11 |
-                getField(21, 10) << 1;
+                (getField(12, 8) << 12) |
+                (getField(20, 1) << 11) |
+                (getField(21, 10) << 1);
     }
 
     /**
