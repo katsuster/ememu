@@ -1,5 +1,6 @@
 package net.katsuster.ememu.test;
 
+import net.katsuster.ememu.riscv.core.DecodeStageRVI;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -11,6 +12,7 @@ import org.junit.runners.Suite.SuiteClasses;
         IntegerExtTest.class,
         RAMTest.class,
         Bus64Test.class,
+        DecodeStageRVITest.class,
 })
 public class AllTest {
     protected AllTest() {
