@@ -503,6 +503,27 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * SLL (Shift left logical) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSll(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+
+        if (!exec) {
+            printDisasm(inst, "sll",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rs1), getRegName(rs2)));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) << getReg(rs2));
+    }
+
+    /**
      * Fence (Fence memory and I/O) 命令。
      *
      * @param inst 32bit 命令
@@ -740,6 +761,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_SUB:
             executeSub(inst, exec);
+            break;
+        case INS_RV32I_SLL:
+            executeSll(inst, exec);
             break;
         case INS_RV32I_FENCE:
             executeFence(inst, exec);
