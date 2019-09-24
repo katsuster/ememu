@@ -278,6 +278,28 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * ADDW (Add word) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAddw(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRs1dash() + 8;
+        int rs2 = inst.getRs2dash() + 8;
+        long v;
+
+        if (!exec) {
+            printDisasm(inst, "c.addw",
+                    String.format("%s, %s", getRegName(rd),
+                            getRegName(rs2)));
+            return;
+        }
+        v = (getReg(rd) + getReg(rs2)) & 0xffffffffL;
+
+        setReg(rd, BitOp.signExt64(v, 32));
+    }
+
+    /**
      * BNEZ (Branch if not equal to zero) 命令。
      *
      * @param inst 16bit 命令
@@ -449,6 +471,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_ANDI:
             executeAndi(inst, exec);
+            break;
+        case INS_RVC_ADDW:
+            executeAddw(inst, exec);
             break;
         case INS_RVC_BNEZ:
             executeBnez(inst, exec);
