@@ -173,7 +173,7 @@ public class InstructionRV16 extends Inst32 {
      * @return imm フィールド
      */
     public int getImm9SDSP() {
-        return (getField(6, 3) << 6) |
+        return (getField(7, 3) << 6) |
                 (getField(10, 3) << 3);
     }
 
