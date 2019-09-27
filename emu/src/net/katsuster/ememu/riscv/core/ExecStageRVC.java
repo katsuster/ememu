@@ -318,6 +318,28 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * BEQZ (Branch if equal to zero) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBeqz(InstructionRV16 inst, boolean exec) {
+        int rs1 = inst.getRs1dash() + 8;
+        int off = BitOp.signExt32(inst.getOffset9B(), 9);
+
+        if (!exec) {
+            printDisasm(inst, "c.beqz",
+                    String.format("%s, 0x%x", getRegName(rs1),
+                            getPC() + off));
+            return;
+        }
+
+        if (getReg(rs1) == 0) {
+            jumpRel(off);
+        }
+    }
+
+    /**
      * BNEZ (Branch if not equal to zero) 命令。
      *
      * @param inst 16bit 命令
@@ -495,6 +517,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_J:
             executeJ(inst, exec);
+            break;
+        case INS_RVC_BEQZ:
+            executeBeqz(inst, exec);
             break;
         case INS_RVC_BNEZ:
             executeBnez(inst, exec);
