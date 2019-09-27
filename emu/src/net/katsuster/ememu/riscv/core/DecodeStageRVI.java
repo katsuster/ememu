@@ -322,6 +322,37 @@ public class DecodeStageRVI extends Stage64 {
     }
 
     /**
+     * 32bit OP-32 命令 (opcode = 0b0111011) をデコードします。
+     *
+     * @param inst 32bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeOp32(InstructionRV32 inst) {
+        int funct3 = inst.getFunct3();
+        int imm7 = inst.getImm7I();
+
+        switch (imm7) {
+        case 1:
+            switch (funct3) {
+            case InstructionRV32.FUNC_OP_MULW:
+                return OpIndex.INS_RV64M_MULW;
+            case InstructionRV32.FUNC_OP_DIVW:
+                return OpIndex.INS_RV64M_DIVW;
+            case InstructionRV32.FUNC_OP_DIVUW:
+                return OpIndex.INS_RV64M_DIVUW;
+            case InstructionRV32.FUNC_OP_REMW:
+                return OpIndex.INS_RV64M_REMW;
+            case InstructionRV32.FUNC_OP_REMUW:
+                return OpIndex.INS_RV64M_REMUW;
+            }
+            break;
+        }
+
+        throw new IllegalArgumentException("Unknown OP-32 " +
+                String.format("funct3 %d imm7 0x%x.", funct3, imm7));
+    }
+
+    /**
      * 32bit BRANCH 命令をデコードします。
      *
      * @param inst 32bit 命令
@@ -441,6 +472,8 @@ public class DecodeStageRVI extends Stage64 {
             return decodeOp(inst);
         case InstructionRV32.OPCODE_LUI:
             return OpIndex.INS_RV32I_LUI;
+        case InstructionRV32.OPCODE_OP_32:
+            return decodeOp32(inst);
         case InstructionRV32.OPCODE_BRANCH:
             return decodeBranch(inst);
         case InstructionRV32.OPCODE_JALR:

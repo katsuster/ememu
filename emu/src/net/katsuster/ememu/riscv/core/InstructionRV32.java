@@ -111,6 +111,13 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_OP_REM = 6;
     public static final int FUNC_OP_REMU = 7;
 
+    //opcode = OP-32 (0b0111011), imm7 = 1
+    public static final int FUNC_OP_MULW = 0;
+    public static final int FUNC_OP_DIVW = 4;
+    public static final int FUNC_OP_DIVUW = 5;
+    public static final int FUNC_OP_REMW = 6;
+    public static final int FUNC_OP_REMUW = 7;
+
     public static final int FUNC_MISC_MEM_FENCE = 0;
     public static final int FUNC_MISC_MEM_FENCE_I = 1;
 

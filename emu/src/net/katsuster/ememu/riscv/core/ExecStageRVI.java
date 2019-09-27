@@ -701,6 +701,31 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * DIVUW (Divide word, Unsigned) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeDivuw(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        long dividend, divisor;
+
+        if (!exec) {
+            printDisasm(inst, "divuw",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rs1), getRegName(rs2)));
+            return;
+        }
+
+        dividend = getReg(rs1) & 0xffffffffL;
+        divisor = getReg(rs2) & 0xffffffffL;
+
+        setReg(rd, BitOp.signExt64(dividend / divisor, 32));
+    }
+
+    /**
      * 32bit 命令を実行します。
      *
      * @param decinst デコードされた命令
@@ -785,6 +810,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32M_DIVU:
             executeDivu(inst, exec);
+            break;
+        case INS_RV64M_DIVUW:
+            executeDivuw(inst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown RV32I instruction " +
