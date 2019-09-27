@@ -24,13 +24,13 @@ public class UART implements ParentCore {
 
     class UARTSlave extends Controller32 {
         public UARTSlave() {
-            addReg(REG_TXDATA, "TXDATA", 0x00000000);
+            /*addReg(REG_TXDATA, "TXDATA", 0x00000000);
             addReg(REG_RXDATA, "RXDATA", 0x00000000);
             addReg(REG_TXCTRL, "TXCTRL", 0x00000000);
             addReg(REG_RXCTRL, "RXCTRL", 0x00000000);
-            addReg(REG_IE, "IE", 0x00000000);
-            addReg(REG_IP, "IP", 0x00000000);
-            addReg(REG_DIV, "DIV", 0x00000000);
+            addReg(REG_IE,     "IE", 0x00000000);
+            addReg(REG_IP,     "IP", 0x00000000);*/
+            addReg(REG_DIV,     "DIV", 0x00000000);
         }
 
         @Override
