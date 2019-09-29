@@ -176,8 +176,8 @@ public class ExecStageRVI extends Stage64 {
 
         if (!exec) {
             printDisasm(inst, "jalr",
-                    String.format("%s, %d(%s)", getRegName(rd),
-                            off, getRegName(rs1)));
+                    String.format("%s, %d(%s) # 0x%x", getRegName(rd),
+                            off, getRegName(rs1), getReg(rs1) + off));
             return;
         }
 
