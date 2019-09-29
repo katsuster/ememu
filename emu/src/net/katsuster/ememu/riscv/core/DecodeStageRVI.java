@@ -113,7 +113,7 @@ public class DecodeStageRVI extends Stage64 {
             return OpIndex.INS_RV32I_ORI;
         case InstructionRV32.FUNC_OP_IMM_ANDI:
             return OpIndex.INS_RV32I_ANDI;
-        case InstructionRV32.FUNC_OP_IMM_SLI:
+        case InstructionRV32.FUNC_OP_IMM_SLLI:
             if (getRVBits() == 64) {
                 int imm6 = inst.getImm6I();
 
@@ -138,7 +138,7 @@ public class DecodeStageRVI extends Stage64 {
 
             throw new IllegalArgumentException("Unknown OP-IMM SLI " +
                     String.format("%dbit.", getRVBits()));
-        case InstructionRV32.FUNC_OP_IMM_SRI:
+        case InstructionRV32.FUNC_OP_IMM_SRLI_SRAI:
             if (getCore().getRVBits() == 64) {
                 int imm6 = inst.getImm6I();
 
@@ -265,7 +265,7 @@ public class DecodeStageRVI extends Stage64 {
         int funct3 = inst.getFunct3();
         int funct5 = inst.getFunct7R() >>> 2;
 
-        if (funct3 == 2) {
+        if (funct3 == InstructionRV32.FUNC_AMO_W) {
             switch (funct5) {
             case InstructionRV32.FUNC5_AMO_LR_W:
                 return OpIndex.INS_RV32A_LR_W;
@@ -375,15 +375,15 @@ public class DecodeStageRVI extends Stage64 {
         switch (funct7) {
         case 1:
             switch (funct3) {
-            case InstructionRV32.FUNC_OP_MULW:
+            case InstructionRV32.FUNC_OP_32_MULW:
                 return OpIndex.INS_RV64M_MULW;
-            case InstructionRV32.FUNC_OP_DIVW:
+            case InstructionRV32.FUNC_OP_32_DIVW:
                 return OpIndex.INS_RV64M_DIVW;
-            case InstructionRV32.FUNC_OP_DIVUW:
+            case InstructionRV32.FUNC_OP_32_DIVUW:
                 return OpIndex.INS_RV64M_DIVUW;
-            case InstructionRV32.FUNC_OP_REMW:
+            case InstructionRV32.FUNC_OP_32_REMW:
                 return OpIndex.INS_RV64M_REMW;
-            case InstructionRV32.FUNC_OP_REMUW:
+            case InstructionRV32.FUNC_OP_32_REMUW:
                 return OpIndex.INS_RV64M_REMUW;
             }
             break;

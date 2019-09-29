@@ -55,16 +55,7 @@ public class InstructionRV32 extends Inst32 {
         return getField(2, 5);
     }
 
-    //funct3
-    public static final int FUNC_JALR_JALR = 0;
-
-    public static final int FUNC_BRANCH_BEQ = 0;
-    public static final int FUNC_BRANCH_BNE = 1;
-    public static final int FUNC_BRANCH_BLT = 4;
-    public static final int FUNC_BRANCH_BGE = 5;
-    public static final int FUNC_BRANCH_BLTU = 6;
-    public static final int FUNC_BRANCH_BGEU = 7;
-
+    //opcode: LOAD (0b00000)
     public static final int FUNC_LOAD_LB = 0;
     public static final int FUNC_LOAD_LH = 1;
     public static final int FUNC_LOAD_LW = 2;
@@ -73,23 +64,80 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_LOAD_LHU = 5;
     public static final int FUNC_LOAD_LWU = 6;
 
-    public static final int FUNC_STORE_SB = 0;
-    public static final int FUNC_STORE_SH = 1;
-    public static final int FUNC_STORE_SW = 2;
-    public static final int FUNC_STORE_SD = 3;
+    //opcode: MISC_MEM (0b00011)
+    public static final int FUNC_MISC_MEM_FENCE = 0;
+    public static final int FUNC_MISC_MEM_FENCE_I = 1;
 
+    //opcode: OP-IMM (0b00100)
     public static final int FUNC_OP_IMM_ADDI = 0;
     public static final int FUNC_OP_IMM_SLTI = 2;
     public static final int FUNC_OP_IMM_SLTIU = 3;
     public static final int FUNC_OP_IMM_XORI = 4;
     public static final int FUNC_OP_IMM_ORI = 6;
     public static final int FUNC_OP_IMM_ANDI = 7;
-    public static final int FUNC_OP_IMM_SLI = 1;
-    public static final int FUNC_OP_IMM_SRI = 5;
+    public static final int FUNC_OP_IMM_SLLI = 1;
+    public static final int FUNC_OP_IMM_SRLI_SRAI = 5;
 
+    //opcode: OP-IMM-32 (0b00110)
     public static final int FUNC_OP_IMM_32_ADDIW = 0;
     public static final int FUNC_OP_IMM_32_SLLIW = 1;
     public static final int FUNC_OP_IMM_32_SRLIW_SRAIW = 5;
+
+    //opcode: STORE (0b01000)
+    public static final int FUNC_STORE_SB = 0;
+    public static final int FUNC_STORE_SH = 1;
+    public static final int FUNC_STORE_SW = 2;
+    public static final int FUNC_STORE_SD = 3;
+
+    //opcode: AMO (0b01011)
+    public static final int FUNC_AMO_W = 2;
+
+    //opcode: OP (0b01100), imm7 = 0, 32
+    public static final int FUNC_OP_ADD_SUB = 0;
+    public static final int FUNC_OP_SLL = 1;
+    public static final int FUNC_OP_SLT = 2;
+    public static final int FUNC_OP_SLTU = 3;
+    public static final int FUNC_OP_XOR = 4;
+    public static final int FUNC_OP_SRL_SRA = 5;
+    public static final int FUNC_OP_OR = 6;
+    public static final int FUNC_OP_AND = 7;
+
+    //opcode: OP (0b01100), imm7 = 1
+    public static final int FUNC_OP_MUL = 0;
+    public static final int FUNC_OP_MULH = 1;
+    public static final int FUNC_OP_MULHSU = 2;
+    public static final int FUNC_OP_MULHU = 3;
+    public static final int FUNC_OP_DIV = 4;
+    public static final int FUNC_OP_DIVU = 5;
+    public static final int FUNC_OP_REM = 6;
+    public static final int FUNC_OP_REMU = 7;
+
+    //opcode: OP-32 (0b01110), imm7 = 1
+    public static final int FUNC_OP_32_MULW = 0;
+    public static final int FUNC_OP_32_DIVW = 4;
+    public static final int FUNC_OP_32_DIVUW = 5;
+    public static final int FUNC_OP_32_REMW = 6;
+    public static final int FUNC_OP_32_REMUW = 7;
+
+    //opcode: BRANCH (0b11000)
+    public static final int FUNC_BRANCH_BEQ = 0;
+    public static final int FUNC_BRANCH_BNE = 1;
+    public static final int FUNC_BRANCH_BLT = 4;
+    public static final int FUNC_BRANCH_BGE = 5;
+    public static final int FUNC_BRANCH_BLTU = 6;
+    public static final int FUNC_BRANCH_BGEU = 7;
+
+    //opcode: JALR (0b11011)
+    public static final int FUNC_JALR_JALR = 0;
+
+    //opcode: SYSTEM (0b11100)
+    public static final int FUNC_SYSTEM_EX = 0;
+    public static final int FUNC_SYSTEM_CSRRW = 1;
+    public static final int FUNC_SYSTEM_CSRRS = 2;
+    public static final int FUNC_SYSTEM_CSRRC = 3;
+    public static final int FUNC_SYSTEM_CSRRWI = 5;
+    public static final int FUNC_SYSTEM_CSRRSI = 6;
+    public static final int FUNC_SYSTEM_CSRRCI = 7;
 
     //R-type, funct3 = 0b010
     public static final int FUNC5_AMO_LR_W = 2;
@@ -103,44 +151,6 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC5_AMO_AMOMAX_W = 20;
     public static final int FUNC5_AMO_AMOMINU_W = 24;
     public static final int FUNC5_AMO_AMOMAXU_W = 28;
-
-    //imm7 = 0, 32
-    public static final int FUNC_OP_ADD_SUB = 0;
-    public static final int FUNC_OP_SLL = 1;
-    public static final int FUNC_OP_SLT = 2;
-    public static final int FUNC_OP_SLTU = 3;
-    public static final int FUNC_OP_XOR = 4;
-    public static final int FUNC_OP_SRL_SRA = 5;
-    public static final int FUNC_OP_OR = 6;
-    public static final int FUNC_OP_AND = 7;
-
-    //imm7 = 1
-    public static final int FUNC_OP_MUL = 0;
-    public static final int FUNC_OP_MULH = 1;
-    public static final int FUNC_OP_MULHSU = 2;
-    public static final int FUNC_OP_MULHU = 3;
-    public static final int FUNC_OP_DIV = 4;
-    public static final int FUNC_OP_DIVU = 5;
-    public static final int FUNC_OP_REM = 6;
-    public static final int FUNC_OP_REMU = 7;
-
-    //opcode = OP-32 (0b0111011), imm7 = 1
-    public static final int FUNC_OP_MULW = 0;
-    public static final int FUNC_OP_DIVW = 4;
-    public static final int FUNC_OP_DIVUW = 5;
-    public static final int FUNC_OP_REMW = 6;
-    public static final int FUNC_OP_REMUW = 7;
-
-    public static final int FUNC_MISC_MEM_FENCE = 0;
-    public static final int FUNC_MISC_MEM_FENCE_I = 1;
-
-    public static final int FUNC_SYSTEM_EX = 0;
-    public static final int FUNC_SYSTEM_CSRRW = 1;
-    public static final int FUNC_SYSTEM_CSRRS = 2;
-    public static final int FUNC_SYSTEM_CSRRC = 3;
-    public static final int FUNC_SYSTEM_CSRRWI = 5;
-    public static final int FUNC_SYSTEM_CSRRSI = 6;
-    public static final int FUNC_SYSTEM_CSRRCI = 7;
 
     /**
      * 32bit 命令の funct3 フィールド（ビット [14:12]）を取得します。
