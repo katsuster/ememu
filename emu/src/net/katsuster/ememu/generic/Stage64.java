@@ -1,5 +1,7 @@
 package net.katsuster.ememu.generic;
 
+import java.util.concurrent.locks.*;
+
 /**
  * 64bit CPU のパイプラインのステージ。
  *
@@ -25,6 +27,24 @@ public class Stage64 {
      */
     public CPU64 getCore() {
         return core;
+    }
+
+    /**
+     * スレーブバスの読み込みロックを取得します。
+     *
+     * @return 読み込みロック
+     */
+    public Lock getReadLock() {
+        return getCore().getReadLock();
+    }
+
+    /**
+     * スレーブバスの書き込み、読み込みロックを取得します。
+     *
+     * @return 書き込みロック
+     */
+    public Lock getWriteLock() {
+        return getCore().getWriteLock();
     }
 
     /**

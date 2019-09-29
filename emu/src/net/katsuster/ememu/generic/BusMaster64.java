@@ -1,5 +1,7 @@
 package net.katsuster.ememu.generic;
 
+import java.util.concurrent.locks.*;
+
 /**
  * バスマスターのインタフェース（64bit アドレス）
  *
@@ -19,6 +21,20 @@ public interface BusMaster64 {
      * @param bus スレーブバス
      */
     public abstract void setSlaveBus(Bus64 bus);
+
+    /**
+     * スレーブバスの読み込みロックを取得します。
+     *
+     * @return 読み込みロック
+     */
+    public abstract Lock getReadLock();
+
+    /**
+     * スレーブバスの書き込み、読み込みロックを取得します。
+     *
+     * @return 書き込みロック
+     */
+    public abstract Lock getWriteLock();
 
     /**
      * 指定されたアドレスからの読み取りが可能かどうかを判定します。

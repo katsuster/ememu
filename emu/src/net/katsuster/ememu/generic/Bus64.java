@@ -73,6 +73,24 @@ public class Bus64 implements BusSlave64 {
         }
     }
 
+    /**
+     * バスの読み込みロックを取得します。
+     *
+     * @return 読み込みロック
+     */
+    public Lock getReadLock() {
+        return rwlock.readLock();
+    }
+
+    /**
+     * バスの書き込みロックを取得します。
+     *
+     * @return 書き込みロック
+     */
+    public Lock getWriteLock() {
+        return rwlock.writeLock();
+    }
+
     @Override
     public boolean tryRead(BusMaster64 m, long addr, int len) {
         SlaveCoreAddress sca;

@@ -1,5 +1,7 @@
 package net.katsuster.ememu.generic;
 
+import java.util.concurrent.locks.*;
+
 /**
  * 64 ビットアドレスバスのマスターコア。
  *
@@ -24,6 +26,16 @@ public abstract class MasterCore64 extends AbstractCore
     @Override
     public void setSlaveBus(Bus64 bus) {
         slaveBus = bus;
+    }
+
+    @Override
+    public Lock getReadLock() {
+        return slaveBus.getReadLock();
+    }
+
+    @Override
+    public Lock getWriteLock() {
+        return slaveBus.getWriteLock();
     }
 
     @Override
