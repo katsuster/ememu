@@ -1,4 +1,4 @@
-package net.katsuster.ememu.riscv.core;
+package net.katsuster.ememu.riscv;
 
 import net.katsuster.ememu.generic.*;
 
