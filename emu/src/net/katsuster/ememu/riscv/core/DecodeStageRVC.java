@@ -208,6 +208,29 @@ public class DecodeStageRVC extends Stage64 {
     }
 
     /**
+     * FLWSP, LDSP 命令をデコードします。
+     *
+     * @param inst 16bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeFlwspLdsp(InstructionRV16 inst) {
+        int rd = inst.getRd();
+
+        if (getRVBits() == 32) {
+            //C.FLWSP
+            return OpIndex.INS_RVC_FLWSP;
+        } if (getRVBits() == 64 || getRVBits() == 128) {
+            //C.LDSP
+            if (rd != 0) {
+                return OpIndex.INS_RVC_LDSP;
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown FLWSP, LDSP " +
+                String.format("rd %d.", rd));
+    }
+
+    /**
      * J[AL]R, MV, ADD 命令をデコードします。
      *
      * @param inst 16bit 命令
@@ -294,6 +317,8 @@ public class DecodeStageRVC extends Stage64 {
             return decodeSlli(inst);
         case InstructionRV16.OPCODE_JR_MV_ADD:
             return decodeJrMvAdd(inst);
+        case InstructionRV16.OPCODE_FLWSP_LDSP:
+            return decodeFlwspLdsp(inst);
         case InstructionRV16.OPCODE_FSWSP_SDSP:
             return decodeFswspSdsp(inst);
         default:

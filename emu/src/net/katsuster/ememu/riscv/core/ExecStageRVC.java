@@ -402,6 +402,44 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * LDSP (Load doubleword, stack-pointer relative) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLdsp(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRd();
+        int uimm = inst.getImm9LDSP();
+        long vaddr, paddr;
+        long val;
+
+        if (!exec) {
+            printDisasm(inst, "c.ldsp",
+                    String.format("%s, %d(sp)", getRegName(rd),
+                            uimm));
+            return;
+        }
+
+        vaddr = getReg(2) + uimm;
+
+        //paddr = getMMU().translate(vaddr, 8, false, getPriv(), true);
+        paddr = vaddr;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        if (!tryRead(paddr, 8)) {
+            //raiseException(ARMv5.EXCEPT_ABT_DATA,
+            //        String.format("ldrd [%08x]", paddr));
+            return;
+        }
+        val = read64(paddr);
+
+        setReg(rd, val);
+    }
+
+    /**
      * Jr (Jump register) 命令。
      *
      * @param inst 16bit 命令
@@ -529,6 +567,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_ADD:
             executeAdd(inst, exec);
+            break;
+        case INS_RVC_LDSP:
+            executeLdsp(inst, exec);
             break;
         case INS_RVC_JR:
             executeJr(inst, exec);
