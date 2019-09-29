@@ -92,6 +92,45 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * LD (Load doubleword) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLd(InstructionRV16 inst, boolean exec) {
+        int rs1 = inst.getRs1dash() + 8;
+        int rd = inst.getRs2dash() + 8;
+        int uimm = inst.getImm8LDSD();
+        long vaddr, paddr;
+        long val;
+
+        if (!exec) {
+            printDisasm(inst, "c.ld",
+                    String.format("%s, %d(%s)", getRegName(rd),
+                            uimm, getRegName(rs1)));
+            return;
+        }
+
+        vaddr = getReg(rs1) + uimm;
+
+        //paddr = getMMU().translate(vaddr, 8, false, getPriv(), true);
+        paddr = vaddr;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        if (!tryRead(paddr, 8)) {
+            //raiseException(ARMv5.EXCEPT_ABT_DATA,
+            //        String.format("ldrd [%08x]", paddr));
+            return;
+        }
+        val = read64(paddr);
+
+        setReg(rd, val);
+    }
+
+    /**
      * SW (Store word) 命令。
      *
      * @param inst 16bit 命令
@@ -546,6 +585,9 @@ public class ExecStageRVC extends Stage64 {
         switch (decinst.getIndex()) {
         case INS_RVC_LW:
             executeLw(inst, exec);
+            break;
+        case INS_RVC_LD:
+            executeLd(inst, exec);
             break;
         case INS_RVC_SW:
             executeSw(inst, exec);

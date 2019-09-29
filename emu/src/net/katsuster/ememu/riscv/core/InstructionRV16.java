@@ -142,6 +142,20 @@ public class InstructionRV16 extends Inst32 {
 
     /**
      * 16bit 命令 imm フィールドを取得します。
+     * LD, FLD, SD が使います。
+     *
+     *   imm[7:6]:  6: 5
+     *   imm[5:3]: 12:10
+     *
+     * @return imm フィールド
+     */
+    public int getImm8LDSD() {
+        return (getField(6, 2) << 6) |
+                (getField(10, 3) << 3);
+    }
+
+    /**
+     * 16bit 命令 imm フィールドを取得します。
      * SWSP, FSWSP が使います。
      *
      *   imm[7:6]:  8: 7
