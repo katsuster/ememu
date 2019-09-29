@@ -373,6 +373,24 @@ public class DecodeStageRVI extends Stage64 {
         int funct7 = inst.getFunct7R();
 
         switch (funct7) {
+        case 0:
+            switch (funct3) {
+            case InstructionRV32.FUNC_OP_32_ADDW_SUBW:
+                return OpIndex.INS_RV64I_ADDW;
+            case InstructionRV32.FUNC_OP_32_SLLW:
+                return OpIndex.INS_RV64I_SLLW;
+            case InstructionRV32.FUNC_OP_32_SRLW_SRAW:
+                return OpIndex.INS_RV64I_SRLW;
+            }
+            break;
+        case 32:
+            switch (funct3) {
+            case InstructionRV32.FUNC_OP_32_ADDW_SUBW:
+                return OpIndex.INS_RV64I_SUBW;
+            case InstructionRV32.FUNC_OP_32_SRLW_SRAW:
+                return OpIndex.INS_RV64I_SRAW;
+            }
+            break;
         case 1:
             switch (funct3) {
             case InstructionRV32.FUNC_OP_32_MULW:

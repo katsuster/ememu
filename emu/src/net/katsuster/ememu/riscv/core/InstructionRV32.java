@@ -92,7 +92,7 @@ public class InstructionRV32 extends Inst32 {
     //opcode: AMO (0b01011)
     public static final int FUNC_AMO_W = 2;
 
-    //opcode: OP (0b01100), imm7 = 0, 32
+    //opcode: OP (0b01100), funct7 = 0, 32
     public static final int FUNC_OP_ADD_SUB = 0;
     public static final int FUNC_OP_SLL = 1;
     public static final int FUNC_OP_SLT = 2;
@@ -102,7 +102,7 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_OP_OR = 6;
     public static final int FUNC_OP_AND = 7;
 
-    //opcode: OP (0b01100), imm7 = 1
+    //opcode: OP (0b01100), funct7 = 1
     public static final int FUNC_OP_MUL = 0;
     public static final int FUNC_OP_MULH = 1;
     public static final int FUNC_OP_MULHSU = 2;
@@ -112,7 +112,12 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_OP_REM = 6;
     public static final int FUNC_OP_REMU = 7;
 
-    //opcode: OP-32 (0b01110), imm7 = 1
+    //opcode: OP-32 (0b01110), funct7 = 0, 32
+    public static final int FUNC_OP_32_ADDW_SUBW = 0;
+    public static final int FUNC_OP_32_SLLW = 1;
+    public static final int FUNC_OP_32_SRLW_SRAW = 5;
+
+    //opcode: OP-32 (0b01110), funct7 = 1
     public static final int FUNC_OP_32_MULW = 0;
     public static final int FUNC_OP_32_DIVW = 4;
     public static final int FUNC_OP_32_DIVUW = 5;
