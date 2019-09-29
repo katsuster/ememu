@@ -475,12 +475,33 @@ public class ExecStageRVI extends Stage64 {
 
         if (!exec) {
             printDisasm(inst, "slli",
-                    String.format("%s, %s, %d", getRegName(rd),
-                            getRegName(rs1), shamt));
+                    String.format("%s, %s, 0x%x # %d", getRegName(rd),
+                            getRegName(rs1), shamt, shamt));
             return;
         }
 
         setReg(rd, getReg(rs1) << shamt);
+    }
+
+    /**
+     * SRLI (Shift right logical immediate) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSrli(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int shamt = inst.getField(20, 5);
+
+        if (!exec) {
+            printDisasm(inst, "srli",
+                    String.format("%s, %s, 0x%x # %d", getRegName(rd),
+                            getRegName(rs1), shamt, shamt));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) >>> shamt);
     }
 
     /**
@@ -907,6 +928,10 @@ public class ExecStageRVI extends Stage64 {
         case INS_RV32I_SLLI:
         case INS_RV64I_SLLI:
             executeSlli(inst, exec);
+            break;
+        case INS_RV32I_SRLI:
+        case INS_RV64I_SRLI:
+            executeSrli(inst, exec);
             break;
         case INS_RV32I_ADD:
             executeAdd(inst, exec);
