@@ -547,6 +547,27 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * SRAI (Shift right arithmetic immediate) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSrai(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int shamt = inst.getField(20, 5);
+
+        if (!exec) {
+            printDisasm(inst, "srai",
+                    String.format("%s, %s, 0x%x # %d", getRegName(rd),
+                            getRegName(rs1), shamt, shamt));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) >> shamt);
+    }
+
+    /**
      * ADD 命令。
      *
      * @param inst 32bit 命令
@@ -965,6 +986,10 @@ public class ExecStageRVI extends Stage64 {
         case INS_RV32I_SRLI:
         case INS_RV64I_SRLI:
             executeSrli(inst, exec);
+            break;
+        case INS_RV32I_SRAI:
+        case INS_RV64I_SRAI:
+            executeSrai(inst, exec);
             break;
         case INS_RV32I_ADD:
             executeAdd(inst, exec);
