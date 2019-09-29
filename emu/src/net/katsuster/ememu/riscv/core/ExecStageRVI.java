@@ -532,7 +532,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeSlli(InstructionRV32 inst, boolean exec) {
         int rd = inst.getRd();
         int rs1 = inst.getRs1();
-        int shamt = inst.getField(20, 5);
+        int shamt = inst.getField(20, 6);
 
         if (!exec) {
             printDisasm(inst, "slli",
@@ -553,7 +553,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeSrli(InstructionRV32 inst, boolean exec) {
         int rd = inst.getRd();
         int rs1 = inst.getRs1();
-        int shamt = inst.getField(20, 5);
+        int shamt = inst.getField(20, 6);
 
         if (!exec) {
             printDisasm(inst, "srli",
@@ -574,7 +574,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeSrai(InstructionRV32 inst, boolean exec) {
         int rd = inst.getRd();
         int rs1 = inst.getRs1();
-        int shamt = inst.getField(20, 5);
+        int shamt = inst.getField(20, 6);
 
         if (!exec) {
             printDisasm(inst, "srai",
