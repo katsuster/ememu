@@ -146,7 +146,7 @@ public class CLINT implements ParentCore {
                 } else {
                     result = 0;
                 }
-                System.out.printf("rd MSIP[%d] val:%08x\n", id, result);
+                //System.out.printf("rd MSIP[%d] val:%08x\n", id, result);
                 break;
             default:
                 result = super.readWord(m, regaddr);
