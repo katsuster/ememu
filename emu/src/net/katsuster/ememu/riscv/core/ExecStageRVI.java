@@ -614,6 +614,45 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * LD (Load doubleword) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLd(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int imm12 = inst.getImm12I();
+        long off = BitOp.signExt64(imm12, 12);
+        long vaddr, paddr;
+        long val;
+
+        if (!exec) {
+            printDisasm(inst, "lw",
+                    String.format("%s, %d(%s) # 0x%x",
+                            getRegName(rd), off, getRegName(rs1), imm12));
+            return;
+        }
+
+        vaddr = getReg(rs1) + off;
+
+        //paddr = getMMU().translate(vaddr, 8, false, getPriv(), true);
+        paddr = vaddr;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        if (!tryRead(paddr, 8)) {
+            //raiseException(ARMv5.EXCEPT_ABT_DATA,
+            //        String.format("ldrd [%08x]", paddr));
+            return;
+        }
+        val = read64(paddr);
+
+        setReg(rd, val);
+    }
+    /**
      * ADDIW (Add word immediate) 命令。
      *
      * @param inst 32bit 命令
@@ -886,6 +925,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_CSRRS:
             executeCsrrs(inst, exec);
+            break;
+        case INS_RV64I_LD:
+            executeLd(inst, exec);
             break;
         case INS_RV64I_ADDIW:
             executeAddiw(inst, exec);
