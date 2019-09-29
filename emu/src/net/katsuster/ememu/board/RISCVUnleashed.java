@@ -68,6 +68,7 @@ public class RISCVUnleashed extends AbstractBoard {
         SPI spi0 = new SPI();
         SPI spi1 = new SPI();
         SPI spi2 = new SPI();
+        RAM qspi_flash0 = new RAM32(33 * 1024 * 1024);
 
         //Master core
         for (int i = 0; i < cpu.length; i++) {
@@ -87,6 +88,7 @@ public class RISCVUnleashed extends AbstractBoard {
         //  0x1004_0000 - 0x1004_0fff: QSPI0
         //  0x1004_1000 - 0x1004_1fff: QSPI1
         //  0x1005_0000 - 0x1005_0fff: QSPI2
+        //  0x2000_0000 - 0x2fff_ffff: QSPI0 flash
         bus.addSlaveCore(mode_select, 0x00001000L, 0x00001fffL);
         bus.addSlaveCore(mask_rom, 0x00010000L, 0x00017fffL);
         bus.addSlaveCore(clint.getSlaveCore(), 0x02000000L, 0x0200ffffL);
@@ -97,6 +99,8 @@ public class RISCVUnleashed extends AbstractBoard {
         bus.addSlaveCore(spi0.getSlaveCore(), 0x10040000L, 0x10040fffL);
         bus.addSlaveCore(spi1.getSlaveCore(), 0x10041000L, 0x10041fffL);
         bus.addSlaveCore(spi2.getSlaveCore(), 0x10050000L, 0x10050fffL);
+        //TODO: tentative 33MB
+        bus.addSlaveCore(qspi_flash0, 0x20000000L, 0x221fffffL);
 
         //reset CPU
         for (int i = 0; i < cpu.length; i++) {
