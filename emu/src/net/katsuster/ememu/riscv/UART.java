@@ -24,12 +24,16 @@ public class UART implements ParentCore {
 
     class UARTSlave extends Controller32 {
         public UARTSlave() {
-            /*addReg(REG_TXDATA, "TXDATA", 0x00000000);
+            addReg(REG_TXDATA, "TXDATA", 0x00000000);
+            /*
             addReg(REG_RXDATA, "RXDATA", 0x00000000);
+            */
             addReg(REG_TXCTRL, "TXCTRL", 0x00000000);
+            /*
             addReg(REG_RXCTRL, "RXCTRL", 0x00000000);
             addReg(REG_IE,     "IE", 0x00000000);
-            addReg(REG_IP,     "IP", 0x00000000);*/
+            addReg(REG_IP,     "IP", 0x00000000);
+            */
             addReg(REG_DIV,     "DIV", 0x00000000);
         }
 
@@ -56,6 +60,12 @@ public class UART implements ParentCore {
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
+            case REG_TXDATA:
+                System.out.printf("UART TXDATA: %c\n", data);
+                break;
+            case REG_TXCTRL:
+                System.out.printf("UART TXCTRL: 0x%x\n", data);
+                break;
             case REG_DIV:
                 System.out.printf("UART Divisor: %d\n", data);
                 break;
