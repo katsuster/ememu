@@ -81,6 +81,25 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * 割り込み待ち。
+     */
+    public void waitInt() {
+        RV64 c = getCore();
+
+        synchronized (c) {
+            while (!c.isRaisedInterrupt() &&
+                    !c.isRaisedInternalInterrupt() &&
+                    !c.shouldHalt()) {
+                try {
+                    c.wait(1000);
+                } catch (InterruptedException ex) {
+                    //do nothing
+                }
+            }
+        }
+    }
+
+    /**
      * AUIPC (Add upper immediate to pc) 命令。
      *
      * @param inst 32bit 命令
@@ -698,6 +717,27 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * WFI () 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeWfi(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int imm12 = inst.getImm12I();
+        long imm = BitOp.signExt64(imm12, 12);
+        long v;
+
+        if (!exec) {
+            printDisasm(inst, "wfi", "");
+            return;
+        }
+
+        waitInt();
+    }
+
+    /**
      * LD (Load doubleword) 命令。
      *
      * @param inst 32bit 命令
@@ -758,46 +798,6 @@ public class ExecStageRVI extends Stage64 {
 
         v = getReg(rs1) + imm;
         setReg(rd, BitOp.signExt64(v & 0xffffffffL, 32));
-    }
-
-    /**
-     * WFI () 命令。
-     *
-     * @param inst 32bit 命令
-     * @param exec デコードと実行なら true、デコードのみなら false
-     */
-    public void executeWfi(InstructionRV32 inst, boolean exec) {
-        int rd = inst.getRd();
-        int rs1 = inst.getRs1();
-        int imm12 = inst.getImm12I();
-        long imm = BitOp.signExt64(imm12, 12);
-        long v;
-
-        if (!exec) {
-            printDisasm(inst, "wfi", "");
-            return;
-        }
-
-        waitInt();
-    }
-
-    /**
-     * 割り込み待ち。
-     */
-    public void waitInt() {
-        RV64 c = getCore();
-
-        synchronized (c) {
-            while (!c.isRaisedInterrupt() &&
-                    !c.isRaisedInternalInterrupt() &&
-                    !c.shouldHalt()) {
-                try {
-                    c.wait(1000);
-                } catch (InterruptedException ex) {
-                    //do nothing
-                }
-            }
-        }
     }
 
     /**
@@ -1009,14 +1009,14 @@ public class ExecStageRVI extends Stage64 {
         case INS_RV32I_CSRRS:
             executeCsrrs(inst, exec);
             break;
+        case INS_RV32_WFI:
+            executeWfi(inst, exec);
+            break;
         case INS_RV64I_LD:
             executeLd(inst, exec);
             break;
         case INS_RV64I_ADDIW:
             executeAddiw(inst, exec);
-            break;
-        case INS_RV32_WFI:
-            executeWfi(inst, exec);
             break;
         case INS_RV32M_MUL:
             executeMul(inst, exec);
