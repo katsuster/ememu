@@ -263,7 +263,7 @@ public class DecodeStageRVI extends Stage64 {
      */
     public OpIndex decodeAmo(InstructionRV32 inst) {
         int funct3 = inst.getFunct3();
-        int funct5 = inst.getImm7I() >>> 2;
+        int funct5 = inst.getFunct7R() >>> 2;
 
         if (funct3 == 2) {
             switch (funct5) {
@@ -304,10 +304,10 @@ public class DecodeStageRVI extends Stage64 {
      */
     public OpIndex decodeOp(InstructionRV32 inst) {
         int funct3 = inst.getFunct3();
-        int imm7 = inst.getImm7I();
+        int funct7 = inst.getFunct7R();
         String opname = "unknown";
 
-        switch (imm7) {
+        switch (funct7) {
         case 0:
             switch (funct3) {
             case InstructionRV32.FUNC_OP_ADD_SUB:
@@ -359,7 +359,7 @@ public class DecodeStageRVI extends Stage64 {
         }
 
         throw new IllegalArgumentException("Unknown OP " +
-                String.format("funct3 %d imm7 0x%x.", funct3, imm7));
+                String.format("funct3 %d funct7 0x%x.", funct3, funct7));
     }
 
     /**
@@ -370,9 +370,9 @@ public class DecodeStageRVI extends Stage64 {
      */
     public OpIndex decodeOp32(InstructionRV32 inst) {
         int funct3 = inst.getFunct3();
-        int imm7 = inst.getImm7I();
+        int funct7 = inst.getFunct7R();
 
-        switch (imm7) {
+        switch (funct7) {
         case 1:
             switch (funct3) {
             case InstructionRV32.FUNC_OP_MULW:
@@ -390,7 +390,7 @@ public class DecodeStageRVI extends Stage64 {
         }
 
         throw new IllegalArgumentException("Unknown OP-32 " +
-                String.format("funct3 %d imm7 0x%x.", funct3, imm7));
+                String.format("funct3 %d funct7 0x%x.", funct3, funct7));
     }
 
     /**

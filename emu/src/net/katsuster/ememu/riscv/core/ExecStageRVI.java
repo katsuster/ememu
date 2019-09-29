@@ -2,7 +2,7 @@ package net.katsuster.ememu.riscv.core;
 
 import net.katsuster.ememu.generic.*;
 
-import java.math.BigInteger;
+import java.math.*;
 
 public class ExecStageRVI extends Stage64 {
     /**
@@ -173,7 +173,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBeq(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffset13B(), 13);
+        int off = BitOp.signExt32(inst.getImm13B(), 13);
 
         if (!exec) {
             printDisasm(inst, "beq",
@@ -196,7 +196,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBne(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffset13B(), 13);
+        int off = BitOp.signExt32(inst.getImm13B(), 13);
 
         if (!exec) {
             printDisasm(inst, "bne",
@@ -219,7 +219,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBlt(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffset13B(), 13);
+        int off = BitOp.signExt32(inst.getImm13B(), 13);
 
         if (!exec) {
             printDisasm(inst, "blt",
@@ -242,7 +242,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBltu(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffset13B(), 13);
+        int off = BitOp.signExt32(inst.getImm13B(), 13);
 
         if (!exec) {
             printDisasm(inst, "bltu",
@@ -265,7 +265,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeBgeu(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int off = BitOp.signExt32(inst.getOffset13B(), 13);
+        int off = BitOp.signExt32(inst.getImm13B(), 13);
 
         if (!exec) {
             printDisasm(inst, "bgeu",
@@ -328,7 +328,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeSw(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int offraw = inst.getOffset12S();
+        int offraw = inst.getImm12S();
         long off = BitOp.signExt64(offraw, 12);
         long vaddr, paddr;
 
@@ -366,7 +366,7 @@ public class ExecStageRVI extends Stage64 {
     public void executeSd(InstructionRV32 inst, boolean exec) {
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        int offraw = inst.getOffset12S();
+        int offraw = inst.getImm12S();
         long off = BitOp.signExt64(offraw, 12);
         long vaddr, paddr;
 

@@ -12,7 +12,7 @@ public class InstructionRV32 extends Inst32 {
         super(inst, 4);
     }
 
-    //opcode[6:2] (opcode[1:0] = 11)
+    //opcode[6:2] (opcode[1:0] = 0b11)
     public static final int OPCODE_LOAD = 0;
     public static final int OPCODE_LOAD_FP = 1;
     public static final int OPCODE_CUSTOM_0 = 2;
@@ -152,6 +152,18 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
+     * 32bit 命令 R-type の funct7 フィールド（ビット [31:25]）を取得します。
+     *
+     * RV32I の ADD, SLLI 命令、
+     * RV64I の SLLIW, SRLIW 命令などに使われます。
+     *
+     * @return funct7 フィールド
+     */
+    public int getFunct7R() {
+        return getField(25, 7);
+    }
+
+    /**
      * 32bit 命令の rd フィールド（ビット [11:7]）を取得します。
      *
      * @return rd フィールド
@@ -179,61 +191,66 @@ public class InstructionRV32 extends Inst32 {
     }
 
     /**
-     * RV64 命令 I-type の imm フィールドの上位 6ビット（ビット [31:26]）を取得します。
+     * RV64 命令 I-type の imm フィールドの上位 6ビットを取得します。
      *
-     * RV64I の ADD, SLLI 命令などに使われます。
+     * RV64I の SLLI, SRLI, SRAI 命令などに使われます。
      *
-     * @return imm[11:0] フィールドの上位 6ビット
+     * imm[ 5: 0]: 31:26
+     *
+     * @return imm フィールドの上位 6ビット
      */
     public int getImm6I() {
         return getField(26, 6);
     }
 
     /**
-     * 32bit 命令 I-type の imm フィールドの上位 7ビット（ビット [31:25]）を取得します。
+     * RV32 命令 I-type の imm フィールドの上位 7ビットを取得します。
      *
-     * RV32I の ADD, SLLI 命令、
-     * RV64I の SLLIW, SRLIW 命令などに使われます。
+     * RV32I の SLLI, SLLIW 命令などに使われます。
      *
-     * @return imm[11:0] フィールドの上位 7ビット
+     * imm[ 6: 0]: 31:25
+     *
+     * @return imm フィールドの上位 7ビット
      */
     public int getImm7I() {
         return getField(25, 7);
     }
 
     /**
-     * 32bit 命令 I-type の imm フィールド（ビット [31:20]）を取得します。
+     * 32bit 命令 I-type の imm フィールドを取得します。
      *
-     * @return imm[11:0] フィールド
+     * imm[11: 0]: 31:20
+     *
+     * @return imm フィールド
      */
     public int getImm12I() {
         return getField(20, 12);
     }
 
     /**
-     * 32bit 命令 S-type の offset フィールドを取得します。
+     * 32bit 命令 S-type の imm フィールドを取得します。
      *
-     * offset[11: 5]: 31:25
-     * offset[ 4: 0]: 11: 7
+     * imm[11: 5]: 31:25
+     * imm[ 4: 0]: 11: 7
      *
-     * @return offset フィールド
+     * @return imm フィールド
      */
-    public int getOffset12S() {
+    public int getImm12S() {
         return (getField(25, 7) << 5) |
                 (getField(7, 5) << 0);
     }
 
     /**
-     * 32bit 命令 B-type の offset フィールドを取得します。
+     * 32bit 命令 B-type の imm フィールドを取得します。
      *
-     * offset[   12]:    31
-     * offset[   11]:     7
-     * offset[10: 5]: 30:25
-     * offset[ 4: 1]: 11: 8
+     * imm[   12]:    31
+     * imm[   11]:     7
+     * imm[10: 5]: 30:25
+     * imm[ 4: 1]: 11: 8
      *
-     * @return offset フィールド
+     * @return imm フィールド
      */
-    public int getOffset13B() {
+    public int getImm13B() {
         return (getField(31, 1) << 12) |
                 (getField(7, 1) << 11) |
                 (getField(25, 6) << 5) |
