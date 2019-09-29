@@ -281,6 +281,46 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * LBU (Load byte, unsigned) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeLbu(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int imm12 = inst.getImm12I();
+        long off = BitOp.signExt64(imm12, 12);
+        long vaddr, paddr;
+        byte val;
+
+        if (!exec) {
+            printDisasm(inst, "lbu",
+                    String.format("%s, %d(%s) # 0x%x",
+                            getRegName(rd), off, getRegName(rs1), imm12));
+            return;
+        }
+
+        vaddr = getReg(rs1) + off;
+
+        //paddr = getMMU().translate(vaddr, 1, false, getPriv(), true);
+        paddr = vaddr;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        if (!tryRead(paddr, 1)) {
+            //raiseException(ARMv5.EXCEPT_ABT_DATA,
+            //        String.format("ldrd [%08x]", paddr));
+            return;
+        }
+        val = read8(paddr);
+
+        setReg(rd, val & 0xffL);
+    }
+
+    /**
      * LW (Load word) 命令。
      *
      * @param inst 32bit 命令
@@ -906,6 +946,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_BGEU:
             executeBgeu(inst, exec);
+            break;
+        case INS_RV32I_LBU:
+            executeLbu(inst, exec);
             break;
         case INS_RV32I_LW:
             executeLw(inst, exec);
