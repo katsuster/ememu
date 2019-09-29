@@ -3,6 +3,7 @@ package net.katsuster.ememu.riscv.core;
 import net.katsuster.ememu.generic.*;
 
 import java.math.*;
+import java.util.concurrent.locks.*;
 
 public class ExecStageRVI extends Stage64 {
     /**
@@ -726,6 +727,68 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * AMOOR.W (Atomic memory operation: OR word) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAmoorw(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        long vaddr_s, paddr_s;
+        long vaddr_d, paddr_d;
+        int val;
+        Lock l;
+
+        if (!exec) {
+            printDisasm(inst, "amoor.w",
+                    String.format("%s, %s, (%s)", getRegName(rd),
+                            getRegName(rs2), getRegName(rs1)));
+            return;
+        }
+
+        vaddr_s = getReg(rs1);
+        vaddr_d = getReg(rd);
+
+        //paddr_s = getMMU().translate(vaddr_s, 4, false, getPriv(), true);
+        paddr_s = vaddr_s;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        //paddr_d = getMMU().translate(vaddr_d, 4, false, getPriv(), true);
+        paddr_d = vaddr_d;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        l = getWriteLock();
+        l.lock();
+        try {
+            if (!tryRead(paddr_s, 4)) {
+                //raiseException(ARMv5.EXCEPT_ABT_DATA,
+                //        String.format("ldrd [%08x]", paddr));
+                return;
+            }
+
+            if (!tryRead(paddr_d, 4)) {
+                //raiseException(ARMv5.EXCEPT_ABT_DATA,
+                //        String.format("ldrd [%08x]", paddr));
+                return;
+            }
+
+            val = read32(paddr_s);
+            val |= getReg(rs2);
+            write32(paddr_d, val);
+        } finally {
+            l.unlock();
+        }
+    }
+
+    /**
      * 32bit 命令を実行します。
      *
      * @param decinst デコードされた命令
@@ -813,6 +876,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV64M_DIVUW:
             executeDivuw(inst, exec);
+            break;
+        case INS_RV32A_AMOOR_W:
+            executeAmoorw(inst, exec);
             break;
         default:
             throw new IllegalArgumentException("Unknown RV32I instruction " +
