@@ -256,6 +256,47 @@ public class DecodeStageRVI extends Stage64 {
     }
 
     /**
+     * 32bit AMO 命令をデコードします。
+     *
+     * @param inst 32bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeAmo(InstructionRV32 inst) {
+        int funct3 = inst.getFunct3();
+        int funct5 = inst.getImm7I() >>> 2;
+
+        if (funct3 == 2) {
+            switch (funct5) {
+            case InstructionRV32.FUNC5_AMO_LR_W:
+                return OpIndex.INS_RV32A_LR_W;
+            case InstructionRV32.FUNC5_AMO_SC_W:
+                return OpIndex.INS_RV32A_SC_W;
+            case InstructionRV32.FUNC5_AMO_AMOSWAP_W:
+                return OpIndex.INS_RV32A_AMOSWAP_W;
+            case InstructionRV32.FUNC5_AMO_AMOADD_W:
+                return OpIndex.INS_RV32A_AMOADD_W;
+            case InstructionRV32.FUNC5_AMO_AMOXOR_W:
+                return OpIndex.INS_RV32A_AMOXOR_W;
+            case InstructionRV32.FUNC5_AMO_AMOAND_W:
+                return OpIndex.INS_RV32A_AMOAND_W;
+            case InstructionRV32.FUNC5_AMO_AMOOR_W:
+                return OpIndex.INS_RV32A_AMOOR_W;
+            case InstructionRV32.FUNC5_AMO_AMOMIN_W:
+                return OpIndex.INS_RV32A_AMOMIN_W;
+            case InstructionRV32.FUNC5_AMO_AMOMAX_W:
+                return OpIndex.INS_RV32A_AMOMAX_W;
+            case InstructionRV32.FUNC5_AMO_AMOMINU_W:
+                return OpIndex.INS_RV32A_AMOMINU_W;
+            case InstructionRV32.FUNC5_AMO_AMOMAXU_W:
+                return OpIndex.INS_RV32A_AMOMAXU_W;
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown AMO " +
+                String.format("funct3 %d funct5 0x%x.", funct3, funct5));
+    }
+
+    /**
      * 32bit OP 命令をデコードします。
      *
      * @param inst 32bit 命令
@@ -468,6 +509,8 @@ public class DecodeStageRVI extends Stage64 {
             return decodeOpImm32(inst);
         case InstructionRV32.OPCODE_STORE:
             return decodeStore(inst);
+        case InstructionRV32.OPCODE_AMO:
+            return decodeAmo(inst);
         case InstructionRV32.OPCODE_OP:
             return decodeOp(inst);
         case InstructionRV32.OPCODE_LUI:

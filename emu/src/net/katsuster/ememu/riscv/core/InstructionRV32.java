@@ -91,6 +91,19 @@ public class InstructionRV32 extends Inst32 {
     public static final int FUNC_OP_IMM_32_SLLIW = 1;
     public static final int FUNC_OP_IMM_32_SRLIW_SRAIW = 5;
 
+    //R-type, funct3 = 0b010
+    public static final int FUNC5_AMO_LR_W = 2;
+    public static final int FUNC5_AMO_SC_W = 3;
+    public static final int FUNC5_AMO_AMOSWAP_W = 1;
+    public static final int FUNC5_AMO_AMOADD_W = 0;
+    public static final int FUNC5_AMO_AMOXOR_W = 4;
+    public static final int FUNC5_AMO_AMOAND_W = 12;
+    public static final int FUNC5_AMO_AMOOR_W = 8;
+    public static final int FUNC5_AMO_AMOMIN_W = 16;
+    public static final int FUNC5_AMO_AMOMAX_W = 20;
+    public static final int FUNC5_AMO_AMOMINU_W = 24;
+    public static final int FUNC5_AMO_AMOMAXU_W = 28;
+
     //imm7 = 0, 32
     public static final int FUNC_OP_ADD_SUB = 0;
     public static final int FUNC_OP_SLL = 1;
