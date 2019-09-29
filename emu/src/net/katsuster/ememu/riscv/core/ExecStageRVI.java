@@ -858,8 +858,7 @@ public class ExecStageRVI extends Stage64 {
         int rd = inst.getRd();
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
-        long vaddr_s, paddr_s;
-        long vaddr_d, paddr_d;
+        long vaddr, paddr;
         int val;
         Lock l;
 
@@ -870,44 +869,33 @@ public class ExecStageRVI extends Stage64 {
             return;
         }
 
-        vaddr_s = getReg(rs1);
-        vaddr_d = getReg(rd);
+        vaddr = getReg(rs1);
 
-        //paddr_s = getMMU().translate(vaddr_s, 4, false, getPriv(), true);
-        paddr_s = vaddr_s;
+        //paddr = getMMU().translate(vaddr, 4, false, getPriv(), true);
+        paddr = vaddr;
         //if (getMMU().isFault()) {
         //    getMMU().clearFault();
         //    return;
         //}
 
-        //paddr_d = getMMU().translate(vaddr_d, 4, false, getPriv(), true);
-        paddr_d = vaddr_d;
-        //if (getMMU().isFault()) {
-        //    getMMU().clearFault();
-        //    return;
-        //}
+        val = (int)getReg(rs2);
 
         l = getWriteLock();
         l.lock();
         try {
-            if (!tryRead(paddr_s, 4)) {
+            if (!tryRead(paddr, 4)) {
                 //raiseException(ARMv5.EXCEPT_ABT_DATA,
                 //        String.format("ldrd [%08x]", paddr));
                 return;
             }
 
-            if (!tryRead(paddr_d, 4)) {
-                //raiseException(ARMv5.EXCEPT_ABT_DATA,
-                //        String.format("ldrd [%08x]", paddr));
-                return;
-            }
-
-            val = read32(paddr_s);
-            val |= getReg(rs2);
-            write32(paddr_d, val);
+            val |= read32(paddr);
+            write32(paddr, val);
         } finally {
             l.unlock();
         }
+
+        setReg(rd, BitOp.signExt64(val & 0xffffffffL, 32));
     }
 
     /**
