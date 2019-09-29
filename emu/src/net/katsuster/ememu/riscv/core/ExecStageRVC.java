@@ -62,8 +62,8 @@ public class ExecStageRVC extends Stage64 {
         int rs1 = inst.getRs1dash() + 8;
         int rd = inst.getRs2dash() + 8;
         int uimm = inst.getImm7LWSW();
-        int val;
         long vaddr, paddr;
+        int val;
 
         if (!exec) {
             printDisasm(inst, "c.lw",
@@ -88,7 +88,7 @@ public class ExecStageRVC extends Stage64 {
         }
         val = read32(paddr);
 
-        setReg(rd, BitOp.signExt64(val, 32));
+        setReg(rd, BitOp.signExt64(val & 0xffffffffL, 32));
     }
 
     /**
@@ -158,8 +158,8 @@ public class ExecStageRVC extends Stage64 {
     public void executeAddiw(InstructionRV16 inst, boolean exec) {
         int rd = inst.getRd();
         int imm6 = inst.getImm6CI();
-        long imm = BitOp.signExt64(imm6, 6);
-        long v;
+        int imm = BitOp.signExt32(imm6, 6);
+        int v;
 
         if (!exec) {
             printDisasm(inst, "c.addiw",
@@ -168,9 +168,9 @@ public class ExecStageRVC extends Stage64 {
             return;
         }
 
-        v = (getReg(rd) + imm) & 0xffffffffL;
+        v = (int)getReg(rd) + imm;
 
-        setReg(rd, BitOp.signExt64(v, 32));
+        setReg(rd, BitOp.signExt64(v & 0xffffffffL, 32));
     }
 
     /**
@@ -306,7 +306,7 @@ public class ExecStageRVC extends Stage64 {
     public void executeAddw(InstructionRV16 inst, boolean exec) {
         int rd = inst.getRs1dash() + 8;
         int rs2 = inst.getRs2dash() + 8;
-        long v;
+        int v;
 
         if (!exec) {
             printDisasm(inst, "c.addw",
@@ -314,9 +314,10 @@ public class ExecStageRVC extends Stage64 {
                             getRegName(rs2)));
             return;
         }
-        v = (getReg(rd) + getReg(rs2)) & 0xffffffffL;
 
-        setReg(rd, BitOp.signExt64(v, 32));
+        v = (int)(getReg(rd) + getReg(rs2));
+
+        setReg(rd, BitOp.signExt64(v & 0xffffffffL, 32));
     }
 
     /**

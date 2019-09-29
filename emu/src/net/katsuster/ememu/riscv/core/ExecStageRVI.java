@@ -88,7 +88,8 @@ public class ExecStageRVI extends Stage64 {
      */
     public void executeAuipc(InstructionRV32 inst, boolean exec) {
         int rd = inst.getRd();
-        long imm = BitOp.signExt64(inst.getImm20U() << 12, 32);
+        int imm20 = inst.getImm20U();
+        long imm = BitOp.signExt64((imm20 << 12) & 0xffffffffL, 32);
 
         if (!exec) {
             printDisasm(inst, "auipc",
@@ -107,7 +108,8 @@ public class ExecStageRVI extends Stage64 {
      */
     public void executeLui(InstructionRV32 inst, boolean exec) {
         int rd = inst.getRd();
-        long imm = BitOp.signExt64(inst.getImm20U() << 12, 31);
+        int imm20 = inst.getImm20U();
+        long imm = BitOp.signExt64((imm20 << 12) & 0xffffffffL, 31);
 
         if (!exec) {
             printDisasm(inst, "lui",
@@ -331,8 +333,8 @@ public class ExecStageRVI extends Stage64 {
         int rs1 = inst.getRs1();
         int imm12 = inst.getImm12I();
         long off = BitOp.signExt64(imm12, 12);
-        int val;
         long vaddr, paddr;
+        int val;
 
         if (!exec) {
             printDisasm(inst, "lw",
@@ -357,7 +359,7 @@ public class ExecStageRVI extends Stage64 {
         }
         val = read32(paddr);
 
-        setReg(rd, BitOp.signExt64(val, 32));
+        setReg(rd, BitOp.signExt64(val & 0xffffffffL, 32));
     }
 
     /**
