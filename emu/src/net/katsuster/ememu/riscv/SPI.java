@@ -70,10 +70,15 @@ public class SPI implements ParentCore {
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
-            case REG_RXDATA:
+            case REG_TXDATA:
                 result = 0;
 
                 System.out.printf("SPI TXDATA: read 0x%x\n", result);
+                break;
+            case REG_RXDATA:
+                result = 0;
+
+                System.out.printf("SPI RXDATA: read 0x%x\n", result);
                 break;
             default:
                 result = super.readWord(m, regaddr);
@@ -96,11 +101,40 @@ public class SPI implements ParentCore {
             case REG_TXDATA:
                 System.out.printf("SPI TXDATA: write 0x%x\n", data);
                 break;
+            case REG_RXDATA:
+                System.out.printf("SPI RXDATA: write 0x%x\n", data);
+                break;
             case REG_FCTRL:
                 System.out.printf("SPI FCTRL: write 0x%x\n", data);
                 break;
             case REG_FFMT:
-                System.out.printf("SPI FFMT: write 0x%x\n", data);
+                int cmd_en = BitOp.getField32(data, 0, 1);
+                int addr_len = BitOp.getField32(data, 1, 3);
+                int pad_cnt = BitOp.getField32(data, 4, 4);
+                int cmd_proto = BitOp.getField32(data, 8, 2);
+                int addr_proto = BitOp.getField32(data, 10, 2);
+                int data_proto = BitOp.getField32(data, 12, 2);
+                int cmd_code = BitOp.getField32(data, 16, 8);
+                int pad_code = BitOp.getField32(data, 24, 8);
+
+                System.out.printf("SPI FFMT: write 0x%x\n" +
+                                "  %s: 0x%x, \n" +
+                                "  %s: 0x%x, \n" +
+                                "  %s: 0x%x, \n" +
+                                "  %s: 0x%x, \n" +
+                                "  %s: 0x%x, \n" +
+                                "  %s: 0x%x, \n" +
+                                "  %s: 0x%x, \n" +
+                                "  %s: 0x%x, \n",
+                        data,
+                        "cmd_en", cmd_en,
+                        "addr_len", addr_len,
+                        "pad_cnt", pad_cnt,
+                        "cmd_proto", cmd_proto,
+                        "addr_proto", addr_proto,
+                        "data_proto", data_proto,
+                        "cmd_code", cmd_code,
+                        "pad_code", pad_code);
                 break;
             default:
                 super.writeWord(m, regaddr, data);
