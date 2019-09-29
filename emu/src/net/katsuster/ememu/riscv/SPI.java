@@ -39,21 +39,27 @@ public class SPI implements ParentCore {
     class SPISlave extends Controller32 {
         public SPISlave() {
             addReg(REG_SCKDIV,  "SCKDIV", 0x00000000);
-            /*addReg(REG_SCKMODE, "SCKMODE", 0x00000000);
+            /*
+            addReg(REG_SCKMODE, "SCKMODE", 0x00000000);
             addReg(REG_CSID,    "CSID", 0x00000000);
             addReg(REG_CSDEF,   "CSDEF", 0x00000000);
             addReg(REG_CSMODE,  "CSMODE", 0x00000000);
             addReg(REG_DELAY0,  "DELAY0", 0x00000000);
             addReg(REG_DELAY1,  "DELAY1", 0x00000000);
             addReg(REG_FMT,     "FMT", 0x00000000);
+            */
             addReg(REG_TXDATA,  "TXDATA", 0x00000000);
             addReg(REG_RXDATA,  "RXDATA", 0x00000000);
+            /*
             addReg(REG_TXMARK,  "TXMARK", 0x00000000);
-            addReg(REG_RXMARK,  "RXMARK", 0x00000000);*/
+            addReg(REG_RXMARK,  "RXMARK", 0x00000000);
+            */
             addReg(REG_FCTRL,   "FCTRL", 0x00000000);
-            /*addReg(REG_FFMT,    "FFMT", 0x00000000);
+            addReg(REG_FFMT,    "FFMT", 0x00000000);
+            /*
             addReg(REG_IE,      "IE", 0x00000000);
-            addReg(REG_IP,      "IP", 0x00000000);*/
+            addReg(REG_IP,      "IP", 0x00000000);
+            */
         }
 
         @Override
@@ -64,6 +70,11 @@ public class SPI implements ParentCore {
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
+            case REG_RXDATA:
+                result = 0;
+
+                System.out.printf("SPI TXDATA: read 0x%x\n", result);
+                break;
             default:
                 result = super.readWord(m, regaddr);
                 break;
@@ -79,6 +90,18 @@ public class SPI implements ParentCore {
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
+            case REG_SCKDIV:
+                System.out.printf("SPI SCKDIV: write 0x%x\n", data);
+                break;
+            case REG_TXDATA:
+                System.out.printf("SPI TXDATA: write 0x%x\n", data);
+                break;
+            case REG_FCTRL:
+                System.out.printf("SPI FCTRL: write 0x%x\n", data);
+                break;
+            case REG_FFMT:
+                System.out.printf("SPI FFMT: write 0x%x\n", data);
+                break;
             default:
                 super.writeWord(m, regaddr, data);
                 break;
