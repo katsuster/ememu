@@ -1033,7 +1033,7 @@ public class ExecStageRVI extends Stage64 {
         case INS_RV32I_CSRRS:
             executeCsrrs(inst, exec);
             break;
-        case INS_RV32_WFI:
+        case INS_RV32I_WFI:
             executeWfi(inst, exec);
             break;
         case INS_RV64I_LD:

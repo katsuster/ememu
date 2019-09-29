@@ -480,7 +480,7 @@ public class DecodeStageRVI extends Stage64 {
                 return OpIndex.INS_RV32I_EBREAK;
             } else if (imm12 == 0x105 && rs1 == 0 && rd == 0) {
                 //WFI, imm12 = 0b0001_0000_0101
-                return OpIndex.INS_RV32_WFI;
+                return OpIndex.INS_RV32I_WFI;
             }
 
             throw new IllegalArgumentException("Unknown SYSTEM " +
