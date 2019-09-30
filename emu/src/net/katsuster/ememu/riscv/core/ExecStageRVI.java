@@ -382,6 +382,44 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * SB (Store byte) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSb(InstructionRV32 inst, boolean exec) {
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        int offraw = inst.getImm12S();
+        long off = BitOp.signExt64(offraw, 12);
+        long vaddr, paddr;
+
+        if (!exec) {
+            printDisasm(inst, "sb",
+                    String.format("%s, %d(%s) # 0x%x",
+                            getRegName(rs2), off, getRegName(rs1), offraw));
+            return;
+        }
+
+        vaddr = getReg(rs1) + off;
+
+        //paddr = getMMU().translate(vaddr, 1, false, getPriv(), true);
+        paddr = vaddr;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        if (!tryWrite(paddr, 1)) {
+            //raiseException(ARMv5.EXCEPT_ABT_DATA,
+            //        String.format("ldrd [%08x]", paddr));
+            return;
+        }
+
+        write8(paddr, (byte)getReg(rs2));
+    }
+
+    /**
      * SW (Store word) 命令。
      *
      * @param inst 32bit 命令
@@ -1008,6 +1046,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_LW:
             executeLw(inst, exec);
+            break;
+        case INS_RV32I_SB:
+            executeSb(inst, exec);
             break;
         case INS_RV32I_SW:
             executeSw(inst, exec);
