@@ -57,7 +57,8 @@ public class RISCVUnleashed extends AbstractBoard {
         cpu = new RV64[5];
         bus = new Bus64();
 
-        RAM mode_select = new RAM32(4 * 1024);
+        RAM mode_select = new RAM32(8 * 1024);
+        RAM reserved2 = new RAM32(56 * 1024);
         RAM mask_rom = new RAM32(32 * 1024);
         CLINT clint = new CLINT(cpu);
         RAM l2lim = new RAM32(32 * 1024 * 1024);
@@ -80,6 +81,7 @@ public class RISCVUnleashed extends AbstractBoard {
         //Memory map of Unleashed
         //  0x0000_0100 - 0x0000_0fff: Debug
         //  0x0000_1000 - 0x0000_1fff: Mode Select
+        //  0x0000_2000 - 0x0000_ffff: Reserved 2
         //  0x0001_0000 - 0x0001_7fff: Mask ROM
         //  0x0800_0000 - 0x09ff_ffff: L2 LIM
         //  0x1000_0000 - 0x1000_0fff: PRCI
@@ -90,6 +92,7 @@ public class RISCVUnleashed extends AbstractBoard {
         //  0x1005_0000 - 0x1005_0fff: QSPI2
         //  0x2000_0000 - 0x2fff_ffff: QSPI0 flash
         bus.addSlaveCore(mode_select, 0x00001000L, 0x00001fffL);
+        bus.addSlaveCore(reserved2, 0x00002000L, 0x0000ffffL);
         bus.addSlaveCore(mask_rom, 0x00010000L, 0x00017fffL);
         bus.addSlaveCore(clint.getSlaveCore(), 0x02000000L, 0x0200ffffL);
         bus.addSlaveCore(l2lim, 0x08000000L, 0x09ffffffL);
