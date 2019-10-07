@@ -317,6 +317,26 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * XOR (Exclusive-or) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeXor(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRs1dash() + 8;
+        int rs2 = inst.getRs2dash() + 8;
+
+        if (!exec) {
+            printDisasm(inst, "c.xor",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rd), getRegName(rs2)));
+            return;
+        }
+
+        setReg(rd, getReg(rd) ^ getReg(rs2));
+    }
+
+    /**
      * OR (Or) 命令。
      *
      * @param inst 16bit 命令
@@ -334,6 +354,26 @@ public class ExecStageRVC extends Stage64 {
         }
 
         setReg(rd, getReg(rd) | getReg(rs2));
+    }
+
+    /**
+     * AND (And) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAnd(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRs1dash() + 8;
+        int rs2 = inst.getRs2dash() + 8;
+
+        if (!exec) {
+            printDisasm(inst, "c.and",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rd), getRegName(rs2)));
+            return;
+        }
+
+        setReg(rd, getReg(rd) & getReg(rs2));
     }
 
     /**
@@ -613,8 +653,14 @@ public class ExecStageRVC extends Stage64 {
         case INS_RVC_ANDI:
             executeAndi(inst, exec);
             break;
+        case INS_RVC_XOR:
+            executeXor(inst, exec);
+            break;
         case INS_RVC_OR:
             executeOr(inst, exec);
+            break;
+        case INS_RVC_AND:
+            executeAnd(inst, exec);
             break;
         case INS_RVC_ADDW:
             executeAddw(inst, exec);
