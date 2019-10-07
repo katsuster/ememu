@@ -313,7 +313,7 @@ public class ExecStageRVC extends Stage64 {
             return;
         }
 
-        setReg(rd, rd & imm);
+        setReg(rd, getReg(rd) & imm);
     }
 
     /**
