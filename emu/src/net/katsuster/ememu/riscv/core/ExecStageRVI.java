@@ -964,12 +964,23 @@ public class ExecStageRVI extends Stage64 {
         int rd = inst.getRd();
         int rs1 = inst.getRs1();
         int rs2 = inst.getRs2();
+        int aq = (inst.getFunct7R() >> 1) & 1;
+        int rl = inst.getFunct7R() & 1;
         long vaddr, paddr;
         int val;
         Lock l;
 
         if (!exec) {
-            printDisasm(inst, "amoor.w",
+            String name = "amoor.w";
+
+            if (aq != 0) {
+                name += ".aq";
+            }
+            if (rl != 0) {
+                name += ".rl";
+            }
+
+            printDisasm(inst, name,
                     String.format("%s, %s, (%s)", getRegName(rd),
                             getRegName(rs2), getRegName(rs1)));
             return;
