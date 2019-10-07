@@ -150,7 +150,7 @@ public class InstructionRV16 extends Inst32 {
      * @return imm フィールド
      */
     public int getImm8LDSD() {
-        return (getField(6, 2) << 6) |
+        return (getField(5, 2) << 6) |
                 (getField(10, 3) << 3);
     }
 
