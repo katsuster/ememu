@@ -901,7 +901,7 @@ public class ExecStageRVI extends Stage64 {
             return;
         }
 
-        v = (getReg(rs1) - getReg(rs2)) & 0xffffffffL;
+        v = getReg(rs1) - getReg(rs2);
         setReg(rd, BitOp.signExt64(v & 0xffffffffL, 32));
     }
 
