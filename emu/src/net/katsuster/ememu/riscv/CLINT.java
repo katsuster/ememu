@@ -172,6 +172,7 @@ public class CLINT implements ParentCore {
                 boolean b = (data & 1) != 0;
 
                 cores[id].setXIP_XSIP(RV64.PRIV_M, b);
+                cores[id].interrupt();
 
                 System.out.printf("MSIP[%d] val:%08x\n", id, data);
                 break;
