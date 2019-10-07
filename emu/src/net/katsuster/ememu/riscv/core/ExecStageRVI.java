@@ -1051,7 +1051,7 @@ public class ExecStageRVI extends Stage64 {
         int aq = (inst.getFunct7R() >> 1) & 1;
         int rl = inst.getFunct7R() & 1;
         long vaddr, paddr;
-        int val;
+        int t, valRs2;
         Lock l;
 
         if (!exec) {
@@ -1079,7 +1079,7 @@ public class ExecStageRVI extends Stage64 {
         //    return;
         //}
 
-        val = (int)getReg(rs2);
+        valRs2 = (int)getReg(rs2);
 
         l = getWriteLock();
         l.lock();
@@ -1090,13 +1090,13 @@ public class ExecStageRVI extends Stage64 {
                 return;
             }
 
-            val += read32(paddr);
-            write32(paddr, val);
+            t = read32(paddr);
+            write32(paddr, t + valRs2);
         } finally {
             l.unlock();
         }
 
-        setReg(rd, BitOp.signExt64(val & 0xffffffffL, 32));
+        setReg(rd, BitOp.signExt64(t & 0xffffffffL, 32));
     }
 
     /**
@@ -1112,7 +1112,7 @@ public class ExecStageRVI extends Stage64 {
         int aq = (inst.getFunct7R() >> 1) & 1;
         int rl = inst.getFunct7R() & 1;
         long vaddr, paddr;
-        int val;
+        int t, valRs2;
         Lock l;
 
         if (!exec) {
@@ -1140,7 +1140,7 @@ public class ExecStageRVI extends Stage64 {
         //    return;
         //}
 
-        val = (int)getReg(rs2);
+        valRs2 = (int)getReg(rs2);
 
         l = getWriteLock();
         l.lock();
@@ -1151,13 +1151,13 @@ public class ExecStageRVI extends Stage64 {
                 return;
             }
 
-            val |= read32(paddr);
-            write32(paddr, val);
+            t = read32(paddr);
+            write32(paddr, t | valRs2);
         } finally {
             l.unlock();
         }
 
-        setReg(rd, BitOp.signExt64(val & 0xffffffffL, 32));
+        setReg(rd, BitOp.signExt64(t & 0xffffffffL, 32));
     }
 
     /**
