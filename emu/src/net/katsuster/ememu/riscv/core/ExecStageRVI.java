@@ -518,6 +518,28 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * XORI (Exclusive-or immediate) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeXori(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int imm12 = inst.getImm12I();
+        long imm = BitOp.signExt64(imm12, 12);
+
+        if (!exec) {
+            printDisasm(inst, "xori",
+                    String.format("%s, %s, %d # 0x%x", getRegName(rd),
+                            getRegName(rs1), imm, imm12));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) ^ imm);
+    }
+
+    /**
      * ORI (Or immediate) 命令。
      *
      * @param inst 32bit 命令
@@ -1214,6 +1236,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_ADDI:
             executeAddi(inst, exec);
+            break;
+        case INS_RV32I_XORI:
+            executeXori(inst, exec);
             break;
         case INS_RV32I_ORI:
             executeOri(inst, exec);
