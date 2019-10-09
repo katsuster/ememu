@@ -15,11 +15,6 @@ public class ExecStageRVI extends Stage64 {
         super(c);
     }
 
-    /**
-     * RVI 命令の実行ステージの持ち主となる CPU コアを取得します。
-     *
-     * @return 実行ステージの持ち主となる CPU コア
-     */
     @Override
     public RV64 getCore() {
         return (RV64)super.getCore();

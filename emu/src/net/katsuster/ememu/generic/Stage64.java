@@ -21,9 +21,9 @@ public class Stage64 {
     }
 
     /**
-     * 実行ステージを使う CPU コアを取得します。
+     * ステージが属する CPU コアを取得します。
      *
-     * @return 実行ステージを使う CPU コア
+     * @return CPU コア
      */
     public CPU64 getCore() {
         return core;
