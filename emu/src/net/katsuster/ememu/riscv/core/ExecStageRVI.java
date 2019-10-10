@@ -251,6 +251,29 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * BGE (Branch if greater than or equal) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeBge(InstructionRV32 inst, boolean exec) {
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        int off = BitOp.signExt32(inst.getImm13B(), 13);
+
+        if (!exec) {
+            printDisasm(inst, "bge",
+                    String.format("%s, %s, 0x%x", getRegName(rs1),
+                            getRegName(rs2), getPC() + off));
+            return;
+        }
+
+        if (getReg(rs1) >= getReg(rs2)) {
+            jumpRel(off);
+        }
+    }
+
+    /**
      * BLTU (Branch if less than, unsigned) 命令。
      *
      * @param inst 32bit 命令
@@ -1207,6 +1230,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_BLT:
             executeBlt(inst, exec);
+            break;
+        case INS_RV32I_BGE:
+            executeBge(inst, exec);
             break;
         case INS_RV32I_BLTU:
             executeBltu(inst, exec);
