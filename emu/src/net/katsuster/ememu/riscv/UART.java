@@ -2,6 +2,11 @@ package net.katsuster.ememu.riscv;
 
 import net.katsuster.ememu.generic.*;
 
+/**
+ * Universal Asynchronous Receiver/Transmitter (UART)
+ *
+ * 参考: SiFive FU540-C000 Manual: v1p0
+ */
 public class UART implements ParentCore {
     private UART.UARTSlave slave;
 
