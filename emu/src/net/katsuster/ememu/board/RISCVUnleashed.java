@@ -66,6 +66,7 @@ public class RISCVUnleashed extends AbstractBoard {
         PRCI prci = new PRCI(cpu);
         UART uart0 = new UART();
         UART uart1 = new UART();
+        I2C i2c = new I2C();
         SPI spi0 = new SPI();
         SPI spi1 = new SPI();
         SPI spi2 = new SPI();
@@ -87,6 +88,7 @@ public class RISCVUnleashed extends AbstractBoard {
         //  0x1000_0000 - 0x1000_0fff: PRCI
         //  0x1001_0000 - 0x1001_0fff: UART0
         //  0x1001_1000 - 0x1001_1fff: UART1
+        //  0x1003_0000 - 0x1003_0fff: I2C
         //  0x1004_0000 - 0x1004_0fff: QSPI0
         //  0x1004_1000 - 0x1004_1fff: QSPI1
         //  0x1005_0000 - 0x1005_0fff: QSPI2
@@ -99,6 +101,7 @@ public class RISCVUnleashed extends AbstractBoard {
         bus.addSlaveCore(prci.getSlaveCore(), 0x10000000L, 0x10000fffL);
         bus.addSlaveCore(uart0.getSlaveCore(), 0x10010000L, 0x10010fffL);
         bus.addSlaveCore(uart1.getSlaveCore(), 0x10011000L, 0x10011fffL);
+        bus.addSlaveCore(i2c.getSlaveCore(), 0x10030000L, 0x10030fffL);
         bus.addSlaveCore(spi0.getSlaveCore(), 0x10040000L, 0x10040fffL);
         bus.addSlaveCore(spi1.getSlaveCore(), 0x10041000L, 0x10041fffL);
         bus.addSlaveCore(spi2.getSlaveCore(), 0x10050000L, 0x10050fffL);
