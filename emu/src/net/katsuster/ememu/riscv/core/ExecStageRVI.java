@@ -228,7 +228,7 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
-     * BNE (Branch if less than) 命令。
+     * BLT (Branch if less than) 命令。
      *
      * @param inst 32bit 命令
      * @param exec デコードと実行なら true、デコードのみなら false
