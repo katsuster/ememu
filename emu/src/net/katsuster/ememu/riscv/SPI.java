@@ -8,7 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
 public class SPI implements ParentCore {
-    private SPI.SPISlave slave;
+    private SPISlave slave;
 
     public static final int REG_SCKDIV  = 0x0000;
     public static final int REG_SCKMODE = 0x0004;

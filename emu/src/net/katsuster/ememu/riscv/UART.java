@@ -8,7 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
 public class UART implements ParentCore {
-    private UART.UARTSlave slave;
+    private UARTSlave slave;
 
     public static final int REG_TXDATA = 0x0000;
     public static final int REG_RXDATA = 0x0004;
