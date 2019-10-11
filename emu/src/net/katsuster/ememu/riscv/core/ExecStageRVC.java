@@ -48,6 +48,19 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * NOP (No operation) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeNop(InstructionRV16 inst, boolean exec) {
+        if (!exec) {
+            printDisasm(inst, "c.nop", "");
+            return;
+        }
+    }
+
+    /**
      * LW (Load word) 命令。
      *
      * @param inst 16bit 命令
@@ -618,6 +631,9 @@ public class ExecStageRVC extends Stage64 {
         InstructionRV16 inst = (InstructionRV16) decinst.getInstruction();
 
         switch (decinst.getIndex()) {
+        case INS_RVC_NOP:
+            executeNop(inst, exec);
+            break;
         case INS_RVC_LW:
             executeLw(inst, exec);
             break;
