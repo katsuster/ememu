@@ -10,7 +10,11 @@ import net.katsuster.ememu.riscv.core.*;
  */
 public class PRCI implements ParentCore {
     private RV64[] cores;
-    private PRCI.PRCISlave slave;
+    private PRCISlave slave;
+
+    private PLLCFG corePll;
+    private PLLCFG ddrPll;
+    private PLLCFG gemgxlPll;
 
     public static final int REG_HFXOSCCFG         = 0x0000;
     public static final int REG_COREPLLCFG0       = 0x0004;
@@ -27,6 +31,10 @@ public class PRCI implements ParentCore {
     public PRCI(RV64[] c) {
         cores = c;
         slave = new PRCISlave();
+
+        corePll = new PLLCFG(0x030187c1);
+        ddrPll = new PLLCFG(0x030187c1);
+        gemgxlPll = new PLLCFG(0x030187c1);
     }
 
     @Override
@@ -57,6 +65,15 @@ public class PRCI implements ParentCore {
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
+            case REG_COREPLLCFG0:
+                result = corePll.getData();
+                break;
+            case REG_DDRPLLCFG0:
+                result = ddrPll.getData();
+                break;
+            case REG_GEMGXLPLLCFG0:
+                result = gemgxlPll.getData();
+                break;
             case REG_UNDOCUMENTD0:
                 result = super.readWord(m, regaddr);
 
@@ -78,6 +95,21 @@ public class PRCI implements ParentCore {
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
+            case REG_COREPLLCFG0:
+                corePll.setData(data);
+                corePll.setLock(1);
+                System.out.printf("PRCI: wr COREPLLCFG0: %s\n", corePll);
+                break;
+            case REG_DDRPLLCFG0:
+                ddrPll.setData(data);
+                ddrPll.setLock(1);
+                System.out.printf("PRCI: wr DDRPLLCFG0: %s\n", ddrPll);
+                break;
+            case REG_GEMGXLPLLCFG0:
+                gemgxlPll.setData(data);
+                gemgxlPll.setLock(1);
+                System.out.printf("PRCI: wr GEMGXLPLLCFG0: %s\n", gemgxlPll);
+                break;
             case REG_UNDOCUMENTD0:
                 System.out.printf("prci: WR: UNDOCUMENTED0: %08x\n", data);
                 super.writeWord(m, regaddr, data);
@@ -86,6 +118,91 @@ public class PRCI implements ParentCore {
                 super.writeWord(m, regaddr, data);
                 break;
             }
+        }
+    }
+
+    /**
+     * PLL の設定
+     */
+    class PLLCFG {
+        private int divr;
+        private int divf;
+        private int divq;
+        private int range;
+        private int bypass;
+        private int fse;
+        private int lock;
+
+        public PLLCFG() {
+            this(0);
+        }
+
+        public PLLCFG(int v) {
+            setData(v);
+        }
+
+        /**
+         * 現在の PLL 設定値を表す 32ビットのレジスタ値を取得します。
+         *
+         * @return レジスタの値
+         */
+        public int getData() {
+            int v = 0;
+
+            v = BitOp.setField32(v, 0, 6, divr);
+            v = BitOp.setField32(v, 6, 9, divf);
+            v = BitOp.setField32(v, 15, 3, divq);
+            v = BitOp.setField32(v, 18, 3, range);
+            v = BitOp.setField32(v, 24, 1, bypass);
+            v = BitOp.setField32(v, 25, 1, fse);
+            v = BitOp.setField32(v, 31, 1, lock);
+
+            return v;
+        }
+
+        /**
+         * 32ビットのレジスタ値から、PLL 設定値を更新します。
+         *
+         * @param v レジスタの値
+         */
+        public void setData(int v) {
+            divr = BitOp.getField32(v, 0, 6);
+            divf = BitOp.getField32(v, 6, 9);
+            divq = BitOp.getField32(v, 15, 3);
+            range = BitOp.getField32(v, 18, 3);
+            bypass = BitOp.getField32(v, 24, 1);
+            fse = BitOp.getField32(v, 25, 1);
+            lock = 0;
+        }
+
+        /**
+         * PLL ロックしているかどうかを設定します。
+         *
+         * @param v ロックしている場合は 0 以外、ロックしていない場合は 0
+         */
+        public void setLock(int v) {
+            if (v != 0) {
+                lock = 1;
+            } else {
+                lock = 0;
+            }
+        }
+
+        public String toString() {
+            return String.format("data: 0x%x\n" +
+                            "  %s: 0x%x, \n" +
+                            "  %s: 0x%x, \n" +
+                            "  %s: 0x%x, \n" +
+                            "  %s: 0x%x, \n" +
+                            "  %s: 0x%x, \n" +
+                            "  %s: 0x%x",
+                    getData(),
+                    "divr", divr,
+                    "divf", divf,
+                    "divq", divq,
+                    "range", range,
+                    "bypass", bypass,
+                    "fse", fse);
         }
     }
 }
