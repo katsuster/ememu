@@ -325,6 +325,26 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * SUB (Subtract) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSub(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRs1dash() + 8;
+        int rs2 = inst.getRs2dash() + 8;
+
+        if (!exec) {
+            printDisasm(inst, "c.sub",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rd), getRegName(rs2)));
+            return;
+        }
+
+        setReg(rd, getReg(rd) - getReg(rs2));
+    }
+
+    /**
      * XOR (Exclusive-or) 命令。
      *
      * @param inst 16bit 命令
@@ -663,6 +683,9 @@ public class ExecStageRVC extends Stage64 {
             break;
         case INS_RVC_ANDI:
             executeAndi(inst, exec);
+            break;
+        case INS_RVC_SUB:
+            executeSub(inst, exec);
             break;
         case INS_RVC_XOR:
             executeXor(inst, exec);
