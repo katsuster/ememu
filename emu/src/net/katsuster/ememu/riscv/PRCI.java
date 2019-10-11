@@ -1,7 +1,6 @@
 package net.katsuster.ememu.riscv;
 
 import net.katsuster.ememu.generic.*;
-import net.katsuster.ememu.riscv.core.*;
 
 /**
  * Power Reset Clocking Interrupt (PRCI)
@@ -9,7 +8,6 @@ import net.katsuster.ememu.riscv.core.*;
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
 public class PRCI implements ParentCore {
-    private RV64[] cores;
     private PRCISlave slave;
 
     private PLLCFG corePll;
@@ -28,8 +26,7 @@ public class PRCI implements ParentCore {
 
     public static final int REG_UNDOCUMENTD0      = 0x002c;
 
-    public PRCI(RV64[] c) {
-        cores = c;
+    public PRCI() {
         slave = new PRCISlave();
 
         corePll = new PLLCFG(0x030187c1);

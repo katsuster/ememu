@@ -63,7 +63,7 @@ public class RISCVUnleashed extends AbstractBoard {
         CLINT clint = new CLINT(cpu);
         RAM l2lim = new RAM32(32 * 1024 * 1024);
         cl0_ddr = new RAM32(64 * 1024 * 1024);
-        PRCI prci = new PRCI(cpu);
+        PRCI prci = new PRCI();
         UART uart0 = new UART();
         UART uart1 = new UART();
         I2C i2c = new I2C();
