@@ -195,6 +195,7 @@ public class PRCI implements ParentCore {
                             "  %s: 0x%x, \n" +
                             "  %s: 0x%x, \n" +
                             "  %s: 0x%x, \n" +
+                            "  %s: 0x%x, \n" +
                             "  %s: 0x%x",
                     getData(),
                     "divr", divr,
@@ -202,7 +203,8 @@ public class PRCI implements ParentCore {
                     "divq", divq,
                     "range", range,
                     "bypass", bypass,
-                    "fse", fse);
+                    "fse", fse,
+                    "lock", lock);
         }
     }
 }
