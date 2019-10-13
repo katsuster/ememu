@@ -16,7 +16,9 @@ public class DDRController implements ParentCore {
     public static final int REG_PHY0000 = 0x2000;
     public static final int REG_PHY1214 = 0x32f8;
 
-    public static final int REG_BUSBLOCKER = 0x8000;
+    //8bytes registers
+    public static final int REG_BUSBLOCKER_L = 0x8000;
+    public static final int REG_BUSBLOCKER_H = 0x8004;
 
     public DDRController() {
         slave = new DDRControllerSlave();
@@ -36,7 +38,8 @@ public class DDRController implements ParentCore {
                 addReg(REG_PHY0000 + i * 4, "PHY" + i, 0x00000000);
             }
 
-            addReg(REG_BUSBLOCKER, "BUSBLOCKER", 0x80000000);
+            addReg(REG_BUSBLOCKER_L, "BUSBLOCKER_L", 0x80000000);
+            addReg(REG_BUSBLOCKER_H, "BUSBLOCKER_H", 0x80000000);
         }
 
         @Override
@@ -47,6 +50,10 @@ public class DDRController implements ParentCore {
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
+            case 0x210:
+                result = super.readWord(m, regaddr);
+                result |= 0x100;
+                break;
             default:
                 result = super.readWord(m, regaddr);
                 break;
@@ -74,13 +81,45 @@ public class DDRController implements ParentCore {
             }
 
             switch (regaddr) {
-            case REG_BUSBLOCKER:
-                System.out.printf("DDRC: wr BUSBLOCKER 0x%x\n", data);
-                break;
             default:
                 super.writeWord(m, regaddr, data);
                 break;
             }
+        }
+
+        @Override
+        public long read64(BusMaster64 m, long addr) {
+            int regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
+            long data;
+
+            switch (regaddr) {
+            case REG_BUSBLOCKER_L:
+                break;
+            default:
+                throw new IllegalArgumentException(String.format(
+                        "Cannot read 64bit from 0x%08x.", addr));
+            }
+
+            data = (((long)readWord(m, addr + 0) & 0xffffffffL) << 0) |
+                    (((long)readWord(m, addr + 4) & 0xffffffffL) << 32);
+
+            return data;
+        }
+
+        @Override
+        public void write64(BusMaster64 m, long addr, long data) {
+            int regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
+
+            switch (regaddr) {
+            case REG_BUSBLOCKER_L:
+                break;
+            default:
+                throw new IllegalArgumentException(String.format(
+                        "Cannot write 64bit to 0x%08x.", addr));
+            }
+
+            writeWord(m, addr + 0, (int)(data >>> 0));
+            writeWord(m, addr + 4, (int)(data >>> 32));
         }
     }
 
