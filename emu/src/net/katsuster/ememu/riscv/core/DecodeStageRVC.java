@@ -49,6 +49,26 @@ public class DecodeStageRVC extends Stage64 {
         throw new IllegalArgumentException("Unknown FLW, LD " +
                 String.format("%dbit.", getRVBits()));
     }
+
+    /**
+     * FSW, SD 命令をデコードします。
+     *
+     * @param inst 16bit 命令
+     * @return 命令の種類
+     */
+    public OpIndex decodeFswSd(InstructionRV16 inst) {
+        if (getRVBits() == 32) {
+            //C.FSW
+            return OpIndex.INS_RVC_FSW;
+        } if (getRVBits() == 64 || getRVBits() == 128) {
+            //C.SD
+            return OpIndex.INS_RVC_SD;
+        }
+
+        throw new IllegalArgumentException("Unknown FSW, SD " +
+                String.format("%dbit.", getRVBits()));
+    }
+
     /**
      * ADDI 命令をデコードします。
      *
@@ -317,6 +337,8 @@ public class DecodeStageRVC extends Stage64 {
             return decodeFlwLd(inst);
         case InstructionRV16.OPCODE_SW:
             return OpIndex.INS_RVC_SW;
+        case InstructionRV16.OPCODE_FSW_SD:
+            return decodeFswSd(inst);
         case InstructionRV16.OPCODE_ADDI:
             return decodeAddi(inst);
         case InstructionRV16.OPCODE_JAL_ADDIW:
