@@ -924,6 +924,29 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * ADDW (Add word) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAddw(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        long v;
+
+        if (!exec) {
+            printDisasm(inst, "addw",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rs1), getRegName(rs2)));
+            return;
+        }
+
+        v = getReg(rs1) + getReg(rs2);
+        setReg(rd, BitOp.signExt64(v & 0xffffffffL, 32));
+    }
+
+    /**
      * SUBW (subtract word) 命令。
      *
      * @param inst 32bit 命令
@@ -1334,6 +1357,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV64I_SRLIW:
             executeSrliw(inst, exec);
+            break;
+        case INS_RV64I_ADDW:
+            executeAddw(inst, exec);
             break;
         case INS_RV64I_SUBW:
             executeSubw(inst, exec);
