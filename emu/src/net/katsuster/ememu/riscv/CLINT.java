@@ -9,8 +9,12 @@ import net.katsuster.ememu.riscv.core.*;
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
 public class CLINT implements ParentCore {
+    public static final long RTCCLK = 1000000; //1MHz
+
     private RV64[] cores;
     private CLINTSlave slave;
+
+    private long mtime;
 
     //4bytes registers
     public static final int REG_MSIP0         = 0x0000;
@@ -193,8 +197,9 @@ public class CLINT implements ParentCore {
             case REG_MTIMECMP2_L:
             case REG_MTIMECMP3_L:
             case REG_MTIMECMP4_L:
-            case REG_MTIME_L:
                 break;
+            case REG_MTIME_L:
+                return mtime;
             default:
                 throw new IllegalArgumentException(String.format(
                         "Cannot read 64bit from 0x%08x.", addr));
@@ -216,8 +221,10 @@ public class CLINT implements ParentCore {
             case REG_MTIMECMP2_L:
             case REG_MTIMECMP3_L:
             case REG_MTIMECMP4_L:
-            case REG_MTIME_L:
                 break;
+            case REG_MTIME_L:
+                System.out.printf("CLINT: wr MTIME: 0x%x\n", data);
+                return;
             default:
                 throw new IllegalArgumentException(String.format(
                         "Cannot write 64bit to 0x%08x.", addr));
@@ -229,7 +236,20 @@ public class CLINT implements ParentCore {
 
         @Override
         public void run() {
-            //do nothing
+            while (!shouldHalt()) {
+                //FIXME: 100Hz polling
+                int hz = 100;
+
+                try {
+                    Thread.sleep(1000 / hz);
+
+                    synchronized (this) {
+                        mtime += RTCCLK / 100;
+                    }
+                } catch (InterruptedException e) {
+                    //ignore
+                }
+            }
         }
     }
 }
