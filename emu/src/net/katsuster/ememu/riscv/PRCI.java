@@ -24,7 +24,8 @@ public class PRCI implements ParentCore {
     public static final int REG_CORECLKSEL        = 0x0024;
     public static final int REG_DEVICESRESETREG   = 0x0028;
 
-    public static final int REG_UNDOCUMENTD0      = 0x002c;
+    public static final int REG_CLKMUXSTATUS      = 0x002c;
+    public static final int REG_PROCMONCFG        = 0x00f0;
 
     public PRCI() {
         slave = new PRCISlave();
@@ -51,7 +52,8 @@ public class PRCI implements ParentCore {
             addReg(REG_CORECLKSEL,      "CORECLKSEL", 0x00000000);
             addReg(REG_DEVICESRESETREG, "DEVICESRESETREG", 0x00000000);
 
-            addReg(REG_UNDOCUMENTD0, "UNDOCUMENTED0", 0x00000004);
+            addReg(REG_CLKMUXSTATUS,    "CLKMUXSTATUS", 0x00000004);
+            addReg(REG_PROCMONCFG,      "PROCMONCFG", 0x00000000);
         }
 
         @Override
@@ -71,11 +73,13 @@ public class PRCI implements ParentCore {
             case REG_GEMGXLPLLCFG0:
                 result = gemgxlPll.getData();
                 break;
-            case REG_UNDOCUMENTD0:
+            case REG_CLKMUXSTATUS:
                 result = super.readWord(m, regaddr);
-
-                System.out.printf("prci: RD: UNDOCUMENTED0: %08x\n", result);
-
+                System.out.printf("PRCI: rd: CLKMUXSTATUS: 0x%x\n", result);
+                break;
+            case REG_PROCMONCFG:
+                result = super.readWord(m, regaddr);
+                System.out.printf("PRCI: rd: PROCMONCFG: 0x%x\n", result);
                 break;
             default:
                 result = super.readWord(m, regaddr);
@@ -107,8 +111,12 @@ public class PRCI implements ParentCore {
                 gemgxlPll.setLock(1);
                 System.out.printf("PRCI: wr GEMGXLPLLCFG0: %s\n", gemgxlPll);
                 break;
-            case REG_UNDOCUMENTD0:
-                System.out.printf("prci: WR: UNDOCUMENTED0: %08x\n", data);
+            case REG_CLKMUXSTATUS:
+                System.out.printf("PRCI: wr: CLKMUXSTATUS: 0x%x\n", data);
+                super.writeWord(m, regaddr, data);
+                break;
+            case REG_PROCMONCFG:
+                System.out.printf("PRCI: wr: PROCMONCFG: 0x%x\n", data);
                 super.writeWord(m, regaddr, data);
                 break;
             default:
