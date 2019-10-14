@@ -1,5 +1,7 @@
 package net.katsuster.ememu.riscv;
 
+import java.io.*;
+
 import net.katsuster.ememu.generic.*;
 
 /**
@@ -10,6 +12,10 @@ import net.katsuster.ememu.generic.*;
 public class UART implements ParentCore {
     private UARTSlave slave;
 
+    private InputStream strInput;
+    private OutputStream strOutput;
+    private StringBuffer bufInput;
+
     public static final int REG_TXDATA = 0x0000;
     public static final int REG_RXDATA = 0x0004;
     public static final int REG_TXCTRL = 0x0008;
@@ -18,7 +24,17 @@ public class UART implements ParentCore {
     public static final int REG_IP     = 0x0014;
     public static final int REG_DIV    = 0x0018;
 
-    public UART() {
+    /**
+     * UART を作成します。
+     *
+     * @param istr UART の入力を得るためのストリーム
+     * @param ostr UART に出力された文字を印字するためのストリーム
+     */
+    public UART(InputStream istr, OutputStream ostr) {
+        strInput = istr;
+        strOutput = ostr;
+        bufInput = new StringBuffer();
+
         slave = new UARTSlave();
     }
 
@@ -66,7 +82,21 @@ public class UART implements ParentCore {
 
             switch (regaddr) {
             case REG_TXDATA:
-                System.out.printf("UART TXDATA: %c\n", data);
+                char ascii = (char)(data & 0xff);
+
+                if (ascii == 0x00) {
+                    //FIXME: IntelliJ の Console でコピーできないため無視
+                    break;
+                }
+                if (strOutput != null) {
+                    try {
+                        strOutput.write(ascii);
+                        strOutput.flush();
+                    } catch (IOException ex) {
+                        //ignore
+                    }
+                }
+
                 break;
             case REG_TXCTRL:
                 System.out.printf("UART TXCTRL: 0x%x\n", data);
