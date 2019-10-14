@@ -1186,6 +1186,67 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * AMOAND.W (Atomic memory operation: and word) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAmoandw(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+        int aq = (inst.getFunct7R() >> 1) & 1;
+        int rl = inst.getFunct7R() & 1;
+        long vaddr, paddr;
+        int t, valRs2;
+        Lock l;
+
+        if (!exec) {
+            String name = "amoand.w";
+
+            if (aq != 0) {
+                name += ".aq";
+            }
+            if (rl != 0) {
+                name += ".rl";
+            }
+
+            printDisasm(inst, name,
+                    String.format("%s, %s, (%s)", getRegName(rd),
+                            getRegName(rs2), getRegName(rs1)));
+            return;
+        }
+
+        vaddr = getReg(rs1);
+
+        //paddr = getMMU().translate(vaddr, 4, false, getPriv(), true);
+        paddr = vaddr;
+        //if (getMMU().isFault()) {
+        //    getMMU().clearFault();
+        //    return;
+        //}
+
+        valRs2 = (int)getReg(rs2);
+
+        l = getWriteLock();
+        l.lock();
+        try {
+            if (!tryRead(paddr, 4)) {
+                //raiseException(ARMv5.EXCEPT_ABT_DATA,
+                //        String.format("ldrd [%08x]", paddr));
+                return;
+            }
+
+            t = read32(paddr);
+            write32(paddr, t & valRs2);
+        } finally {
+            l.unlock();
+        }
+
+        setReg(rd, BitOp.signExt64(t & 0xffffffffL, 32));
+    }
+
+    /**
      * AMOOR.W (Atomic memory operation: OR word) 命令。
      *
      * @param inst 32bit 命令
@@ -1381,6 +1442,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32A_AMOADD_W:
             executeAmoaddw(inst, exec);
+            break;
+        case INS_RV32A_AMOAND_W:
+            executeAmoandw(inst, exec);
             break;
         case INS_RV32A_AMOOR_W:
             executeAmoorw(inst, exec);
