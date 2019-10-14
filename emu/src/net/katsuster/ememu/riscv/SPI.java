@@ -41,13 +41,15 @@ public class SPI implements ParentCore {
             addReg(REG_SCKDIV,  "SCKDIV", 0x00000000);
             /*
             addReg(REG_SCKMODE, "SCKMODE", 0x00000000);
+            */
             addReg(REG_CSID,    "CSID", 0x00000000);
             addReg(REG_CSDEF,   "CSDEF", 0x00000000);
             addReg(REG_CSMODE,  "CSMODE", 0x00000000);
+            /*
             addReg(REG_DELAY0,  "DELAY0", 0x00000000);
             addReg(REG_DELAY1,  "DELAY1", 0x00000000);
-            addReg(REG_FMT,     "FMT", 0x00000000);
             */
+            addReg(REG_FMT,     "FMT", 0x00000000);
             addReg(REG_TXDATA,  "TXDATA", 0x00000000);
             addReg(REG_RXDATA,  "RXDATA", 0x00000000);
             /*
@@ -70,14 +72,24 @@ public class SPI implements ParentCore {
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
             switch (regaddr) {
+            case REG_CSID:
+                result = 0;
+                System.out.printf("SPI CSID: read 0x%x\n", result);
+                break;
+            case REG_CSDEF:
+                result = 0;
+                System.out.printf("SPI CSDEF: read 0x%x\n", result);
+                break;
+            case REG_CSMODE:
+                result = 0;
+                System.out.printf("SPI CSMODE: read 0x%x\n", result);
+                break;
             case REG_TXDATA:
                 result = 0;
-
                 System.out.printf("SPI TXDATA: read 0x%x\n", result);
                 break;
             case REG_RXDATA:
                 result = 0;
-
                 System.out.printf("SPI RXDATA: read 0x%x\n", result);
                 break;
             default:
@@ -97,6 +109,18 @@ public class SPI implements ParentCore {
             switch (regaddr) {
             case REG_SCKDIV:
                 System.out.printf("SPI SCKDIV: write 0x%x\n", data);
+                break;
+            case REG_CSID:
+                System.out.printf("SPI CSID: write 0x%x\n", data);
+                break;
+            case REG_CSDEF:
+                System.out.printf("SPI CSDEF: write 0x%x\n", data);
+                break;
+            case REG_CSMODE:
+                System.out.printf("SPI CSMODE: write 0x%x\n", data);
+                break;
+            case REG_FMT:
+                System.out.printf("SPI FMT: write 0x%x\n", data);
                 break;
             case REG_TXDATA:
                 System.out.printf("SPI TXDATA: write 0x%x\n", data);
