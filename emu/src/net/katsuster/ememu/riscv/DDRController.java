@@ -49,11 +49,33 @@ public class DDRController implements ParentCore {
 
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
+            if (REG_CTRL000 <= regaddr && regaddr <= REG_CTRL264) {
+                int i = (regaddr - REG_CTRL000) >> 2;
+
+                switch (i) {
+                case 0:
+                case 19:
+                case 21:
+                case 120:
+                    result = super.readWord(m, regaddr);
+                    break;
+                case 132:
+                    result = super.readWord(m, regaddr);
+                    //int_status[8]: Initialization has been completed
+                    result |= 0x100;
+                    break;
+                case 136:
+                    result = super.readWord(m, regaddr);
+                    break;
+                default:
+                    result = super.readWord(m, regaddr);
+                    break;
+                }
+
+                return result;
+            }
+
             switch (regaddr) {
-            case 0x210:
-                result = super.readWord(m, regaddr);
-                result |= 0x100;
-                break;
             default:
                 result = super.readWord(m, regaddr);
                 break;
@@ -70,13 +92,24 @@ public class DDRController implements ParentCore {
 
             if (REG_CTRL000 <= regaddr && regaddr <= REG_CTRL264) {
                 int i = (regaddr - REG_CTRL000) >> 2;
-                System.out.printf("DDRC: wr CTRL%d 0x%x\n", i, data);
+
+                switch (i) {
+                case 0:
+                case 19:
+                case 21:
+                case 120:
+                case 132:
+                case 136:
+                    System.out.printf("DDRC: wr CTRL%d 0x%x\n", i, data);
+                    break;
+                }
+
                 return;
             }
 
             if (REG_PHY0000 <= regaddr && regaddr <= REG_PHY1214) {
                 int i = (regaddr - REG_PHY0000) >> 2;
-                System.out.printf("DDRC: wr PHY%d 0x%x\n", i, data);
+                //System.out.printf("DDRC: wr PHY%d 0x%x\n", i, data);
                 return;
             }
 
