@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * 最新版は、日本語版 ARM DDI0100HJ, 英語版 ARM DDI0100I
  */
-public class DecodeStageARMv5 extends Stage {
+public class DecodeStageARMv5 extends Stage32 {
     /**
      * ARMv5 CPU コア c のデコードステージを生成します。
      *

@@ -10,7 +10,7 @@ import net.katsuster.ememu.generic.*;
  *
  * 最新版は、日本語版 ARM DDI0100HJ, 英語版 ARM DDI0100I
  */
-public class ExecStageThumb extends Stage {
+public class ExecStageThumb extends Stage32 {
     /**
      * ARMv5 CPU コア c の実行ステージを生成します。
      *
