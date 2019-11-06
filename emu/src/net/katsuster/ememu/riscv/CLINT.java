@@ -9,46 +9,20 @@ import net.katsuster.ememu.riscv.core.*;
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
 public class CLINT implements ParentCore {
+    public static final int NUM_REG_MSIP = 32;
     public static final long RTCCLK = 1000000; //1MHz
 
     private RV64[] cores;
     private CLINTSlave slave;
 
+    private int numCores;
+    private int REG_MSIP_LAST;
+    private int REG_MSIP_RES0;
     private long mtime;
 
     //4bytes registers
     public static final int REG_MSIP0         = 0x0000;
-    public static final int REG_MSIP1         = 0x0004;
-    public static final int REG_MSIP2         = 0x0008;
-    public static final int REG_MSIP3         = 0x000c;
-    public static final int REG_MSIP4         = 0x0010;
-    public static final int REG_MSIP_RES5     = 0x0014;
-    public static final int REG_MSIP_RES6     = 0x0018;
-    public static final int REG_MSIP_RES7     = 0x001c;
-    public static final int REG_MSIP_RES8     = 0x0020;
-    public static final int REG_MSIP_RES9     = 0x0024;
-    public static final int REG_MSIP_RES10    = 0x0028;
-    public static final int REG_MSIP_RES11    = 0x002c;
-    public static final int REG_MSIP_RES12    = 0x0030;
-    public static final int REG_MSIP_RES13    = 0x0034;
-    public static final int REG_MSIP_RES14    = 0x0038;
-    public static final int REG_MSIP_RES15    = 0x003c;
-    public static final int REG_MSIP_RES16    = 0x0040;
-    public static final int REG_MSIP_RES17    = 0x0044;
-    public static final int REG_MSIP_RES18    = 0x0048;
-    public static final int REG_MSIP_RES19    = 0x004c;
-    public static final int REG_MSIP_RES20    = 0x0050;
-    public static final int REG_MSIP_RES21    = 0x0054;
-    public static final int REG_MSIP_RES22    = 0x0058;
-    public static final int REG_MSIP_RES23    = 0x005c;
-    public static final int REG_MSIP_RES24    = 0x0060;
-    public static final int REG_MSIP_RES25    = 0x0064;
-    public static final int REG_MSIP_RES26    = 0x0068;
-    public static final int REG_MSIP_RES27    = 0x006c;
-    public static final int REG_MSIP_RES28    = 0x0070;
-    public static final int REG_MSIP_RES29    = 0x0074;
-    public static final int REG_MSIP_RES30    = 0x0078;
-    public static final int REG_MSIP_RES31    = 0x007c;
+    public static final int REG_MSIP_RES_LAST = 0x007c;
 
     //8bytes registers
     public static final int REG_MTIMECMP0_L   = 0x4000;
@@ -67,6 +41,9 @@ public class CLINT implements ParentCore {
 
     public CLINT(RV64[] c) {
         cores = c;
+        numCores = 5;
+        REG_MSIP_LAST = Math.max(REG_MSIP0, REG_MSIP0 + (numCores - 1) * 4);
+        REG_MSIP_RES0 = REG_MSIP0 + numCores * 4;
         slave = new CLINTSlave();
     }
 
@@ -77,38 +54,9 @@ public class CLINT implements ParentCore {
 
     class CLINTSlave extends Controller32 {
         public CLINTSlave() {
-            addReg(REG_MSIP0, "MSIP0", 0x00000000);
-            addReg(REG_MSIP1, "MSIP1", 0x00000000);
-            addReg(REG_MSIP2, "MSIP2", 0x00000000);
-            addReg(REG_MSIP3, "MSIP3", 0x00000000);
-            addReg(REG_MSIP4, "MSIP4", 0x00000000);
-            addReg(REG_MSIP_RES5, "MSIP_RES5", 0x00000000);
-            addReg(REG_MSIP_RES6, "MSIP_RES6", 0x00000000);
-            addReg(REG_MSIP_RES7, "MSIP_RES7", 0x00000000);
-            addReg(REG_MSIP_RES8, "MSIP_RES8", 0x00000000);
-            addReg(REG_MSIP_RES9, "MSIP_RES9", 0x00000000);
-            addReg(REG_MSIP_RES10, "MSIP_RES10", 0x00000000);
-            addReg(REG_MSIP_RES11, "MSIP_RES11", 0x00000000);
-            addReg(REG_MSIP_RES12, "MSIP_RES12", 0x00000000);
-            addReg(REG_MSIP_RES13, "MSIP_RES13", 0x00000000);
-            addReg(REG_MSIP_RES14, "MSIP_RES14", 0x00000000);
-            addReg(REG_MSIP_RES15, "MSIP_RES15", 0x00000000);
-            addReg(REG_MSIP_RES16, "MSIP_RES16", 0x00000000);
-            addReg(REG_MSIP_RES17, "MSIP_RES17", 0x00000000);
-            addReg(REG_MSIP_RES18, "MSIP_RES18", 0x00000000);
-            addReg(REG_MSIP_RES19, "MSIP_RES19", 0x00000000);
-            addReg(REG_MSIP_RES20, "MSIP_RES20", 0x00000000);
-            addReg(REG_MSIP_RES21, "MSIP_RES21", 0x00000000);
-            addReg(REG_MSIP_RES22, "MSIP_RES22", 0x00000000);
-            addReg(REG_MSIP_RES23, "MSIP_RES23", 0x00000000);
-            addReg(REG_MSIP_RES24, "MSIP_RES24", 0x00000000);
-            addReg(REG_MSIP_RES25, "MSIP_RES25", 0x00000000);
-            addReg(REG_MSIP_RES26, "MSIP_RES26", 0x00000000);
-            addReg(REG_MSIP_RES27, "MSIP_RES27", 0x00000000);
-            addReg(REG_MSIP_RES28, "MSIP_RES28", 0x00000000);
-            addReg(REG_MSIP_RES29, "MSIP_RES29", 0x00000000);
-            addReg(REG_MSIP_RES30, "MSIP_RES30", 0x00000000);
-            addReg(REG_MSIP_RES31, "MSIP_RES31", 0x00000000);
+            for (int i = 0; i < NUM_REG_MSIP; i++) {
+                addReg(REG_MSIP0 + i * 4, "MSIP" + i, 0x00000000);
+            }
 
             addReg(REG_MTIMECMP0_L, "MTIMECMP0_L", 0x00000000);
             addReg(REG_MTIMECMP0_H, "MTIMECMP0_H", 0x00000000);
@@ -137,12 +85,7 @@ public class CLINT implements ParentCore {
                 return 0;
             }
 
-            switch (regaddr) {
-            case REG_MSIP0:
-            case REG_MSIP1:
-            case REG_MSIP2:
-            case REG_MSIP3:
-            case REG_MSIP4:
+            if (REG_MSIP0 <= regaddr && regaddr <= REG_MSIP_LAST) {
                 int id = (regaddr - REG_MSIP0) / 4;
 
                 if (cores[id].getXIP_XSIP(RV64.PRIV_M)) {
@@ -150,8 +93,18 @@ public class CLINT implements ParentCore {
                 } else {
                     result = 0;
                 }
+
                 //System.out.printf("rd MSIP[%d] val:%08x\n", id, result);
-                break;
+
+                return result;
+            }
+
+            if (REG_MSIP_RES0 <= regaddr && regaddr <= REG_MSIP_RES_LAST) {
+                // Ignore reserved registers
+                return 0;
+            }
+
+            switch (regaddr) {
             default:
                 result = super.readWord(m, regaddr);
                 break;
@@ -166,12 +119,7 @@ public class CLINT implements ParentCore {
 
             regaddr = (int) (addr & BitOp.getAddressMask(LEN_WORD_BITS));
 
-            switch (regaddr) {
-            case REG_MSIP0:
-            case REG_MSIP1:
-            case REG_MSIP2:
-            case REG_MSIP3:
-            case REG_MSIP4:
+            if (REG_MSIP0 <= regaddr && regaddr <= REG_MSIP_LAST) {
                 int id = (regaddr - REG_MSIP0) / 4;
                 boolean b = (data & 1) != 0;
 
@@ -179,7 +127,16 @@ public class CLINT implements ParentCore {
                 cores[id].interrupt();
 
                 System.out.printf("MSIP[%d] val:%08x\n", id, data);
-                break;
+
+                return;
+            }
+
+            if (REG_MSIP_RES0 <= regaddr && regaddr <= REG_MSIP_RES_LAST) {
+                // Ignore reserved registers
+                return;
+            }
+
+            switch (regaddr) {
             default:
                 super.writeWord(m, regaddr, data);
                 break;
