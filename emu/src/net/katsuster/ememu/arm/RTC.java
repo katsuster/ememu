@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell Real Time Clock (PL031)
  * ARM DDI0224B
  */
-public class RTC implements ParentCore {
-    private RTCSlave slave;
-
+public class RTC extends AbstractParentCore {
     public static final int REG_RTCDR        = 0x000;
     public static final int REG_RTCMR        = 0x004;
     public static final int REG_RTCLR        = 0x008;
@@ -29,13 +27,10 @@ public class RTC implements ParentCore {
     public static final int REG_RTCPCellID2  = 0xff8;
     public static final int REG_RTCPCellID3  = 0xffc;
 
-    public RTC() {
-        slave = new RTCSlave();
-    }
+    public RTC(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new RTCSlave());
     }
 
     class RTCSlave extends Controller32 {

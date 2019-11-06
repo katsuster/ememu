@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell Multimedia Card Interface (PL180)
  * ARM DDI0172A
  */
-public class MMCI implements ParentCore {
-    private MMCISlave slave;
-
+public class MMCI extends AbstractParentCore {
     public static final int REG_MCIPower      = 0x000;
     public static final int REG_MCIClock      = 0x004;
     public static final int REG_MCIArgument   = 0x008;
@@ -42,13 +40,10 @@ public class MMCI implements ParentCore {
     public static final int REG_MCIPCellID2   = 0xff8;
     public static final int REG_MCIPCellID3   = 0xffc;
 
-    public MMCI() {
-        slave = new MMCISlave();
-    }
+    public MMCI(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new MMCISlave());
     }
 
     class MMCISlave extends Controller32 {

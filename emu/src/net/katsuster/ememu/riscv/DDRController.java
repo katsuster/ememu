@@ -7,9 +7,7 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
-public class DDRController implements ParentCore {
-    private DDRControllerSlave slave;
-
+public class DDRController extends AbstractParentCore {
     public static final int REG_CTRL000 = 0x0000;
     public static final int REG_CTRL264 = 0x0420;
 
@@ -20,13 +18,10 @@ public class DDRController implements ParentCore {
     public static final int REG_BUSBLOCKER_L = 0x8000;
     public static final int REG_BUSBLOCKER_H = 0x8004;
 
-    public DDRController() {
-        slave = new DDRControllerSlave();
-    }
+    public DDRController(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new DDRControllerSlave());
     }
 
     class DDRControllerSlave extends Controller32 {

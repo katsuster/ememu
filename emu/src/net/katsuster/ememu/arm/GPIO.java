@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell General Purpose Input/Output (PL061)
  * ARM DDI0190B
  */
-public class GPIO implements ParentCore {
-    private GPIOSlave slave;
-
+public class GPIO extends AbstractParentCore {
     //0x000-0x3fc: REG_GPIODATA
 
     public static final int REG_GPIODIR       = 0x400;
@@ -35,13 +33,10 @@ public class GPIO implements ParentCore {
     public static final int REG_GPIOPCellID2  = 0xff8;
     public static final int REG_GPIOPCellID3  = 0xffc;
 
-    public GPIO() {
-        slave = new GPIOSlave();
-    }
+    public GPIO(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new GPIOSlave());
     }
 
     class GPIOSlave extends Controller32 {

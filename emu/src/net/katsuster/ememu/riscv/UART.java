@@ -9,9 +9,7 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
-public class UART implements ParentCore {
-    private UARTSlave slave;
-
+public class UART extends AbstractParentCore {
     private InputStream strInput;
     private OutputStream strOutput;
     private StringBuffer bufInput;
@@ -27,20 +25,18 @@ public class UART implements ParentCore {
     /**
      * UART を作成します。
      *
+     * @param n    コアの名前
      * @param istr UART の入力を得るためのストリーム
      * @param ostr UART に出力された文字を印字するためのストリーム
      */
-    public UART(InputStream istr, OutputStream ostr) {
+    public UART(String n, InputStream istr, OutputStream ostr) {
+        super(n);
+
         strInput = istr;
         strOutput = ostr;
         bufInput = new StringBuffer();
 
-        slave = new UARTSlave();
-    }
-
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new UARTSlave());
     }
 
     class UARTSlave extends Controller32 {

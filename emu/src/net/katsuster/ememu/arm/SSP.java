@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell Synchronous Serial Port (PL022)
  * ARM DDI0194G
  */
-public class SSP implements ParentCore {
-    private SSPSlave slave;
-
+public class SSP extends AbstractParentCore {
     public static final int REG_SSPCR0       = 0x000;
     public static final int REG_SSPCR1       = 0x004;
     public static final int REG_SSPDR        = 0x008;
@@ -31,13 +29,10 @@ public class SSP implements ParentCore {
     public static final int REG_SSPPCellID2  = 0xff8;
     public static final int REG_SSPPCellID3  = 0xffc;
 
-    public SSP() {
-        slave = new SSPSlave();
-    }
+    public SSP(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new SSPSlave());
     }
 
     class SSPSlave extends Controller32 {

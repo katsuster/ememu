@@ -10,9 +10,8 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell UART (PL011)
  * 日本語版は ARM DDI0183AJ, 英語版は ARM DDI0183G
  */
-public class UART implements INTSource, ParentCore {
+public class UART extends AbstractParentCore implements INTSource {
     private INTDestination intDst = new NullINTDestination();
-    private UARTSlave slave;
 
     private int rawInt;
     private int maskInt;
@@ -74,7 +73,9 @@ public class UART implements INTSource, ParentCore {
      * @param istr UART の入力を得るためのストリーム
      * @param ostr UART に出力された文字を印字するためのストリーム
      */
-    public UART(InputStream istr, OutputStream ostr) {
+    public UART(String n, InputStream istr, OutputStream ostr) {
+        super(n);
+
         rawInt = 0;
         maskInt = 0;
 
@@ -82,7 +83,7 @@ public class UART implements INTSource, ParentCore {
         strOutput = ostr;
         bufInput = new StringBuffer();
 
-        slave = new UARTSlave();
+        setSlaveCore(new UARTSlave());
     }
 
     /**
@@ -139,11 +140,6 @@ public class UART implements INTSource, ParentCore {
     @Override
     public String getIRQMessage() {
         return "UART";
-    }
-
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
     }
 
     class UARTSlave extends Controller32 {

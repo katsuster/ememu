@@ -8,22 +8,17 @@ import net.katsuster.ememu.generic.*;
  * 参考: OpenCores I2C controller core
  *       I2C-Master Core Specifications Rev.0.9
  */
-public class I2C implements ParentCore {
-    private I2CSlave slave;
-
+public class I2C extends AbstractParentCore {
     public static final int REG_PRERLO  = 0x0000;
     public static final int REG_PRERHI  = 0x0004;
     public static final int REG_CTR     = 0x0008;
     public static final int REG_TXRRXR  = 0x000c;
     public static final int REG_CRSR    = 0x0010;
 
-    public I2C() {
-        slave = new I2CSlave();
-    }
+    public I2C(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new I2CSlave());
     }
 
     class I2CSlave extends Controller32 {

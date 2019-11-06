@@ -8,12 +8,11 @@ import net.katsuster.ememu.riscv.core.*;
  *
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
-public class CLINT implements ParentCore {
+public class CLINT extends AbstractParentCore {
     public static final int NUM_REG_MSIP = 32;
     public static final long RTCCLK = 1000000; //1MHz
 
     private RV64[] cores;
-    private CLINTSlave slave;
 
     private int numCores;
     private int REG_MSIP_LAST;
@@ -39,17 +38,15 @@ public class CLINT implements ParentCore {
     public static final int REG_MTIME_L       = 0xbff8;
     public static final int REG_MTIME_H       = 0xbffc;
 
-    public CLINT(RV64[] c) {
+    public CLINT(String n, RV64[] c) {
+        super(n);
+
         cores = c;
         numCores = 5;
         REG_MSIP_LAST = Math.max(REG_MSIP0, REG_MSIP0 + (numCores - 1) * 4);
         REG_MSIP_RES0 = REG_MSIP0 + numCores * 4;
-        slave = new CLINTSlave();
-    }
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new CLINTSlave());
     }
 
     class CLINTSlave extends Controller32 {

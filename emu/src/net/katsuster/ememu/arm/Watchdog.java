@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM Watchdog Module (SP805)
  * ARM DDI0270B
  */
-public class Watchdog implements ParentCore {
-    private WatchdogSlave slave;
-
+public class Watchdog extends AbstractParentCore {
     public static final int REG_WdogLoad      = 0x00;
     public static final int REG_WdogValue     = 0x04;
     public static final int REG_WdogControl   = 0x08;
@@ -32,13 +30,10 @@ public class Watchdog implements ParentCore {
     public static final int REG_WdogPCellID2  = 0xff8;
     public static final int REG_WdogPCellID3  = 0xffc;
 
-    public Watchdog() {
-        slave = new WatchdogSlave();
-    }
+    public Watchdog(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new WatchdogSlave());
     }
 
     class WatchdogSlave extends Controller32 {

@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: Versatile Application Baseboard for ARM926EJ-S User Guide
  * ARM DUI0225D
  */
-public class SysBaseboard implements ParentCore {
-    private SysBaseboardSlave slave;
-
+public class SysBaseboard extends AbstractParentCore {
     private long start24MHz;
 
     public static final int REG_SYS_ID         = 0x000;
@@ -52,16 +50,12 @@ public class SysBaseboard implements ParentCore {
     public static final int REG_SYS_TEST_OSC3  = 0x0cc;
     public static final int REG_SYS_TEST_OSC4  = 0x0d0;
 
+    public SysBaseboard(String n) {
+        super(n);
 
-    public SysBaseboard() {
         start24MHz = System.nanoTime();
 
-        slave = new SysBaseboardSlave();
-    }
-
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new SysBaseboardSlave());
     }
 
     class SysBaseboardSlave extends Controller32 {

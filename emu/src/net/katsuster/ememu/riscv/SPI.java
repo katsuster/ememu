@@ -7,9 +7,7 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
-public class SPI implements ParentCore {
-    private SPISlave slave;
-
+public class SPI extends AbstractParentCore {
     public static final int REG_SCKDIV  = 0x0000;
     public static final int REG_SCKMODE = 0x0004;
     public static final int REG_CSID    = 0x0010;
@@ -27,13 +25,10 @@ public class SPI implements ParentCore {
     public static final int REG_IE      = 0x0070;
     public static final int REG_IP      = 0x0074;
 
-    public SPI() {
-        slave = new SPISlave();
-    }
+    public SPI(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new SPISlave());
     }
 
     class SPISlave extends Controller32 {

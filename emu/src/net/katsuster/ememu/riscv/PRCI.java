@@ -7,9 +7,7 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
-public class PRCI implements ParentCore {
-    private PRCISlave slave;
-
+public class PRCI extends AbstractParentCore {
     private PLLCFG corePll;
     private PLLCFG ddrPll;
     private PLLCFG gemgxlPll;
@@ -27,17 +25,14 @@ public class PRCI implements ParentCore {
     public static final int REG_CLKMUXSTATUS      = 0x002c;
     public static final int REG_PROCMONCFG        = 0x00f0;
 
-    public PRCI() {
-        slave = new PRCISlave();
+    public PRCI(String n) {
+        super(n);
 
         corePll = new PLLCFG(0x030187c1);
         ddrPll = new PLLCFG(0x030187c1);
         gemgxlPll = new PLLCFG(0x030187c1);
-    }
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new PRCISlave());
     }
 
     class PRCISlave extends Controller32 {

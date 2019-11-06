@@ -10,9 +10,8 @@ import net.katsuster.ememu.generic.*;
  * ARM DDI0271C
  * </p>
  */
-public class DualTimer implements INTSource, ParentCore {
+public class DualTimer extends AbstractParentCore implements INTSource {
     private INTDestination intDst = new NullINTDestination();
-    private DualTimerSlave slave;
 
     private int clock;
     private boolean[] timerEn;
@@ -52,17 +51,22 @@ public class DualTimer implements INTSource, ParentCore {
 
     /**
      * 1MHz 駆動のタイマーを作成します。
+     *
+     * @param n  コアの名前
      */
-    public DualTimer() {
-        this(1000000);
+    public DualTimer(String n) {
+        this(n, 1000000);
     }
 
     /**
      * タイマーを作成します。
      *
+     * @param n  コアの名前
      * @param ck タイマーを駆動するクロックの周波数
      */
-    public DualTimer(int ck) {
+    public DualTimer(String n, int ck) {
+        super(n);
+
         clock = ck;
         timerEn = new boolean[2];
         timerPeriodic = new boolean[2];
@@ -74,7 +78,7 @@ public class DualTimer implements INTSource, ParentCore {
         loadValue = new int[2];
         currentValue = new int[2];
 
-        slave = new DualTimerSlave();
+        setSlaveCore(new DualTimerSlave());
     }
 
     @Override
@@ -101,11 +105,6 @@ public class DualTimer implements INTSource, ParentCore {
     @Override
     public String getIRQMessage() {
         return "Dual-Timer";
-    }
-
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
     }
 
     class DualTimerSlave extends Controller32 {

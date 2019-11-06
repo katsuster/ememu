@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: PrimeXsys System Controller (SP810)
  * ARM DDI0254B
  */
-public class SysController implements ParentCore {
-    private SysControllerSlave slave;
-
+public class SysController extends AbstractParentCore {
     public static final int REG_SCCTRL      = 0x000;
     public static final int REG_SCSYSSTAT   = 0x004;
     public static final int REG_SCIMCTRL    = 0x008;
@@ -44,13 +42,10 @@ public class SysController implements ParentCore {
     public static final int REG_SCPCellID2  = 0xff8;
     public static final int REG_SCPCellID3  = 0xffc;
 
-    public SysController() {
-        slave = new SysControllerSlave();
-    }
+    public SysController(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new SysControllerSlave());
     }
 
     class SysControllerSlave extends Controller32 {

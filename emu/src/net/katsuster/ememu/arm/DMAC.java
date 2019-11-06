@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell DMA Controller (PL080)
  * ARM DDI0196G
  */
-public class DMAC implements ParentCore {
-    private DMACSlave slave;
-
+public class DMAC extends AbstractParentCore {
     public static final int REG_DMACIntStatus           = 0x000;
     public static final int REG_DMACIntTCStatus         = 0x004;
     public static final int REG_DMACIntTCClear          = 0x008;
@@ -78,13 +76,10 @@ public class DMAC implements ParentCore {
     public static final int REG_DMACPCellID2            = 0xff8;
     public static final int REG_DMACPCellID3            = 0xffc;
 
-    public DMAC() {
-        slave = new DMACSlave();
-    }
+    public DMAC(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new DMACSlave());
     }
 
     class DMACSlave extends Controller32 {

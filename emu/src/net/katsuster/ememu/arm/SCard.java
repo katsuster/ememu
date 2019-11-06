@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell Smart Card Interface (PL131)
  * ARM DDI0228A
  */
-public class SCard implements ParentCore {
-    private SCardSlave slave;
-
+public class SCard extends AbstractParentCore {
     public static final int REG_SCIDATA        = 0x000;
     public static final int REG_SCICR0         = 0x004;
     public static final int REG_SCICR1         = 0x008;
@@ -54,13 +52,10 @@ public class SCard implements ParentCore {
     public static final int REG_SCIPCellID2    = 0xff8;
     public static final int REG_SCIPCellID3    = 0xffc;
 
-    public SCard() {
-        slave = new SCardSlave();
-    }
+    public SCard(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new SCardSlave());
     }
 
     class SCardSlave extends Controller32 {

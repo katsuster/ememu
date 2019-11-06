@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell PS2 Keyboard/Mouse Interface (PL050)
  * ARM DDI0143C
  */
-public class KMI implements ParentCore {
-    private KMISlave slave;
-
+public class KMI extends AbstractParentCore {
     public static final int REG_KMICR        = 0x000;
     public static final int REG_KMISTAT      = 0x004;
     public static final int REG_KMIDATA      = 0x008;
@@ -37,13 +35,10 @@ public class KMI implements ParentCore {
     public static final int REG_KMIPCellID2  = 0xff8;
     public static final int REG_KMIPCellID3  = 0xffc;
 
-    public KMI() {
-        slave = new KMISlave();
-    }
+    public KMI(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new KMISlave());
     }
 
     class KMISlave extends Controller32 {

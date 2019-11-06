@@ -9,6 +9,13 @@ package net.katsuster.ememu.generic;
  */
 public interface ParentCore {
     /**
+     * コアの名前を取得します。
+     *
+     * @return コアの名前
+     */
+    public abstract String getName();
+
+    /**
      * バススレーブとなるコアを取得します。
      *
      * @return バススレーブコア

@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell Synchronous Static Memory Controller (PL093)
  * ARM DDI0236H
  */
-public class SSMC implements ParentCore {
-    private SSMCSlave slave;
-
+public class SSMC extends AbstractParentCore {
     public static final int REG_SMBIDCYR0     = 0x000;
     public static final int REG_SMBWSTRDR0    = 0x004;
     public static final int REG_SMBWSTWRR0    = 0x008;
@@ -91,13 +89,10 @@ public class SSMC implements ParentCore {
     public static final int REG_SSMCPCellID2  = 0xff8;
     public static final int REG_SSMCPCellID3  = 0xffc;
 
-    public SSMC() {
-        slave = new SSMCSlave();
-    }
+    public SSMC(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new SSMCSlave());
     }
 
     class SSMCSlave extends Controller32 {

@@ -60,21 +60,21 @@ public class RISCVUnleashed extends AbstractBoard {
         RAM mode_select = new RAM32(8 * 1024);
         RAM reserved2 = new RAM32(56 * 1024);
         RAM mask_rom = new RAM32(32 * 1024);
-        CLINT clint = new CLINT(cpu);
+        CLINT clint = new CLINT("clint", cpu);
         RAM l2lim = new RAM32(32 * 1024 * 1024);
         cl0_ddr = new RAM32(64 * 1024 * 1024);
-        PRCI prci = new PRCI();
-        UART uart0 = new UART(uartIn[0], uartOut[0]);
-        UART uart1 = new UART(uartIn[1], uartOut[1]);
-        I2C i2c = new I2C();
-        SPI spi0 = new SPI();
-        SPI spi1 = new SPI();
-        SPI spi2 = new SPI();
-        GPIO gpio = new GPIO();
-        DDRController ddrc = new DDRController();
+        PRCI prci = new PRCI("pcri");
+        UART uart0 = new UART("uart0", uartIn[0], uartOut[0]);
+        UART uart1 = new UART("uart1", uartIn[1], uartOut[1]);
+        I2C i2c = new I2C("i2c");
+        SPI spi0 = new SPI("spi0");
+        SPI spi1 = new SPI("spi1");
+        SPI spi2 = new SPI("spi2");
+        GPIO gpio = new GPIO("gpio");
+        DDRController ddrc = new DDRController("ddrc");
         RAM qspi_flash0 = new RAM32(33 * 1024 * 1024);
 
-        //Master core
+        //Main bus
         for (int i = 0; i < cpu.length; i++) {
             cpu[i] = new RV64();
             cpu[i].setThreadID(i);

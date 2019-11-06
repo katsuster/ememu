@@ -7,9 +7,7 @@ import net.katsuster.ememu.generic.*;
  *
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
-public class GPIO implements ParentCore {
-    private GPIOSlave slave;
-
+public class GPIO extends AbstractParentCore {
     public static final int REG_INPUT_VAL  = 0x00;
     public static final int REG_INPUT_EN   = 0x04;
     public static final int REG_OUTPUT_EN  = 0x08;
@@ -26,13 +24,10 @@ public class GPIO implements ParentCore {
     public static final int REG_LOW_IP     = 0x34;
     public static final int REG_OUT_XOR    = 0x40;
 
-    public GPIO() {
-        slave = new GPIOSlave();
-    }
+    public GPIO(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new GPIOSlave());
     }
 
     class GPIOSlave extends Controller32 {

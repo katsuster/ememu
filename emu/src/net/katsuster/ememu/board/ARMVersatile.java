@@ -63,7 +63,7 @@ public class ARMVersatile extends AbstractBoard {
         //TODO: implement MPMC controller...
         mpmc_c0_c1 = new RAM32(64 * 1024 * 1024);
 
-        SysBaseboard sysBoard = new SysBaseboard();
+        SysBaseboard sysBoard = new SysBaseboard("sysBoard");
 
         //TODO: implement PCI controller...
         RAM pci_conf = new RAM64(4 * 1024);
@@ -71,37 +71,37 @@ public class ARMVersatile extends AbstractBoard {
         RAM serial_bus = new RAM64(4 * 1024);
 
         SecondaryINTC intc2nd = new SecondaryINTC();
-        AACI aaci = new AACI();
-        MMCI mci0 = new MMCI();
-        KMI kmiKey = new KMI();
-        KMI kmiMouse = new KMI();
-        UART uart3 = new UART(uartIn[3], uartOut[3]);
-        SCard scard1 = new SCard();
-        MMCI mci1 = new MMCI();
+        AACI aaci = new AACI("aaci");
+        MMCI mci0 = new MMCI("mci0");
+        KMI kmiKey = new KMI("kmiKey");
+        KMI kmiMouse = new KMI("kmiMouse");
+        UART uart3 = new UART("uart3", uartIn[3], uartOut[3]);
+        SCard scard1 = new SCard("scard1");
+        MMCI mci1 = new MMCI("mci1");
         //TODO: implement Ethernet controller...
         RAM ether = new RAM64(4 * 1024);
         //TODO: implement USB controller...
         RAM usb = new RAM64(4 * 1024);
 
-        SSMC ssmc = new SSMC();
-        MPMC mpmc = new MPMC();
-        LCDC clcdc = new LCDC();
-        DMAC dmac = new DMAC();
+        SSMC ssmc = new SSMC("ssmc");
+        MPMC mpmc = new MPMC("mpmc");
+        LCDC clcdc = new LCDC("lcdc");
+        DMAC dmac = new DMAC("dmac");
         PrimaryINTC intc1st = new PrimaryINTC();
-        SysController sysCtrl = new SysController();
-        Watchdog watchdog = new Watchdog();
-        DualTimer timer0_1 = new DualTimer();
-        DualTimer timer2_3 = new DualTimer();
-        GPIO gpio0 = new GPIO();
-        GPIO gpio1 = new GPIO();
-        GPIO gpio2 = new GPIO();
-        GPIO gpio3 = new GPIO();
-        RTC rtc = new RTC();
-        SCard scard0 = new SCard();
-        UART uart0 = new UART(uartIn[0], uartOut[0]);
-        UART uart1 = new UART(uartIn[1], uartOut[1]);
-        UART uart2 = new UART(uartIn[2], uartOut[2]);
-        SSP ssp = new SSP();
+        SysController sysCtrl = new SysController("sysCtrl");
+        Watchdog watchdog = new Watchdog("watchdog");
+        DualTimer timer0_1 = new DualTimer("timer0_1");
+        DualTimer timer2_3 = new DualTimer("timer2_3");
+        GPIO gpio0 = new GPIO("gpio0");
+        GPIO gpio1 = new GPIO("gpio1");
+        GPIO gpio2 = new GPIO("gpio2");
+        GPIO gpio3 = new GPIO("gpio3");
+        RTC rtc = new RTC("rtc");
+        SCard scard0 = new SCard("scard0");
+        UART uart0 = new UART("uart0", uartIn[0], uartOut[0]);
+        UART uart1 = new UART("uart1", uartIn[1], uartOut[1]);
+        UART uart2 = new UART("uart2", uartIn[2], uartOut[2]);
+        SSP ssp = new SSP("ssp");
 
         //TODO: implement SSMC controller...
         RAM ssmc_c4_7 = new RAM64(4 * 1024);

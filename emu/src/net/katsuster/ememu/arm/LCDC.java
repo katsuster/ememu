@@ -11,9 +11,7 @@ import net.katsuster.ememu.generic.*;
  * ARM DDI0161E はレジスタアドレスの仕様が変わっている。
  * Linux のドライバは DDI0161E に対応していない。
  */
-public class LCDC implements ParentCore {
-    private LCDCSlave slave;
-
+public class LCDC extends AbstractParentCore {
     public static final int REG_LCDTiming0       = 0x000;
     public static final int REG_LCDTiming1       = 0x004;
     public static final int REG_LCDTiming2       = 0x008;
@@ -38,13 +36,10 @@ public class LCDC implements ParentCore {
     public static final int REG_CLCDPCELLID2     = 0xff8;
     public static final int REG_CLCDPCELLID3     = 0xffc;
 
-    public LCDC() {
-        slave = new LCDCSlave();
-    }
+    public LCDC(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new LCDCSlave());
     }
 
     class LCDCSlave extends Controller32 {

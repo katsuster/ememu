@@ -8,9 +8,7 @@ import net.katsuster.ememu.generic.*;
  * 参考: ARM PrimeCell MultiPort Memory Controller (GX175)
  * ARM DDI0277F
  */
-public class MPMC implements ParentCore {
-    private MPMCSlave slave;
-
+public class MPMC extends AbstractParentCore {
     public static final int REG_MPMCControl            = 0x000;
     public static final int REG_MPMCStatus             = 0x004;
     public static final int REG_MPMCConfig             = 0x008;
@@ -96,13 +94,10 @@ public class MPMC implements ParentCore {
     public static final int REG_MPMCPCellID2           = 0xff8;
     public static final int REG_MPMCPCellID3           = 0xffc;
 
-    public MPMC() {
-        slave = new MPMCSlave();
-    }
+    public MPMC(String n) {
+        super(n);
 
-    @Override
-    public SlaveCore64 getSlaveCore() {
-        return slave;
+        setSlaveCore(new MPMCSlave());
     }
 
     class MPMCSlave extends Controller32 {
