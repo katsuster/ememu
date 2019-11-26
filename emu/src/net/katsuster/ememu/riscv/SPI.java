@@ -8,6 +8,9 @@ import net.katsuster.ememu.generic.*;
  * 参考: SiFive FU540-C000 Manual: v1p0
  */
 public class SPI extends AbstractParentCore {
+    private SPIMaster mc;
+    private SPISlave sc;
+
     public static final int REG_SCKDIV  = 0x0000;
     public static final int REG_SCKMODE = 0x0004;
     public static final int REG_CSID    = 0x0010;
@@ -28,10 +31,22 @@ public class SPI extends AbstractParentCore {
     public SPI(String n) {
         super(n);
 
-        setSlaveCore(new SPISlave());
+        mc = new SPIMaster();
+        setMasterCore(mc);
+
+        sc = new SPISlave();
+        setSlaveCore(sc);
+    }
+
+    class SPIMaster extends MasterCore64 {
+        public SPIMaster() {
+
+        }
     }
 
     class SPISlave extends Controller32 {
+        private int cs = 0;
+
         public SPISlave() {
             addReg(REG_SCKDIV,  "SCKDIV", 0x00000000);
             /*
@@ -68,7 +83,7 @@ public class SPI extends AbstractParentCore {
 
             switch (regaddr) {
             case REG_CSID:
-                result = 0;
+                result = cs;
                 System.out.printf("SPI CSID: read 0x%x\n", result);
                 break;
             case REG_CSDEF:
@@ -106,6 +121,7 @@ public class SPI extends AbstractParentCore {
                 System.out.printf("SPI SCKDIV: write 0x%x\n", data);
                 break;
             case REG_CSID:
+                cs = data;
                 System.out.printf("SPI CSID: write 0x%x\n", data);
                 break;
             case REG_CSDEF:
