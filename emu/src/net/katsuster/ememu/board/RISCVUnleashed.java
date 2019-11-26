@@ -74,6 +74,9 @@ public class RISCVUnleashed extends AbstractBoard {
         DDRController ddrc = new DDRController("ddrc");
         RAM qspi_flash0 = new RAM32(33 * 1024 * 1024);
 
+        Bus64 busSpi2 = new Bus64();
+        MMC mmc = new MMC("mmc");
+
         //Main bus
         for (int i = 0; i < cpu.length; i++) {
             cpu[i] = new RV64();
@@ -113,6 +116,10 @@ public class RISCVUnleashed extends AbstractBoard {
         bus.addSlaveCore(ddrc.getSlaveCore(), 0x100b0000L, 0x100bffffL);
         //TODO: tentative 33MB
         bus.addSlaveCore(qspi_flash0, 0x20000000L, 0x221fffffL);
+
+        //SPI bus
+        busSpi2.addMasterCore(spi2.getMasterCore());
+        busSpi2.addSlaveCore(mmc.getSlaveCore(), 0, 0);
 
         //reset CPU
         for (int i = 0; i < cpu.length; i++) {
