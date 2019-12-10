@@ -8,7 +8,7 @@ import net.katsuster.ememu.riscv.core.*;
 
 public class RISCVUnleashed extends AbstractBoard {
     private RV64[] cpu;
-    private Bus64 bus;
+    private Bus64[] buses;
     private RAM cl0_ddr;
     private InputStream[] uartIn = new InputStream[4];
     private OutputStream[] uartOut = new OutputStream[4];
@@ -24,7 +24,7 @@ public class RISCVUnleashed extends AbstractBoard {
 
     @Override
     public Bus64 getMainBus() {
-        return bus;
+        return buses[0];
     }
 
     @Override
@@ -55,7 +55,16 @@ public class RISCVUnleashed extends AbstractBoard {
     @Override
     public void setup() {
         cpu = new RV64[5];
-        bus = new Bus64();
+        Bus64 busMain = new Bus64();
+        Bus64 busSpi0 = new Bus64();
+        Bus64 busSpi1 = new Bus64();
+        Bus64 busSpi2 = new Bus64();
+
+        buses = new Bus64[4];
+        buses[0] = busMain;
+        buses[1] = busSpi0;
+        buses[2] = busSpi1;
+        buses[3] = busSpi2;
 
         RAM mode_select = new RAM32(8 * 1024);
         RAM reserved2 = new RAM32(56 * 1024);
@@ -74,14 +83,13 @@ public class RISCVUnleashed extends AbstractBoard {
         DDRController ddrc = new DDRController("ddrc");
         RAM qspi_flash0 = new RAM32(33 * 1024 * 1024);
 
-        Bus64 busSpi2 = new Bus64();
         MMC mmc = new MMC("mmc");
 
         //Main bus
         for (int i = 0; i < cpu.length; i++) {
             cpu[i] = new RV64();
             cpu[i].setThreadID(i);
-            bus.addMasterCore(cpu[i]);
+            busMain.addMasterCore(cpu[i]);
         }
 
         //Memory map of Unleashed
@@ -100,24 +108,26 @@ public class RISCVUnleashed extends AbstractBoard {
         //  0x1006_0000 - 0x1006_0fff: GPIO
         //  0x100b_0000 - 0x100b_ffff: DDR Controller
         //  0x2000_0000 - 0x2fff_ffff: QSPI0 flash
-        bus.addSlaveCore(mode_select, 0x00001000L, 0x00001fffL);
-        bus.addSlaveCore(reserved2, 0x00002000L, 0x0000ffffL);
-        bus.addSlaveCore(mask_rom, 0x00010000L, 0x00017fffL);
-        bus.addSlaveCore(clint.getSlaveCore(), 0x02000000L, 0x0200ffffL);
-        bus.addSlaveCore(l2lim, 0x08000000L, 0x09ffffffL);
-        bus.addSlaveCore(prci.getSlaveCore(), 0x10000000L, 0x10000fffL);
-        bus.addSlaveCore(uart0.getSlaveCore(), 0x10010000L, 0x10010fffL);
-        bus.addSlaveCore(uart1.getSlaveCore(), 0x10011000L, 0x10011fffL);
-        bus.addSlaveCore(i2c.getSlaveCore(), 0x10030000L, 0x10030fffL);
-        bus.addSlaveCore(spi0.getSlaveCore(), 0x10040000L, 0x10040fffL);
-        bus.addSlaveCore(spi1.getSlaveCore(), 0x10041000L, 0x10041fffL);
-        bus.addSlaveCore(spi2.getSlaveCore(), 0x10050000L, 0x10050fffL);
-        bus.addSlaveCore(gpio.getSlaveCore(), 0x10060000L, 0x10060fffL);
-        bus.addSlaveCore(ddrc.getSlaveCore(), 0x100b0000L, 0x100bffffL);
+        busMain.addSlaveCore(mode_select, 0x00001000L, 0x00001fffL);
+        busMain.addSlaveCore(reserved2, 0x00002000L, 0x0000ffffL);
+        busMain.addSlaveCore(mask_rom, 0x00010000L, 0x00017fffL);
+        busMain.addSlaveCore(clint.getSlaveCore(), 0x02000000L, 0x0200ffffL);
+        busMain.addSlaveCore(l2lim, 0x08000000L, 0x09ffffffL);
+        busMain.addSlaveCore(prci.getSlaveCore(), 0x10000000L, 0x10000fffL);
+        busMain.addSlaveCore(uart0.getSlaveCore(), 0x10010000L, 0x10010fffL);
+        busMain.addSlaveCore(uart1.getSlaveCore(), 0x10011000L, 0x10011fffL);
+        busMain.addSlaveCore(i2c.getSlaveCore(), 0x10030000L, 0x10030fffL);
+        busMain.addSlaveCore(spi0.getSlaveCore(), 0x10040000L, 0x10040fffL);
+        busMain.addSlaveCore(spi1.getSlaveCore(), 0x10041000L, 0x10041fffL);
+        busMain.addSlaveCore(spi2.getSlaveCore(), 0x10050000L, 0x10050fffL);
+        busMain.addSlaveCore(gpio.getSlaveCore(), 0x10060000L, 0x10060fffL);
+        busMain.addSlaveCore(ddrc.getSlaveCore(), 0x100b0000L, 0x100bffffL);
         //TODO: tentative 33MB
-        bus.addSlaveCore(qspi_flash0, 0x20000000L, 0x221fffffL);
+        busMain.addSlaveCore(qspi_flash0, 0x20000000L, 0x221fffffL);
 
         //SPI bus
+        busSpi0.addMasterCore(spi0.getMasterCore());
+        busSpi1.addMasterCore(spi1.getMasterCore());
         busSpi2.addMasterCore(spi2.getMasterCore());
         busSpi2.addSlaveCore(mmc.getSlaveCore(), 0, 0);
 
@@ -133,8 +143,10 @@ public class RISCVUnleashed extends AbstractBoard {
     @Override
     public void start() {
         //start cores
-        bus.startAllSlaveCores();
-        bus.startAllMasterCores();
+        for (int i = 0; i < buses.length; i++) {
+            buses[i].startAllSlaveCores();
+            buses[i].startAllMasterCores();
+        }
 
         //wait CPU halted
         try {
@@ -149,7 +161,9 @@ public class RISCVUnleashed extends AbstractBoard {
 
     @Override
     public void stop() {
-        bus.haltAllMasterCores();
-        bus.haltAllSlaveCores();
+        for (int i = 0; i < buses.length; i++) {
+            buses[i].haltAllMasterCores();
+            buses[i].haltAllSlaveCores();
+        }
     }
 }
