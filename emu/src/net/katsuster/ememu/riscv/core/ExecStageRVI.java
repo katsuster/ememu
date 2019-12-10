@@ -728,6 +728,31 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * SLTU (Set if less than) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSltu(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+
+        if (!exec) {
+            printDisasm(inst, "sltu",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rs1), getRegName(rs2)));
+            return;
+        }
+
+        if (IntegerExt.compareUint64(getReg(rs1), getReg(rs2)) < 0) {
+            setReg(rd, 1);
+        } else {
+            setReg(rd, 0);
+        }
+    }
+
+    /**
      * XOR (Exclusive-or) 命令。
      *
      * @param inst 32bit 命令
@@ -1417,6 +1442,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_SLL:
             executeSll(inst, exec);
+            break;
+        case INS_RV32I_SLTU:
+            executeSltu(inst, exec);
             break;
         case INS_RV32I_XOR:
             executeXor(inst, exec);
