@@ -31,7 +31,7 @@ public class SPI extends AbstractParentCore {
     public SPI(String n) {
         super(n);
 
-        mc = new SPIMaster();
+        mc = new SPIMaster(this);
         setMasterCore(mc);
 
         sc = new SPISlave(this);
@@ -39,6 +39,7 @@ public class SPI extends AbstractParentCore {
     }
 
     class SPIMaster extends MasterCore64 {
+        private SPI parent;
         private int select = 0;
         private boolean enableSelect = true;
         private byte[] txFifo;
@@ -48,7 +49,9 @@ public class SPI extends AbstractParentCore {
         private int rdRx = 0, wrRx = 0, lenRx = 0;
         private final Object obj;
 
-        public SPIMaster() {
+        public SPIMaster(SPI p) {
+            parent = p;
+
             lenFifo = 8;
             txFifo = new byte[lenFifo];
             rxFifo = new byte[lenFifo];
@@ -156,20 +159,27 @@ public class SPI extends AbstractParentCore {
 
                 if (!enableSelect) {
                     //not chip select
-                    popTx();
+                    byte t = popTx();
                     pushRx((byte)0xff);
+                    System.out.printf("SPI(%s) r, w: %02x, %02x\n",
+                            parent.getName(), t & 0xff, 0xff);
                     return;
                 }
 
                 SlaveCore64 sc = getSlaveBus().getSlaveCore(select, select);
                 if (sc == null) {
                     //not connected
-                    popTx();
+                    byte t = popTx();
                     pushRx((byte)0xff);
+                    System.out.printf("SPI(%s) r, w: %02x, %02x\n",
+                            parent.getName(), t & 0xff, 0xff);
                 } else {
-                    write8(select, popTx());
-                    byte b = read8(select);
-                    pushRx(b);
+                    byte t = popTx();
+                    write8(select, t);
+                    byte r = read8(select);
+                    pushRx(r);
+                    System.out.printf("SPI(%s) r, w: %02x, %02x\n",
+                            parent.getName(), t, r);
                 }
             }
         }
@@ -246,7 +256,6 @@ public class SPI extends AbstractParentCore {
                         result |= 0x80000000;
                     }
                 }
-                //System.out.printf("SPI(%s) TXDATA: read 0x%x\n", parent.getName(), result);
                 break;
             case REG_RXDATA:
                 synchronized (mc.getSync()) {
@@ -254,7 +263,6 @@ public class SPI extends AbstractParentCore {
                         result |= 0x80000000;
                     } else {
                         result |= mc.popRx() & 0xff;
-                        System.out.printf("SPI(%s) RXDATA: read 0x%x\n", parent.getName(), result);
                     }
                 }
                 break;
@@ -314,7 +322,6 @@ public class SPI extends AbstractParentCore {
                 synchronized (mc.getSync()) {
                     if (!mc.isTxFull()) {
                         mc.pushTx((byte)data);
-                        System.out.printf("SPI(%s) TXDATA: write 0x%x\n", parent.getName(), data);
                     }
                 }
                 break;
