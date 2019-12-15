@@ -83,7 +83,7 @@ public class RISCVUnleashed extends AbstractBoard {
         DDRController ddrc = new DDRController("ddrc");
         RAM qspi_flash0 = new RAM32(33 * 1024 * 1024);
 
-        MMC mmc = new MMC("mmc");
+        SDCard sdcard = new SDCard("sdcard");
 
         //Main bus
         for (int i = 0; i < cpu.length; i++) {
@@ -129,7 +129,7 @@ public class RISCVUnleashed extends AbstractBoard {
         busSpi0.addMasterCore(spi0.getMasterCore());
         busSpi1.addMasterCore(spi1.getMasterCore());
         busSpi2.addMasterCore(spi2.getMasterCore());
-        busSpi2.addSlaveCore(mmc.getSlaveCore(), 0, 0);
+        busSpi2.addSlaveCore(sdcard.getSlaveCore(), 0, 0);
 
         //reset CPU
         for (int i = 0; i < cpu.length; i++) {

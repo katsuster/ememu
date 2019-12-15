@@ -5,10 +5,10 @@ package net.katsuster.ememu.generic;
  *
  * 参考: ?
  */
-public class MMC extends AbstractParentCore {
+public class SDCard extends AbstractParentCore {
     public static final int REG_IO  = 0x00;
 
-    public MMC(String n) {
+    public SDCard(String n) {
         super(n);
 
         setSlaveCore(new MMCSlave());
