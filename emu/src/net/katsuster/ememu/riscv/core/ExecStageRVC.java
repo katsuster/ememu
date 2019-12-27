@@ -61,6 +61,26 @@ public class ExecStageRVC extends Stage64 {
     }
 
     /**
+     * ADDI4SPN (Add immediate, Scaled by 4, to Stack Pointer, Nondestructive) 命令。
+     *
+     * @param inst 16bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAddi4spn(InstructionRV16 inst, boolean exec) {
+        int rd = inst.getRs2dash() + 8;
+        int imm = inst.getImm8ADDI4SPN();
+
+        if (!exec) {
+            printDisasm(inst, "c.addi4spn",
+                    String.format("%s, %d # 0x%x", getRegName(rd),
+                            imm, imm));
+            return;
+        }
+
+        setReg(rd, getReg(2) + imm);
+    }
+
+    /**
      * LW (Load word) 命令。
      *
      * @param inst 16bit 命令
@@ -690,6 +710,9 @@ public class ExecStageRVC extends Stage64 {
         switch (decinst.getIndex()) {
         case INS_RVC_NOP:
             executeNop(inst, exec);
+            break;
+        case INS_RVC_ADDI4SPN:
+            executeAddi4spn(inst, exec);
             break;
         case INS_RVC_LW:
             executeLw(inst, exec);

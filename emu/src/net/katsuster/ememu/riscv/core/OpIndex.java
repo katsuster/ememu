@@ -243,7 +243,7 @@ public enum OpIndex {
     INS_RV64D_FCVT_D_LU,
     INS_RV64D_FMV_D_X,
 
-    INS_RVC_ADDISPN,
+    INS_RVC_ADDI4SPN,
     INS_RVC_FLD, //RV32/64
     INS_RVC_LQ,  //RV128
     INS_RVC_LW,
