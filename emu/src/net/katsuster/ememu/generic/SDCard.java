@@ -129,6 +129,15 @@ public class SDCard extends AbstractParentCore {
                 dat[4] = arg & 0xff;
                 st = new RespState(dat, new CmdState());
                 break;
+            case 0x10:
+                //CMD 16: SET_BLOCKLEN
+                System.out.printf("CMD16: arg 0x%x\n",
+                        arg);
+
+                dat = new int[5];
+                dat[0] = 0x00;
+                st = new RespState(dat, new CmdState());
+                break;
             case 0x37:
                 //CMD 55: APP_CMD
                 dat = new int[1];
@@ -155,8 +164,24 @@ public class SDCard extends AbstractParentCore {
             switch (cmd) {
             case 0x29:
                 //ACMD 41: SD_SEND_OP_COND
+                int hsc = BitOp.getField32(arg, 30, 1);
+                int xpc = BitOp.getField32(arg, 28, 1);
+                int s18r = BitOp.getField32(arg, 24, 1);
+                int ocr = BitOp.getField32(arg, 8, 16);
+
+                System.out.printf("ACMD41: arg 0x%x\n" +
+                                "  %s: 0x%x, \n" +
+                                "  %s: 0x%x, \n" +
+                                "  %s: 0x%x, \n" +
+                                "  %s: 0x%x, \n",
+                        arg,
+                        "hsc", hsc,
+                        "xpc", xpc,
+                        "s18r", s18r,
+                        "ocr", ocr);
+
                 dat = new int[1];
-                dat[0] = 0x1;
+                dat[0] = 0x00;
                 st = new RespState(dat, new CmdState());
                 break;
             default:
