@@ -193,7 +193,7 @@ public class DecodeStageRVI extends Stage64 {
 
                 if (imm7 == 0) {
                     //RV64I SLLIW
-                    return OpIndex.INS_RV64I_SLLI;
+                    return OpIndex.INS_RV64I_SLLIW;
                 }
 
                 throw new IllegalArgumentException("Unknown OP-IMM-32 SLLIW 64bit " +
