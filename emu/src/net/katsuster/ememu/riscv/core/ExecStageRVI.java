@@ -926,6 +926,29 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * SLLIW (Shift left logical word immediate) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeSlliw(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int shamt = inst.getField(20, 6);
+        long v;
+
+        if (!exec) {
+            printDisasm(inst, "slliw",
+                    String.format("%s, %s, 0x%x # %d", getRegName(rd),
+                            getRegName(rs1), shamt, shamt));
+            return;
+        }
+
+        v = getReg(rs1) << shamt;
+        setReg(rd, BitOp.signExt64(v & 0xffffffffL, 32));
+    }
+
+    /**
      * SRLIW (Shift right logical word immediate) 命令。
      *
      * @param inst 32bit 命令
@@ -1466,6 +1489,9 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV64I_ADDIW:
             executeAddiw(inst, exec);
+            break;
+        case INS_RV64I_SLLIW:
+            executeSlliw(inst, exec);
             break;
         case INS_RV64I_SRLIW:
             executeSrliw(inst, exec);
