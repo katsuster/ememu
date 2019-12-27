@@ -10,6 +10,8 @@ package net.katsuster.ememu.generic;
 public class SDCard extends AbstractParentCore {
     public static final int REG_IO  = 0x00;
     private SDCardState st;
+    private int blockAddr;
+    private int blockLen;
 
     public SDCard(String n) {
         super(n);
@@ -131,11 +133,22 @@ public class SDCard extends AbstractParentCore {
                 break;
             case 0x10:
                 //CMD 16: SET_BLOCKLEN
-                System.out.printf("CMD16: arg 0x%x\n",
-                        arg);
+                System.out.printf("CMD16: len 0x%x\n", arg);
 
-                dat = new int[5];
+                blockLen = arg;
+
+                dat = new int[1];
                 dat[0] = 0x00;
+                st = new RespState(dat, new CmdState());
+                break;
+            case 0x12:
+                //CMD 18: READ_MULTIPLE_BLOCK
+                System.out.printf("CMD18: addr 0x%x\n", arg);
+
+                blockAddr = arg;
+
+                dat = new int[1];
+                dat[0] = 0x01;
                 st = new RespState(dat, new CmdState());
                 break;
             case 0x37:
