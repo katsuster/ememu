@@ -101,6 +101,16 @@ public class RV64 extends CPU64 {
         setPrivMode(PRIV_M);
         setPC(0x1004);
         setJumped(false);
+
+        if (getThreadID() == 0) {
+            setPrintInstruction(false);
+            setEnabledDisasm(true);
+            setPrintRegs(false);
+        } else {
+            setPrintInstruction(false);
+            setEnabledDisasm(true);
+            setPrintRegs(false);
+        }
     }
 
     @Override
@@ -634,33 +644,172 @@ public class RV64 extends CPU64 {
         setRaisedException(true);
     }
 
+    /**
+     * 最も優先度の高い例外または割り込みを 1つだけ発生させます。
+     *
+     * 優先度の低い例外は後回しにされます。
+     */
+    public void doImportantException() {
+        int i;
+
+        //内部割り込み状態を確認する
+        acceptInternalIRQ();
+
+        for (i = 0; i < exceptions.length; i++) {
+            if (exceptions[i]) {
+                exceptions[i] = false;
+                doException(i, exceptionReasons[i]);
+                return;
+            }
+        }
+    }
+
+    /**
+     * M Mode の例外を発生させます。
+     *
+     * @param cause  例外番号
+     * @param dbgmsg デバッグ用のメッセージ
+     */
+    public void doException(int cause, String dbgmsg) {
+        long pcOrg, base;
+
+        System.out.printf("Exception: Machine by '%s'.\n",
+                dbgmsg);
+
+        //PC の値を取っておく
+        pcOrg = getPC();
+
+        setCSR(CSR_MEPC, pcOrg);
+        if (cause >= EXCEPT_BASE) {
+            //Synchronous exception
+            setXCAUSE_CODE(getPrivMode(), cause - EXCEPT_BASE);
+            setXCAUSE_INTR(getPrivMode(), false);
+        } else {
+            //Asynchronous exception
+            setXCAUSE_CODE(getPrivMode(), cause);
+            setXCAUSE_INTR(getPrivMode(), true);
+        }
+
+        //例外ベクタへ
+        base = getCSR(CSR_MTVEC) & XTVEC_BASE_MASK;
+        switch (getXTVEC_MODE(getPrivMode())) {
+        case XTVEC_MODE_DIRECT:
+            setPCRaw(base);
+            break;
+        case XTVEC_MODE_VECTOR:
+            setPCRaw(base + cause * 4);
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal vector mode " +
+                    getXTVEC_MODE(getPrivMode()));
+        }
+
+        //TODO: 未実装
+
+        //mstatus
+        //mip
+        //mie
+        //mcause
+        //mtvec
+        //mtval
+        //mscratch
+
+    }
+
+    /**
+     * いずれかの要因が割り込み線をアサートしており、
+     * グローバル割り込みが有効ならば、非同期例外を要求します。
+     */
+    public void acceptInternalIRQ() {
+        int[] privs = {
+                PRIV_M, PRIV_S, PRIV_U,
+        };
+        String[] msgs = {
+                "Machine", "Super", "User",
+        };
+        int[] intrsSoft = {
+                INTR_SOFT_M, INTR_SOFT_S, INTR_SOFT_U,
+        };
+        int[] intrsTimer = {
+                INTR_TIMER_M, INTR_TIMER_S, INTR_TIMER_U,
+        };
+        int i;
+
+        if (!getXIE(getPrivMode())) {
+            //mstatus xIE が 0 の場合は、割り込み無効を意味する
+            return;
+        }
+
+        //内部割り込み状態を確認する
+        for (i = 0; i < privs.length; i++) {
+            if (getXIP_XSIP(privs[i]) && getXIE_XSIE(privs[i])) {
+                raiseException(intrsSoft[i], msgs[i] + " software interrupt.");
+            }
+            if (getXIP_XTIP(privs[i]) && getXIE_XTIE(privs[i])) {
+                raiseException(intrsTimer[i], msgs[i] + " timer interrupt.");
+            }
+        }
+    }
+
+    /**
+     * いずれかの割り込みコントローラが割り込み線をアサートしており、
+     * グローバル割り込みが有効ならば、マシン外部割り込みを要求します。
+     */
+    public void acceptIRQ() {
+        int[] intrs = {
+                INTR_EXTERNAL_U,
+                INTR_EXTERNAL_S,
+                -1,
+                INTR_EXTERNAL_M,
+        };
+
+        if (!getXIE(getPrivMode())) {
+            //mstatus xIE が 0 の場合は、割り込み無効を意味する
+            return;
+        }
+
+        if (!getXIE_XEIE(getPrivMode())) {
+            //mie/sie/uie xEIE が 0 の場合は、外部割り込み無効を意味する
+            return;
+        }
+
+        if (!intc.getINTSource(INTSRC_IRQ).isAssert()) {
+            //割り込み要求がない
+            return;
+        }
+
+        //割り込み要求の詳細説明を得る
+        String msg = String.format("accept IRQ from '%s'",
+                intc.getINTSource(INTSRC_IRQ).getIRQMessage());
+
+        raiseException(intrs[getPrivMode()], msg);
+    }
+
     @Override
     public void step() {
         Inst32 inst;
         Opcode decinst;
 
+        //for debug
+        //if ((getPC() & 0x80010a6) != 0 && getThreadID() == 0) {
+            //setPrintInstruction(true);
+            //setPrintRegs(true);
+        //}
+
         //要求された例外のうち、優先度の高い例外を 1つだけ処理します
-        //doImportantException();
+        doImportantException();
 
         if (isRaisedInterrupt()) {
-            //高速割り込み線がアサートされていれば、FIQ 例外を要求します
-            //acceptFIQ();
-            //if (isRaisedException()) {
-            //    setRaisedException(false);
-            //    return;
-            //}
-
             //割り込み線がアサートされていれば、IRQ 例外を要求します
-            //acceptIRQ();
-            //if (isRaisedException()) {
-            //    setRaisedException(false);
-            //    return;
-            //}
+            acceptIRQ();
+            if (isRaisedException()) {
+                setRaisedException(false);
+                return;
+            }
 
-            //if (!intc.getINTSource(INTSRC_IRQ).isAssert() &&
-            //        !intc.getINTSource(INTSRC_FIQ).isAssert()) {
-            //    setRaisedInterrupt(false);
-            //}
+            if (!intc.getINTSource(INTSRC_IRQ).isAssert()) {
+                setRaisedInterrupt(false);
+            }
         }
 
         //命令を取得します
@@ -677,12 +826,6 @@ public class RV64 extends CPU64 {
         if (isEnabledDisasm()) {
             disasm(decinst);
         }
-
-        //FIXME: for debug
-        //if (getCPSR().getTBit()) {
-        //    setPrintInstruction(true);
-        //    disasm(decinst);
-        //}
 
         //実行して、次の命令へ
         execute(decinst);
