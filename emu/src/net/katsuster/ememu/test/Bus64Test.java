@@ -1,7 +1,11 @@
 package net.katsuster.ememu.test;
 
-import net.katsuster.ememu.generic.*;
 import org.junit.*;
+
+import net.katsuster.ememu.generic.RAM16;
+import net.katsuster.ememu.generic.RAM32;
+import net.katsuster.ememu.generic.RAM64;
+import net.katsuster.ememu.generic.bus.Bus64;
 
 public class Bus64Test {
     @Test
