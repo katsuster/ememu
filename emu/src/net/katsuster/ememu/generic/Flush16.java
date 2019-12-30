@@ -1,5 +1,8 @@
 package net.katsuster.ememu.generic;
 
+import net.katsuster.ememu.generic.bus.BusMaster64;
+import net.katsuster.ememu.generic.core.SlaveCore64;
+
 /**
  * 64 ビットアドレス、16ビットデータ Flush ROM
  *

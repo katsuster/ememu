@@ -1,5 +1,7 @@
 package net.katsuster.ememu.generic;
 
+import net.katsuster.ememu.generic.bus.BusMaster64;
+
 /**
  * 64 ビットアドレス、64 ビットデータ RAM
  */

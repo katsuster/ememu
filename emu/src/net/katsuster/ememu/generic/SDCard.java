@@ -1,5 +1,8 @@
 package net.katsuster.ememu.generic;
 
+import net.katsuster.ememu.generic.core.AbstractParentCore;
+import net.katsuster.ememu.generic.bus.BusMaster64;
+
 /**
  * SD Card
  *

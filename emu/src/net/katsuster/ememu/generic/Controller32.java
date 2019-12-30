@@ -2,6 +2,10 @@ package net.katsuster.ememu.generic;
 
 import java.util.*;
 
+import net.katsuster.ememu.generic.core.Reg32;
+import net.katsuster.ememu.generic.core.SlaveCore64;
+import net.katsuster.ememu.generic.bus.BusMaster64;
+
 /**
  * 64 ビットアドレスバス、32 ビットレジスタを持つコントローラ。
  */
@@ -14,7 +18,7 @@ public abstract class Controller32 extends SlaveCore64 {
     private Map<Long, Reg32> regs;
 
     public Controller32() {
-        regs = new HashMap<Long, Reg32>();
+        regs = new HashMap<>();
     }
 
     /**

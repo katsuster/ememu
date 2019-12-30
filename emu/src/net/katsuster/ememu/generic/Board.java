@@ -2,6 +2,9 @@ package net.katsuster.ememu.generic;
 
 import java.io.*;
 
+import net.katsuster.ememu.generic.bus.Bus64;
+import net.katsuster.ememu.generic.core.CPU;
+
 public interface Board {
     /**
      * メイン CPU を取得します。
