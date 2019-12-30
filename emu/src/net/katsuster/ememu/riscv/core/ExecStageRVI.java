@@ -774,6 +774,48 @@ public class ExecStageRVI extends Stage64 {
     }
 
     /**
+     * OR (Or) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeOr(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+
+        if (!exec) {
+            printDisasm(inst, "or",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rs1), getRegName(rs2)));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) | getReg(rs2));
+    }
+
+    /**
+     * AND (And) 命令。
+     *
+     * @param inst 32bit 命令
+     * @param exec デコードと実行なら true、デコードのみなら false
+     */
+    public void executeAnd(InstructionRV32 inst, boolean exec) {
+        int rd = inst.getRd();
+        int rs1 = inst.getRs1();
+        int rs2 = inst.getRs2();
+
+        if (!exec) {
+            printDisasm(inst, "and",
+                    String.format("%s, %s, %s", getRegName(rd),
+                            getRegName(rs1), getRegName(rs2)));
+            return;
+        }
+
+        setReg(rd, getReg(rs1) & getReg(rs2));
+    }
+
+    /**
      * Fence (Fence memory and I/O) 命令。
      *
      * @param inst 32bit 命令
@@ -1471,6 +1513,12 @@ public class ExecStageRVI extends Stage64 {
             break;
         case INS_RV32I_XOR:
             executeXor(inst, exec);
+            break;
+        case INS_RV32I_OR:
+            executeOr(inst, exec);
+            break;
+        case INS_RV32I_AND:
+            executeAnd(inst, exec);
             break;
         case INS_RV32I_FENCE:
             executeFence(inst, exec);
