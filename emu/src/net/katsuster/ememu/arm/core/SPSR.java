@@ -1,6 +1,6 @@
 package net.katsuster.ememu.arm.core;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.core.Reg32;
 
 /**
  * ARM アーキテクチャの SPSR(保存プログラムステートレジスタ)です。

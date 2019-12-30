@@ -1,6 +1,8 @@
 package net.katsuster.ememu.arm;
 
 import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.core.*;
+import net.katsuster.ememu.generic.bus.*;
 
 /**
  * システムレジスタ

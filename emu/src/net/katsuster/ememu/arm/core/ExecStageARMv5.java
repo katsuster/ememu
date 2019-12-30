@@ -1,6 +1,8 @@
 package net.katsuster.ememu.arm.core;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.BitOp;
+import net.katsuster.ememu.generic.IntegerExt;
+import net.katsuster.ememu.generic.core.Stage32;
 
 /**
  * ARMv5 命令の実行ステージ。

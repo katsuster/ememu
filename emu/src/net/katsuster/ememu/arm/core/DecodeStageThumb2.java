@@ -1,6 +1,6 @@
 package net.katsuster.ememu.arm.core;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.core.Stage32;
 
 /**
  * Thumb-2 命令のデコードステージ。

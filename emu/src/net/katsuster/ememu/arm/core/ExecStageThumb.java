@@ -1,6 +1,8 @@
 package net.katsuster.ememu.arm.core;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.BitOp;
+import net.katsuster.ememu.generic.IntegerExt;
+import net.katsuster.ememu.generic.core.Stage32;
 
 /**
  * Thumb 命令（Thumb v1, v2, v3）の実行ステージ。

@@ -2,7 +2,7 @@ package net.katsuster.ememu.arm.core;
 
 import java.util.*;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.core.Reg32;
 
 /**
  * ARM コプロセッサ。

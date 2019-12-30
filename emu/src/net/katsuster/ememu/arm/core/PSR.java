@@ -1,6 +1,7 @@
 package net.katsuster.ememu.arm.core;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.BitOp;
+import net.katsuster.ememu.generic.core.Reg32;
 
 /**
  * PSR（プログラムステートレジスタ）。
