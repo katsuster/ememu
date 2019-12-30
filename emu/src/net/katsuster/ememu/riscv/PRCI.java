@@ -1,6 +1,9 @@
 package net.katsuster.ememu.riscv;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.BitOp;
+import net.katsuster.ememu.generic.Controller32;
+import net.katsuster.ememu.generic.core.AbstractParentCore;
+import net.katsuster.ememu.generic.bus.BusMaster64;
 
 /**
  * Power Reset Clocking Interrupt (PRCI)
