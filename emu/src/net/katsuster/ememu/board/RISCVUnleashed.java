@@ -3,6 +3,8 @@ package net.katsuster.ememu.board;
 import java.io.*;
 
 import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.bus.Bus64;
+import net.katsuster.ememu.generic.core.CPU;
 import net.katsuster.ememu.riscv.*;
 import net.katsuster.ememu.riscv.core.*;
 

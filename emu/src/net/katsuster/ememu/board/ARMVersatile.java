@@ -5,6 +5,8 @@ import java.io.*;
 import net.katsuster.ememu.arm.*;
 import net.katsuster.ememu.arm.core.*;
 import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.bus.Bus64;
+import net.katsuster.ememu.generic.core.CPU;
 
 /**
  * ARM Versatile Application Baseboards (AB) and Platform Baseboards (PB).
