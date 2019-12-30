@@ -1,4 +1,4 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.core;
 
 /**
  * コアの典型的な実装を持った抽象クラス。

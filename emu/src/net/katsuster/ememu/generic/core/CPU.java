@@ -1,4 +1,4 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.core;
 
 /**
  * CPU の基本クラス

@@ -1,4 +1,4 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.core;
 
 /**
  * 常に 0 の 64ビットレジスタ。

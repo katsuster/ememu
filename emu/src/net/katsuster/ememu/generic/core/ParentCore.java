@@ -1,4 +1,4 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.core;
 
 /**
  * 64bit スレーブコアを所持するインタフェース

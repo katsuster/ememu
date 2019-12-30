@@ -1,4 +1,4 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.bus;
 
 import java.util.concurrent.locks.*;
 

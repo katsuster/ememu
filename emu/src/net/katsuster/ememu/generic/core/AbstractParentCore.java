@@ -1,4 +1,4 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.core;
 
 abstract public class AbstractParentCore implements ParentCore {
     private String name;

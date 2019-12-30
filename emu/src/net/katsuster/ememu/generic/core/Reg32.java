@@ -1,17 +1,17 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.core;
 
 /**
- * 64ビットレジスタ。
+ * 32ビットレジスタ。
  */
-public class Reg64 {
+public class Reg32 {
     private String name;
-    private long val;
+    private int val;
 
-    public Reg64() {
+    public Reg32() {
         this("", 0);
     }
 
-    public Reg64(String name, long val) {
+    public Reg32(String name, int val) {
         this.name = name;
         this.val = val;
     }
@@ -39,7 +39,7 @@ public class Reg64 {
      *
      * @return レジスタの値
      */
-    public long getValue() {
+    public int getValue() {
         return val;
     }
 
@@ -48,7 +48,7 @@ public class Reg64 {
      *
      * @param v レジスタの値
      */
-    public void setValue(long v) {
+    public void setValue(int v) {
         val = v;
     }
 

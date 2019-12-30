@@ -1,7 +1,9 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.bus;
 
 import java.util.*;
 import java.util.concurrent.locks.*;
+
+import net.katsuster.ememu.generic.core.*;
 
 /**
  * 64 ビットアドレスバス。
@@ -22,8 +24,8 @@ public class Bus64 implements BusSlave64 {
 
     public Bus64() {
         rwlock = new ReentrantReadWriteLock();
-        masterList = new ArrayList<MasterCore64>();
-        slaveList = new ArrayList<SlaveCoreAddress>();
+        masterList = new ArrayList<>();
+        slaveList = new ArrayList<>();
         //4KB ごとにスレーブコアを記録するため、
         //2^32 / 2^12 = 2^20 の要素が必要となる
         slaves = new SlaveCoreAddress[1024 * 1024];

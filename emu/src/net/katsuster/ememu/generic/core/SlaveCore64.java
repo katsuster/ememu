@@ -1,4 +1,6 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.core;
+
+import net.katsuster.ememu.generic.bus.*;
 
 /**
  * 64 ビットアドレスバスのスレーブコア。

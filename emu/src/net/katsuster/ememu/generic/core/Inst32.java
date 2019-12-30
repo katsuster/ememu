@@ -1,4 +1,6 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.core;
+
+import net.katsuster.ememu.generic.BitOp;
 
 /**
  * 命令。

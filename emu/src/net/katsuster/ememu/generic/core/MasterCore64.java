@@ -1,6 +1,8 @@
-package net.katsuster.ememu.generic;
+package net.katsuster.ememu.generic.core;
 
 import java.util.concurrent.locks.*;
+
+import net.katsuster.ememu.generic.bus.*;
 
 /**
  * 64 ビットアドレスバスのマスターコア。
