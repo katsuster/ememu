@@ -926,12 +926,6 @@ public class ARMv5 extends CPU32 {
             disasm(decinst);
         }
 
-        //FIXME: for debug
-        //if (getCPSR().getTBit()) {
-        //    setPrintInstruction(true);
-        //    disasm(decinst);
-        //}
-
         //実行して、次の命令へ
         execute(decinst);
         if (isRaisedException()) {
