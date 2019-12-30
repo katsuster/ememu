@@ -1,9 +1,9 @@
 package net.katsuster.ememu.ui;
 
-import net.katsuster.ememu.generic.*;
-
 import java.io.*;
 import java.net.*;
+
+import net.katsuster.ememu.generic.bus.Bus64;
 
 /**
  * バイナリファイルのローダです。

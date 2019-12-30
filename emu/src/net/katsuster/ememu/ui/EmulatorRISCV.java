@@ -1,8 +1,8 @@
 package net.katsuster.ememu.ui;
 
-import net.katsuster.ememu.riscv.core.*;
-import net.katsuster.ememu.board.*;
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.board.RISCVUnleashed;
+import net.katsuster.ememu.generic.bus.Bus64;
+import net.katsuster.ememu.riscv.core.RV64;
 
 /**
  * RISCV エミュレータです。

@@ -3,8 +3,9 @@ package net.katsuster.ememu.ui;
 import java.io.*;
 import java.net.*;
 
-import net.katsuster.ememu.generic.*;
 import net.katsuster.ememu.arm.core.ARMv5;
+import net.katsuster.ememu.generic.RAM;
+import net.katsuster.ememu.generic.core.CPU;
 
 /**
  * ARM Linux 用の簡易ブートローダです。
