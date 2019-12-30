@@ -1,6 +1,10 @@
 package net.katsuster.ememu.riscv.core;
 
 import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.core.CPU64;
+import net.katsuster.ememu.generic.core.INTSource;
+import net.katsuster.ememu.generic.core.Inst32;
+import net.katsuster.ememu.generic.core.NormalINTC;
 
 import static net.katsuster.ememu.riscv.core.RV64CSRFile.*;
 

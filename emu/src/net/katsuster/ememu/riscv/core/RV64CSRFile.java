@@ -2,7 +2,8 @@ package net.katsuster.ememu.riscv.core;
 
 import java.util.*;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.core.Reg64;
+import net.katsuster.ememu.generic.core.Reg64File;
 import net.katsuster.ememu.riscv.core.reg.*;
 
 /**

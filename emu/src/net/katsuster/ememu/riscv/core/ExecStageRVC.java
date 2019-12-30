@@ -1,6 +1,7 @@
 package net.katsuster.ememu.riscv.core;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.BitOp;
+import net.katsuster.ememu.generic.core.Stage64;
 
 public class ExecStageRVC extends Stage64 {
     /**

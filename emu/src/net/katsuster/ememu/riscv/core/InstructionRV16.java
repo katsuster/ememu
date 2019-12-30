@@ -1,6 +1,6 @@
 package net.katsuster.ememu.riscv.core;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.core.Inst32;
 
 public class InstructionRV16 extends Inst32 {
     /**

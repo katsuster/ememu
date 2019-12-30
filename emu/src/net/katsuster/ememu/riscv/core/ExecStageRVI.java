@@ -1,6 +1,8 @@
 package net.katsuster.ememu.riscv.core;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.BitOp;
+import net.katsuster.ememu.generic.IntegerExt;
+import net.katsuster.ememu.generic.core.Stage64;
 
 import java.math.*;
 import java.util.concurrent.locks.*;

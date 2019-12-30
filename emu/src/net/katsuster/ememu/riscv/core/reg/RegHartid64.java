@@ -1,6 +1,6 @@
 package net.katsuster.ememu.riscv.core.reg;
 
-import net.katsuster.ememu.generic.*;
+import net.katsuster.ememu.generic.core.Reg64;
 import net.katsuster.ememu.riscv.core.*;
 
 public class RegHartid64 extends Reg64 {
