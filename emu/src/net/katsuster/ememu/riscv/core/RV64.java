@@ -639,11 +639,6 @@ public class RV64 extends CPU64 {
         Inst32 inst;
         Opcode decinst;
 
-        ////////////////////
-        setPrintInstruction(true);
-        setEnabledDisasm(true);
-        setPrintRegs(true);
-
         //要求された例外のうち、優先度の高い例外を 1つだけ処理します
         //doImportantException();
 
