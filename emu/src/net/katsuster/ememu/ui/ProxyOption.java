@@ -3,19 +3,40 @@ package net.katsuster.ememu.ui;
 import java.net.*;
 
 /**
- * プロキシの設定オプション。
+ * プロキシの設定用のプロパティ。
+ *
+ * 有効なキーとプロパティの意味は下記のとおりです。
+ *
+ * proxy.host: プロキシの URL
+ * proxy.port: プロキシのポート番号
  */
-public class ProxyOption {
-    private URI proxyHost;
-    private int proxyPort;
+public class ProxyOption extends PropertyPanels {
+    public static final String PROXY_ENABLE = "proxy.enable";
+    public static final String PROXY_HOST = "proxy.host";
+    public static final String PROXY_PORT = "proxy.port";
 
-    public ProxyOption() {
-        try {
-            proxyHost = new URI("");
-            proxyPort = 0;
-        } catch (URISyntaxException ex) {
-            //ignored
-        }
+    public ProxyOption()  {
+        setProperty(PROXY_ENABLE, "Enable proxy configuration", "Boolean", "false");
+        setProperty(PROXY_HOST, "Host", "String", "");
+        setProperty(PROXY_PORT, "Port", "String", "0");
+    }
+
+    /**
+     * プロキシ設定が有効かどうか取得します。
+     *
+     * @return プロキシ設定が有効なら true、無効なら false
+     */
+    public boolean getProxyEnabled() {
+        return Boolean.parseBoolean(getProperty(PROXY_ENABLE).getValue());
+    }
+
+    /**
+     * プロキシ設定が有効かどうか設定します。
+     *
+     * @param ena プロキシ設定が有効なら true、無効なら false
+     */
+    public void setProxyEnabled(boolean ena) {
+        setValue(PROXY_ENABLE, Boolean.toString(ena));
     }
 
     /**
@@ -24,7 +45,7 @@ public class ProxyOption {
      * @return プロキシのホストの URI
      */
     public URI getProxyHost() {
-        return proxyHost;
+        return toURI(getProperty(PROXY_HOST).getValue());
     }
 
     /**
@@ -33,7 +54,7 @@ public class ProxyOption {
      * @param uri プロキシのホストの URI
      */
     public void setProxyHost(URI uri) {
-        proxyHost = uri;
+        setValue(PROXY_HOST, uri.toString());
     }
 
     /**
@@ -45,15 +66,9 @@ public class ProxyOption {
      */
     public void setProxyHost(String h) {
         try {
-            URI emptyURI = new URI("");
-
-            try {
-                setProxyHost(new URI(h));
-            } catch (URISyntaxException ex) {
-                setProxyHost(emptyURI);
-            }
+            setProxyHost(new URI(h));
         } catch (URISyntaxException ex) {
-            //ignore
+            setProxyHost("");
         }
     }
 
@@ -63,7 +78,11 @@ public class ProxyOption {
      * @return ポート番号
      */
     public int getProxyPort() {
-        return proxyPort;
+        try {
+            return Integer.parseInt(getProperty(PROXY_PORT).getValue());
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
     }
 
     /**
@@ -72,7 +91,11 @@ public class ProxyOption {
      * @param p ポート番号
      */
     public void setProxyPort(int p) {
-        proxyPort = p;
+        try {
+            setValue(PROXY_PORT, Integer.toString(p));
+        } catch (NumberFormatException ex) {
+            setValue(PROXY_PORT, "0");
+        }
     }
 
     /**
@@ -83,11 +106,7 @@ public class ProxyOption {
      * @param p ポート番号の文字列表記
      */
     public void setProxyPort(String p) {
-        try {
-            setProxyPort(Integer.valueOf(p));
-        } catch (NumberFormatException ex) {
-            setProxyPort(0);
-        }
+        setValue(PROXY_PORT, p);
     }
 
     /**
@@ -102,6 +121,6 @@ public class ProxyOption {
                         "  proxyPort: '%s'",
                 getClass().getSimpleName(),
                 getProxyHost().toString(),
-                Integer.toString(getProxyPort()));
+                getProxyPort());
     }
 }

@@ -2,6 +2,8 @@ package net.katsuster.ememu.ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
+import java.util.List;
 import javax.swing.*;
 
 /**
@@ -12,13 +14,14 @@ public class MainWindow extends JFrame {
     private JTabbedPane tabPane;
     private JSplitPane panel;
     private StdoutPanel stdoutPanel;
-    private LinuxOptionPanel linuxOptPanel;
-    private ProxyOptionPanel proxyOptPanel;
+    private LinuxOption linuxOpts;
+    private ProxyOption proxyOpts;
     private Emulator emu;
     private VirtualTerminal[] vttyAMA;
 
-    public MainWindow(LinuxOption linuxOpts) {
-        ProxyOption proxyOpts = new ProxyOption();
+    public MainWindow(LinuxOption lopts) {
+        linuxOpts = lopts;
+        proxyOpts = new ProxyOption();
 
         vttyAMA = new VirtualTerminal[3];
 
@@ -44,8 +47,22 @@ public class MainWindow extends JFrame {
         panel.setLeftComponent(stdoutPanel);
 
         //stdout Tab - Right - Settings, Navigator
-        linuxOptPanel = new LinuxOptionPanel(linuxOpts);
-        proxyOptPanel = new ProxyOptionPanel(proxyOpts);
+        List<String> keys;
+
+        keys = new ArrayList<>();
+        keys.add(LinuxOption.EMU_ARCH);
+        keys.add(LinuxOption.LINUX_DTB_ENABLE);
+        keys.add(LinuxOption.LINUX_DTB);
+        keys.add(LinuxOption.LINUX_KIMAGE);
+        keys.add(LinuxOption.LINUX_INITRD);
+        keys.add(LinuxOption.LINUX_CMDLINE);
+        JPanel linuxOptPanel = linuxOpts.createPanel(keys, "Linux Boot Options");
+
+        keys = new ArrayList<>();
+        keys.add(ProxyOption.PROXY_ENABLE);
+        keys.add(ProxyOption.PROXY_HOST);
+        keys.add(ProxyOption.PROXY_PORT);
+        JPanel proxyOptPanel = proxyOpts.createPanel(keys, "Proxies");
 
         JPanel panelNavigator = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnReset = new JButton("Reset");
@@ -74,9 +91,8 @@ public class MainWindow extends JFrame {
         System.out.println("start");
 
         //proxy
-        ProxyOption optProxy = proxyOptPanel.getOption();
-        System.setProperty("proxyHost", optProxy.getProxyHost().toString());
-        System.setProperty("proxyPort", Integer.toString(optProxy.getProxyPort()));
+        System.setProperty("proxyHost", proxyOpts.getValue(ProxyOption.PROXY_HOST));
+        System.setProperty("proxyPort", proxyOpts.getValue(ProxyOption.PROXY_PORT));
 
         //stdout Tab - Left - stdout
         stdoutPanel = new StdoutPanel(listenButton);
@@ -95,7 +111,7 @@ public class MainWindow extends JFrame {
         tabPane.setSelectedIndex(1);
 
         //Run the emulator
-        String arch = linuxOptPanel.getOption().getArch();
+        String arch = linuxOpts.getArch();
 
         if (arch.compareToIgnoreCase("arm") == 0) {
             emu = new EmulatorARM();
@@ -105,7 +121,7 @@ public class MainWindow extends JFrame {
             throw new IllegalArgumentException("Not support '" +
                     arch + "' architecture.");
         }
-        emu.setOption(linuxOptPanel.getOption());
+        emu.setOption(linuxOpts);
         for (int i = 0; i < vttyAMA.length; i++) {
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());
             emu.getBoard().setUARTOutputStream(i, vttyAMA[i].getOutputStream());

@@ -6,22 +6,23 @@ import java.net.*;
 /**
  * Linux 起動時に渡すオプション。
  */
-public class LinuxOption {
-    private String arch;
-    private URI dtb;
-    private URI kimage;
-    private URI initrd;
-    private String cmdline;
+public class LinuxOption extends PropertyPanels {
+    public static final String EMU_ARCH = "emu.arch";
+    public static final String LINUX_DTB_ENABLE = "emu.linux.dtb.enable";
+    public static final String LINUX_DTB = "linux.dtb";
+    public static final String LINUX_KIMAGE = "linux.kimage";
+    public static final String LINUX_INITRD_ENABLE = "linux.initrd.enable";
+    public static final String LINUX_INITRD = "linux.initrd";
+    public static final String LINUX_CMDLINE = "linux.cmdline";
 
     public LinuxOption() {
-        try {
-            dtb = new URI("");
-            kimage = new URI("");
-            initrd = new URI("");
-        } catch (URISyntaxException ex) {
-            //ignore
-        }
-        cmdline = "";
+        setProperty(EMU_ARCH, "Architecture", "String", "");
+        setProperty(LINUX_DTB_ENABLE, "Use Device Tree", "Boolean", "false");
+        setProperty(LINUX_DTB, "Device Tree Image", "File", "");
+        setProperty(LINUX_KIMAGE, "Kernel Image", "File", "");
+        setProperty(LINUX_INITRD_ENABLE, "Use Initrd Image", "Boolean", "true");
+        setProperty(LINUX_INITRD, "Initrd Image", "File", "");
+        setProperty(LINUX_CMDLINE, "Command line", "String", "");
     }
 
     /**
@@ -30,7 +31,7 @@ public class LinuxOption {
      * @return アーキテクチャ
      */
     public String getArch() {
-        return arch;
+        return getProperty(EMU_ARCH).getValue();
     }
 
     /**
@@ -39,7 +40,7 @@ public class LinuxOption {
      * @param str アーキテクチャ
      */
     public void setArch(String str) {
-        arch = str;
+        setValue(EMU_ARCH, str);
     }
 
     /**
@@ -48,7 +49,7 @@ public class LinuxOption {
      * @return Linux Device Tree Blob イメージファイルの URI
      */
     public URI getDeviceTreeImage() {
-        return dtb;
+        return toURI(getProperty(LINUX_DTB).getValue());
     }
 
     /**
@@ -57,7 +58,7 @@ public class LinuxOption {
      * @param file Linux Device Tree Blob イメージファイルパス
      */
     public void setDeviceTreeImage(File file) {
-        dtb = file.toURI();
+        setValue(LINUX_DTB, file.toURI().toString());
     }
 
     /**
@@ -66,7 +67,7 @@ public class LinuxOption {
      * @param uri Linux Device Tree Blob イメージファイルの URI
      */
     public void setDeviceTreeImage(URI uri) {
-        dtb = uri;
+        setValue(LINUX_DTB, uri.toString());
     }
 
     /**
@@ -75,7 +76,7 @@ public class LinuxOption {
      * @return Linux カーネルイメージファイルの URI
      */
     public URI getKernelImage() {
-        return kimage;
+        return toURI(getProperty(LINUX_KIMAGE).getValue());
     }
 
     /**
@@ -84,7 +85,7 @@ public class LinuxOption {
      * @param file Linux カーネルイメージファイルパス
      */
     public void setKernelImage(File file) {
-        kimage = file.toURI();
+        setValue(LINUX_KIMAGE, file.toURI().toString());
     }
 
     /**
@@ -93,7 +94,7 @@ public class LinuxOption {
      * @param uri Linux カーネルイメージファイルの URI
      */
     public void setKernelImage(URI uri) {
-        kimage = uri;
+        setValue(LINUX_KIMAGE, uri.toString());
     }
 
     /**
@@ -102,7 +103,7 @@ public class LinuxOption {
      * @return Initrd/InitramFS イメージファイルの URI
      */
     public URI getInitrdImage() {
-        return initrd;
+        return toURI(getProperty(LINUX_INITRD).getValue());
     }
 
     /**
@@ -111,7 +112,7 @@ public class LinuxOption {
      * @param file Initrd/InitramFS イメージファイルパス
      */
     public void setInitrdImage(File file) {
-        initrd = file.toURI();
+        setValue(LINUX_INITRD, file.toURI().toString());
     }
 
     /**
@@ -120,7 +121,7 @@ public class LinuxOption {
      * @param uri Initrd/InitramFS イメージファイルの URI
      */
     public void setInitrdImage(URI uri) {
-        initrd = uri;
+        setValue(LINUX_INITRD, uri.toString());
     }
 
     /**
@@ -129,7 +130,7 @@ public class LinuxOption {
      * @return コマンドライン文字列
      */
     public String getCommandLine() {
-        return cmdline;
+        return getProperty(LINUX_CMDLINE).getValue();
     }
 
     /**
@@ -138,7 +139,7 @@ public class LinuxOption {
      * @param str コマンドライン文字列
      */
     public void setCommandLine(String str) {
-        cmdline = str;
+        setValue(LINUX_CMDLINE, str);
     }
 
     /**
