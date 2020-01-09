@@ -19,6 +19,7 @@ public class PropertyPanel {
 
     private String label;
     private String type;
+    private Map<String, String[]> attrs;
 
     private JPanel panel;
     private JCheckBox chkbox;
@@ -31,6 +32,7 @@ public class PropertyPanel {
     public PropertyPanel(String label, String type, String value) {
         this.label = label;
         this.type = type;
+        this.attrs = new HashMap<>();
 
         resetComponents(type);
         setValue(value);
@@ -72,6 +74,33 @@ public class PropertyPanel {
     public void setType(String val) {
         type = val;
         resetComponents(type);
+    }
+
+    /**
+     * プロパティの付加情報を取得します。
+     * キーに対応する付加情報が存在しない場合は新たに作成します。
+     *
+     * @param name 付加情報の名前
+     * @return プロパティの付加情報
+     */
+    public String[] getAttribute(String name) {
+        if (!attrs.containsKey(name)) {
+            String[] empty = new String[1];
+            empty[0] = "";
+            attrs.put(name, empty);
+        }
+
+        return attrs.get(name);
+    }
+
+    /**
+     * プロパティの付加情報を設定します。
+     *
+     * @param name 付加情報の名前
+     * @param val  プロパティの付加情報
+     */
+    public void setAttribute(String name, String... val) {
+        attrs.put(name, val);
     }
 
     /**
@@ -291,9 +320,13 @@ public class PropertyPanel {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(lastDir);
 
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                    "Binary files (*.bin)", "bin");
-            chooser.setFileFilter(filter);
+            if (!getAttribute(URI_FILTER)[0].isEmpty()) {
+                String[] name = getAttribute(URI_FILTER_TITLE);
+                String[] filt = getAttribute(URI_FILTER);
+
+                FileNameExtensionFilter filter = new FileNameExtensionFilter(name[0], filt);
+                chooser.setFileFilter(filter);
+            }
             int res = chooser.showOpenDialog(parent.getComponent());
             if (res == JFileChooser.APPROVE_OPTION) {
                 selected = chooser.getSelectedFile();

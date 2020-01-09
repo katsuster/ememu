@@ -121,6 +121,29 @@ public class PropertyPanels {
     }
 
     /**
+     * 指定されたキーに対応するプロパティの付加情報を取得します。
+     * キーに対応する付加情報が存在しない場合は新たに作成します。
+     *
+     * @param key  キー
+     * @param name 付加情報の名前
+     * @return キーに対応するプロパティの付加情報
+     */
+    public String[] getAttribute(String key, String name) {
+        return getProperty(key).getAttribute(name);
+    }
+
+    /**
+     * 指定されたキーに対応するプロパティの付加情報を設定します。
+     *
+     * @param key  キー
+     * @param name 付加情報の名前
+     * @param val  キーに対応するプロパティの付加情報
+     */
+    public void setAttribute(String key, String name, String... val) {
+        getProperty(key).setAttribute(name, val);
+    }
+
+    /**
      * 指定されたキーに対応するプロパティの値を取得します。
      * キーに対応するプロパティが存在しない場合は新たに作成した後に取得します。
      *

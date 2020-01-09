@@ -28,11 +28,15 @@ public class LinuxOption extends PropertyPanels {
 
         p.setProperty(LINUX_DTB_ENABLE, "Use Device Tree", TYPE_BOOLEAN, "false");
         p.setProperty(LINUX_DTB, "Device Tree Image", TYPE_URI, "");
+        p.setAttribute(LINUX_DTB, URI_FILTER_TITLE, "Device Tree Blob image (*.dtb)");
+        p.setAttribute(LINUX_DTB, URI_FILTER, "dtb");
 
         p.setProperty(LINUX_KIMAGE, "Kernel Image", TYPE_URI, "");
 
         p.setProperty(LINUX_INITRD_ENABLE, "Use Initrd Image", TYPE_BOOLEAN, "true");
         p.setProperty(LINUX_INITRD, "Initrd Image", TYPE_URI, "");
+        p.setAttribute(LINUX_INITRD, URI_FILTER_TITLE, "Initrd image (*.cpio, *.gz)");
+        p.setAttribute(LINUX_INITRD, URI_FILTER, "cpio", "gz");
 
         p.setProperty(LINUX_CMDLINE, "Command line", TYPE_STRING, "");
     }
