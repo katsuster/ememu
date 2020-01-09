@@ -7,7 +7,7 @@ import net.katsuster.ememu.generic.*;
  */
 public class Emulator extends Thread {
     private Board board;
-    private LinuxOption opts;
+    private PropertyPanels opts;
 
     public Emulator() {
 
@@ -41,7 +41,7 @@ public class Emulator extends Thread {
      *
      * @return エミュレータに渡すオプション
      */
-    public LinuxOption getOption() {
+    public PropertyPanels getOption() {
         return opts;
     }
 
@@ -50,7 +50,7 @@ public class Emulator extends Thread {
      *
      * @param op エミュレータに渡すオプション
      */
-    public void setOption(LinuxOption op) {
+    public void setOption(PropertyPanels op) {
         opts = op;
     }
 

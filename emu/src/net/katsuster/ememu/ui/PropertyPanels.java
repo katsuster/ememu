@@ -49,33 +49,27 @@ public class PropertyPanels {
     }
 
     /**
-     * 指定されたキーに対応するプロパティを設定し、以前に設定されていた値を返します。
+     * 指定されたキーに対応するプロパティを設定します。
      * キーに対応するプロパティが存在しない場合は新たに作成した後に設定します。
      *
      * @param key キー
      * @param val キーに対応するプロパティ
-     * @return 以前のプロパティ
      */
-    public PropertyPanel setProperty(String key, PropertyPanel val) {
-        PropertyPanel before = getProperty(key);
+    public void setProperty(String key, PropertyPanel val) {
         props.put(key, val);
-        return before;
     }
 
     /**
-     * 指定されたキーに対応するプロパティを設定し、以前に設定されていた値を返します。
+     * 指定されたキーに対応するプロパティを設定します。
      * キーに対応するプロパティが存在しない場合は新たに作成した後に設定します。
      *
      * @param key   キー
      * @param label キーに対応するプロパティのラベル
      * @param type  キーに対応するプロパティの型名
      * @param val   キーに対応するプロパティの値
-     * @return 以前のプロパティ
      */
-    public PropertyPanel setProperty(String key, String label, String type, String val) {
-        PropertyPanel before = getProperty(key);
+    public void setProperty(String key, String label, String type, String val) {
         props.put(key, new PropertyPanel(label, type, val));
-        return before;
     }
 
     /**
@@ -91,18 +85,15 @@ public class PropertyPanels {
     }
 
     /**
-     * 指定されたキーに対応するプロパティのラベルを設定し、以前に設定されていた値を返します。
+     * 指定されたキーに対応するプロパティのラベルを設定します。
      * キーに対応するプロパティが存在しない場合は新たに作成した後に設定します。
      *
      * @param key   キー
      * @param label キーに対応するプロパティのラベル
-     * @return 以前のプロパティのラベル
      */
-    public String setLabel(String key, String label) {
+    public void setLabel(String key, String label) {
         PropertyPanel p = getProperty(key);
-        String before = p.getLabel();
         p.setLabel(label);
-        return before;
     }
 
     /**
@@ -118,18 +109,15 @@ public class PropertyPanels {
     }
 
     /**
-     * 指定されたキーに対応するプロパティの型名を設定し、以前に設定されていた値を返します。
+     * 指定されたキーに対応するプロパティの型名を設定します。
      * キーに対応するプロパティが存在しない場合は新たに作成した後に設定します。
      *
      * @param key  キー
      * @param type キーに対応するプロパティの型名
-     * @return 以前のプロパティの型名
      */
-    public String setType(String key, String type) {
+    public void setType(String key, String type) {
         PropertyPanel p = getProperty(key);
-        String before = p.getType();
         p.setType(type);
-        return before;
     }
 
     /**
@@ -145,20 +133,100 @@ public class PropertyPanels {
     }
 
     /**
-     * 指定されたキーに対応するプロパティの値を設定し、以前に設定されていた値を返します。
+     * 指定されたキーに対応するプロパティの値を設定します。
      * キーに対応するプロパティが存在しない場合は新たに作成した後に設定します。
      *
      * @param key キー
      * @param val キーに対応するプロパティの値
-     * @return 以前のプロパティの値
      */
-    public String setValue(String key, String val) {
+    public void setValue(String key, String val) {
         PropertyPanel p = getProperty(key);
-        String before = p.getValue();
         p.setValue(val);
-        return before;
     }
 
+    /**
+     * 指定されたキーに対応するプロパティの値を boolean として取得します。
+     * "true"（大文字と小文字は区別しない）以外の値の場合 false とみなします。
+     *
+     * @param key キー
+     * @return キーに対応するプロパティの boolean 値
+     */
+    public boolean getAsBoolean(String key) {
+        return getProperty(key).getAsBoolean();
+    }
+
+    /**
+     * 指定されたキーに対応するプロパティの値として、boolean を設定します。
+     *
+     * @param key キー
+     * @param val キーに対応するプロパティの boolean 値
+     */
+    public void setAsBoolean(String key, boolean val) {
+        getProperty(key).setValue(Boolean.toString(val));
+    }
+
+    /**
+     * 指定されたキーに対応するプロパティの値を int として取得します。
+     * int への変換に失敗した場合は 0 を返します。
+     *
+     * @param key キー
+     * @return キーに対応するプロパティの int 値
+     */
+    public int getAsInteger(String key) {
+        return getProperty(key).getAsInteger();
+    }
+
+    /**
+     * 指定されたキーに対応するプロパティの値として、int を設定します。
+     *
+     * @param key キー
+     * @param val キーに対応するプロパティの int 値
+     */
+    public void setAsInteger(String key, int val) {
+        getProperty(key).setValue(Integer.toString(val));
+    }
+
+    /**
+     * 指定されたキーに対応するプロパティの値を URI として取得します。
+     *
+     * URI への変換に失敗した場合は空の URI を返し、
+     * 空の URI の生成にも失敗した場合は null を返します。
+     *
+     * @param key キー
+     * @return キーに対応するプロパティの URI、もしくは null
+     */
+    public URI getAsURI(String key) {
+        return getProperty(key).getAsURI();
+    }
+
+    /**
+     * 指定されたキーに対応するプロパティの値として、URI を設定します。
+     *
+     * @param key キー
+     * @param uri キーに対応するプロパティの URI
+     */
+    public void setAsURI(String key, URI uri) {
+        getProperty(key).setValue(uri.toString());
+    }
+
+    /**
+     * 指定されたキーに対応するプロパティの値として、URI を設定します。
+     * URI として解釈できない文字列を渡したときは空文字列と見なします。
+     *
+     * @param key キー
+     * @param uri キーに対応するプロパティの URI の文字列表現
+     */
+    public void setAsURI(String key, String uri) {
+        getProperty(key).setAsURI(uri);
+    }
+
+    /**
+     * 指定されたキー（複数も可能）に対応するプロパティの設定用 GUI を作成します。
+     *
+     * @param keys キーのリスト
+     * @param title 設定用 GUI パネルのタイトル
+     * @return 設定用 GUI パネル
+     */
     public JPanel createPanel(List<String> keys, String title) {
         JPanel panel = new JPanel(true);
         GridBagLayout layout = new GridBagLayout();

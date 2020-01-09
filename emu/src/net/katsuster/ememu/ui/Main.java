@@ -20,16 +20,15 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        LinuxOption opts = new LinuxOption();
+        PropertyPanels opts = new PropertyPanels();
 
-        try {
-            opts.setArch("arm");
-            opts.setKernelImage(new URI("http://www.katsuster.net/contents/java/ememu/Image-4.4.57"));
-            opts.setInitrdImage(new URI("http://www.katsuster.net/contents/java/ememu/initramfs.gz"));
-            opts.setCommandLine("console=ttyAMA0 mem=64M root=/dev/ram init=/bin/init debug printk.time=1");
-        } catch (URISyntaxException e) {
-            //ignore
-        }
+        LinuxOption.addLinuxOptions(opts);
+        ProxyOption.addProxyOptions(opts);
+
+        opts.setValue(LinuxOption.EMU_ARCH, "arm");
+        opts.setAsURI(LinuxOption.LINUX_KIMAGE, "http://www.katsuster.net/contents/java/ememu/Image-4.4.57");
+        opts.setAsURI(LinuxOption.LINUX_INITRD, "http://www.katsuster.net/contents/java/ememu/initramfs.gz");
+        opts.setValue(LinuxOption.LINUX_CMDLINE, "console=ttyAMA0 mem=64M root=/dev/ram init=/bin/init debug printk.time=1");
 
         if (args.length >= 1) {
             if (args[0].equals("-h") || args[0].equals("--help") ||
@@ -37,17 +36,17 @@ public class Main {
                 usage(args);
                 return;
             }
-            opts.setArch(args[0]);
+            opts.setValue(LinuxOption.EMU_ARCH, args[0]);
         }
         if (args.length >= 2) {
-            opts.setKernelImage(new File(args[1]));
-            opts.setInitrdImage(new File(""));
+            opts.setAsURI(LinuxOption.LINUX_KIMAGE, new File(args[1]).toURI());
+            opts.setAsURI(LinuxOption.LINUX_INITRD, new File("").toURI());
         }
         if (args.length >= 3) {
-            opts.setInitrdImage(new File(args[2]));
+            opts.setAsURI(LinuxOption.LINUX_INITRD, new File(args[2]).toURI());
         }
         if (args.length >= 4) {
-            opts.setCommandLine(args[3]);
+            opts.setValue(LinuxOption.LINUX_CMDLINE, args[3]);
         }
 
         try {
@@ -61,7 +60,7 @@ public class Main {
         }
     }
 
-    public static void mainConsole(LinuxOption opts) {
+    public static void mainConsole(PropertyPanels opts) {
         EmulatorARM emu = new EmulatorARM();
 
         emu.setOption(opts);

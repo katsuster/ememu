@@ -1,12 +1,22 @@
 package net.katsuster.ememu.ui;
 
-import javax.swing.*;
-import javax.swing.filechooser.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.filechooser.*;
 
 public class PropertyPanel {
+    public static final String TYPE_BOOLEAN = "Boolean";
+    public static final String TYPE_INT = "Int";
+    public static final String TYPE_URI = "URI";
+    public static final String TYPE_STRING = "String";
+
+    public static final String URI_FILTER_TITLE = "filter_title";
+    public static final String URI_FILTER = "filter";
+
     private String label;
     private String type;
 
@@ -15,7 +25,7 @@ public class PropertyPanel {
     private JTextField field;
 
     public PropertyPanel() {
-        this("", "String", "");
+        this("", TYPE_STRING, "");
     }
 
     public PropertyPanel(String label, String type, String value) {
@@ -39,14 +49,10 @@ public class PropertyPanel {
      * プロパティのラベルを設定します。
      *
      * @param val プロパティのラベル
-     * @return 以前の値
      */
-    public String setLabel(String val) {
-        resetComponents(type);
-
-        String before = label;
+    public void setLabel(String val) {
         label = val;
-        return before;
+        resetComponents(type);
     }
 
     /**
@@ -62,14 +68,10 @@ public class PropertyPanel {
      * プロパティの値の方を設定します。
      *
      * @param val プロパティの値の型
-     * @return 以前の値
      */
-    public String setType(String val) {
-        resetComponents(val);
-
-        String before = type;
+    public void setType(String val) {
         type = val;
-        return before;
+        resetComponents(type);
     }
 
     /**
@@ -79,10 +81,11 @@ public class PropertyPanel {
      */
     public String getValue() {
         switch (getType()) {
-        case "Boolean":
+        case TYPE_BOOLEAN:
             return Boolean.toString(chkbox.isSelected());
-        case "String":
-        case "File":
+        case TYPE_INT:
+        case TYPE_URI:
+        case TYPE_STRING:
             return field.getText();
         default:
             return "";
@@ -93,26 +96,109 @@ public class PropertyPanel {
      * プロパティの値を設定します。
      *
      * @param val プロパティの値
-     * @return 以前の値
      */
-    public String setValue(String val) {
-        String before;
-
+    public void setValue(String val) {
         switch (getType()) {
-        case "Boolean":
-            before = Boolean.toString(chkbox.isSelected());
-            chkbox.setSelected(Boolean.parseBoolean(val));
+        case TYPE_BOOLEAN:
+            setAsBoolean(val);
             break;
-        case "String":
-        case "File":
-            before = field.getText();
+        case TYPE_INT:
+            setAsInteger(val);
+            break;
+        case TYPE_URI:
+            setAsURI(val);
+            break;
+        case TYPE_STRING:
             field.setText(val);
             break;
         default:
-            return "";
+            break;
         }
+    }
 
-        return before;
+    /**
+     * プロパティの値を boolean として取得します。
+     * "true"（大文字と小文字は区別しない）以外の値の場合 false とみなします。
+     *
+     * @return プロパティの boolean 値
+     */
+    public boolean getAsBoolean() {
+        return Boolean.parseBoolean(getValue());
+    }
+
+    /**
+     * プロパティの値として、boolean を設定します。
+     * "true"（大文字と小文字は区別しない）以外の値の場合 false とみなします。
+     *
+     * @param val プロパティの boolean 値として解釈する文字列
+     */
+    protected void setAsBoolean(String val) {
+        chkbox.setSelected(Boolean.parseBoolean(getValue()));
+    }
+
+    /**
+     * プロパティの値を int として取得します。
+     * int への変換に失敗した場合は 0 を返します。
+     *
+     * @return プロパティの int 値
+     */
+    public int getAsInteger() {
+        try {
+            return Integer.parseInt(getValue());
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
+    }
+
+    /**
+     * プロパティの値として、int を設定します。
+     * int への変換に失敗した場合は 0 とみなします。
+     *
+     * @param val プロパティの int 値として解釈する文字列
+     */
+    protected void setAsInteger(String val) {
+        try {
+            int i = Integer.parseInt(val);
+            field.setText(Integer.toString(i));
+        } catch (NumberFormatException ex) {
+            field.setText("0");
+        }
+    }
+
+    /**
+     * プロパティの値を URI として取得します。
+     * URI への変換に失敗した場合は空の URI を返し、
+     * 空の URI の生成にも失敗した場合は null を返します。
+     *
+     * @return プロパティの URI、もしくは null
+     */
+    public URI getAsURI() {
+        try {
+            URI emptyURI = new URI("");
+
+            try {
+                return new URI(getValue());
+            } catch (URISyntaxException ex) {
+                return emptyURI;
+            }
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    /**
+     * プロパティの値として、URI を設定します。
+     * URI として解釈できない文字列を渡したときは空文字列とみなします。
+     *
+     * @param uri プロパティの URI の文字列表現
+     */
+    protected void setAsURI(String uri) {
+        try {
+            URI tmp = new URI(uri);
+            field.setText(tmp.toString());
+        } catch (URISyntaxException ex) {
+            field.setText("");
+        }
     }
 
     /**
@@ -150,12 +236,13 @@ public class PropertyPanel {
         panel.setLayout(layout);
 
         switch (val) {
-        case "Boolean":
+        case TYPE_BOOLEAN:
             chkbox = new JCheckBox(getLabel());
             GridBagLayoutHelper.add(panel, layout, chkbox,
                     1, 1, 1, 4);
             break;
-        case "String":
+        case TYPE_INT:
+        case TYPE_STRING:
             field = new JTextField();
             field.setPreferredSize(calcPreferredSize(30));
             field.setMinimumSize(calcPreferredSize(30));
@@ -164,7 +251,7 @@ public class PropertyPanel {
             GridBagLayoutHelper.add(panel, layout, field,
                     2, 1, 1, 2);
             break;
-        case "File":
+        case TYPE_URI:
             field = new JTextField();
             field.setPreferredSize(calcPreferredSize(30));
             field.setMinimumSize(calcPreferredSize(30));

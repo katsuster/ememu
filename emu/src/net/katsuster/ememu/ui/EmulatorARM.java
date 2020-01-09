@@ -24,10 +24,10 @@ public class EmulatorARM extends Emulator {
         cpu = (ARMv5)getBoard().getMainCPU();
         ram = getBoard().getMainRAM();
 
-        dtree = getOption().getDeviceTreeImage().toString();
-        kimage = getOption().getKernelImage().toString();
-        initrd = getOption().getInitrdImage().toString();
-        cmdline = getOption().getCommandLine();
+        dtree = getOption().getValue(LinuxOption.LINUX_DTB);
+        kimage = getOption().getValue(LinuxOption.LINUX_KIMAGE);
+        initrd = getOption().getValue(LinuxOption.LINUX_INITRD);
+        cmdline = getOption().getValue(LinuxOption.LINUX_CMDLINE);
         if (dtree.equals("")) {
             ARMLinuxLoader.bootFromURI(cpu, ram, kimage, initrd, cmdline);
         } else {

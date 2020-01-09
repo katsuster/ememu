@@ -14,14 +14,12 @@ public class MainWindow extends JFrame {
     private JTabbedPane tabPane;
     private JSplitPane panel;
     private StdoutPanel stdoutPanel;
-    private LinuxOption linuxOpts;
-    private ProxyOption proxyOpts;
+    private PropertyPanels opts;
     private Emulator emu;
     private VirtualTerminal[] vttyAMA;
 
-    public MainWindow(LinuxOption lopts) {
-        linuxOpts = lopts;
-        proxyOpts = new ProxyOption();
+    public MainWindow(PropertyPanels o) {
+        opts = o;
 
         vttyAMA = new VirtualTerminal[3];
 
@@ -51,18 +49,27 @@ public class MainWindow extends JFrame {
 
         keys = new ArrayList<>();
         keys.add(LinuxOption.EMU_ARCH);
+        JPanel emuOptPanel = opts.createPanel(keys, "Emulator Options");
+
+        keys = new ArrayList<>();
         keys.add(LinuxOption.LINUX_DTB_ENABLE);
         keys.add(LinuxOption.LINUX_DTB);
         keys.add(LinuxOption.LINUX_KIMAGE);
         keys.add(LinuxOption.LINUX_INITRD);
         keys.add(LinuxOption.LINUX_CMDLINE);
-        JPanel linuxOptPanel = linuxOpts.createPanel(keys, "Linux Boot Options");
+        JPanel linuxOptPanel = opts.createPanel(keys, "Linux Boot Options");
 
         keys = new ArrayList<>();
         keys.add(ProxyOption.PROXY_ENABLE);
         keys.add(ProxyOption.PROXY_HOST);
         keys.add(ProxyOption.PROXY_PORT);
-        JPanel proxyOptPanel = proxyOpts.createPanel(keys, "Proxies");
+        JPanel proxyOptPanel = opts.createPanel(keys, "Proxies");
+
+        JPanel panelOptions = new JPanel(true);
+        panelOptions.setLayout(new BoxLayout(panelOptions, BoxLayout.Y_AXIS));
+        panelOptions.add(emuOptPanel);
+        panelOptions.add(linuxOptPanel);
+        panelOptions.add(proxyOptPanel);
 
         JPanel panelNavigator = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnReset = new JButton("Reset");
@@ -70,10 +77,9 @@ public class MainWindow extends JFrame {
         btnReset.setActionCommand("reset");
         panelNavigator.add(btnReset);
 
-        JPanel panelRight = new JPanel(new GridLayout(3, 1, 5, 5), true);
-        panelRight.add(linuxOptPanel);
-        panelRight.add(proxyOptPanel);
-        panelRight.add(panelNavigator);
+        JPanel panelRight = new JPanel(new BorderLayout(), true);
+        panelRight.add(panelOptions, BorderLayout.CENTER);
+        panelRight.add(panelNavigator, BorderLayout.SOUTH);
         panelRight.setPreferredSize(new Dimension(100, 100));
         panelRight.setMinimumSize(panelRight.getPreferredSize());
         panel.setRightComponent(panelRight);
@@ -91,8 +97,12 @@ public class MainWindow extends JFrame {
         System.out.println("start");
 
         //proxy
-        System.setProperty("proxyHost", proxyOpts.getValue(ProxyOption.PROXY_HOST));
-        System.setProperty("proxyPort", proxyOpts.getValue(ProxyOption.PROXY_PORT));
+        if (opts.getAsBoolean(ProxyOption.PROXY_ENABLE)) {
+            System.setProperty("proxyHost",
+                    opts.getAsURI(ProxyOption.PROXY_HOST).toString());
+            System.setProperty("proxyPort",
+                    Integer.toString(opts.getAsInteger(ProxyOption.PROXY_PORT)));
+        }
 
         //stdout Tab - Left - stdout
         stdoutPanel = new StdoutPanel(listenButton);
@@ -111,7 +121,7 @@ public class MainWindow extends JFrame {
         tabPane.setSelectedIndex(1);
 
         //Run the emulator
-        String arch = linuxOpts.getArch();
+        String arch = opts.getValue(LinuxOption.EMU_ARCH);
 
         if (arch.compareToIgnoreCase("arm") == 0) {
             emu = new EmulatorARM();
@@ -121,7 +131,7 @@ public class MainWindow extends JFrame {
             throw new IllegalArgumentException("Not support '" +
                     arch + "' architecture.");
         }
-        emu.setOption(linuxOpts);
+        emu.setOption(opts);
         for (int i = 0; i < vttyAMA.length; i++) {
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());
             emu.getBoard().setUARTOutputStream(i, vttyAMA[i].getOutputStream());
