@@ -8,6 +8,11 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 
+/**
+ * プロパティ。
+ *
+ * プロパティはラベル、値のほか、設定用のユーザインタフェースも保持します。
+ */
 public class PropertyPanel {
     public static final String TYPE_BOOLEAN = "Boolean";
     public static final String TYPE_INT = "Int";
@@ -299,7 +304,7 @@ public class PropertyPanel {
                     4, 1, 1, 1);
             break;
         default:
-            break;
+            throw new IllegalStateException("Unknown type '" + type + "'");
         }
 
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
