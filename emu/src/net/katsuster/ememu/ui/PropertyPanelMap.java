@@ -6,10 +6,15 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
-public class PropertyPanels {
+/**
+ * プロパティのマップ。
+ *
+ * プロパティは固有のキーにより参照されます。
+ */
+public class PropertyPanelMap {
     private Map<String, PropertyPanel> props;
 
-    public PropertyPanels() {
+    public PropertyPanelMap() {
         props = new HashMap<>();
     }
 

@@ -5,7 +5,7 @@ import static net.katsuster.ememu.ui.PropertyPanel.*;
 /**
  * プロキシの設定用のプロパティ。
  */
-public class ProxyOption extends PropertyPanels {
+public class ProxyOption extends PropertyPanelMap {
     public static final String PROXY_ENABLE = "proxy.enable";
     /** プロキシの URI */
     public static final String PROXY_HOST = "proxy.host";
@@ -13,10 +13,10 @@ public class ProxyOption extends PropertyPanels {
     public static final String PROXY_PORT = "proxy.port";
 
     public ProxyOption()  {
-        addProxyOptions(this);
+        addPropertyPanels(this);
     }
 
-    public static void addProxyOptions(PropertyPanels p) {
+    public static void addPropertyPanels(PropertyPanelMap p) {
         p.setProperty(PROXY_ENABLE, "Enable proxy configuration", TYPE_BOOLEAN, "false");
         p.setProperty(PROXY_HOST, "Host", TYPE_STRING, "");
         p.setProperty(PROXY_PORT, "Port", TYPE_INT, "0");

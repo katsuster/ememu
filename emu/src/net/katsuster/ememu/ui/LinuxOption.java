@@ -5,7 +5,7 @@ import static net.katsuster.ememu.ui.PropertyPanel.*;
 /**
  * Linux 起動時に渡すオプション。
  */
-public class LinuxOption extends PropertyPanels {
+public class LinuxOption extends PropertyPanelMap {
     /** エミュレートするアーキテクチャ */
     public static final String EMU_ARCH = "emu.arch";
     public static final String LINUX_DTB_ENABLE = "emu.linux.dtb.enable";
@@ -20,10 +20,10 @@ public class LinuxOption extends PropertyPanels {
     public static final String LINUX_CMDLINE = "linux.cmdline";
 
     public LinuxOption() {
-        addLinuxOptions(this);
+        addPropertyPanels(this);
     }
 
-    public static void addLinuxOptions(PropertyPanels p) {
+    public static void addPropertyPanels(PropertyPanelMap p) {
         p.setProperty(EMU_ARCH, "Architecture", TYPE_STRING, "");
 
         p.setProperty(LINUX_DTB_ENABLE, "Use Device Tree", TYPE_BOOLEAN, "false");
