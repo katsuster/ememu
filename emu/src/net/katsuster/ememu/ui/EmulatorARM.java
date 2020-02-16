@@ -9,7 +9,7 @@ import net.katsuster.ememu.generic.*;
  */
 public class EmulatorARM extends Emulator {
     public EmulatorARM() {
-        super(new ARMVersatile(), new LinuxOption());
+        super(new ARMVersatile());
     }
 
     @Override
@@ -24,10 +24,10 @@ public class EmulatorARM extends Emulator {
         cpu = (ARMv5)getBoard().getMainCPU();
         ram = getBoard().getMainRAM();
 
-        dtree = getOption().getValue(LinuxOption.LINUX_DTB);
-        kimage = getOption().getValue(LinuxOption.LINUX_KIMAGE);
-        initrd = getOption().getValue(LinuxOption.LINUX_INITRD);
-        cmdline = getOption().getValue(LinuxOption.LINUX_CMDLINE);
+        dtree = getProperties().getValue(LinuxOption.LINUX_DTB, 0);
+        kimage = getProperties().getValue(LinuxOption.LINUX_KIMAGE, 0);
+        initrd = getProperties().getValue(LinuxOption.LINUX_INITRD, 0);
+        cmdline = getProperties().getValue(LinuxOption.LINUX_CMDLINE, 0);
         if (dtree.equals("")) {
             ARMLinuxLoader.bootFromURI(cpu, ram, kimage, initrd, cmdline);
         } else {

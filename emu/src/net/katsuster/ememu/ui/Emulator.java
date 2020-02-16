@@ -2,20 +2,39 @@ package net.katsuster.ememu.ui;
 
 import net.katsuster.ememu.generic.*;
 
+import static net.katsuster.ememu.ui.EmuPropertyPanel.*;
+
 /**
  * エミュレータです。
  */
-public class Emulator extends Thread {
+public class Emulator extends Thread
+        implements Configurable {
     private Board board;
-    private PropertyPanels opts;
+    private EmuPropertyMap opts;
 
     public Emulator() {
 
     }
 
-    public Emulator(Board b, LinuxOption o) {
+    public Emulator(Board b) {
         board = b;
-        opts = o;
+    }
+
+    @Override
+    public void initProperties(EmuPropertyMap m) {
+        int index = 0;
+
+        m.setProperty("test.test", index, "Test", TYPE_STRING, "test default");
+    }
+
+    @Override
+    public EmuPropertyMap getProperties() {
+        return opts;
+    }
+
+    @Override
+    public void setProperties(EmuPropertyMap m) {
+        opts = m;
     }
 
     /**
@@ -34,24 +53,6 @@ public class Emulator extends Thread {
      */
     public void setBoard(Board b) {
         board = b;
-    }
-
-    /**
-     * エミュレータ起動のオプションを取得します。
-     *
-     * @return エミュレータに渡すオプション
-     */
-    public PropertyPanels getOption() {
-        return opts;
-    }
-
-    /**
-     * エミュレータ起動のオプションを設定します。
-     *
-     * @param op エミュレータに渡すオプション
-     */
-    public void setOption(PropertyPanels op) {
-        opts = op;
     }
 
     /**

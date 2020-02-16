@@ -9,7 +9,7 @@ import net.katsuster.ememu.riscv.core.RV64;
  */
 public class EmulatorRISCV extends Emulator {
     public EmulatorRISCV() {
-        super(new RISCVUnleashed(), new LinuxOption());
+        super(new RISCVUnleashed());
     }
 
     @Override
