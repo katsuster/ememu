@@ -14,11 +14,12 @@ public class MainWindow extends JFrame {
     private JTabbedPane tabPane;
     private JSplitPane panel;
     private StdoutPanel stdoutPanel;
-    private PropertyPanels opts;
+    private EmuPropertyPanelMap opts;
     private Emulator emu;
+    private JPanel emuOptPanel;
     private VirtualTerminal[] vttyAMA;
 
-    public MainWindow(PropertyPanels o) {
+    public MainWindow(EmuPropertyPanelMap o) {
         opts = o;
 
         vttyAMA = new VirtualTerminal[3];
@@ -49,7 +50,7 @@ public class MainWindow extends JFrame {
 
         keys = new ArrayList<>();
         keys.add(LinuxOption.EMU_ARCH);
-        JPanel emuOptPanel = opts.createPanel(keys, "Emulator Options");
+        JPanel emuOptPanel = opts.createPanel(keys, 0, "Emulator Options");
 
         keys = new ArrayList<>();
         keys.add(LinuxOption.LINUX_DTB_ENABLE);
@@ -57,13 +58,13 @@ public class MainWindow extends JFrame {
         keys.add(LinuxOption.LINUX_KIMAGE);
         keys.add(LinuxOption.LINUX_INITRD);
         keys.add(LinuxOption.LINUX_CMDLINE);
-        JPanel linuxOptPanel = opts.createPanel(keys, "Linux Boot Options");
+        JPanel linuxOptPanel = opts.createPanel(keys, 0, "Linux Boot Options");
 
         keys = new ArrayList<>();
         keys.add(ProxyOption.PROXY_ENABLE);
         keys.add(ProxyOption.PROXY_HOST);
         keys.add(ProxyOption.PROXY_PORT);
-        JPanel proxyOptPanel = opts.createPanel(keys, "Proxies");
+        JPanel proxyOptPanel = opts.createPanel(keys, 0, "Proxies");
 
         JPanel panelOptions = new JPanel(true);
         panelOptions.setLayout(new BoxLayout(panelOptions, BoxLayout.Y_AXIS));
@@ -71,14 +72,27 @@ public class MainWindow extends JFrame {
         panelOptions.add(linuxOptPanel);
         panelOptions.add(proxyOptPanel);
 
+        JScrollPane scrOptions = new JScrollPane(panelOptions);
+        scrOptions.setPreferredSize(new Dimension(320, 640));
+
         JPanel panelNavigator = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnCreate = new JButton("Create");
+        btnCreate.addActionListener(listenButton);
+        btnCreate.setActionCommand("create");
+        panelNavigator.add(btnCreate);
+
+        JButton btnDestroy = new JButton("Destroy");
+        btnDestroy.addActionListener(listenButton);
+        btnDestroy.setActionCommand("destroy");
+        panelNavigator.add(btnDestroy);
+
         JButton btnReset = new JButton("Reset");
         btnReset.addActionListener(listenButton);
         btnReset.setActionCommand("reset");
         panelNavigator.add(btnReset);
 
         JPanel panelRight = new JPanel(new BorderLayout(), true);
-        panelRight.add(panelOptions, BorderLayout.CENTER);
+        panelRight.add(scrOptions, BorderLayout.CENTER);
         panelRight.add(panelNavigator, BorderLayout.SOUTH);
         panelRight.setPreferredSize(new Dimension(100, 100));
         panelRight.setMinimumSize(panelRight.getPreferredSize());
@@ -93,35 +107,53 @@ public class MainWindow extends JFrame {
         setSize(800, 600);
     }
 
+    public void create() {
+        System.out.println("create");
+
+        //Create emulator properties
+        String arch = opts.getValue(LinuxOption.EMU_ARCH, 0);
+        Emulator tempEmu;
+        List<String> keys = new ArrayList<>();
+        int index = 0;
+
+        if (arch.compareToIgnoreCase("arm") == 0) {
+            tempEmu = new EmulatorARM();
+
+            keys.add("test.test");
+        } else if (arch.compareToIgnoreCase("riscv") == 0) {
+            tempEmu = new EmulatorRISCV();
+
+            keys.add("test.test");
+        } else {
+            throw new IllegalArgumentException("Not support '" +
+                    arch + "' architecture.");
+        }
+        tempEmu.initProperties(opts);
+
+        emuOptPanel = opts.createPanel(keys, index, "Emulator");
+        tabPane.addTab("emulator", emuOptPanel);
+    }
+
+    public void destroy() {
+        System.out.println("destroy");
+
+        //Destroy emulator properties
+        if (emuOptPanel != null) {
+            tabPane.remove(emuOptPanel);
+            emuOptPanel = null;
+        }
+    }
+
     public void start() {
+        int index = 0;
+
         System.out.println("start");
 
-        //proxy
-        if (opts.getAsBoolean(ProxyOption.PROXY_ENABLE)) {
-            System.setProperty("proxyHost",
-                    opts.getAsURI(ProxyOption.PROXY_HOST).toString());
-            System.setProperty("proxyPort",
-                    Integer.toString(opts.getAsInteger(ProxyOption.PROXY_PORT)));
-        }
+        if (emu != null)
+            return;
 
-        //stdout Tab - Left - stdout
-        stdoutPanel = new StdoutPanel(listenButton);
-        panel.setLeftComponent(stdoutPanel);
-
-        //terminal
-        for (int i = 0; i < vttyAMA.length; i++) {
-            if (vttyAMA[i] != null) {
-                tabPane.remove(vttyAMA[i]);
-                vttyAMA[i] = null;
-            }
-
-            vttyAMA[i] = new VirtualTerminal();
-            tabPane.addTab("ttyAMA" + i, vttyAMA[i]);
-        }
-        tabPane.setSelectedIndex(1);
-
-        //Run the emulator
-        String arch = opts.getValue(LinuxOption.EMU_ARCH);
+        //Create the emulator
+        String arch = opts.getValue(LinuxOption.EMU_ARCH, 0);
 
         if (arch.compareToIgnoreCase("arm") == 0) {
             emu = new EmulatorARM();
@@ -131,32 +163,63 @@ public class MainWindow extends JFrame {
             throw new IllegalArgumentException("Not support '" +
                     arch + "' architecture.");
         }
-        emu.setOption(opts);
+
+        //Create and connect stdout
+        stdoutPanel = new StdoutPanel(listenButton);
+        panel.setLeftComponent(stdoutPanel);
+
+        //Create and connect terminals
         for (int i = 0; i < vttyAMA.length; i++) {
+            vttyAMA[i] = new VirtualTerminal();
+            tabPane.addTab("ttyAMA" + i, vttyAMA[i]);
+
             emu.getBoard().setUARTInputStream(i, vttyAMA[i].getInputStream());
             emu.getBoard().setUARTOutputStream(i, vttyAMA[i].getOutputStream());
         }
+        tabPane.setSelectedIndex(2);
+
+        //Set emulator properties
+        if (opts.getAsBoolean(ProxyOption.PROXY_ENABLE, 0)) {
+            System.setProperty("proxyHost",
+                    opts.getAsURI(ProxyOption.PROXY_HOST, 0).toString());
+            System.setProperty("proxyPort",
+                    Integer.toString(opts.getAsInteger(ProxyOption.PROXY_PORT, 0)));
+        }
+        emu.setProperties(opts);
+
+        //Start emulator
         emu.start();
     }
 
     public void stop() {
         System.out.println("stop");
 
+        if (emu == null)
+            return;
+
+        //Stop and destroy emulator
         try {
-            stdoutPanel.close();
-
-            if (emu != null) {
-                for (VirtualTerminal vta : vttyAMA) {
-                    vta.close();
-                }
-
-                emu.halt();
-                emu.join();
-            }
+            emu.halt();
+            emu.join();
         } catch (InterruptedException e) {
             e.printStackTrace(System.err);
             //ignored
         }
+        emu = null;
+
+        //Disconnect and destroy terminals
+        for (int i = 0; i < vttyAMA.length; i++) {
+            if (vttyAMA[i] == null)
+                continue;
+
+            vttyAMA[i].close();
+            tabPane.remove(vttyAMA[i]);
+            vttyAMA[i] = null;
+        }
+
+        //Disconnect and destroy stdout
+        stdoutPanel.close();
+        stdoutPanel = null;
     }
 
     class ButtonListener implements ActionListener {
@@ -166,6 +229,13 @@ public class MainWindow extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals("create")) {
+                create();
+            }
+            if (e.getActionCommand().equals("destroy")) {
+                stop();
+                destroy();
+            }
             if (e.getActionCommand().equals("reset")) {
                 stop();
                 start();

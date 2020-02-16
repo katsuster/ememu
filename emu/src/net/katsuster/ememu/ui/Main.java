@@ -1,7 +1,6 @@
 package net.katsuster.ememu.ui;
 
 import java.io.*;
-import java.net.*;
 import java.awt.*;
 
 /**
@@ -20,15 +19,15 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        PropertyPanels opts = new PropertyPanels();
+        EmuPropertyPanelMap opts = new EmuPropertyPanelMap();
 
-        LinuxOption.addLinuxOptions(opts);
-        ProxyOption.addProxyOptions(opts);
+        new LinuxOption().initProperties(opts);
+        new ProxyOption().initProperties(opts);
 
-        opts.setValue(LinuxOption.EMU_ARCH, "arm");
-        opts.setAsURI(LinuxOption.LINUX_KIMAGE, "http://www.katsuster.net/contents/java/ememu/Image-4.4.57");
-        opts.setAsURI(LinuxOption.LINUX_INITRD, "http://www.katsuster.net/contents/java/ememu/initramfs.gz");
-        opts.setValue(LinuxOption.LINUX_CMDLINE, "console=ttyAMA0 mem=64M root=/dev/ram init=/bin/init debug printk.time=1");
+        opts.setValue(LinuxOption.EMU_ARCH, 0, "arm");
+        opts.setAsURI(LinuxOption.LINUX_KIMAGE, 0, "http://www.katsuster.net/contents/java/ememu/Image-4.4.57");
+        opts.setAsURI(LinuxOption.LINUX_INITRD, 0, "http://www.katsuster.net/contents/java/ememu/initramfs.gz");
+        opts.setValue(LinuxOption.LINUX_CMDLINE, 0, "console=ttyAMA0 mem=64M root=/dev/ram init=/bin/init debug printk.time=1");
 
         if (args.length >= 1) {
             if (args[0].equals("-h") || args[0].equals("--help") ||
@@ -36,17 +35,17 @@ public class Main {
                 usage(args);
                 return;
             }
-            opts.setValue(LinuxOption.EMU_ARCH, args[0]);
+            opts.setValue(LinuxOption.EMU_ARCH, 0, args[0]);
         }
         if (args.length >= 2) {
-            opts.setAsURI(LinuxOption.LINUX_KIMAGE, new File(args[1]).toURI());
-            opts.setAsURI(LinuxOption.LINUX_INITRD, new File("").toURI());
+            opts.setAsURI(LinuxOption.LINUX_KIMAGE, 0, new File(args[1]).toURI());
+            opts.setAsURI(LinuxOption.LINUX_INITRD, 0, new File("").toURI());
         }
         if (args.length >= 3) {
-            opts.setAsURI(LinuxOption.LINUX_INITRD, new File(args[2]).toURI());
+            opts.setAsURI(LinuxOption.LINUX_INITRD, 0, new File(args[2]).toURI());
         }
         if (args.length >= 4) {
-            opts.setValue(LinuxOption.LINUX_CMDLINE, args[3]);
+            opts.setValue(LinuxOption.LINUX_CMDLINE, 0, args[3]);
         }
 
         try {
@@ -60,10 +59,10 @@ public class Main {
         }
     }
 
-    public static void mainConsole(PropertyPanels opts) {
+    public static void mainConsole(EmuPropertyMap opts) {
         EmulatorARM emu = new EmulatorARM();
 
-        emu.setOption(opts);
+        emu.setProperties(opts);
         emu.getBoard().setUARTInputStream(0, System.in);
         emu.getBoard().setUARTOutputStream(0, System.out);
         emu.start();
