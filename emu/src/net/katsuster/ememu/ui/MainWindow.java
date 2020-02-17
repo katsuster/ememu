@@ -81,11 +81,6 @@ public class MainWindow extends JFrame {
         btnCreate.setActionCommand("create");
         panelNavigator.add(btnCreate);
 
-        JButton btnDestroy = new JButton("Destroy");
-        btnDestroy.addActionListener(listenButton);
-        btnDestroy.setActionCommand("destroy");
-        panelNavigator.add(btnDestroy);
-
         JButton btnReset = new JButton("Reset");
         btnReset.addActionListener(listenButton);
         btnReset.setActionCommand("reset");
@@ -231,11 +226,9 @@ public class MainWindow extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equals("create")) {
-                create();
-            }
-            if (e.getActionCommand().equals("destroy")) {
                 stop();
                 destroy();
+                create();
             }
             if (e.getActionCommand().equals("reset")) {
                 stop();

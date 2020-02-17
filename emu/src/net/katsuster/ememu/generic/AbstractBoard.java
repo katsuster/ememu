@@ -48,5 +48,4 @@ public abstract class AbstractBoard implements Board, Configurable {
     public void setProperties(EmuPropertyMap p) {
         props = p;
     }
-
 }
