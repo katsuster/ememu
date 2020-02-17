@@ -52,7 +52,6 @@ public class SPI extends AbstractParentCore {
         private int lenFifo;
         private int rdTx = 0, wrTx = 0, lenTx = 0;
         private int rdRx = 0, wrRx = 0, lenRx = 0;
-        private final Object obj;
 
         public SPIMaster(SPI p) {
             parent = p;
@@ -60,7 +59,6 @@ public class SPI extends AbstractParentCore {
             lenFifo = 8;
             txFifo = new byte[lenFifo];
             rxFifo = new byte[lenFifo];
-            obj = new Object();
         }
 
         public int getChipSelect() {
@@ -88,7 +86,7 @@ public class SPI extends AbstractParentCore {
         }
 
         public void pushTx(byte b) {
-            synchronized (obj) {
+            synchronized (this) {
                 if (isTxFull()) {
                     throw new IllegalStateException("Tx FIFO is full, cannot push");
                 }
@@ -97,12 +95,12 @@ public class SPI extends AbstractParentCore {
                 wrTx++;
                 wrTx %= lenFifo;
                 lenTx++;
-                obj.notifyAll();
+                notifyAll();
             }
         }
 
         public byte popTx() {
-            synchronized (obj) {
+            synchronized (this) {
                 if (isTxEmpty()) {
                     throw new IllegalStateException("Tx FIFO is empty, cannot pop");
                 }
@@ -111,7 +109,7 @@ public class SPI extends AbstractParentCore {
                 rdTx++;
                 rdTx %= lenFifo;
                 lenTx--;
-                obj.notifyAll();
+                notifyAll();
                 return b;
             }
         }
@@ -125,7 +123,7 @@ public class SPI extends AbstractParentCore {
         }
 
         public void pushRx(byte b) {
-            synchronized (obj) {
+            synchronized (this) {
                 if (isRxFull()) {
                     throw new IllegalStateException("Rx FIFO is full, cannot push");
                 }
@@ -134,12 +132,12 @@ public class SPI extends AbstractParentCore {
                 wrRx++;
                 wrRx %= lenFifo;
                 lenRx++;
-                obj.notifyAll();
+                notifyAll();
             }
         }
 
         public byte popRx() {
-            synchronized (obj) {
+            synchronized (this) {
                 if (isRxEmpty()) {
                     throw new IllegalStateException("Rx FIFO is empty, cannot pop");
                 }
@@ -148,15 +146,15 @@ public class SPI extends AbstractParentCore {
                 rdRx++;
                 rdRx %= lenFifo;
                 lenRx--;
-                obj.notifyAll();
+                notifyAll();
                 return b;
             }
         }
 
         private void process() throws InterruptedException {
-            synchronized (obj) {
+            synchronized (this) {
                 while (isTxEmpty()) {
-                    obj.wait();
+                    wait();
                     if (shouldHalt()) {
                         return;
                     }
@@ -187,10 +185,6 @@ public class SPI extends AbstractParentCore {
                             parent.getName(), t, r);
                 }
             }
-        }
-
-        public final Object getSync() {
-            return obj;
         }
 
         @Override
@@ -256,14 +250,14 @@ public class SPI extends AbstractParentCore {
                 System.out.printf("SPI(%s) CSMODE: read 0x%x\n", parent.getName(), result);
                 break;
             case REG_TXDATA:
-                synchronized (mc.getSync()) {
+                synchronized (mc) {
                     if (mc.isTxFull()) {
                         result |= 0x80000000;
                     }
                 }
                 break;
             case REG_RXDATA:
-                synchronized (mc.getSync()) {
+                synchronized (mc) {
                     if (mc.isRxEmpty()) {
                         result |= 0x80000000;
                     } else {
@@ -324,7 +318,7 @@ public class SPI extends AbstractParentCore {
                 System.out.printf("SPI(%s) FMT: write 0x%x\n", parent.getName(), data);
                 break;
             case REG_TXDATA:
-                synchronized (mc.getSync()) {
+                synchronized (mc) {
                     if (!mc.isTxFull()) {
                         mc.pushTx((byte)data);
                     }
