@@ -63,6 +63,8 @@ public class Main {
         EmulatorARM emu = new EmulatorARM();
 
         emu.setProperties(opts);
+        emu.setup();
+
         emu.getBoard().setUARTInputStream(0, System.in);
         emu.getBoard().setUARTOutputStream(0, System.out);
         emu.start();

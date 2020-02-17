@@ -4,9 +4,9 @@ public interface Configurable {
     /**
      * プロパティを初期化します。
      *
-     * @param m プロパティのマップ
+     * @param p プロパティのマップ
      */
-    public void initProperties(EmuPropertyMap m);
+    public void initProperties(EmuPropertyMap p);
 
     /**
      * プロパティを取得します。
@@ -18,7 +18,7 @@ public interface Configurable {
     /**
      * プロパティを設定します。
      *
-     * @param m プロパティのマップ
+     * @param p プロパティのマップ
      */
-    public void setProperties(EmuPropertyMap m);
+    public void setProperties(EmuPropertyMap p);
 }

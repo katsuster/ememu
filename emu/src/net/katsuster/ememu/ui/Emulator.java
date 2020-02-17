@@ -9,32 +9,38 @@ import static net.katsuster.ememu.ui.EmuPropertyPanel.*;
  */
 public class Emulator extends Thread
         implements Configurable {
+    private EmuPropertyMap props;
     private Board board;
-    private EmuPropertyMap opts;
 
     public Emulator() {
 
     }
 
-    public Emulator(Board b) {
-        board = b;
+    public Emulator(EmuPropertyMap p, Board b) {
+        this.props = p;
+        this.board = b;
     }
 
     @Override
-    public void initProperties(EmuPropertyMap m) {
+    public void initProperties(EmuPropertyMap p) {
         int index = 0;
 
-        m.setProperty("test.test", index, "Test", TYPE_STRING, "test default");
+        p.setProperty("test.test", index, "Test", TYPE_STRING, "test default");
     }
 
     @Override
     public EmuPropertyMap getProperties() {
-        return opts;
+        return props;
     }
 
     @Override
-    public void setProperties(EmuPropertyMap m) {
-        opts = m;
+    public void setProperties(EmuPropertyMap p) {
+        props = p;
+    }
+
+    @Override
+    public void run() {
+        boot();
     }
 
     /**
@@ -51,14 +57,28 @@ public class Emulator extends Thread
      *
      * @param b エミュレーション対象のボード
      */
-    public void setBoard(Board b) {
+    protected void setBoard(Board b) {
         board = b;
+    }
+
+    /**
+     * エミュレータを設定します。
+     */
+    public void setup() {
+
+    }
+
+    /**
+     * エミュレータを起動します。
+     */
+    public void boot() {
+        getBoard().boot();
     }
 
     /**
      * エミュレータを停止します。
      */
     public void halt() {
-
+        getBoard().halt();
     }
 }

@@ -164,6 +164,16 @@ public class MainWindow extends JFrame {
                     arch + "' architecture.");
         }
 
+        //Set emulator properties
+        if (opts.getAsBoolean(ProxyOption.PROXY_ENABLE, 0)) {
+            System.setProperty("proxyHost",
+                    opts.getAsURI(ProxyOption.PROXY_HOST, 0).toString());
+            System.setProperty("proxyPort",
+                    Integer.toString(opts.getAsInteger(ProxyOption.PROXY_PORT, 0)));
+        }
+        emu.setProperties(opts);
+        emu.setup();
+
         //Create and connect stdout
         stdoutPanel = new StdoutPanel(listenButton);
         panel.setLeftComponent(stdoutPanel);
@@ -177,15 +187,6 @@ public class MainWindow extends JFrame {
             emu.getBoard().setUARTOutputStream(i, vttyAMA[i].getOutputStream());
         }
         tabPane.setSelectedIndex(2);
-
-        //Set emulator properties
-        if (opts.getAsBoolean(ProxyOption.PROXY_ENABLE, 0)) {
-            System.setProperty("proxyHost",
-                    opts.getAsURI(ProxyOption.PROXY_HOST, 0).toString());
-            System.setProperty("proxyPort",
-                    Integer.toString(opts.getAsInteger(ProxyOption.PROXY_PORT, 0)));
-        }
-        emu.setProperties(opts);
 
         //Start emulator
         emu.start();

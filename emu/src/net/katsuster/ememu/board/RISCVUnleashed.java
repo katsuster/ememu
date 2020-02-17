@@ -7,6 +7,7 @@ import net.katsuster.ememu.generic.bus.Bus64;
 import net.katsuster.ememu.generic.core.CPU;
 import net.katsuster.ememu.riscv.*;
 import net.katsuster.ememu.riscv.core.*;
+import net.katsuster.ememu.ui.EmuPropertyMap;
 
 public class RISCVUnleashed extends AbstractBoard {
     private RV64[] cpu;
@@ -143,7 +144,7 @@ public class RISCVUnleashed extends AbstractBoard {
     }
 
     @Override
-    public void start() {
+    public void boot() {
         //start cores
         for (int i = 0; i < buses.length; i++) {
             buses[i].startAllSlaveCores();
@@ -162,7 +163,7 @@ public class RISCVUnleashed extends AbstractBoard {
     }
 
     @Override
-    public void stop() {
+    public void halt() {
         for (int i = 0; i < buses.length; i++) {
             buses[i].haltAllMasterCores();
             buses[i].haltAllSlaveCores();

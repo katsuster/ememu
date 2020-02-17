@@ -1,19 +1,25 @@
 package net.katsuster.ememu.ui;
 
+import net.katsuster.ememu.board.ARMVersatile;
 import net.katsuster.ememu.board.RISCVUnleashed;
 import net.katsuster.ememu.generic.bus.Bus64;
 import net.katsuster.ememu.riscv.core.RV64;
 
 /**
- * RISCV エミュレータです。
+ * RISC-V エミュレータです。
  */
 public class EmulatorRISCV extends Emulator {
     public EmulatorRISCV() {
-        super(new RISCVUnleashed());
+
     }
 
     @Override
-    public void run() {
+    public void setup() {
+        setBoard(new RISCVUnleashed());
+    }
+
+    @Override
+    public void boot() {
         String rom0, rom1, qspi_flash0;
         RV64 cpu;
         Bus64 bus;
@@ -32,11 +38,6 @@ public class EmulatorRISCV extends Emulator {
         BinaryLoader.loadFromURI(bus, rom1, 0x10000);
         BinaryLoader.loadFromURI(bus, qspi_flash0, 0x20000000);
 
-        getBoard().start();
-    }
-
-    @Override
-    public void halt() {
-        getBoard().stop();
+        getBoard().boot();
     }
 }

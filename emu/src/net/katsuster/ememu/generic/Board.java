@@ -67,10 +67,10 @@ public interface Board {
     /**
      * ボードを起動します。
      */
-    public abstract void start();
+    public abstract void boot();
 
     /**
      * ボードを停止します。
      */
-    public abstract void stop();
+    public abstract void halt();
 }

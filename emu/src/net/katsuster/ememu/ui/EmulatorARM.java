@@ -9,11 +9,16 @@ import net.katsuster.ememu.generic.*;
  */
 public class EmulatorARM extends Emulator {
     public EmulatorARM() {
-        super(new ARMVersatile());
+
     }
 
     @Override
-    public void run() {
+    public void setup() {
+        setBoard(new ARMVersatile());
+    }
+
+    @Override
+    public void boot() {
         String dtree, kimage, initrd, cmdline;
         ARMv5 cpu;
         RAM ram;
@@ -34,11 +39,6 @@ public class EmulatorARM extends Emulator {
             ARMLinuxLoader.bootFromURIWithDT(cpu, ram, dtree, kimage, initrd, cmdline);
         }
 
-        getBoard().start();
-    }
-
-    @Override
-    public void halt() {
-        getBoard().stop();
+        getBoard().boot();
     }
 }

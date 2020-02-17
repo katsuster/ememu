@@ -2,7 +2,11 @@ package net.katsuster.ememu.generic;
 
 import java.io.*;
 
-public abstract class AbstractBoard implements Board {
+import net.katsuster.ememu.ui.*;
+
+public abstract class AbstractBoard implements Board, Configurable {
+    private EmuPropertyMap props;
+
     @Override
     public abstract InputStream getUARTInputStream(int index);
 
@@ -21,12 +25,28 @@ public abstract class AbstractBoard implements Board {
     }
 
     @Override
-    public void start() {
+    public void boot() {
 
     }
 
     @Override
-    public void stop() {
+    public void halt() {
 
     }
+
+    @Override
+    public void initProperties(EmuPropertyMap p) {
+
+    }
+
+    @Override
+    public EmuPropertyMap getProperties() {
+        return props;
+    }
+
+    @Override
+    public void setProperties(EmuPropertyMap p) {
+        props = p;
+    }
+
 }

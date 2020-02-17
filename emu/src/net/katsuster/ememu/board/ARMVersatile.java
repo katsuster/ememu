@@ -7,6 +7,7 @@ import net.katsuster.ememu.arm.core.*;
 import net.katsuster.ememu.generic.*;
 import net.katsuster.ememu.generic.bus.Bus64;
 import net.katsuster.ememu.generic.core.CPU;
+import net.katsuster.ememu.ui.EmuPropertyMap;
 
 /**
  * ARM Versatile Application Baseboards (AB) and Platform Baseboards (PB).
@@ -235,7 +236,7 @@ public class ARMVersatile extends AbstractBoard {
     }
 
     @Override
-    public void start() {
+    public void boot() {
         //start cores
         bus.startAllSlaveCores();
         bus.startAllMasterCores();
@@ -250,7 +251,7 @@ public class ARMVersatile extends AbstractBoard {
     }
 
     @Override
-    public void stop() {
+    public void halt() {
         bus.haltAllMasterCores();
         bus.haltAllSlaveCores();
     }
