@@ -16,11 +16,6 @@ public class Emulator extends Thread
 
     }
 
-    public Emulator(EmuPropertyMap p, Board b) {
-        this.props = p;
-        this.board = b;
-    }
-
     @Override
     public void initProperties(EmuPropertyMap p) {
         int index = 0;
