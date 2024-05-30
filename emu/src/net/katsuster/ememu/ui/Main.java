@@ -25,8 +25,8 @@ public class Main {
         new ProxyOption().initProperties(opts);
 
         opts.setValue(LinuxOption.EMU_ARCH, 0, "arm");
-        opts.setAsURI(LinuxOption.LINUX_KIMAGE, 0, "http://www.katsuster.net/contents/java/ememu/Image-4.4.57");
-        opts.setAsURI(LinuxOption.LINUX_INITRD, 0, "http://www.katsuster.net/contents/java/ememu/initramfs.gz");
+        opts.setAsURI(LinuxOption.LINUX_KIMAGE, 0, "https://www.katsuster.net/contents/java/ememu/Image-4.4.57");
+        opts.setAsURI(LinuxOption.LINUX_INITRD, 0, "https://www.katsuster.net/contents/java/ememu/initramfs.gz");
         opts.setValue(LinuxOption.LINUX_CMDLINE, 0, "console=ttyAMA0 mem=64M root=/dev/ram init=/bin/init debug printk.time=1");
 
         if (args.length >= 1) {
